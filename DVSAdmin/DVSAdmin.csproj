@@ -9,6 +9,15 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\DVSAdmin.BusinessLogic\DVSAdmin.BusinessLogic.csproj" />
+    <ProjectReference Include="..\DVSAdmin.CommonUtility\DVSAdmin.CommonUtility.csproj" />
+    <ProjectReference Include="..\DVSAdmin.Data\DVSAdmin.Data.csproj" />
   </ItemGroup>
 </Project>
