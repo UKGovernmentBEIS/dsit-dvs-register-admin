@@ -1,5 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
+using DVSAdmin.CommonUtility;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
 
 namespace DVSAdmin.Middleware
@@ -9,23 +11,35 @@ namespace DVSAdmin.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly BasicAuthMiddlewareConfiguration configuration;
+        private readonly ILogger<BasicAuthMiddleware> logger;
 
-        public BasicAuthMiddleware(RequestDelegate next, IOptions<BasicAuthMiddlewareConfiguration> options)
+        public BasicAuthMiddleware(RequestDelegate next, IOptions<BasicAuthMiddlewareConfiguration> options, ILogger<BasicAuthMiddleware> logger)
         {
             _next = next;
             configuration = options.Value;
+            this.logger = logger;
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
+            try
+            {
 
-            if (IsAuthorised(httpContext))
-            {
-                await _next.Invoke(httpContext);
+                if (IsAuthorised(httpContext))
+                {
+                    await _next.Invoke(httpContext);
+                }
+                else
+                {
+                    SendUnauthorisedResponse(httpContext);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                SendUnauthorisedResponse(httpContext);
+
+                logger.LogError($"An unexpected error occurred: {ex}");
+                // Redirect to error page 
+                httpContext.Response.Redirect(Constants.ErrorPath);
             }
         }
         private bool IsAuthorised(HttpContext httpContext)
