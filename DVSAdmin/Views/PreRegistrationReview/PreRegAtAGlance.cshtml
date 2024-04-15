@@ -1,0 +1,10 @@
+﻿@model DVSAdmin.Models.PreRegAtAGlanceViewModel
+@{
+    ViewData["Title"] = "PreRegAtAGlance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Model.InReviewApplicationCount</h1>  InReviewApplicationCount
+
+@Html.ActionLink("Application Review", "PreRegistrationReview", "PreRegistrationReview", null, new { @class = "govuk-back-link" })
+
