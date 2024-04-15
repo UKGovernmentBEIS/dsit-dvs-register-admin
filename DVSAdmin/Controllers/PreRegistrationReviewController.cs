@@ -1,4 +1,5 @@
-﻿using DVSAdmin.Models;
+﻿using DVSAdmin.BusinessLogic.Services;
+using DVSAdmin.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
@@ -7,12 +8,13 @@ namespace DVSAdmin.Controllers
     public class PreRegistrationReviewController : Controller
     {
         private readonly ILogger<PreRegistrationReviewController> logger;
+        private readonly IPreRegistrationReviewService preRegistrationReviewService;
 
 
-        public PreRegistrationReviewController(ILogger<PreRegistrationReviewController> logger)
+        public PreRegistrationReviewController(ILogger<PreRegistrationReviewController> logger, IPreRegistrationReviewService preRegistrationReviewService)
         {
             this.logger = logger;
-
+            this.preRegistrationReviewService = preRegistrationReviewService;
         }
 
 
@@ -31,9 +33,11 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpGet("pre-registration-review")]
-        public IActionResult PreRegistrationReview()
+        public async Task<IActionResult> PreRegistrationReview()
         {
-            return View();
+            PreRegReviewListViewModel preRegReviewListViewModel = new PreRegReviewListViewModel();
+            preRegReviewListViewModel.PreRegistrations = await preRegistrationReviewService.GetPreRegistrations();
+            return View(preRegReviewListViewModel);
         }
     }
 }

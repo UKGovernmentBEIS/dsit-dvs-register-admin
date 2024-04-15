@@ -3,6 +3,9 @@ using System.Data.Common;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.Data;
 using DVSAdmin.Middleware;
+using DVSAdmin.BusinessLogic;
+using DVSAdmin.BusinessLogic.Services;
+using DVSAdmin.Data.Repositories;
 
 namespace DVSAdmin
 {
@@ -27,6 +30,9 @@ namespace DVSAdmin
             string connectionString = string.Format(configuration.GetValue<string>("DB_CONNECTIONSTRING"));
             services.AddDbContext<DVSAdminDbContext>(opt =>
                 opt.UseNpgsql(connectionString));
+            ConfigureDvsRegisterServices(services);
+            ConfigureAutomapperServices(services);
+
         }
 
         public void ConfigureDatabaseHealthCheck(DVSAdminDbContext? dbContext)
@@ -44,6 +50,16 @@ namespace DVSAdmin
                 Console.WriteLine(Constants.DbConnectionFailed + ex.Message);
                 throw;
             }
+        }
+
+        public void ConfigureDvsRegisterServices(IServiceCollection services)
+        {
+            services.AddScoped<IPreRegistrationReviewRepository, PreRegistrationReviewRepository>();
+            services.AddScoped<IPreRegistrationReviewService, PreRegistrationReviewService>();
+        }
+        public void ConfigureAutomapperServices(IServiceCollection services)
+        {
+            services.AddAutoMapper(typeof(AutoMapperProfile));
         }
     }
 }
