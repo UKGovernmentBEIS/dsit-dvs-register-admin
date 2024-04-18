@@ -4,7 +4,55 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>@Model.InReviewApplicationCount</h1>  InReviewApplicationCount
 
-@Html.ActionLink("Application Review", "PreRegistrationReview", "PreRegistrationReview", null, new { @class = "govuk-back-link" })
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper">
+        @*@Html.ActionLink("Application Review", "PreRegistrationReview", "PreRegistrationReview", null, new { @class = "govuk-back-link" })*@
 
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl govuk-!-margin-top-8">Office for Digital Identities and Attributes review portal</h1>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                <p class="govuk-body"><a href="#" class="govuk-link govuk-!-font-weight-bold">Pre-registration platform</a></p>
+                <p class="govuk-body">
+                    Conduct a due diligence check on digital identity and attributes service providers and assess their suitability to join the register of trusted digital identity and attribute service providers.
+                </p>
+
+                <p class="govuk-body govuk-!-font-weight-bold">At a glance:</p>
+                <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                    <li>
+                        3 applications with less than a week to complete
+                    </li>
+                    <li>
+                        1 application in review
+                    </li>
+                    <li>
+                        1 application unique reference number expired
+                    </li>
+                    <li>
+                        3 applications unique reference number not validated
+                    </li>
+                </ul>
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-visually-hidden">Warning</span>
+                        1 application unique reference number expired
+                    </strong>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                <p class="govuk-body"><a href="#" class="govuk-link govuk-!-font-weight-bold">Application review</a></p>
+                <p class="govuk-body">
+                    Review digital identity and attribute service providers' applications and certification details to confirm their application. These are the final checks.
+                </p>
+            </div>
+        </div>
+    </main>
+</div>
