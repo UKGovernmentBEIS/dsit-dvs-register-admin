@@ -11,5 +11,7 @@ namespace DVSAdmin.Data
         public DbSet<PreRegistration> PreRegistration { get; set; }
         public DbSet<Country> Country { get; set; }
         public DbSet<PreRegistrationCountryMapping> PreRegistrationCountryMapping { get; set; }
+        public DbSet<User> User { get; set; }
+        public DbSet<PreRegistrationReview> PreRegistrationReview { get; set; }
     }
 }

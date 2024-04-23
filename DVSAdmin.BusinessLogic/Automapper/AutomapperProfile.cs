@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DVSAdmin.BusinessLogic.Automapper;
 using DVSAdmin.BusinessLogic.Extensions;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.PreRegistration;
@@ -17,12 +16,18 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<CountryDto, Country>();
             CreateMap<PreRegistration, PreRegistrationDto>()
             .ForMember(dest => dest.PreRegistrationCountryMappings, opt => opt.MapFrom(src => src.PreRegistrationCountryMappings))
-            
-            .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftResolver>())
-            .ForMember(dest=>dest.PrimaryChecksCommentCount ,opt => opt.MapFrom<CommentsCountResolver>())
-            .ForMember(dest => dest.SecondaryChecksCommentCount, opt => opt.MapFrom<CommentsCountResolver>());
-            CreateMap<PreRegistrationDto, PreRegistration>().ForMember(dest => dest.PreRegistrationCountryMappings, opt => opt.MapFrom(src => src.PreRegistrationCountryMappings));
-          
+            .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftResolver>());
+
+            CreateMap<PreRegistrationDto, PreRegistration>().ForMember(dest => dest.PreRegistrationCountryMappings, opt => opt.MapFrom(src => src.PreRegistrationCountryMappings))
+            .ForMember(dest => dest.PreRegistrationReview, opt => opt.MapFrom(src => src.PreRegistrationReview));
+
+            CreateMap<User, UserDto>();
+            CreateMap<UserDto, User>();
+
+            CreateMap<PreRegistrationReview, PreRegistrationReviewDto>();
+
+            CreateMap<PreRegistrationReviewDto, PreRegistrationReview>();
+
 
 
         }

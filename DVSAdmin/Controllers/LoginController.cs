@@ -2,10 +2,10 @@
 
 namespace DVSAdmin.Controllers
 {
-    [Route("")]
+   
     public class LoginController : Controller
     {
-        [HttpGet("")]
+        
         public IActionResult SignUp()
         {
             return View("SignUp");
