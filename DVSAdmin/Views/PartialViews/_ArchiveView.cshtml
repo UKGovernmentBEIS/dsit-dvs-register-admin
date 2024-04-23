@@ -1,0 +1,37 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.Extensions;
+@model DVSAdmin.Models.PreRegReviewListViewModel;
+
+<div class="govuk-tabs__panel" id="archive">
+    <h2 class="govuk-heading-l">Primary check overview</h2>
+
+
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header"> Unique Reference <br /># </th>
+                <th scope="col" class="govuk-table__header">Digital Identity <br />and Attribute <br /> Service Provider</th>
+                <th scope="col" class="govuk-table__header">Time of application <br/> decision</th>
+                <th scope="col" class="govuk-table__header">Status</th>
+
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+
+            @foreach (var item in Model.ArchiveList)
+            {
+                <tr class="govuk-table__row">
+
+                    @* TODO: change action and controller *@
+                    <td class="govuk-table__cell"> @Html.ActionLink(item.URN, "PrimaryCheckReview", "PreRegistrationReview", new { @preRegistrationId = item.Id }, new { @class = "govuk-link" })</td>
+                    <td class="govuk-table__cell"> @item.RegisteredDIPName</td>
+                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.ReleasedTimeStamp)</td>                  
+                    <td class="govuk-table__cell">@EnumHtmlExtensions.ToStyledStrongTag(item.URNStatus)</td>
+                </tr>
+            }
+
+
+        </tbody>
+    </table>
+
+</div>

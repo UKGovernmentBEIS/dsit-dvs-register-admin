@@ -28,4 +28,8 @@
   <ItemGroup>
     <None Remove="Middleware\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Views\PartialViews\_PrimaryChecksView.cshtml" />
+    <None Include="Views\PartialViews\_SecondaryChecksView.cshtml" />
+  </ItemGroup>
 </Project>

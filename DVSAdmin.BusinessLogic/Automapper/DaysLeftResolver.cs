@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.BusinessLogic.Models.PreRegistration;
+using DVSAdmin.CommonUtility;
+
 
 namespace DVSAdmin.BusinessLogic.Extensions
 {
@@ -13,8 +15,8 @@ namespace DVSAdmin.BusinessLogic.Extensions
                 // Calculate the difference in days from the created date to today
                 var daysPassed = (DateTime.Today - source.CreatedDate.Value).Days;
 
-                // Calculate the number of days left (14 days minus days passed)
-                var daysLeft = 14 - daysPassed;
+                // Calculate the number of days left (60 days minus days passed)
+                var daysLeft = Constants.DaysLeftToComplete - daysPassed;
 
                 // Ensure days left is not negative
                 return Math.Max(0, daysLeft);

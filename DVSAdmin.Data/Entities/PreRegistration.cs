@@ -52,8 +52,9 @@ namespace DVSAdmin.Data.Entities
 
         public YesNoEnum ConfirmAccuracy { get; set; }
         public string? URN { get; set; }
-        public PreRegistrationStatusEnum PreRegistrationStatus { get; set; }
+        public ApplicationReviewStatusEnum ApplicationReviewStatus { get; set; }
+        public PreRegistrationReview PreRegistrationReview { get; set; }
 
-       
+
     }
 }
