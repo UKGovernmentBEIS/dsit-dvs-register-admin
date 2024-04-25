@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace DVSAdmin.Middleware
 {
-    // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
+    
     public class BasicAuthMiddleware
     {
         private readonly RequestDelegate _next;
@@ -36,7 +36,6 @@ namespace DVSAdmin.Middleware
             }
             catch (Exception ex)
             {
-
                 logger.LogError($"An unexpected error occurred: {ex}");
                 // Redirect to error page 
                 httpContext.Response.Redirect(Constants.ErrorPath);

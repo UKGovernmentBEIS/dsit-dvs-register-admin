@@ -19,6 +19,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.5.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DVSAdmin.BusinessLogic\DVSAdmin.BusinessLogic.csproj" />
@@ -27,6 +29,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Middleware\" />
+    <None Remove="Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Views\PartialViews\_PrimaryChecksView.cshtml" />
