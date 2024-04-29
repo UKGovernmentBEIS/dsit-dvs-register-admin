@@ -30,9 +30,21 @@ namespace DVSAdmin
             string connectionString = string.Format(configuration.GetValue<string>("DB_CONNECTIONSTRING"));
             services.AddDbContext<DVSAdminDbContext>(opt =>
                 opt.UseNpgsql(connectionString));
+            ConfigureSession(services);
             ConfigureDvsRegisterServices(services);
             ConfigureAutomapperServices(services);
 
+        }
+
+        private void ConfigureSession(IServiceCollection services)
+        {
+            services.AddHttpContextAccessor();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // ToDo:Adjust the timeout
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
         }
 
         public void ConfigureDatabaseHealthCheck(DVSAdminDbContext? dbContext)
@@ -56,6 +68,14 @@ namespace DVSAdmin
         {
             services.AddScoped<IPreRegistrationReviewRepository, PreRegistrationReviewRepository>();
             services.AddScoped<IPreRegistrationReviewService, PreRegistrationReviewService>();
+            services.AddScoped<ISignUpService, SignUpService>();
+            services.AddScoped(opt =>
+            {
+                string userPoolId = string.Format(configuration.GetValue<string>("UserPoolId"));
+                string clientId = string.Format(configuration.GetValue<string>("ClientId")); ;
+                string region = string.Format(configuration.GetValue<string>("Region"));
+                return new CognitoClient(userPoolId, clientId, region);
+            });
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {

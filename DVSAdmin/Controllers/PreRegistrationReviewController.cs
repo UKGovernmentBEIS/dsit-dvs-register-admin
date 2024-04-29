@@ -1,14 +1,14 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Services;
-using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
-    [Route("pre-registration-review")]
     
+    [Route("pre-registration-review")]
+    [ValidCognitoToken]
     public class PreRegistrationReviewController : Controller
     {
         private readonly ILogger<PreRegistrationReviewController> logger;

@@ -1,0 +1,36 @@
+﻿@model DVSAdmin.Models.LoginPageViewModel
+@{
+
+    ViewData["Title"] = "MFA Confirmation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("ConfirmMFACodeLogin", "Login", FormMethod.Post))
+{
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-xl govuk-!-margin-top-8">Check your MFA App</h1>
+
+                    <p class="govuk-body">Enter the security code from your Authenticator Application</p>
+
+                    <div class="govuk-form-group">
+                        <h1 class="govuk-label-wrapper">
+                            <label class="govuk-label govuk-label--s" for="event-name">
+                                Multi Factor Authentication Code
+                            </label>
+                        </h1>
+                        <div id="event-name-hint" class="govuk-hint">
+                            For example, 123456
+                        </div>
+                        @Html.TextBoxFor(m => m.MFACode, new { @class = "govuk-input", id = "one-time-password", name = "one-time-password" })
+                    </div>
+                    <button type="submit" class="govuk-button govuk-!-margin-top-2" data-module="govuk-button">
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+}
