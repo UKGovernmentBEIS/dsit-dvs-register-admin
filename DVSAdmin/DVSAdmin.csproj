@@ -41,5 +41,14 @@
     <None Include="Views\PrimaryCheck\PrimaryCheckFailedConfirmation.cshtml" />
     <None Include="Views\PrimaryCheck\PrimaryCheckPassedConfirmation.cshtml" />
     <None Include="Views\PrimaryCheck\PrimaryCheckReview.cshtml" />
+    <None Include="Views\SecondaryCheck\AboutToIssueURN.cshtml" />
+    <None Include="Views\SecondaryCheck\AboutToReject.cshtml" />
+    <None Include="Views\SecondaryCheck\ApplicationApprovalConfirmation.cshtml" />
+    <None Include="Views\SecondaryCheck\ApplicationRejectionConfirmation.cshtml" />
+    <None Include="Views\SecondaryCheck\ConfirmIssueURN.cshtml" />
+    <None Include="Views\SecondaryCheck\ConfirmSecondaryCheckReject.cshtml" />
+    <None Include="Views\SecondaryCheck\ConfirmSentBackForPrimaryCheck.cshtml" />
+    <None Include="Views\SecondaryCheck\SecondaryCheckReview.cshtml" />
+    <None Include="Views\SecondaryCheck\SentBackConfirmation.cshtml" />
   </ItemGroup>
 </Project>

@@ -37,7 +37,7 @@
                             <td class="govuk-table__cell"> @Html.ActionLink(Model.PreRegistration.URN, "PrimaryCheckReview", "PreRegistrationReview", new { @preRegistrationId = Model.PreRegistration.Id }, new { @class = "govuk-link" })</td>
                             <td class="govuk-table__cell">@Model.PreRegistration.TradingName</td>
                             <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.PreRegistration.CreatedDate)</td>
-                            <td class="govuk-table__cell">@EnumHtmlExtensions.ToStyledStrongTag(ApplicationReviewStatusEnum.PrimaryCheckPassed)</td>
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(ApplicationReviewStatusEnum.PrimaryCheckPassed)</td>
                             <td class="govuk-table__cell">@Model.PreRegistration.DaysLeftToComplete  days</td>
                         </tr>
                     </tbody>

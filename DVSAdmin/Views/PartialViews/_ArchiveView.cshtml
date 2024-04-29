@@ -26,7 +26,7 @@
                     <td class="govuk-table__cell"> @Html.ActionLink(item.URN, "ArchiveDetails", "PreRegistrationReview", new { @preRegistrationId = item.Id }, new { @class = "govuk-link" })</td>
                     <td class="govuk-table__cell"> @item.TradingName</td>
                     <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.UniqueReferenceNumber.ModifiedDate)</td>
-                    <td class="govuk-table__cell">@EnumHtmlExtensions.ToStyledStrongTag(item.UniqueReferenceNumber.URNStatus)</td>
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.UniqueReferenceNumber.URNStatus)</td>
                 </tr>
             }
 

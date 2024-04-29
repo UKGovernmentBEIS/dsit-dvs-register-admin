@@ -10,6 +10,8 @@ using DVSRegister.Extensions;
 
 namespace DVSAdmin.Controllers
 {
+    [ValidCognitoToken]
+    [Route("primary-check")]
     public class PrimaryCheckController : Controller
     {
      

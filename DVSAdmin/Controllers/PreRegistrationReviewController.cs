@@ -8,7 +8,7 @@ namespace DVSAdmin.Controllers
 {
     
     [Route("pre-registration-review")]
-    //[ValidCognitoToken]
+    [ValidCognitoToken]
     public class PreRegistrationReviewController : Controller
     {
         private readonly ILogger<PreRegistrationReviewController> logger;

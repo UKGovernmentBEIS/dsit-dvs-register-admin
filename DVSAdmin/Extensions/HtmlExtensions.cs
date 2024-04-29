@@ -7,7 +7,7 @@ using System.Web;
 
 namespace DVSAdmin.Extensions
 {
-    public static class EnumHtmlExtensions
+    public static class HtmlExtensions
     {
 
         private static string GetTagClass<TEnum>(TEnum value) where TEnum : struct, Enum
@@ -59,8 +59,16 @@ namespace DVSAdmin.Extensions
         }
 
 
+        public static HtmlString ToStringWithLineBreaks(string input)
+        {
+           
+            string output = input?.Replace("\r", "<br>")??string.Empty;       
 
-        //For displaying statuses in secondary review, whcih are approved /rejected in primary check
+            return new HtmlString(output);
+        }
+
+
+        //For displaying statuses of each section in secondary review details, whcih are approved /rejected in primary check
 
         public static HtmlString ToStyledStrongTag(this bool? input)
         {

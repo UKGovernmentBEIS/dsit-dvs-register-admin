@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewData["Title"] = "AboutToReject";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "ConfirmSecondaryCheckReject", "SecondaryCheck", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">
+                    You are about to reject an application
+                </h1>
+                <p class="govuk-body">
+                    The provider will not be issued a unique reference number and their application will be removed. The applicant and all OfDIA Review Portal members will receive an email with this decision.                    
+                </p>
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-visually-hidden">Warning</span>
+                        Once you reject this application, the decision can’t be changed.
+                    </strong>
+                </div>
+
+                @using (Html.BeginForm("SaveApplicationRejection", "SecondaryCheck", FormMethod.Post))
+                {
+                    <div class="govuk-button-group">
+
+                        <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="save">
+                            Reject application
+                        </button>
+                        
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+</div>
+
+

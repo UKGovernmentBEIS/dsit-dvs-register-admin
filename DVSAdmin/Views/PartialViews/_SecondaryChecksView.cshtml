@@ -27,11 +27,11 @@
                     <td class="govuk-table__cell">  @DateTimeExtensions.FormatDateTime(item.CreatedDate)</td>
                     @if (@item.PreRegistrationReview == null)
                     {
-                        <td class="govuk-table__cell">@EnumHtmlExtensions.ToStyledStrongTag(item.ApplicationReviewStatus)</td>
+                        <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ApplicationReviewStatus)</td>
                     }
                     else
                     {
-                        <td class="govuk-table__cell">@EnumHtmlExtensions.ToStyledStrongTag(item.PreRegistrationReview.ApplicationReviewStatus)</td>
+                        <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.PreRegistrationReview.ApplicationReviewStatus)</td>
                     }
                     <td class="govuk-table__cell">@item.DaysLeftToComplete  days</td>
 

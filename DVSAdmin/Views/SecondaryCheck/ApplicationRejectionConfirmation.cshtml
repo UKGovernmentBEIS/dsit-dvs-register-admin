@@ -1,23 +1,24 @@
-﻿@model DVSAdmin.Models.PreRegistrationReviewViewModel;
+﻿@model DVSAdmin.Models.SecondaryCheckViewModel;
 @using Newtonsoft.Json
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @{
-    ViewData["Title"] = "PrimaryCheckFailedConfirmation";
+    ViewData["Title"] = "ApplicationRejectionConfirmation";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <div class="govuk-width-container">
    
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">
-                    Failed primary check<br/> confirmation
+                    You have rejected this <br /> application
                 </h1>
                 <p class="govuk-body">
-                    You confirmed the following application has failed the primary check:
+                    You have chosen to reject the following application:
                 </p>
-                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
 
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
@@ -31,10 +32,10 @@
                     </thead>
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell"> @Html.ActionLink(Model.PreRegistration.URN, "PrimaryCheckReview", "PreRegistrationReview", new { @preRegistrationId = Model.PreRegistration.Id }, new { @class = "govuk-link" })</td>
+                            <td class="govuk-table__cell"> @Html.ActionLink(Model.PreRegistration.URN, "SecondaryCheckReview", "SecondaryCheck", new { @preRegistrationId = Model.PreRegistration.Id }, new { @class = "govuk-link" })</td>
                             <td class="govuk-table__cell">@Model.PreRegistration.TradingName</td>
                             <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.PreRegistration.CreatedDate)</td>
-                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(ApplicationReviewStatusEnum.PrimaryCheckFailed)</td>
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(ApplicationReviewStatusEnum.ApplicationRejected)</td>
                             <td class="govuk-table__cell">@Model.PreRegistration.DaysLeftToComplete  days</td>
                         </tr>
                     </tbody>
@@ -46,7 +47,7 @@
 
                 @using (Html.BeginForm("PreRegistrationReview", "PreRegistrationReview", FormMethod.Get))
                 {
-                    <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
+                    <button type="submit" class="govuk-button" data-module="govuk-button" >
                         Go back to pre-registration review
                     </button>
                 }
@@ -55,3 +56,4 @@
         </div>
     </main>
 </div>
+
