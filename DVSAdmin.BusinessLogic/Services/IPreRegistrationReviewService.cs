@@ -1,5 +1,4 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.BusinessLogic.Models.PreRegistration;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 

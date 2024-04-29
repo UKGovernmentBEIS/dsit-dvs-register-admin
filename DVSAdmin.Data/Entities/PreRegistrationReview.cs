@@ -18,6 +18,7 @@ namespace DVSAdmin.Data.Entities
         public bool IsCountryApproved { get; set; }
         public bool IsCompanyApproved { get; set; }
         public bool IsCheckListApproved { get; set; }
+        public bool IsDirectorshipsApproved { get; set; }
         public bool IsDirectorshipsAndRelationApproved { get; set; }
         public bool IsTradingAddressApproved { get; set; }
         public bool IsSanctionListApproved { get; set; }
@@ -30,6 +31,8 @@ namespace DVSAdmin.Data.Entities
         public bool IsProvidersWebpageApproved { get; set; }
 
         public ApplicationReviewStatusEnum ApplicationReviewStatus { get; set; }
+
+        public RejectionReasonEnum? RejectionReason { get; set; }
         public string? Comment { get; set; }
 
         [ForeignKey("User")]

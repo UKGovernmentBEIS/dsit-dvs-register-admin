@@ -4,10 +4,10 @@ namespace DVSAdmin.BusinessLogic.Models
 {
     public class UniqueReferenceNumberDto
     {
-       
+
         public int Id { get; set; }
 
-      
+
         public required string URN { get; set; }
 
         public string? RegisteredDIPName { get; set; }
@@ -21,5 +21,8 @@ namespace DVSAdmin.BusinessLogic.Models
         public int? Validity { get; set; }
 
         public URNStatusEnum URNStatus { get; set; }
+
+        public string? ModifiedBy { get; set; }
+        public DateTime? ModifiedDate { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace DVSAdmin.BusinessLogic.Models.PreRegistration
+﻿namespace DVSAdmin.BusinessLogic.Models
 {
     public class CountryDto
     {
