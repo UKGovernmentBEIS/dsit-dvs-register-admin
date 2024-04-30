@@ -9,18 +9,18 @@ public class ValidCognitoTokenAttribute : ActionFilterAttribute
 {   
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        var cognitoClient = context.HttpContext.RequestServices.GetService<CognitoClient>();
-        var sessionToken = context.HttpContext.Session.GetString("IdToken");
-        sessionToken = sessionToken.Substring(1, sessionToken.Length - 2);
-
-        if (string.IsNullOrEmpty(sessionToken))
-        {
-            context.Result = new RedirectToActionResult("", "Login", null);
-            return;
-        }
-
         try
         {
+            var cognitoClient = context.HttpContext.RequestServices.GetService<CognitoClient>();
+            var sessionToken = context.HttpContext.Session.GetString("IdToken");
+            sessionToken = sessionToken.Substring(1, sessionToken.Length - 2);
+       
+            if (string.IsNullOrEmpty(sessionToken))
+            {
+                context.Result = new RedirectToActionResult("", "Login", null);
+                return;
+            }
+
             string cognitoIssuer = $"https://cognito-idp.{cognitoClient._region}.amazonaws.com/{cognitoClient._userPoolId}";
             string jwtKeySetUrl = $"{cognitoIssuer}/.well-known/jwks.json";
             string cognitoAudience = cognitoClient._clientId;

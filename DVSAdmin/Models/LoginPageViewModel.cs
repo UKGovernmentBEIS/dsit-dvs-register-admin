@@ -1,12 +1,21 @@
-﻿namespace DVSAdmin.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DVSAdmin.Models
 {
 	public class LoginPageViewModel
 	{
-		public string Email { get; set; }
+        [Required(ErrorMessage = "Enter an email address in the correct format, like name@example.com.")]
+        [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com.")]
+        public string Email { get; set; }
 
-		public string Password { get; set; }
 
-		public string MFACode { get; set; }
+		[Required(ErrorMessage ="Enter a valid password")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+
+        [Required]
+        [RegularExpression("^[0-9]{6}$", ErrorMessage = "The MFA code must be a 6-digit number.")]
+        public string MFACode { get; set; }
 	}
 }
-

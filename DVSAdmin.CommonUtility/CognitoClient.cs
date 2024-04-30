@@ -179,12 +179,29 @@ public class CognitoClient
         try
         {
             var response = await _provider.RespondToAuthChallengeAsync(challengeResponse);
+            
             return response.AuthenticationResult.IdToken;
         }
         catch(Exception ex)
         {
             Console.WriteLine($"Error in logging in {ex.Message} ");
             return "";
+        }
+    }
+
+    public async Task SignOutUserAsync(string accessToken)
+    {
+        try
+        {
+            var signOutRequest = new GlobalSignOutRequest
+            {
+                AccessToken = accessToken
+            };
+            var response = await _provider.GlobalSignOutAsync(signOutRequest);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine("An error occurred while signing out: " + ex.Message);
         }
     }
 

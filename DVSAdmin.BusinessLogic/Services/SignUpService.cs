@@ -1,14 +1,17 @@
 ﻿using System;
+using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.Data.Repositories;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
 	public class SignUpService : ISignUpService
 	{
         private CognitoClient _cognitoClient;
+        private readonly IUserRepository _userRepository;
 
-        public SignUpService(CognitoClient cognitoClient)
+        public SignUpService(CognitoClient cognitoClient, IUserRepository userRepository)
         {
-
+            _userRepository = userRepository;
             _cognitoClient = cognitoClient;
         }
 
@@ -24,7 +27,23 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<string> MFAConfirmation(string email, string password, string mfaCode)
         {
-            return await _cognitoClient.MFARegistrationConfirmation(email, password, mfaCode);
+            
+            if (await _cognitoClient.MFARegistrationConfirmation(email, password, mfaCode) == "OK")
+            {
+                GenericResponse genericResponse = await _userRepository.AddUser(new Data.Entities.User() { Email = email, UserName = email });
+                if(genericResponse.Success)
+                {
+                    return "OK";
+                }
+                else
+                {
+                    return "KO";
+                }
+            }
+            else
+            {
+                return "KO";
+            }
         }
 
         public async Task<string> SignInAndWaitForMfa(string email, string password)

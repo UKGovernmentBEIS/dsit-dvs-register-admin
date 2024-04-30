@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "MFA Confirmation Check";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string qrCodeImageBase64 = DVSAdmin.CommonUtility.Helper.GenerateQRCode(Model.SecretToken, Model.Email);
+
 }
 
 
@@ -13,23 +15,25 @@
                 <div class="govuk-grid-column-two-thirds">
                     <h1 class="govuk-heading-xl govuk-!-margin-top-8">MFA Software Token Registration</h1>
 
-                    <p class="govuk-body">Here is your Software Token for MFA Registration</p>
+                    <p class="govuk-body">Here is your Software Token QR Code for MFA Registration</p>
 
                     <p class="govuk-body">Please use the same to register onto a TOTP based authenticator app like Okta Verify, Google Authenticator or Microsoft Authenticator</p>
 
                     <div class="govuk-inset-text">
-                        Secret Token Software Token - @Model.SecretToken
+                        <img src="data:image/png;base64, @qrCodeImageBase64" alt="QR Code for MFA Code" style="max-width: 200px; width: 30vw; height: auto; min-width: 100px;" />
                     </div>
 
                     <p class="govuk-body">Enter the one time MFA code</p>
+                    <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("MFACode") && Html.ViewData.ModelState["MFACode"].Errors.Count > 0 ? "govuk-form-group--error" :"" )">
 
-                    @Html.TextBoxFor(m => m.MFACode, new { @class = "govuk-input", id = "mfa-code", name = "mfa-code" })
-
+                        @Html.ValidationMessageFor(m => m.MFACode, "", new { @class = "govuk-error-message" })
+                        @Html.TextBoxFor(m => m.MFACode, new { @class = "govuk-input", id = "mfa-code", name = "mfa-code" })
+                    </div>
                     <button type="submit" class="govuk-button govuk-!-margin-top-2" data-module="govuk-button">
                         Confirm
                     </button>
                 </div>
-            </div>
+                </div>
         </main>
     </div>
 }

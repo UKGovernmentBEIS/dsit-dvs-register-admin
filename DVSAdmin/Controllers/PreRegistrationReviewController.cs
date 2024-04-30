@@ -2,6 +2,7 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
+using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
@@ -14,8 +15,7 @@ namespace DVSAdmin.Controllers
         private readonly ILogger<PreRegistrationReviewController> logger;
         private readonly IPreRegistrationReviewService preRegistrationReviewService;
 
-
-        public PreRegistrationReviewController(ILogger<PreRegistrationReviewController> logger, IPreRegistrationReviewService preRegistrationReviewService)
+        public PreRegistrationReviewController(ILogger<PreRegistrationReviewController> logger, IPreRegistrationReviewService preRegistrationReviewService, ISignUpService signUpService)
         {
             this.logger = logger;
             this.preRegistrationReviewService = preRegistrationReviewService;
@@ -79,7 +79,13 @@ namespace DVSAdmin.Controllers
 
             return View(preRegistrationReviewViewModel);
 
+        }
 
+        
+        public async Task<IActionResult> SignOut()
+        {
+            HttpContext?.Session.Clear();
+            return RedirectToAction("LoginPage", "Login");
         }
 
         public static PreRegistrationReviewViewModel MapDtoToViewModel(PreRegistrationDto preRegistrationDto)

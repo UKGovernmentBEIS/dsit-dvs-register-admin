@@ -26,41 +26,58 @@ namespace DVSAdmin.Controllers
         [HttpPost("create-new-account")]
         public async Task<IActionResult> CreateNewAccount(SignUpViewModel signUpViewModel)
         {
-            
-            
-            var forgotPasswordResponse = await _signUpService.ForgotPassword(signUpViewModel.Email);
-            if (forgotPasswordResponse == "OK")
+
+            if (ModelState["Email"].Errors.Count == 0)
             {
-                return RedirectToAction("ConfirmPassword", "Login", signUpViewModel);
+                var forgotPasswordResponse = await _signUpService.ForgotPassword(signUpViewModel.Email);
+
+                if (forgotPasswordResponse == "OK")
+                {
+                    HttpContext.Session?.Set("Email", signUpViewModel.Email);
+                    return RedirectToAction("ConfirmPassword", "Login");
+                }
+                else
+                {
+                    return View("SignUp");
+                }
             }
+
             else
             {
                 return View("SignUp");
             }
-            
-            
-            
         }
 
         [HttpGet("enter-email-address")]
-        public IActionResult ConfirmPassword(SignUpViewModel signUpViewModel)
+        public IActionResult ConfirmPassword()
         {
-            return View("ConfirmPassword", signUpViewModel);
+            ConfirmPasswordViewModel confirmPasswordViewModel = new ConfirmPasswordViewModel();
+            confirmPasswordViewModel.Email = HttpContext?.Session.Get<string>("Email");
+            return View("ConfirmPassword", confirmPasswordViewModel);
         }
 
         [HttpPost("confirm-password")]
-        public async Task<IActionResult> ConfirmPasswordCheck(SignUpViewModel signUpViewModel)
+        public async Task<IActionResult> ConfirmPasswordCheck(ConfirmPasswordViewModel confirmPasswordViewModel)
         {
-            var confirmPasswordResponse = await _signUpService.ConfirmPassword(signUpViewModel.Email, signUpViewModel.Password, signUpViewModel.OneTimePassword);
-            if(confirmPasswordResponse.Length > 0)
+            confirmPasswordViewModel.Email = HttpContext?.Session.Get<string>("Email");
+            if (ModelState["Password"].Errors.Count ==0 && ModelState["ConfirmPassword"].Errors.Count==0)
             {
-                HttpContext?.Session.Set("MFARegistrationViewModel", new MFARegistrationViewModel { Email = signUpViewModel.Email, Password = signUpViewModel.Password, SecretToken = confirmPasswordResponse });
-                return RedirectToAction("MFARegistration", "Login");
+                var confirmPasswordResponse = await _signUpService.ConfirmPassword(confirmPasswordViewModel.Email, confirmPasswordViewModel.Password, confirmPasswordViewModel.OneTimePassword);
+                if (confirmPasswordResponse.Length > 0)
+                {
+                    HttpContext?.Session.Set("MFARegistrationViewModel", new MFARegistrationViewModel { Email = confirmPasswordViewModel.Email, Password = confirmPasswordViewModel.Password, SecretToken = confirmPasswordResponse });
+                    return RedirectToAction("MFARegistration", "Login");
+                }
+                else
+                {
+                    return RedirectToAction(Constants.ErrorPath);
+                }
             }
             else
             {
-                return RedirectToAction(Constants.ErrorPath);
-            }            
+                return View("ConfirmPassword", confirmPasswordViewModel);
+            }
+                        
         }
 
         [HttpGet("mfa-registration")]
@@ -74,16 +91,24 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> MFAConfirmationCheck(MFARegistrationViewModel viewModel)
         {
             MFARegistrationViewModel MFARegistrationViewModel = HttpContext?.Session.Get<MFARegistrationViewModel>("MFARegistrationViewModel");
-
-            var mfaConfirmationCheckResponse = await _signUpService.MFAConfirmation(MFARegistrationViewModel.Email, MFARegistrationViewModel.Password, viewModel.MFACode);
-            if (mfaConfirmationCheckResponse == "OK")
+            if (ModelState["MFACode"].Errors.Count == 0)
             {
-                return RedirectToAction("LoginPage");
+                var mfaConfirmationCheckResponse = await _signUpService.MFAConfirmation(MFARegistrationViewModel.Email, MFARegistrationViewModel.Password, viewModel.MFACode);
+
+                if (mfaConfirmationCheckResponse == "OK")
+                {
+                    return RedirectToAction("LoginPage");
+                }
+                else
+                {
+                    return RedirectToAction(Constants.ErrorPath);
+                }
             }
             else
             {
-                return RedirectToAction(Constants.ErrorPath);
+                return View("MFARegistration", viewModel);
             }
+            
         }
 
         [HttpGet("login")]
@@ -95,16 +120,23 @@ namespace DVSAdmin.Controllers
         [HttpPost("login-to-account")]
         public async Task<IActionResult> LoginToAccount(LoginPageViewModel loginPageViewModel)
         {
-            var loginResponse = await _signUpService.SignInAndWaitForMfa(loginPageViewModel.Email, loginPageViewModel.Password);
-            if(loginResponse.Length > 0)
+            if (ModelState["Email"].Errors.Count == 0 && ModelState["Password"].Errors.Count ==0)
             {
-                HttpContext?.Session.Set("Email", loginPageViewModel.Email);
-                HttpContext?.Session.Set("Session", loginResponse);
-                return RedirectToAction("MFAConfirmation");
+                var loginResponse = await _signUpService.SignInAndWaitForMfa(loginPageViewModel.Email, loginPageViewModel.Password);
+                if (loginResponse.Length > 0)
+                {
+                    HttpContext?.Session.Set("Email", loginPageViewModel.Email);
+                    HttpContext?.Session.Set("Session", loginResponse);
+                    return RedirectToAction("MFAConfirmation");
+                }
+                else
+                {
+                    return RedirectToAction("LoginPage");
+                }
             }
             else
             {
-                return RedirectToAction("LoginPage");
+                return View("LoginPage");
             }
         }
 
@@ -117,16 +149,23 @@ namespace DVSAdmin.Controllers
         [HttpPost("mfa-confirmation-login")]
         public async Task<IActionResult> ConfirmMFACodeLogin(LoginPageViewModel loginPageViewModel)
         {
-            var mfaResponse = await _signUpService.ConfirmMFAToken(HttpContext?.Session.Get<string>("Session"), HttpContext?.Session.Get<string>("Email"), loginPageViewModel.MFACode);
-
-            if(mfaResponse.Length > 0)
+            if (ModelState["MFACode"].Errors.Count == 0)
             {
-                HttpContext?.Session.Set("IdToken",mfaResponse);
-                return RedirectToAction("PreRegAtAGlance", "PreRegistrationReview");
+                var mfaResponse = await _signUpService.ConfirmMFAToken(HttpContext?.Session.Get<string>("Session"), HttpContext?.Session.Get<string>("Email"), loginPageViewModel.MFACode);
+
+                if (mfaResponse.Length > 0)
+                {
+                    HttpContext?.Session.Set("IdToken", mfaResponse);
+                    return RedirectToAction("PreRegAtAGlance", "PreRegistrationReview");
+                }
+                else
+                {
+                    return RedirectToAction("MFAConfirmation");
+                }
             }
             else
             {
-                return RedirectToAction("LoginPage");
+                return View("MFAConfirmation");
             }
         }
     }

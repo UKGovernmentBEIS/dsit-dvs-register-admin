@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace DVSAdmin.Models
 {
-	public class SignUpViewModel
+	public class ConfirmPasswordViewModel
 	{
-        [Required(ErrorMessage = "Enter an email address in the correct format, like name@example.com.")]
-        [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com.")]
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Enter a valid password")]
@@ -15,16 +14,16 @@ namespace DVSAdmin.Models
         public string? Password { get; set; }
 
 
-        [Required(ErrorMessage ="Enter a valid password")]
+        [Required(ErrorMessage = "Enter a valid password")]
         [StringLength(255, ErrorMessage = "Confirm Password must be between 10 and 255 characters", MinimumLength = 10)]
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string? ConfirmPassword { get; set; }
 
-        public string? OneTimePassword { get; set; }
 
-        [RegularExpression("^[0-9]{6}$", ErrorMessage = "The MFA confirmation code must be a 6-digit number.")]
-        public string? MFAConfirmationCode { get; set; }
-	}
+        [Required(ErrorMessage = "Enter a valid OTP")]
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "The OTP must be a 6-digit number")]
+        public string? OneTimePassword { get; set; }
+    }
 }
 
