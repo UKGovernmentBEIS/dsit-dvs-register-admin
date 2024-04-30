@@ -7,7 +7,7 @@ using System.Web;
 
 namespace DVSAdmin.Extensions
 {
-    public static class EnumHtmlExtensions
+    public static class HtmlExtensions
     {
 
         private static string GetTagClass<TEnum>(TEnum value) where TEnum : struct, Enum
@@ -18,9 +18,9 @@ namespace DVSAdmin.Extensions
                     return "govuk-tag govuk-tag--blue";
                 case ApplicationReviewStatusEnum.InPrimaryReview:
                     return "govuk-tag govuk-tag--yellow";
-                case ApplicationReviewStatusEnum.PrimaryCheckRejected:
+                case ApplicationReviewStatusEnum.PrimaryCheckFailed:
                     return "govuk-tag govuk-tag--red";
-                case ApplicationReviewStatusEnum.PrimaryCheckApproved:
+                case ApplicationReviewStatusEnum.PrimaryCheckPassed:
                     return "govuk-tag govuk-tag--green";
                 case ApplicationReviewStatusEnum.ApplicationRejected:
                     return "govuk-tag govuk-tag--red";
@@ -28,6 +28,16 @@ namespace DVSAdmin.Extensions
                     return "govuk-tag govuk-tag--green";
                 case URNStatusEnum.Expired:
                     return "govuk-tag govuk-tag--red";
+                case ApplicationReviewStatusEnum.SentBackBySecondReviewer:
+                    return "govuk-tag govuk-tag--red";
+                case URNStatusEnum.Created:
+                    return "govuk-tag govuk-tag--blue";
+                case URNStatusEnum.Approved:
+                    return "govuk-tag govuk-tag--green";
+                case URNStatusEnum.Rejected:
+                    return "govuk-tag govuk-tag--red";
+                case URNStatusEnum.ValidatedByCAB:
+                    return "govuk-tag govuk-tag--blue";
                 default:
                     return string.Empty;
             }
@@ -45,6 +55,34 @@ namespace DVSAdmin.Extensions
             sb.Append(HttpUtility.HtmlEncode(description));
             sb.Append("</strong>");
             var test = sb.ToString();
+            return new HtmlString(sb.ToString());
+        }
+
+
+        public static HtmlString ToStringWithLineBreaks(string input)
+        {
+           
+            string output = input?.Replace("\r", "<br>")??string.Empty;       
+
+            return new HtmlString(output);
+        }
+
+
+        //For displaying statuses of each section in secondary review details, whcih are approved /rejected in primary check
+
+        public static HtmlString ToStyledStrongTag(this bool? input)
+        {
+            bool boolValue = Convert.ToBoolean(input);
+            string tagClass = boolValue ? "govuk-tag govuk-tag--green" : "govuk-tag govuk-tag--red";
+            string description = boolValue ? "Approved" : "Rejected";
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<strong class=\"");
+            sb.Append(HttpUtility.HtmlEncode(tagClass));
+            sb.Append("\">");
+            sb.Append(HttpUtility.HtmlEncode(description));
+            sb.Append("</strong>");
+
             return new HtmlString(sb.ToString());
         }
 

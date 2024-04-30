@@ -32,10 +32,23 @@
     <None Remove="Extensions\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="Views\PartialViews\_ArchiveView.cshtml" />
     <None Include="Views\PartialViews\_PrimaryChecksView.cshtml" />
+    <None Include="Views\PartialViews\_ReviewErrorSummary.cshtml" />
     <None Include="Views\PartialViews\_SecondaryChecksView.cshtml" />
+    <None Include="Views\PrimaryCheck\ConfirmPrimaryCheckFail.cshtml" />
+    <None Include="Views\PrimaryCheck\ConfirmPrimaryCheckPass.cshtml" />
+    <None Include="Views\PrimaryCheck\PrimaryCheckFailedConfirmation.cshtml" />
+    <None Include="Views\PrimaryCheck\PrimaryCheckPassedConfirmation.cshtml" />
+    <None Include="Views\PrimaryCheck\PrimaryCheckReview.cshtml" />
+    <None Include="Views\SecondaryCheck\AboutToIssueURN.cshtml" />
+    <None Include="Views\SecondaryCheck\AboutToReject.cshtml" />
+    <None Include="Views\SecondaryCheck\ApplicationApprovalConfirmation.cshtml" />
+    <None Include="Views\SecondaryCheck\ApplicationRejectionConfirmation.cshtml" />
+    <None Include="Views\SecondaryCheck\ConfirmIssueURN.cshtml" />
+    <None Include="Views\SecondaryCheck\ConfirmSecondaryCheckReject.cshtml" />
+    <None Include="Views\SecondaryCheck\ConfirmSentBackForPrimaryCheck.cshtml" />
+    <None Include="Views\SecondaryCheck\SecondaryCheckReview.cshtml" />
+    <None Include="Views\SecondaryCheck\SentBackConfirmation.cshtml" />
   </ItemGroup>
 </Project>

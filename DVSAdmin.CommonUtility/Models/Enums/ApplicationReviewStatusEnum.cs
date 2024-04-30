@@ -11,10 +11,10 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         Received = 1,
         [Description("In primary review")]
         InPrimaryReview = 2,
-        [Description("Primary check rejected")]
-        PrimaryCheckRejected = 3,
-        [Description("Primary check approved")]
-        PrimaryCheckApproved = 4,
+        [Description("Primary check failed")]
+        PrimaryCheckFailed = 3,
+        [Description("Primary check passed")]
+        PrimaryCheckPassed = 4,
         [Description("Sent back by second reviewer")]
         SentBackBySecondReviewer = 5,
         [Description("Application rejected")]

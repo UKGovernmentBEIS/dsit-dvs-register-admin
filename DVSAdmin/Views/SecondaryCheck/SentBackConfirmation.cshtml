@@ -1,0 +1,61 @@
+﻿@model DVSAdmin.Models.SecondaryCheckViewModel;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@{
+    ViewData["Title"] = "SentBackConfirmation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">
+                    Primary check round two <br/>
+                    request successful
+                </h1>
+                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header"> Unique Reference # </th>
+                            <th scope="col" class="govuk-table__header">Digital Identity <br />and Attribute <br /> Service Provider</th>
+                            <th scope="col" class="govuk-table__header">Time Submitted</th>
+                            <th scope="col" class="govuk-table__header">Status</th>
+                            <th scope="col" class="govuk-table__header">Days left to <br />complete</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"> @Html.ActionLink(Model.PreRegistration.URN, "SecondaryCheckReview", "SecondaryCheck", new { @preRegistrationId = Model.PreRegistration.Id }, new { @class = "govuk-link" })</td>
+                            <td class="govuk-table__cell">@Model.PreRegistration.TradingName</td>
+                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.PreRegistration.CreatedDate)</td>
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(ApplicationReviewStatusEnum.SentBackBySecondReviewer)</td>
+                            <td class="govuk-table__cell">@Model.PreRegistration.DaysLeftToComplete  days</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <div class="govuk-grid-column-two-thirds">
+                   
+                    <div id="applicationSponsor-hint" class="govuk-hint">
+                        The OfDIA Review Portal user will receive an email notification of the
+                        application status change within 20 minutes
+                    </div>
+
+                    @using (Html.BeginForm("PreRegistrationReview", "PreRegistrationReview", FormMethod.Get))
+                    {
+                        <button type="submit" class="govuk-button" data-module="govuk-button" >
+                            Go back to pre-registration review
+                        </button>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+

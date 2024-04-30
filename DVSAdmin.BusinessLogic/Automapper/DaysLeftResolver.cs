@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DVSAdmin.Data.Entities;
-using DVSAdmin.BusinessLogic.Models.PreRegistration;
 using DVSAdmin.CommonUtility;
+using DVSAdmin.BusinessLogic.Models;
 
 
 namespace DVSAdmin.BusinessLogic.Extensions

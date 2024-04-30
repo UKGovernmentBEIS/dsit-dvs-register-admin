@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DVSAdmin.Data.Repositories;
-using DVSAdmin.BusinessLogic.Models.PreRegistration;
 using Microsoft.Extensions.Logging;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Models;
@@ -25,7 +24,19 @@ namespace DVSAdmin.BusinessLogic.Services
         public async Task<PreRegistrationDto> GetPreRegistration(int preRegistrationId)
         {
             var preRegistration = await preRegistrationReviewRepository.GetPreRegistration(preRegistrationId);
-            return automapper.Map<PreRegistrationDto>(preRegistration);
+            var countries = await preRegistrationReviewRepository.GetCountries();
+            PreRegistrationDto preRegistrationDto = automapper.Map<PreRegistrationDto>(preRegistration);
+            List<CountryDto> countryDtos = automapper.Map<List<CountryDto>>(countries);
+            var filteredMapping = preRegistrationDto.PreRegistrationCountryMappings.Where(x => x.PreRegistrationId == preRegistrationId);
+            var countryIds = filteredMapping.Select(mapping => mapping.CountryId);
+            preRegistrationDto.Countries = countryDtos.Where(country => countryIds.Contains(country.Id)).ToList();
+
+            preRegistrationDto.CountrySubList = preRegistrationDto.Countries.Select((country, index) => new { Country = country, Index = index })
+                          .GroupBy(x => x.Index / 15)
+                          .Select(group => group.Select(x => x.Country).ToList())
+                          .ToList();
+
+            return preRegistrationDto;
         }
 
         public async Task<List<PreRegistrationDto>> GetPreRegistrations()
@@ -36,9 +47,18 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<GenericResponse> SavePreRegistrationReview(PreRegistrationReviewDto preRegistrationReviewDto, ReviewTypeEnum reviewType)
         {
+
             PreRegistrationReview preRegistrationReview = new PreRegistrationReview();
             automapper.Map(preRegistrationReviewDto, preRegistrationReview);
             GenericResponse genericResponse = await preRegistrationReviewRepository.SavePreRegistrationReview(preRegistrationReview, reviewType);
+            if (genericResponse.Success && reviewType == ReviewTypeEnum.SecondaryCheck &&
+            (preRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationRejected ||
+             preRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationApproved)) // update URN status for Approved and rejected applications
+            {
+                URNStatusEnum uRNStatus = preRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationApproved ? URNStatusEnum.Approved : URNStatusEnum.Rejected;
+                UniqueReferenceNumber uniqueReferenceNumber = new UniqueReferenceNumber { URNStatus = uRNStatus, PreRegistrationId = preRegistrationReviewDto.PreRegistrationId };
+                genericResponse = await preRegistrationReviewRepository.UpdateURNStatus(uniqueReferenceNumber);
+            }
             return genericResponse;
         }
     }

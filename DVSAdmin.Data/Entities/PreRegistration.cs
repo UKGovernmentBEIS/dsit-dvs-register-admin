@@ -54,6 +54,7 @@ namespace DVSAdmin.Data.Entities
         public string? URN { get; set; }
         public ApplicationReviewStatusEnum ApplicationReviewStatus { get; set; }
         public PreRegistrationReview PreRegistrationReview { get; set; }
+        public UniqueReferenceNumber UniqueReferenceNumber { get; set; }
 
 
     }

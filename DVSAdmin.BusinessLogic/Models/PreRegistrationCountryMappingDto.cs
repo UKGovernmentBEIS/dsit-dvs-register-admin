@@ -1,12 +1,11 @@
 ﻿using DVSAdmin.Data.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DVSAdmin.BusinessLogic.Models.PreRegistration
+namespace DVSAdmin.BusinessLogic.Models
 {
     public class PreRegistrationCountryMappingDto
     {      
-        public int PreRegistrationId { get; set; }
-        public PreRegistrationDto PreRegistration { get; set; }
+        public int PreRegistrationId { get; set; }        
 
         [ForeignKey("Country")]
         public int CountryId { get; set; }

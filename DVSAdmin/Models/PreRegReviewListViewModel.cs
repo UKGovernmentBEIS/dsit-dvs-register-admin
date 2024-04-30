@@ -1,5 +1,4 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.BusinessLogic.Models.PreRegistration;
 
 namespace DVSAdmin.Models
 {
@@ -9,6 +8,6 @@ namespace DVSAdmin.Models
 
         public List<PreRegistrationDto>? SecondaryChecksList { get; set; }
 
-        public List<UniqueReferenceNumberDto>? ArchiveList { get; set; }
+        public List<PreRegistrationDto>? ArchiveList { get; set; }
     }
 }

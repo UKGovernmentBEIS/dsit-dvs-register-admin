@@ -6,6 +6,7 @@
         public const string DbConnectionFailed = "DB connection failed:";
         public const string DbConnectionSuccess = "DB connection success.";
         public const string ErrorPath = "preregistration-review/service-error";
-        public const int DaysLeftToComplete = 60;
+        public const int DaysLeftToComplete = 21;
+      
     }
 }
