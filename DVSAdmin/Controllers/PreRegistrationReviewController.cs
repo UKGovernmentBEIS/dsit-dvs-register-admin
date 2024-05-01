@@ -1,5 +1,6 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Services;
+using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
@@ -14,18 +15,18 @@ namespace DVSAdmin.Controllers
     {
         private readonly ILogger<PreRegistrationReviewController> logger;
         private readonly IPreRegistrationReviewService preRegistrationReviewService;
-
-        public PreRegistrationReviewController(ILogger<PreRegistrationReviewController> logger, IPreRegistrationReviewService preRegistrationReviewService, ISignUpService signUpService)
+        private readonly IUserService userService;
+        public PreRegistrationReviewController(ILogger<PreRegistrationReviewController> logger, IPreRegistrationReviewService preRegistrationReviewService, IUserService userService)
         {
             this.logger = logger;
             this.preRegistrationReviewService = preRegistrationReviewService;
+            this.userService = userService;
         }
 
 
         [HttpGet("pre-reg-at-a-glance")]
         public IActionResult PreRegAtAGlance()
-        {
-
+        {           
             return View();
         }
 
@@ -34,37 +35,48 @@ namespace DVSAdmin.Controllers
         /// primary check, secondary check and archive List
         /// </summary>
         /// <returns></returns>
-        [HttpGet("pre-registration-review")]
+        [HttpGet("pre-registration-review-list")]
         public async Task<IActionResult> PreRegistrationReview()
         {
-            PreRegReviewListViewModel preRegReviewListViewModel = new PreRegReviewListViewModel();
-            var preregistrations = await preRegistrationReviewService.GetPreRegistrations();
-            preRegReviewListViewModel.PrimaryChecksList = preregistrations.Where(x => (x.ApplicationReviewStatus == ApplicationReviewStatusEnum.Received && x.Id !=x?.PreRegistrationReview?.PreRegistrationId)||
-            x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.InPrimaryReview
-            ||  x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckPassed
-            ||  x?.PreRegistrationReview?.ApplicationReviewStatus ==ApplicationReviewStatusEnum.PrimaryCheckFailed
-            ||  x?.PreRegistrationReview?.ApplicationReviewStatus ==ApplicationReviewStatusEnum.SentBackBySecondReviewer
-            ).ToList();
+            string loggedinUserEmail  = HttpContext?.Session.Get<string>("Email");
+            if(!string.IsNullOrEmpty(loggedinUserEmail)) 
+            {
+                UserDto userDto = await userService.GetUser(loggedinUserEmail);
+                PreRegReviewListViewModel preRegReviewListViewModel = new PreRegReviewListViewModel();
+                var preregistrations = await preRegistrationReviewService.GetPreRegistrations();
+                preRegReviewListViewModel.PrimaryChecksList = preregistrations.Where(x => (x.ApplicationReviewStatus == ApplicationReviewStatusEnum.Received && x.Id !=x?.PreRegistrationReview?.PreRegistrationId)||
+                x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.InPrimaryReview
+                ||  x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckPassed
+                ||  x?.PreRegistrationReview?.ApplicationReviewStatus ==ApplicationReviewStatusEnum.PrimaryCheckFailed
+                ||  x?.PreRegistrationReview?.ApplicationReviewStatus ==ApplicationReviewStatusEnum.SentBackBySecondReviewer
+                 && x.PreRegistrationReview.SecondaryCheckUserId != userDto.Id).ToList();
 
-            preRegReviewListViewModel.SecondaryChecksList = preregistrations
-            .Where(x => x.PreRegistrationReview !=null    && x.DaysLeftToComplete>0
-            &&(x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckPassed ||
-            x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckFailed ||
-            x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationApproved ||
-            x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationRejected)
-            /*&& x.PreRegistrationReview.PrimaryCheckUserId !=*/ ).ToList(); //To Do filter based on current user
+                preRegReviewListViewModel.SecondaryChecksList = preregistrations
+                .Where(x => x.PreRegistrationReview !=null    && x.DaysLeftToComplete>0
+                &&(x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckPassed ||
+                x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckFailed ||
+                x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationApproved ||
+                x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationRejected)
+                && x.PreRegistrationReview.PrimaryCheckUserId != userDto.Id).ToList();
 
 
 
-            preRegReviewListViewModel.ArchiveList = preregistrations
-            .Where(x => x.UniqueReferenceNumber !=null && (x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Rejected
-            || x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Approved || x.UniqueReferenceNumber.URNStatus == URNStatusEnum.ValidatedByCAB ||
-            x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Rejected || x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Expired)).ToList();
-            return View(preRegReviewListViewModel);
+                preRegReviewListViewModel.ArchiveList = preregistrations
+                .Where(x => x.UniqueReferenceNumber !=null && (x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Rejected
+                || x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Approved || x.UniqueReferenceNumber.URNStatus == URNStatusEnum.ValidatedByCAB ||
+                x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Rejected || x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Expired)).ToList();
+                return View(preRegReviewListViewModel);
+            }
+            else
+            {
+                return RedirectToAction("HandleException", "Error");
+            }
+           
+            
         }
 
 
-        /// <summary>
+        /// <summary>so 
         /// Review screen with approve/reject sections
         /// </summary>
         /// <param name="preRegistrationId">The pre registration identifier.</param>
@@ -81,13 +93,7 @@ namespace DVSAdmin.Controllers
 
         }
 
-        
-        public async Task<IActionResult> SignOut()
-        {
-            HttpContext?.Session.Clear();
-            return RedirectToAction("LoginPage", "Login");
-        }
-
+      
         public static PreRegistrationReviewViewModel MapDtoToViewModel(PreRegistrationDto preRegistrationDto)
         {
 

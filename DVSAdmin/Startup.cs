@@ -70,6 +70,7 @@ namespace DVSAdmin
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPreRegistrationReviewService, PreRegistrationReviewService>();
             services.AddScoped<ISignUpService, SignUpService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped(opt =>
             {
                 string userPoolId = string.Format(configuration.GetValue<string>("UserPoolId"));

@@ -6,6 +6,7 @@ using DVSAdmin.Extensions;
 using DVSAdmin.Models;
 using Microsoft.AspNetCore.Mvc;
 using DVSRegister.Extensions;
+using DVSAdmin.CommonUtility;
 
 namespace DVSAdmin.Controllers
 {
@@ -15,9 +16,11 @@ namespace DVSAdmin.Controllers
     {
      
         private readonly IPreRegistrationReviewService preRegistrationReviewService;
-        public SecondaryCheckController(IPreRegistrationReviewService preRegistrationReviewService)
+        private readonly IUserService userService;
+        public SecondaryCheckController(IPreRegistrationReviewService preRegistrationReviewService, IUserService userService)
         {           
             this.preRegistrationReviewService = preRegistrationReviewService;
+            this.userService = userService;
         }
 
         /// <summary>
@@ -35,8 +38,29 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                PreRegistrationDto preRegistrationDto = await preRegistrationReviewService.GetPreRegistration(preRegistrationId);
-                secondaryCheckViewModel = MapDtoToViewModel(preRegistrationDto);
+                string loggedinUserEmail = HttpContext?.Session.Get<string>("Email");
+                if (!string.IsNullOrEmpty(loggedinUserEmail))
+                {
+                    UserDto userDto = await userService.GetUser(loggedinUserEmail);
+                    if(userDto.Id > 0) 
+                    {
+                      
+                        PreRegistrationDto preRegistrationDto = await preRegistrationReviewService.GetPreRegistration(preRegistrationId);
+                        secondaryCheckViewModel = MapDtoToViewModel(preRegistrationDto);
+                        secondaryCheckViewModel.SecondaryCheckUserId = userDto.Id;
+                    }
+                    else
+                    {
+                        return RedirectToAction(Constants.ErrorPath);
+                    }
+                   
+                }
+                else
+                {
+                    return RedirectToAction(Constants.ErrorPath);
+                }
+
+               
             }
             return View(secondaryCheckViewModel);
         }
@@ -59,7 +83,7 @@ namespace DVSAdmin.Controllers
             secondaryCheckViewModelData = MapDtoToViewModel(preRegistrationDto);
             secondaryCheckViewModelData.Comment = InputSanitizeExtensions.CleanseInput(secondaryCheckViewModel.Comment??string.Empty);
             secondaryCheckViewModelData.PreRegistration = preRegistrationDto;
-            secondaryCheckViewModelData.SecondaryCheckUserId = 2;// TODO map from login
+            secondaryCheckViewModelData.SecondaryCheckUserId = secondaryCheckViewModel.SecondaryCheckUserId;
 
             AddModelErrorForInvalidActions(secondaryCheckViewModelData, saveReview);
             HttpContext?.Session.Set("SecondaryCheckData", secondaryCheckViewModelData);
@@ -80,7 +104,7 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    HttpContext?.Session.Clear();
+                    HttpContext?.Session.Remove("SecondaryCheckData");
                     return RedirectToAction("HandleException", "Error");
                 }
             }
@@ -130,7 +154,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                HttpContext.Session.Clear();
+                HttpContext.Session.Remove("SecondaryCheckData");
                 return RedirectToAction("HandleException", "Error");
             }
         }
@@ -189,7 +213,7 @@ namespace DVSAdmin.Controllers
         {
             SecondaryCheckViewModel secondaryCheckViewModel = new SecondaryCheckViewModel();
             secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
-            HttpContext.Session.Clear();
+            HttpContext.Session.Remove("SecondaryCheckData");
             return View(secondaryCheckViewModel);
         }
 
@@ -242,13 +266,14 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    HttpContext.Session.Clear();
+                    HttpContext.Session.Remove("SecondaryCheckData");
                     return RedirectToAction("HandleException", "Error");
                 }
 
             }
             else
             {
+                HttpContext.Session.Remove("SecondaryCheckData");
                 return RedirectToAction("HandleException", "Error");
             }
 
@@ -265,7 +290,7 @@ namespace DVSAdmin.Controllers
         {
             SecondaryCheckViewModel secondaryCheckViewModel = new SecondaryCheckViewModel();
             secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
-            HttpContext.Session.Clear();
+            HttpContext.Session.Remove("SecondaryCheckData");
             return View(secondaryCheckViewModel);
         }
 
@@ -323,8 +348,8 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    HttpContext.Session.Clear();
-                    return RedirectToAction("HandleException", "Error");
+                HttpContext.Session.Remove("SecondaryCheckData");
+                return RedirectToAction("HandleException", "Error");
                 }
         }
 
@@ -376,7 +401,7 @@ namespace DVSAdmin.Controllers
         {
             SecondaryCheckViewModel secondaryCheckViewModel = new SecondaryCheckViewModel();
             secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
-            HttpContext.Session.Clear();
+            HttpContext.Session.Remove("SecondaryCheckData");
             return View(secondaryCheckViewModel);
         }
 
