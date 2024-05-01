@@ -7,9 +7,9 @@ namespace DVSAdmin.Controllers
     {
         [HttpGet]
         public IActionResult HandleException()
-        {           
+        {
+            HttpContext.Session.Clear();
             return View("ServiceIssue");
         }
-
     }
 }

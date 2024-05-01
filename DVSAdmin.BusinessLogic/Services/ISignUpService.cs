@@ -12,7 +12,6 @@ namespace DVSAdmin.BusinessLogic.Services
 		public Task<string> SignInAndWaitForMfa(string email, string password);
 
 		public Task<string> ConfirmMFAToken(string session, string email, string token);
-
     }
 }
 

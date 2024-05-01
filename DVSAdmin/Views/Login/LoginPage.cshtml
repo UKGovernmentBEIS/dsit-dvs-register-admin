@@ -12,22 +12,24 @@
                 <div class="govuk-grid-column-two-thirds">
                     <h1 class="govuk-heading-xl govuk-!-margin-top-8">Sign into your account</h1>
 
-                    <div class="govuk-form-group">
+                    <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("Email") && Html.ViewData.ModelState["Email"].Errors.Count > 0 ? "govuk-form-group--error" :"" )">
                         <h1 class="govuk-label-wrapper">
                             <label class="govuk-label govuk-label--s" for="event-name">
                                 Email address
                             </label>
                         </h1>
                         @Html.TextBoxFor(m => m.Email, new { @class = "govuk-input", id = "email", name = "email" })
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "govuk-error-message" })
                     </div>
 
-                    <div class="govuk-form-group">
+                    <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("Password") && Html.ViewData.ModelState["Password"].Errors.Count >0 ? "govuk-form-group--error": "" )">
                         <h1 class="govuk-label-wrapper">
                             <label class="govuk-label govuk-label--s" for="event-name">
                                 Password
                             </label>
                         </h1>
-                        @Html.TextBoxFor(m => m.Password, new { @class = "govuk-input", id = "email", name = "email", type = "password" })
+                        @Html.TextBoxFor(m => m.Password, new { @class = "govuk-input", id = "password", name = "password", type = "password" })
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "govuk-error-message" })
                     </div>
 
                     <button type="submit" class="govuk-button govuk-!-margin-top-2" data-module="govuk-button">
@@ -41,7 +43,6 @@
 
                     <h1 class="govuk-heading-m">Problems signing in</h1>
                     <p class="govuk-body"><a class="govuk-link" href="#">I have forgotten my password</a></p>
-                    
                 </div>
             </div>
         </main>
