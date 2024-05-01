@@ -15,7 +15,7 @@ namespace DVSAdmin.BusinessLogic.Services
             _cognitoClient = cognitoClient;
         }
 
-        public async Task<string> ConfirmPassword(string email, string password, string oneTimePassword)
+        public async Task<GenericResponse> ConfirmPassword(string email, string password, string oneTimePassword)
         {
             return await _cognitoClient.ConfirmPasswordAndGenerateMFAToken(email, password, oneTimePassword);
         }
