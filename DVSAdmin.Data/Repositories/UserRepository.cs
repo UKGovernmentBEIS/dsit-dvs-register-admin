@@ -48,6 +48,14 @@ namespace DVSAdmin.Data.Repositories
 
             return genericResponse;
         }
+
+
+        public async Task<User> GetUser(string email)
+        {
+            User user = new User();
+            user = await context.User.FirstOrDefaultAsync<User>(e => e.Email == email);
+            return user;
+        }
     }
 }
 

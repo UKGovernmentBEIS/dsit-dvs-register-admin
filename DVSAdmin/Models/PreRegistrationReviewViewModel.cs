@@ -53,9 +53,8 @@ namespace DVSAdmin.Models
         public string? Comment { get; set; }    
         public string? SubmitValidation { get; set; }
 
-       
-
-
+        public int? PrimaryCheckUserId { get; set; }
+        public int? SecondaryCheckUserId { get; set; }
 
     }
 }

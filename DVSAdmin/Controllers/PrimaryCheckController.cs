@@ -6,6 +6,7 @@ using DVSAdmin.Extensions;
 using DVSAdmin.Models;
 using Microsoft.AspNetCore.Mvc;
 using DVSRegister.Extensions;
+using DVSAdmin.CommonUtility;
 
 
 namespace DVSAdmin.Controllers
@@ -14,11 +15,13 @@ namespace DVSAdmin.Controllers
     [Route("primary-check")]
     public class PrimaryCheckController : Controller
     {
-     
+
         private readonly IPreRegistrationReviewService preRegistrationReviewService;
-        public PrimaryCheckController(IPreRegistrationReviewService preRegistrationReviewService)
+        private readonly IUserService userService;
+        public PrimaryCheckController(IPreRegistrationReviewService preRegistrationReviewService, IUserService userService)
         {
             this.preRegistrationReviewService = preRegistrationReviewService;
+            this.userService = userService;
         }
 
         /// <summary>
@@ -37,12 +40,30 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                PreRegistrationDto preRegistrationDto = await preRegistrationReviewService.GetPreRegistration(preRegistrationId);
-                preRegistrationReviewViewModel = MapDtoToViewModel(preRegistrationDto);
+                string loggedinUserEmail = HttpContext?.Session.Get<string>("Email");
+                if (!string.IsNullOrEmpty(loggedinUserEmail))
+                {
+                    UserDto userDto = await userService.GetUser(loggedinUserEmail);
+                   
+                    if (userDto.Id>0)
+                    {
+                       
+                        PreRegistrationDto preRegistrationDto = await preRegistrationReviewService.GetPreRegistration(preRegistrationId);                        
+                        preRegistrationReviewViewModel = MapDtoToViewModel(preRegistrationDto);
+                        preRegistrationReviewViewModel.PrimaryCheckUserId = userDto.Id;
+                    }
+                    else
+                    {
+                        return RedirectToAction(Constants.ErrorPath);
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction(Constants.ErrorPath);
+                }
             }
-
             return View(preRegistrationReviewViewModel);
-
 
         }
 
@@ -93,7 +114,7 @@ namespace DVSAdmin.Controllers
             else
             {
 
-                HttpContext?.Session.Clear();
+                HttpContext?.Session.Remove("PrimaryCheckData");
                 return View("PrimaryCheckReview", preRegistrationReviewViewModel);
             }
 
@@ -138,7 +159,7 @@ namespace DVSAdmin.Controllers
                     }
                     else
                     {
-                        HttpContext.Session.Clear();
+                        HttpContext.Session.Remove("PrimaryCheckData");
                         return RedirectToAction("HandleException", "Error");
                     }
                 }
@@ -148,13 +169,13 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    HttpContext.Session.Clear();
+                    HttpContext.Session.Remove("PrimaryCheckData");
                     return RedirectToAction("HandleException", "Error");
                 }
             }
             else
             {
-                HttpContext.Session.Clear();
+                HttpContext.Session.Remove("PrimaryCheckData");
                 return RedirectToAction("HandleException", "Error");
             }
 
@@ -167,7 +188,7 @@ namespace DVSAdmin.Controllers
 
             PreRegistrationReviewViewModel preRegistrationReviewViewModel = new PreRegistrationReviewViewModel();
             preRegistrationReviewViewModel = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
-            HttpContext.Session.Clear();
+            HttpContext.Session.Remove("PrimaryCheckData");
             return View(preRegistrationReviewViewModel);
         }
 
@@ -212,7 +233,7 @@ namespace DVSAdmin.Controllers
                     }
                     else
                     {
-                        HttpContext.Session.Clear();
+                        HttpContext.Session.Remove("PrimaryCheckData");
                         return RedirectToAction("HandleException", "Error");
                     }
                 }
@@ -222,13 +243,13 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    HttpContext.Session.Clear();
+                    HttpContext.Session.Remove("PrimaryCheckData");
                     return RedirectToAction("HandleException", "Error");
                 }
             }
             else
             {
-                HttpContext.Session.Clear();
+                HttpContext.Session.Remove("PrimaryCheckData");
                 return RedirectToAction("HandleException", "Error");
             }
 
@@ -240,7 +261,7 @@ namespace DVSAdmin.Controllers
         {
             PreRegistrationReviewViewModel preRegistrationReviewViewModel = new PreRegistrationReviewViewModel();
             preRegistrationReviewViewModel = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
-            HttpContext.Session.Clear();
+            HttpContext.Session.Remove("PrimaryCheckData");
             return View(preRegistrationReviewViewModel);          
         }
 
@@ -267,7 +288,7 @@ namespace DVSAdmin.Controllers
             preRegistrationReviewDto.IsProvidersWebpageApproved= Convert.ToBoolean(registrationReviewViewModel?.IsProvidersWebpageApproved);
             preRegistrationReviewDto.Comment = registrationReviewViewModel?.Comment;
             preRegistrationReviewDto.ApplicationReviewStatus = registrationReviewViewModel.ApplicationReviewStatus;
-            preRegistrationReviewDto.PrimaryCheckUserId = 1;
+            preRegistrationReviewDto.PrimaryCheckUserId = Convert.ToInt32(registrationReviewViewModel.PrimaryCheckUserId);
 
 
             return preRegistrationReviewDto;
@@ -352,11 +373,16 @@ namespace DVSAdmin.Controllers
             {
                 ModelState.AddModelError("SubmitValidation", "Your decision to pass or fail this primary check must match with the selections");
             }
+            if (pregistrationReviewViewModel.PrimaryCheckUserId == pregistrationReviewViewModel.SecondaryCheckUserId)
+            {
+                ModelState.AddModelError("SubmitValidation", "Primary and secondary check user should be different");
+            }
 
-            if((reviewAction == "approve" || reviewAction == "reject") &&  string.IsNullOrEmpty( pregistrationReviewViewModel.Comment))            
+            if ((reviewAction == "approve" || reviewAction == "reject") &&  string.IsNullOrEmpty( pregistrationReviewViewModel.Comment))            
             {
                 ModelState.AddModelError("Comment", "Enter a comment to explain the checks completed");
             }
+
         }
         #endregion
     }

@@ -19,6 +19,8 @@
                     <h1 class="govuk-heading-xl">Application review</h1>
               
                  @Html.HiddenFor(m => m.PreRegistrationId)
+                    @Html.HiddenFor(m => m.PrimaryCheckUserId)
+                    @Html.HiddenFor(m => m.SecondaryCheckUserId)
                  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
