@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
+using DVSAdmin.CommonUtility.Models;
 
 public class CognitoClient
 {
@@ -56,8 +57,9 @@ public class CognitoClient
         }
     }
 
-    public async Task<string> ConfirmPasswordAndGenerateMFAToken(string email, string password, string oneTimePassCode)
+    public async Task<GenericResponse> ConfirmPasswordAndGenerateMFAToken(string email, string password, string oneTimePassCode)
     {
+        GenericResponse genericResponse = new GenericResponse();
         var confirmForgotPasswordRequest = new ConfirmForgotPasswordRequest
         {
             ClientId = _clientId, 
@@ -75,7 +77,9 @@ public class CognitoClient
         catch(Exception ex)
         {
             Console.WriteLine($"Error confirming password : { ex.Message}");
-            return "KO";
+            genericResponse.Success = false;
+            genericResponse.Data = "Error while confirming password, please try again later";
+            return genericResponse;
         }
         
 
@@ -88,12 +92,16 @@ public class CognitoClient
             };
             var associateSoftwareTokenResponse = await _provider.AssociateSoftwareTokenAsync(associateSoftwareTokenRequest);
 
-            return associateSoftwareTokenResponse.SecretCode;
+            genericResponse.Success = true;
+            genericResponse.Data = associateSoftwareTokenResponse.SecretCode;
+            return genericResponse;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error adding MFA: {ex.Message}");
-            return "KO";
+            genericResponse.Success = false;
+            genericResponse.Data = "Error while generating MFA Token, please try again later";
+            return genericResponse;
         }
     }
 

@@ -18,6 +18,12 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpGet("")]
+        public IActionResult StartPage()
+        {
+            return View("StartPage");
+        }
+
+        [HttpGet("sign-up")]
         public IActionResult SignUp()
         {
             return View("SignUp");
@@ -38,6 +44,7 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
+                    ModelState.AddModelError("Email", "Incorrect Email provided");
                     return View("SignUp");
                 }
             }
@@ -63,14 +70,16 @@ namespace DVSAdmin.Controllers
             if (ModelState["Password"].Errors.Count ==0 && ModelState["ConfirmPassword"].Errors.Count==0)
             {
                 var confirmPasswordResponse = await _signUpService.ConfirmPassword(confirmPasswordViewModel.Email, confirmPasswordViewModel.Password, confirmPasswordViewModel.OneTimePassword);
-                if (confirmPasswordResponse.Length > 0)
+                if (confirmPasswordResponse.Success)
                 {
-                    HttpContext?.Session.Set("MFARegistrationViewModel", new MFARegistrationViewModel { Email = confirmPasswordViewModel.Email, Password = confirmPasswordViewModel.Password, SecretToken = confirmPasswordResponse });
+                    HttpContext?.Session.Set("MFARegistrationViewModel", new MFARegistrationViewModel { Email = confirmPasswordViewModel.Email, Password = confirmPasswordViewModel.Password, SecretToken = confirmPasswordResponse.Data });
                     return RedirectToAction("MFARegistration", "Login");
                 }
                 else
                 {
-                    return RedirectToAction(Constants.ErrorPath);
+                    ModelState.AddModelError("ErrorMessage", "");
+                    confirmPasswordViewModel.ErrorMessage = confirmPasswordResponse.Data;
+                    return View("ConfirmPassword", confirmPasswordViewModel);
                 }
             }
             else
@@ -97,11 +106,12 @@ namespace DVSAdmin.Controllers
 
                 if (mfaConfirmationCheckResponse == "OK")
                 {
-                    return RedirectToAction("LoginPage");
+                    return View("SignUpComplete");
                 }
                 else
                 {
-                    return RedirectToAction(Constants.ErrorPath);
+                    ModelState.AddModelError("MFACode", "Wrong MFA Code Provided from Authenticator App");
+                    return View("MFARegistration", viewModel);
                 }
             }
             else
@@ -131,7 +141,9 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("LoginPage");
+                    ModelState.AddModelError("Email", "Incorrect email or password");
+                    ModelState.AddModelError("Password", "Incorrect email or password");
+                    return View("LoginPage");
                 }
             }
             else
@@ -160,7 +172,8 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("MFAConfirmation");
+                    ModelState.AddModelError("MFACode", "There is a problem with your MFA Code");
+                    return View("MFAConfirmation");
                 }
             }
             else

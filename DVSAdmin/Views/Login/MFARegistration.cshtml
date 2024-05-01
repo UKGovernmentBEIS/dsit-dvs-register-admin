@@ -13,6 +13,26 @@
         <main class="govuk-main-wrapper">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="govuk-error-summary" data-module="govuk-error-summary">
+                            <div role="alert">
+                                <h2 class="govuk-error-summary__title">
+                                    There is a problem
+                                </h2>
+                                <div class="govuk-error-summary__body">
+                                    <ul class="govuk-list govuk-error-summary__list">
+                                        <li>
+                                            <a href="#">
+                                                Wrong MFA Code provided from the authenticator app. If Issue persists contact the team.
+                                            </a>
+                                        </li>
+</ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
                     <h1 class="govuk-heading-xl govuk-!-margin-top-8">MFA Software Token Registration</h1>
 
                     <p class="govuk-body">Here is your Software Token QR Code for MFA Registration</p>
@@ -21,6 +41,9 @@
 
                     <div class="govuk-inset-text">
                         <img src="data:image/png;base64, @qrCodeImageBase64" alt="QR Code for MFA Code" style="max-width: 200px; width: 30vw; height: auto; min-width: 100px;" />
+
+                        <p class="govuk-body">Or you can use the following Secret Key to register</p>
+                        <p class="govuk-body"><b>@Model.SecretToken	</b></p>
                     </div>
 
                     <p class="govuk-body">Enter the one time MFA code</p>
@@ -33,7 +56,7 @@
                         Confirm
                     </button>
                 </div>
-                </div>
+            </div>
         </main>
     </div>
 }

@@ -1,11 +1,13 @@
 ﻿using System;
+using DVSAdmin.CommonUtility.Models;
+
 namespace DVSAdmin.BusinessLogic.Services
 {
 	public interface ISignUpService
 	{
 		public Task<string> ForgotPassword(string email);
 
-		public Task<string> ConfirmPassword(string email, string password, string oneTimePassword);
+		public Task<GenericResponse> ConfirmPassword(string email, string password, string oneTimePassword);
 
 		public Task<string> MFAConfirmation(string email, string password, string mfaCode);
 
