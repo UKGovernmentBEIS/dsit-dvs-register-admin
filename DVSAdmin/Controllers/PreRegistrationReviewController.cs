@@ -93,13 +93,7 @@ namespace DVSAdmin.Controllers
 
         }
 
-        [HttpGet("sign-out")]
-        public IActionResult SignOut()
-        {
-            HttpContext?.Session.Clear();
-            return RedirectToAction("LoginPage", "Login");
-        }
-
+      
         public static PreRegistrationReviewViewModel MapDtoToViewModel(PreRegistrationDto preRegistrationDto)
         {
 

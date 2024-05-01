@@ -168,5 +168,14 @@ namespace DVSAdmin.Controllers
                 return View("MFAConfirmation");
             }
         }
+
+
+        [HttpGet("sign-out")]
+        public IActionResult OfDiaSignOut()
+        {
+            HttpContext?.Session.Clear();
+            return RedirectToAction("LoginPage", "Login");
+        }
+
     }
 }
