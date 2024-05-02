@@ -29,18 +29,18 @@
                             </div>
                         </div>
                     }
-                    <h1 class="govuk-heading-xl govuk-!-margin-top-8">Check your MFA App</h1>
+                    <h1 class="govuk-heading-xl govuk-!-margin-top-8">Multi-factor authentication required</h1>
 
-                    <p class="govuk-body">Enter the security code from your Authenticator Application</p>
+                    <p class="govuk-body">Please confirm the six-digit passcode from your authenticator app, to access your account.</p>
 
                     <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("MFACode") && Html.ViewData.ModelState["MFACode"].Errors.Count > 0 ? "govuk-form-group--error" :"" )">
                         <h1 class="govuk-label-wrapper">
                             <label class="govuk-label govuk-label--s" for="event-name">
-                                Multi Factor Authentication Code
+                                Enter the one time multi factor authentication code
                             </label>
                         </h1>
                         <div id="event-name-hint" class="govuk-hint">
-                            For example, 123456
+                            This is a six-digit passcode. For example, 623452
                         </div>
                         @Html.TextBoxFor(m => m.MFACode, new { @class = "govuk-input", id = "one-time-password", name = "one-time-password" })
                         @Html.ValidationMessageFor(m => m.MFACode, "", new { @class = "govuk-error-message" })
