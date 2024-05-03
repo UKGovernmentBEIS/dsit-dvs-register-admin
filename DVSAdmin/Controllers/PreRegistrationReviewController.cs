@@ -25,8 +25,7 @@ namespace DVSAdmin.Controllers
 
         [HttpGet("pre-reg-at-a-glance")]
         public IActionResult PreRegAtAGlance()
-        {
-            HttpContext.Session?.Set("Email", "vishal.vishwanathan@ics.gov.uk");
+        {          
             return View();
         }
 
