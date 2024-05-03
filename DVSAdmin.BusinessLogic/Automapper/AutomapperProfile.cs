@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DVSAdmin.BusinessLogic.Automapper;
 using DVSAdmin.BusinessLogic.Extensions;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.Data.Entities;
@@ -26,7 +27,8 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<PreRegistrationReview, PreRegistrationReviewDto>();
 
             CreateMap<PreRegistrationReviewDto, PreRegistrationReview>();
-            CreateMap<UniqueReferenceNumber, UniqueReferenceNumberDto>();
+            CreateMap<UniqueReferenceNumber, UniqueReferenceNumberDto>()
+            .ForMember(dest => dest.URNStatus, opt => opt.MapFrom<URNStatusResolver>());
 
             CreateMap<UniqueReferenceNumberDto, UniqueReferenceNumber>();
 
