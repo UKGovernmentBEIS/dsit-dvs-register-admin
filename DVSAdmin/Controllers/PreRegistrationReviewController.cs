@@ -1,6 +1,5 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Services;
-using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
@@ -8,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
-    
+
     [Route("pre-registration-review")]
     [ValidCognitoToken]
     public class PreRegistrationReviewController : Controller
@@ -26,7 +25,8 @@ namespace DVSAdmin.Controllers
 
         [HttpGet("pre-reg-at-a-glance")]
         public IActionResult PreRegAtAGlance()
-        {           
+        {
+            HttpContext.Session?.Set("Email", "vishal.vishwanathan@ics.gov.uk");
             return View();
         }
 
@@ -44,7 +44,8 @@ namespace DVSAdmin.Controllers
                 UserDto userDto = await userService.GetUser(loggedinUserEmail);
                 PreRegReviewListViewModel preRegReviewListViewModel = new PreRegReviewListViewModel();
                 var preregistrations = await preRegistrationReviewService.GetPreRegistrations();
-                preRegReviewListViewModel.PrimaryChecksList = preregistrations.Where(x => (x.ApplicationReviewStatus == ApplicationReviewStatusEnum.Received && x.Id !=x?.PreRegistrationReview?.PreRegistrationId)||
+                preRegReviewListViewModel.PrimaryChecksList = preregistrations.Where(x => (x.DaysLeftToComplete>0 && 
+                x.ApplicationReviewStatus == ApplicationReviewStatusEnum.Received && x.Id !=x?.PreRegistrationReview?.PreRegistrationId)||
                 x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.InPrimaryReview
                 ||  x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckPassed
                 ||  x?.PreRegistrationReview?.ApplicationReviewStatus ==ApplicationReviewStatusEnum.PrimaryCheckFailed
@@ -70,8 +71,7 @@ namespace DVSAdmin.Controllers
             else
             {
                 return RedirectToAction("HandleException", "Error");
-            }
-           
+            }          
             
         }
 
@@ -85,10 +85,8 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ArchiveDetails(int preRegistrationId)
         {
             PreRegistrationReviewViewModel preRegistrationReviewViewModel = new PreRegistrationReviewViewModel();
-
             PreRegistrationDto preRegistrationDto = await preRegistrationReviewService.GetPreRegistration(preRegistrationId);
             preRegistrationReviewViewModel = MapDtoToViewModel(preRegistrationDto);
-
             return View(preRegistrationReviewViewModel);
 
         }
