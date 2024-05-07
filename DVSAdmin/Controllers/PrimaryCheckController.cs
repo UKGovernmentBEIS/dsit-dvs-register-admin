@@ -340,47 +340,51 @@ namespace DVSAdmin.Controllers
         }
         private void AddModelErrorForInvalidActions(PreRegistrationReviewViewModel pregistrationReviewViewModel, string reviewAction)
         {
-
-            if (Convert.ToBoolean(pregistrationReviewViewModel.IsCountryApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsCompanyApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsCheckListApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsDirectorshipsApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsDirectorshipsAndRelationApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsTradingAddressApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsSanctionListApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsUNFCApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsECCheckApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsTARICApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsBannedPoliticalApproved) &&
-                Convert.ToBoolean(pregistrationReviewViewModel.IsProvidersWebpageApproved) &&
-                reviewAction == "reject")
-            {
-                ModelState.AddModelError("SubmitValidation", "Your decision to pass or fail this primary check must match with the selections");
-            }
-            else if ((!Convert.ToBoolean(pregistrationReviewViewModel.IsCountryApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsCompanyApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsCheckListApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsDirectorshipsApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsDirectorshipsAndRelationApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsTradingAddressApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsSanctionListApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsUNFCApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsECCheckApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsTARICApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsBannedPoliticalApproved) ||
-             !Convert.ToBoolean(pregistrationReviewViewModel.IsProvidersWebpageApproved))
-             &&   reviewAction == "approve")
-            {
-                ModelState.AddModelError("SubmitValidation", "Your decision to pass or fail this primary check must match with the selections");
-            }
             if (pregistrationReviewViewModel.PrimaryCheckUserId == pregistrationReviewViewModel.SecondaryCheckUserId)
             {
                 ModelState.AddModelError("SubmitValidation", "Primary and secondary check user should be different");
             }
-
-            if ((reviewAction == "approve" || reviewAction == "reject") &&  string.IsNullOrEmpty( pregistrationReviewViewModel.Comment))            
+            else
             {
-                ModelState.AddModelError("Comment", "Enter a comment to explain the checks completed");
+
+                if (Convert.ToBoolean(pregistrationReviewViewModel.IsCountryApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsCompanyApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsCheckListApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsDirectorshipsApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsDirectorshipsAndRelationApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsTradingAddressApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsSanctionListApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsUNFCApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsECCheckApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsTARICApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsBannedPoliticalApproved) &&
+                    Convert.ToBoolean(pregistrationReviewViewModel.IsProvidersWebpageApproved) &&
+                    reviewAction == "reject")
+                {
+                    ModelState.AddModelError("SubmitValidation", "Your decision to pass or fail this primary check must match with the selections");
+                }
+                else if ((!Convert.ToBoolean(pregistrationReviewViewModel.IsCountryApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsCompanyApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsCheckListApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsDirectorshipsApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsDirectorshipsAndRelationApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsTradingAddressApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsSanctionListApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsUNFCApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsECCheckApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsTARICApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsBannedPoliticalApproved) ||
+                 !Convert.ToBoolean(pregistrationReviewViewModel.IsProvidersWebpageApproved))
+                 &&   reviewAction == "approve")
+                {
+                    ModelState.AddModelError("SubmitValidation", "Your decision to pass or fail this primary check must match with the selections");
+                }
+
+
+                if ((reviewAction == "approve" || reviewAction == "reject") &&  string.IsNullOrEmpty(pregistrationReviewViewModel.Comment))
+                {
+                    ModelState.AddModelError("Comment", "Enter a comment to explain the checks completed");
+                }
             }
 
         }

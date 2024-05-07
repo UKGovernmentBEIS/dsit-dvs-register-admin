@@ -488,27 +488,15 @@ namespace DVSAdmin.Controllers
         }
         private void AddModelErrorForInvalidActions(SecondaryCheckViewModel secondaryCheckViewModel, string reviewAction)
         {
-            if(string.IsNullOrEmpty(secondaryCheckViewModel.Comment))
-                ModelState.AddModelError("Comment", "Enter a comment to explain the checks completed");
-           else
-            {
-                if (secondaryCheckViewModel.PrimaryCheckUserId == secondaryCheckViewModel.SecondaryCheckUserId)
-                {
-                    ModelState.AddModelError("SubmitValidation", "Primary and secondary check user should be different");
-                }                
-            }
-        }
-
-        private void AddModelErrorForApplicationRejection(SecondaryCheckViewModel secondaryCheckViewModel, string reviewAction)
-        {
             if (secondaryCheckViewModel.PrimaryCheckUserId == secondaryCheckViewModel.SecondaryCheckUserId)
             {
                 ModelState.AddModelError("SubmitValidation", "Primary and secondary check user should be different");
+            }
+            else if (string.IsNullOrEmpty(secondaryCheckViewModel.Comment))
+            {
+                ModelState.AddModelError("Comment", "Enter a comment to explain the checks completed");
             }           
-
-        }
-
-      
+        } 
         #endregion
     }
 }
