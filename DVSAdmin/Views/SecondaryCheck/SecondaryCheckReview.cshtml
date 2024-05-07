@@ -14,6 +14,10 @@
                 <h1 class="govuk-heading-xl">Application review</h1>
                 @using (Html.BeginForm("SaveSecondaryCheckReview", "SecondaryCheck", FormMethod.Post))
                 {
+                    @if (ViewData.ModelState.ErrorCount >0)
+                    {
+                        @await Html.PartialAsync("~/Views/PartialViews/_SecondaryCheckErrorSummary.cshtml", Model)
+                    }
                     @Html.HiddenFor(m => m.PreRegistrationId)
                     @Html.HiddenFor(m => m.PrimaryCheckUserId)
                     @Html.HiddenFor(m => m.SecondaryCheckUserId)
@@ -576,11 +580,11 @@
 
 
                     <p class="govuk-body govuk-!-font-weight-bold"> Comments</p>
-                    @Html.ValidationMessageFor(m => m.Comment, "", new { @class = "govuk-error-message" })
+                    @Html.ValidationMessageFor(m => m.Comment, "", new { @class = "govuk-error-message", id = "comment-error" })
                     @Html.TextAreaFor(model => model.Comment, new { @class = "govuk-textarea", @id = "secondarycheck-comment", @name = "comment", @rows = "5" })
 
 
-                    @Html.ValidationMessageFor(m => m.SubmitValidation, "", new { @class = "govuk-error-message" })
+                    @Html.ValidationMessageFor(m => m.SubmitValidation, "", new { @class = "govuk-error-message", id = "submit-error" })
                    
 
                         @if(Model.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckFailed)
