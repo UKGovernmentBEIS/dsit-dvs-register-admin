@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
+using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 
 public class CognitoClient
@@ -163,7 +164,11 @@ public class CognitoClient
             var authResponse = await _provider.InitiateAuthAsync(authRequest);
             return authResponse.Session.ToString();
         }
-        catch(Exception ex)
+        catch (Amazon.CognitoIdentityProvider.Model.NotAuthorizedException ex)
+        {
+            return Constants.IncorrectPassword;
+        }
+        catch (Exception ex)
         {
             Console.WriteLine($"Error in logging in {ex.Message} ");
             return "";

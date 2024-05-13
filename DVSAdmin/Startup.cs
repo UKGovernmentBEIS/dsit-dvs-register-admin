@@ -6,6 +6,8 @@ using DVSAdmin.Middleware;
 using DVSAdmin.BusinessLogic;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.Data.Repositories;
+using DVSAdmin.CommonUtility.Email;
+using DVSAdmin.CommonUtility.Models;
 
 namespace DVSAdmin
 {
@@ -33,6 +35,7 @@ namespace DVSAdmin
             ConfigureSession(services);
             ConfigureDvsRegisterServices(services);
             ConfigureAutomapperServices(services);
+            ConfigureGovUkNotify(services);
 
         }
 
@@ -82,6 +85,12 @@ namespace DVSAdmin
         public void ConfigureAutomapperServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(AutoMapperProfile));
+        }
+        private void ConfigureGovUkNotify(IServiceCollection services)
+        {
+            services.AddScoped<IEmailSender, GovUkNotifyApi>();
+            services.Configure<GovUkNotifyConfiguration>(
+                configuration.GetSection(GovUkNotifyConfiguration.ConfigSection));
         }
     }
 }

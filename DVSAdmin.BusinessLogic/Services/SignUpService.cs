@@ -1,4 +1,6 @@
 ﻿using System;
+using DVSAdmin.CommonUtility;
+using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Repositories;
 
@@ -8,11 +10,13 @@ namespace DVSAdmin.BusinessLogic.Services
 	{
         private CognitoClient _cognitoClient;
         private readonly IUserRepository _userRepository;
+        private readonly IEmailSender _emailSender;
 
-        public SignUpService(CognitoClient cognitoClient, IUserRepository userRepository)
+        public SignUpService(CognitoClient cognitoClient, IUserRepository userRepository, IEmailSender emailSender)
         {
             _userRepository = userRepository;
             _cognitoClient = cognitoClient;
+            _emailSender = emailSender;
         }
 
         public async Task<GenericResponse> ConfirmPassword(string email, string password, string oneTimePassword)
@@ -33,6 +37,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 GenericResponse genericResponse = await _userRepository.AddUser(new Data.Entities.User() { Email = email, UserName = email });
                 if(genericResponse.Success)
                 {
+                    await _emailSender.SendAccountCreatedConfirmation(email, email);
                     return "OK";
                 }
                 else
@@ -48,7 +53,12 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<string> SignInAndWaitForMfa(string email, string password)
         {
-            return await _cognitoClient.SignInAndWaitForMfa(email, password);
+            string response = await _cognitoClient.SignInAndWaitForMfa(email, password);
+            if (response == Constants.IncorrectPassword)
+            {
+                await _emailSender.SendFailedLoginAttempt(Helper.GetLocalDateTime(DateTime.UtcNow, "dd MMM yyyy h:mm tt"), email);
+            }
+            return response;
         }
 
         public async Task<string> ConfirmMFAToken(string session, string email, string token)
