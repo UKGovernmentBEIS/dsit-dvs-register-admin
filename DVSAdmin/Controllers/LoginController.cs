@@ -133,7 +133,7 @@ namespace DVSAdmin.Controllers
             if (ModelState["Email"].Errors.Count == 0 && ModelState["Password"].Errors.Count ==0)
             {
                 var loginResponse = await _signUpService.SignInAndWaitForMfa(loginPageViewModel.Email, loginPageViewModel.Password);
-                if (loginResponse.Length > 0)
+                if (loginResponse.Length > 0 && loginResponse != Constants.IncorrectPassword)
                 {
                     HttpContext?.Session.Set("Email", loginPageViewModel.Email);
                     HttpContext?.Session.Set("Session", loginResponse);
