@@ -16,5 +16,6 @@
         public AccountCreatedTemplate AccountCreatedTemplate { get; set; }
         public FailedLoginAttemptTemplate FailedLoginAttemptTemplate { get; set; } 
         public ApplicationRejectedConfirmationTemplate ApplicationRejectedConfirmationTemplate { get; set; }
+        public ApplicationApprovedConfirmationTemplate ApplicationApprovedConfirmationTemplate { get; set; }
     }
 }

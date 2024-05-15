@@ -201,5 +201,25 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+
+        public async Task<bool> SendApplicationApprovedToDIASP(string recipientName, string URN, string expiryDate, string emailAddress)
+        {
+            var template = govUkNotifyConfig.ApplicationApprovedConfirmationTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.RecipientName,  recipientName},
+                { template.ExpiryDate,  expiryDate},
+                { template.URN,  URN},
+                { template.PreRegLink,  govUkNotifyConfig.PreRegLink},
+            };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
     }
 }

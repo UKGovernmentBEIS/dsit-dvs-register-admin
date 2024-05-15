@@ -10,6 +10,7 @@
         public Task<bool> SendAccountCreatedConfirmation(string recipientName, string emailAddress);
         public Task<bool> SendFailedLoginAttempt(string timestamp, string emailAddress);       
         public Task<bool> SendApplicationRejectedToDIASP(string recipientName, string emailAddress);
+        public Task<bool> SendApplicationApprovedToDIASP(string recipientName, string URN, string expiryDate, string emailAddress);
 
     }
 }

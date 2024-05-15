@@ -110,15 +110,14 @@ namespace DVSAdmin.BusinessLogic.Services
                         genericResponse = await preRegistrationReviewRepository.UpdateURNStatus(uniqueReferenceNumber);
 
 
-                        await emailSender.SendURNIssuedConfirmationToOfDia(preRegistration.URN??string.Empty); //email to ofdia
-                        //TO DO: Email to DIP
-                        //await emailSender.SendApplicationApprovedToDIASP(preRegistration.FullName, preRegistration.URN??string.Empty, //email to provider
-                        //GetUrnExpiryDate(uniqueReferenceNumber.ModifiedDate), preRegistration.Email);
-                        //if (!string.IsNullOrEmpty(preRegistration.SponsorEmail))
-                        //{
-                        //    await emailSender.SendApplicationApprovedToDIASP(preRegistration.SponsorFullName??string.Empty, preRegistration.URN??string.Empty,
-                        //    GetUrnExpiryDate(uniqueReferenceNumber.ModifiedDate), preRegistration.SponsorEmail);
-                        //}
+                        await emailSender.SendURNIssuedConfirmationToOfDia(preRegistration.URN??string.Empty); //email to ofdia                       
+                        await emailSender.SendApplicationApprovedToDIASP(preRegistration.FullName, preRegistration.URN??string.Empty, //email to provider
+                        GetUrnExpiryDate(uniqueReferenceNumber.ModifiedDate), preRegistration.Email);
+                        if (!string.IsNullOrEmpty(preRegistration.SponsorEmail))
+                        {
+                            await emailSender.SendApplicationApprovedToDIASP(preRegistration.SponsorFullName??string.Empty, preRegistration.URN??string.Empty,
+                            GetUrnExpiryDate(uniqueReferenceNumber.ModifiedDate), preRegistration.SponsorEmail);
+                        }
                     }
                 }
             }
