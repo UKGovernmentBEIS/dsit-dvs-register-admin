@@ -1,0 +1,143 @@
+﻿@model DVSAdmin.Models.SecondaryCheckViewModel;
+@using Newtonsoft.Json
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@{
+    ViewData["Title"] = "ConfirmSecondaryCheckReject";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+
+    @Html.ActionLink("Back", "SecondaryCheckReview", "SecondaryCheck", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        @using (Html.BeginForm("ProceedSecondaryCheckRejection", "SecondaryCheck", FormMethod.Post))
+        {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">
+                    Rejecting this application
+                </h1>
+                <p class="govuk-body">
+                    You are about to reject the following application:
+                </p>
+               
+                 @Html.HiddenFor(m=>m.PreRegistrationId)
+                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header"> Unique Reference # </th>
+                            <th scope="col" class="govuk-table__header">Digital Identity <br />and Attribute <br /> Service Provider</th>
+                            <th scope="col" class="govuk-table__header">Time Submitted</th>
+                            <th scope="col" class="govuk-table__header">Status</th>
+                            <th scope="col" class="govuk-table__header">Days left to <br />complete</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"><a href="#" class="govuk-link">@Model.PreRegistration.URN</a></td>
+                            <td class="govuk-table__cell">@Model.PreRegistration.TradingName</td>
+                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.PreRegistration.CreatedDate)</td>
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.PreRegistration.PreRegistrationReview.ApplicationReviewStatus)</td>
+                            <td class="govuk-table__cell">@Model.PreRegistration.DaysLeftToComplete  days</td>
+                        </tr>
+                    </tbody>
+                </table>              
+                    
+              
+            </div>
+
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" aria-describedby="applicationName-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                            Select reason for rejection
+                        </legend>
+                        <div id="applicationSponsor-hint" class="govuk-hint">
+                            Select a reason for rejection to be sent to the applicant.
+                        </div>
+
+                        @Html.ValidationMessageFor(m => m.RejectionReason, "", new { @class = "govuk-error-message" })
+                        <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
+                            <div class="govuk-radios__item">
+                                @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.DiligenceCheck, new { @id = "rejection-diligencecheck", @class = "govuk-radios__input" })
+                                <label class="govuk-label govuk-radios__label" for="rejection-diligencecheck">
+                                    Failed due diligence check
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.IncorrectInfo, new { @id = "rejection-incorrectinfo", @class = "govuk-radios__input" })
+                                <label class="govuk-label govuk-radios__label" for="rejection-incorrectinfo">
+                                    Submitted incorrect information
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <h2 class="govuk-heading-m">Who will receive the application decision notification</h2>
+                <div id="applicationSponsor-hint" class="govuk-hint">
+                    The applicant will receive an email with this decision from the OfDIA Review
+                    Portal and guidance on next steps.
+                </div>
+
+                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                @if (Model.PreRegistration.IsApplicationSponsor)
+                {
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email address of application sponsor
+
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.PreRegistration.Email
+                            </dd>
+                        </div>
+                    </dl>
+                }
+                else
+                {
+
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email address of application sponsor
+
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.PreRegistration.SponsorEmail
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email address of additional contact
+
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.PreRegistration.Email
+                            </dd>
+                        </div>
+                    </dl>
+               }
+
+
+                <div class="govuk-button-group">
+                    <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
+                        Proceed with rejection
+                    </button>
+                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+      }
+    </main>
+</div>
+
+

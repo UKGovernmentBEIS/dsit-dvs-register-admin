@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "PreRegAtAGlance";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper">
+        
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl govuk-!-margin-top-8">Office for Digital Identities and Attributes review portal</h1>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                <p class="govuk-body">@Html.ActionLink("Pre-registration platform", "PreRegistrationReview", "PreRegistrationReview", null, new { @class = "govuk-link govuk-!-font-weight-bold" })</p>
+                <p class="govuk-body">
+                    Conduct a due diligence check on digital identity and attributes service providers and assess their suitability to join the register of trusted digital identity and attribute service providers.
+                </p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                <p class="govuk-body"><a href="#" class="govuk-link govuk-!-font-weight-bold">Application review</a></p>
+                <p class="govuk-body">
+                    Review digital identity and attribute service providers' applications and certification details to confirm their application. These are the final checks.
+                </p>
+            </div>
+        </div>
+    </main>
+</div>

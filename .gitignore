@@ -404,7 +404,3 @@ ASALocalRun/
 # Local History for Visual Studio
 .localhistory/
 
-*.css
-*.css.map
-
-*.min.js
