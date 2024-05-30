@@ -28,5 +28,18 @@ namespace DVSAdmin.Controllers
         {
             return View();
         }
+
+        //Temp route for building out view
+        [HttpGet("certificate-review-submissions")]
+        public ActionResult PartialViewsCertificateReviewSubmissionsView()
+        {
+            return View();
+        }
+        //Temp route for building out view
+        [HttpGet("certificate-review-archive")]
+        public ActionResult PartialViewsCertificateReviewArchiveView()
+        {
+            return View();
+        }
     }
 }
