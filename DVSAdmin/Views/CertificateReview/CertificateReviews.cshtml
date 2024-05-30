@@ -1,8 +1,49 @@
-﻿
+﻿@model DVSAdmin.Models.CertificateReviewListViewModel;
+@using DVSAdmin.CommonUtility.Models.Enums;
 @{
     ViewData["Title"] = "CertificateReviews";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
-<h1>CertificateReviews</h1>
+<div class="govuk-width-container">    
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-breadcrumbs">
+                    <ol class="govuk-breadcrumbs__list">
+                        <li class="govuk-breadcrumbs__list-item">
+                            @Html.ActionLink("Home", "LandingPage", "OfDia", null, new { @class = "govuk-breadcrumbs__link" })
+                        </li>
+                        <li class="govuk-breadcrumbs__list-item">
+                            @Html.ActionLink("Certificate review", "CertificateReviews", "CertificateReview", null, new { @class = "govuk-breadcrumbs__link" })
+                        </li>
+                    </ol>
+                </div>
+                <h1 class="govuk-heading-xl">Certificate review</h1>
+                <div class="govuk-tabs" data-module="govuk-tabs">
+                    <ul class="govuk-tabs__list">
+                        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                            <a class="govuk-tabs__tab" href="#certificate-submissions">
+                                Certificate submissions
+                            </a>
+                        </li>
+                        <li class="govuk-tabs__list-item">
+                            <a class="govuk-tabs__tab" href="#archive">
+                                Archive
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="govuk-tabs__panel" id="certificate-submissions">
+                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateReviewsView.cshtml", Model)
+                    </div>
+                    <div class="govuk-tabs__panel" id="archive">
+                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ArchiveView.cshtml", Model)
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
 

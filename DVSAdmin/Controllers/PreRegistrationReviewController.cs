@@ -22,13 +22,6 @@ namespace DVSAdmin.Controllers
             this.userService = userService;
         }
 
-
-        [HttpGet("pre-reg-at-a-glance")]
-        public IActionResult PreRegAtAGlance()
-        {          
-            return View();
-        }
-
         /// <summary>
         /// Load Landing page with grid having
         /// primary check, secondary check and archive List

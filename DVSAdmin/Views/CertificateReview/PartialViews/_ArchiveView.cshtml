@@ -1,0 +1,50 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.Extensions;
+@model DVSAdmin.Models.CertificateReviewListViewModel;
+  
+    <h2 class="govuk-heading-l">Archive</h2>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Service name</th>
+                <th scope="col" class="govuk-table__header">Service provider</th>
+                <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
+                <th scope="col" class="govuk-table__header">Role type</th>
+                <th scope="col" class="govuk-table__header">Time submitted</th>
+                <th scope="col" class="govuk-table__header">Review status</th>
+                <th scope="col" class="govuk-table__header">Time reviewed</th>
+            </tr>
+        </thead>
+
+    <tbody class="govuk-table__body">
+
+        @foreach (var item in Model.ArchiveList)
+        {
+            <tr class="govuk-table__row">
+
+                <td class="govuk-table__cell"> <a class="govuk-link" href="#">@item.ServiceName</a></td>
+                <td class="govuk-table__cell"> @item.TradingName</td>
+                <td class="govuk-table__cell"> @item.CreatedBy</td>
+                <td class="govuk-table__cell">
+
+                    @foreach (var role in item.CertificateInfoRoleMapping)
+                    {
+                        RoleEnum enumValue = (RoleEnum)role.RoleId;
+                        <div> @Enum.GetName(enumValue) </div>
+                    }
+                </td>
+
+                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedDate)</td>
+                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateInfoStatus)</td>
+                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.ModifiedDate)</td>
+
+            </tr>
+        }
+    </tbody>
+
+    </table>
+
+
+  
+

@@ -168,7 +168,7 @@ namespace DVSAdmin.Controllers
                 if (mfaResponse.Length > 0)
                 {
                     HttpContext?.Session.Set("IdToken", mfaResponse);
-                    return RedirectToAction("PreRegAtAGlance", "PreRegistrationReview");
+                    return RedirectToAction("LandingPage", "OfDia");
                 }
                 else
                 {
