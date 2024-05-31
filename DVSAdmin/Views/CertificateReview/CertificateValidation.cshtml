@@ -1,0 +1,513 @@
+﻿@model CertificateValidationViewModel
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using Newtonsoft.Json
+
+@{
+    ViewData["Title"] = "Certificate Validation";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "CertificateReviews", "CertificateReview", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+
+        <div class="govuk-grid-row">
+           
+                <h1 class="govuk-heading-xl">Certificate review</h1>
+
+                @if (ViewData.ModelState.ErrorCount >0)
+                {                  
+                    ViewData["Title"] = "Error: " + ViewData["Title"];
+                    @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)                   
+                }
+
+                @using (Html.BeginForm("SaveCertificateValidation", "CertificateReview", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken();
+                    @Html.HiddenFor(m => m.PreRegistrationId)
+                    @Html.HiddenFor(m => m.CertificateInformationId)
+
+                <div class="govuk-grid-column-full">
+                  <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header"> Service name </th>
+                                <th scope="col" class="govuk-table__header">Service Provider</th>
+                                <th scope="col" class="govuk-table__header">Conformity Assessment Body </th>
+                                <th scope="col" class="govuk-table__header">Role type</th>
+                                <th scope="col" class="govuk-table__header">Time submitted</th>
+                                <th scope="col" class="govuk-table__header">Review status</th>
+                                <th scope="col" class="govuk-table__header">Days left to complete checks</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+
+                                <th scope="row" class="govuk-table__header">@Model.CertificateInformation.ServiceName</th>                               
+                                <td class="govuk-table__cell">@Model.CertificateInformation.TradingName</td>
+                                <td class="govuk-table__cell">@Model.CertificateInformation.CreatedBy</td>
+                                <td class="govuk-table__cell">
+                                    @foreach (var role in @Model.CertificateInformation.CertificateInfoRoleMapping)
+                                    {
+                                        RoleEnum enumValue = (RoleEnum)role.RoleId;
+                                        <div> @Enum.GetName(enumValue) </div>
+                                    }
+                                </td>
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateInformation.CreatedDate)</td>                               
+                                @if (@Model.CertificateInformation.CertificateReview == null)
+                                {
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateInfoStatus)</td>
+                                }
+                                else
+                                {
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateReview.CertificateInfoStatus)</td>
+                                }
+                                <td class="govuk-table__cell">@Model.CertificateInformation.DaysLeftToComplete  days</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-m">Certificate validation</h1>
+                    <p class="govuk-body">
+                        In this section, you will need to review the service provider s certificate to
+                        check whether it contains the correct information and whether the
+                        information about the service is consistent with certification scheme
+                        requirements.
+                    </p>
+
+                    <details class="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                Instructions for completing the certificate validation
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text">
+
+
+                            <ol class="govuk-list govuk-list--number">
+                                <li>
+                                    Begin by downloading the 'Provided certificate of conformity'. Open
+                                    the certificate document for your review.
+                                </li>
+                                <li>
+                                    Return to this page to compare the certificate against the details
+                                    submitted by the Conformity Assessment Body (CAB).
+                                </li>
+                                <li>
+                                    For each category, pay attention to the individual items or entries to
+                                    confirm their accuracy. Please select 'True' if the statement is true
+                                    and 'False' if the statement is false for each item.
+                                </li>
+                                <li>
+                                    If you need to pause your review or wish to complete it at a later time,
+                                    you can save your progress by clicking the Save as draft button
+                                    located at the bottom of the page. Additionally, if you have any
+                                    comments or notes regarding the verification, you can type them in
+                                    the free text area also at the bottom of the page.
+                                </li>
+                                <li>
+                                    Once you have verified all items, scroll down to the bottom of the
+                                    page and click the 'Continue' button to proceed with the process.
+                                </li>
+                            </ol>                           
+                        </div>
+                    </details>
+
+                    <h1 class="govuk-heading-m">Provided certificate of conformity</h1>
+                    <p class="govuk-body">
+                        Download the certificate of conformity to compare against the details
+                        submitted by the Conformity Assessment Body (CAB)
+                    </p>
+
+                    <span class="govuk-caption-xl">@Model.CertificateInformation.FileName</span>
+
+                    <div id="download-certificate-hint" class="govuk-hint">
+                        PDF, 19.5 KB, 1 page
+                        This file may not be suitable for users of assistive technology.
+                    </div>
+
+                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" aria-describedby="download-certificate-hint">
+                        Download certificate of conformity
+                    </button>
+
+                    <hr class="govuk-section-break govuk-section-break--m">
+
+                    <h2 class="govuk-heading-m">General</h2>
+                    @* --------------Logos and certificate number ----------------- *@
+                    <h1 class="govuk-heading-s">Logos and certificate number</h1>                 
+                    <p class="govuk-body">The certificate contains the following:</p>
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>
+                            UKDIATF logo
+                        </li>
+                        <li>
+                            CAB logo
+                        </li>
+                        <li>
+                            Certificate number or other unique identification
+                        </li>
+                    </ul>
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                       {
+                       PropertyName = "IsCabLogoCorrect",
+                       Value = Model.IsCabLogoCorrect,                      
+                       HasError = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ?
+                       Html.ViewData.ModelState["IsCabLogoCorrect"].Errors[0].ErrorMessage: string.Empty
+                       })
+
+                   
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------Conformity Assessment Body details ----------------- *@
+                    <h1 class="govuk-heading-s">Conformity Assessment Body details</h1>
+                    <p class="govuk-body">The certificate contains the following:</p>
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>
+                            Name of the CAB
+                        </li>
+                        <li>
+                            Address of the CAB
+                        </li>                       
+                    </ul>
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                    {
+                        PropertyName = "IsCabDetailsCorrect",
+                        Value = Model.IsCabDetailsCorrect,                   
+                        HasError = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors.Count > 0,
+                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors[0].ErrorMessage : string.Empty
+                    })
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------Service provider details ----------------- *@
+                    <h1 class="govuk-heading-s">Service provider details</h1>
+                    <p class="govuk-body">The certificate contains the following:</p>
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>
+                            Registered name of the service provider
+                        </li>
+                        <li>
+                            Trading name of the service provider (if applicable)
+                        </li>
+                        <li>
+                            Address of the service provider
+                        </li>
+                    </ul>
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                     {
+                        PropertyName = "IsProviderDetailsCorrect",
+                        Value = Model.IsProviderDetailsCorrect,
+                        HasError = Html.ViewData.ModelState.ContainsKey("IsProviderDetailsCorrect") && Html.ViewData.ModelState["IsProviderDetailsCorrect"].Errors.Count > 0,
+                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsProviderDetailsCorrect") && Html.ViewData.ModelState["IsProviderDetailsCorrect"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsProviderDetailsCorrect"].Errors[0].ErrorMessage : string.Empty
+                    })
+                                    
+
+
+                    <hr class="govuk-section-break govuk-section-break--m">
+
+                    <h2 class="govuk-heading-m">Statement of conformity</h2>
+
+                    @* --------------Name of service ----------------- *@
+                    <h1 class="govuk-heading-s">Name of service</h1>
+                    <p class="govuk-body">
+                        The certificate contains a statement of conformity that includes the name of
+                        the service.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                   {
+                       PropertyName = "IsServiceNameCorrect",
+                       Value = Model.IsServiceNameCorrect,
+                       HasError = Html.ViewData.ModelState.ContainsKey("IsServiceNameCorrect") && Html.ViewData.ModelState["IsServiceNameCorrect"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsServiceNameCorrect") && Html.ViewData.ModelState["IsServiceNameCorrect"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsServiceNameCorrect"].Errors[0].ErrorMessage : string.Empty
+                   })
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------Roles certified against----------------- *@
+                    <h1 class="govuk-heading-s">Roles certified against</h1>
+                    <p class="govuk-body">
+                        The certificate contains a statement of conformity which includes the roles
+                        certified against.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                   {
+                       PropertyName = "IsRolesCertifiedCorrect",
+                       Value = Model.IsRolesCertifiedCorrect,
+                       HasError = Html.ViewData.ModelState.ContainsKey("IsRolesCertifiedCorrect") && Html.ViewData.ModelState["IsRolesCertifiedCorrect"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsRolesCertifiedCorrect") && Html.ViewData.ModelState["IsRolesCertifiedCorrect"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsRolesCertifiedCorrect"].Errors[0].ErrorMessage : string.Empty
+                   })
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------Scope of certification----------------- *@
+                    <h1 class="govuk-heading-s">Scope of certification</h1>
+                    <p class="govuk-body">
+                        The certificate contains a statement of conformity which details the scope of
+                        certification, including any recognised supplementary schemes (Right to
+                        Work, Right to Rent, Disclosure and Barring Service), if applicable.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                   {
+                       PropertyName = "IsCertificationScopeCorrect",
+                       Value = Model.IsCertificationScopeCorrect,
+                       HasError = Html.ViewData.ModelState.ContainsKey("IsCertificationScopeCorrect") && Html.ViewData.ModelState["IsCertificationScopeCorrect"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCertificationScopeCorrect") && Html.ViewData.ModelState["IsCertificationScopeCorrect"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsCertificationScopeCorrect"].Errors[0].ErrorMessage : string.Empty
+                   })
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------Summary of service----------------- *@
+                    <h1 class="govuk-heading-s">Scope of certification</h1>
+                    <p class="govuk-body">
+                        The certificate contains a statement of conformity which includes a summary
+                        of the service.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                   {
+                       PropertyName = "IsServiceSummaryCorrect",
+                       Value = Model.IsServiceSummaryCorrect,
+                       HasError = Html.ViewData.ModelState.ContainsKey("IsServiceSummaryCorrect") && Html.ViewData.ModelState["IsServiceSummaryCorrect"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsServiceSummaryCorrect") && Html.ViewData.ModelState["IsServiceSummaryCorrect"].Errors.Count > 0 ?
+                      Html.ViewData.ModelState["IsServiceSummaryCorrect"].Errors[0].ErrorMessage : string.Empty
+                   })
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------URL link to service----------------- *@
+                    <h1 class="govuk-heading-s">URL link to service</h1>
+                    <p class="govuk-body">
+                        The certificate contains a statement of conformity that includes a URL link to
+                        a website providing access to the service. This URL link may be slightly
+                        different from the company website address.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                    {
+                        PropertyName = "IsURLLinkToServiceCorrect",
+                        Value = Model.IsURLLinkToServiceCorrect,
+                         HasError = Html.ViewData.ModelState.ContainsKey("IsURLLinkToServiceCorrect") && Html.ViewData.ModelState["IsURLLinkToServiceCorrect"].Errors.Count > 0,
+                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsURLLinkToServiceCorrect") && Html.ViewData.ModelState["IsURLLinkToServiceCorrect"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsURLLinkToServiceCorrect"].Errors[0].ErrorMessage : string.Empty
+                    })
+
+                    <hr class="govuk-section-break govuk-section-break--m">
+                    @* --------------GPG45 identity profiles----------------- *@
+                    <h1 class="govuk-heading-m">Unique designation of services</h1>
+                    <h1 class="govuk-heading-s">GPG45 identity profiles</h1>
+                    <p class="govuk-body">
+                        The certificate includes GPG45 identity profiles assessed. If the provider has
+                        been certified on supplementary schemes, the profiles listed meet the
+                        certification scheme requirements.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                   {
+                       PropertyName = "IsIdentityProfilesCorrect",
+                       Value = Model.IsIdentityProfilesCorrect,
+                       HasError = Html.ViewData.ModelState.ContainsKey("IsIdentityProfilesCorrect") && Html.ViewData.ModelState["IsIdentityProfilesCorrect"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsIdentityProfilesCorrect") && Html.ViewData.ModelState["IsIdentityProfilesCorrect"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsIdentityProfilesCorrect"].Errors[0].ErrorMessage : string.Empty
+                   })
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------GPG44 quality assessment----------------- *@
+
+                    <h1 class="govuk-heading-s">GPG44 quality assessment</h1>
+                    <p class="govuk-body">
+                        The certificate includes GPG44 Quality of Authentication and Quality of
+                        Protection assessed, if applicable.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                   {
+                       PropertyName = "IsQualityAssessmentCorrect",
+                       Value = Model.IsQualityAssessmentCorrect,
+                       HasError = Html.ViewData.ModelState.ContainsKey("IsQualityAssessmentCorrect") && Html.ViewData.ModelState["IsQualityAssessmentCorrect"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsQualityAssessmentCorrect") && Html.ViewData.ModelState["IsQualityAssessmentCorrect"].Errors.Count > 0 ?
+                       Html.ViewData.ModelState["IsQualityAssessmentCorrect"].Errors[0].ErrorMessage : string.Empty
+                   })
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------Methods of service provision----------------- *@
+
+                    <h1 class="govuk-heading-s">Methods of service provision</h1>
+                    <p class="govuk-body">
+                        The certificate includes methods of service provision (e.g. online, person to
+                        person, physical sites).
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                    {
+                    PropertyName = "IsServiceProvisionCorrect",
+                    Value = Model.IsServiceProvisionCorrect,
+                    HasError = Html.ViewData.ModelState.ContainsKey("IsServiceProvisionCorrect") && Html.ViewData.ModelState["IsServiceProvisionCorrect"].Errors.Count > 0,
+                    ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsServiceProvisionCorrect") && Html.ViewData.ModelState["IsServiceProvisionCorrect"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsServiceProvisionCorrect"].Errors[0].ErrorMessage : string.Empty
+                   })
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------Geographical location----------------- *@
+
+                    <h1 class="govuk-heading-s">Geographical location</h1>
+                    <p class="govuk-body">
+                        The certificate includes the geographical location of service provision, if
+                        applicable.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                   {
+                    PropertyName = "IsLocationCorrect",
+                    Value = Model.IsLocationCorrect,
+                    HasError = Html.ViewData.ModelState.ContainsKey("IsLocationCorrect") && Html.ViewData.ModelState["IsLocationCorrect"].Errors.Count > 0,
+                    ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsLocationCorrect") && Html.ViewData.ModelState["IsLocationCorrect"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsLocationCorrect"].Errors[0].ErrorMessage : string.Empty
+                    })
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------Date of issue----------------- *@
+
+                    <h1 class="govuk-heading-s">Date of issue</h1>
+                    <p class="govuk-body">
+                        The certificate includes a valid date of issue. The issue date should not be in
+                        the future.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                    {
+                        PropertyName = "IsDateOfIssueCorrect",
+                        Value = Model.IsDateOfIssueCorrect,
+                        HasError = Html.ViewData.ModelState.ContainsKey("IsDateOfIssueCorrect") && Html.ViewData.ModelState["IsDateOfIssueCorrect"].Errors.Count > 0,
+                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDateOfIssueCorrect") && Html.ViewData.ModelState["IsDateOfIssueCorrect"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsDateOfIssueCorrect"].Errors[0].ErrorMessage : string.Empty
+                    })
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* --------------Date of expiry----------------- *@
+
+                    <h1 class="govuk-heading-s">Date of expiry</h1>
+                    <p class="govuk-body">
+                        The certificate includes a valid date of expiry. The expiry date should not be
+                        more than 2 years after the date of issue.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                    {
+                    PropertyName = "IsDateOfExpiryCorrect",
+                    Value = Model.IsDateOfExpiryCorrect,
+                    HasError = Html.ViewData.ModelState.ContainsKey("IsDateOfExpiryCorrect") && Html.ViewData.ModelState["IsDateOfExpiryCorrect"].Errors.Count > 0,
+                    ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDateOfExpiryCorrect") && Html.ViewData.ModelState["IsDateOfExpiryCorrect"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsDateOfExpiryCorrect"].Errors[0].ErrorMessage : string.Empty
+                    })
+
+
+                    <hr class="govuk-section-break govuk-section-break--s">
+                    @* -------------Authenticity verification----------------- *@
+
+                    <h1 class="govuk-heading-s">Authenticity verification</h1>
+                    <p class="govuk-body">
+                        The certificate includes means by which the authenticity of the certificate can
+                        be verified.
+                    </p>
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                    {
+                        PropertyName = "IsAuthenticyVerifiedCorrect",
+                        Value = Model.IsAuthenticyVerifiedCorrect,
+                        HasError = Html.ViewData.ModelState.ContainsKey("IsAuthenticyVerifiedCorrect") && Html.ViewData.ModelState["IsAuthenticyVerifiedCorrect"].Errors.Count > 0,
+                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsAuthenticyVerifiedCorrect") && Html.ViewData.ModelState["IsAuthenticyVerifiedCorrect"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsAuthenticyVerifiedCorrect"].Errors[0].ErrorMessage : string.Empty
+                    })
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                     @*    ---------Comments and Save as draft ------- *@
+
+
+                    @if (Html.ViewData.ModelState.ContainsKey("CommentsForIncorrect") && Html.ViewData.ModelState["CommentsForIncorrect"].Errors.Count > 0)
+                    {
+                        <div class="govuk-form-group govuk-form-group--error">
+                            <h1 class="govuk-label-wrapper">
+                                <label class="govuk-label govuk-label--s" for="commentsforincorrect">
+                                    Comments
+                                </label>
+
+                            </h1>
+                            <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
+                            <p id="commentsforincorrect-error" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.CommentsForIncorrect)
+                            </p>
+                            @Html.TextAreaFor(model => model.CommentsForIncorrect, new { @class = "govuk-textarea govuk-textarea--error", @id = "commentsforincorrect",  @name = "comment", @rows = "5" })                            
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div class="govuk-form-group">
+                            <h1 class="govuk-label-wrapper">
+                                <label class="govuk-label govuk-label--s" for="commentsforincorrect">
+                                   Comments
+                                </label>
+                            </h1>
+
+                            @Html.TextAreaFor(model => model.CommentsForIncorrect, new { @class = "govuk-textarea", @id = "commentsforincorrect", @name = "comment", @rows = "5" })
+                        </div>
+                        
+                    }
+
+
+                    </div>
+
+
+
+
+                <div class="govuk-grid-column-full">
+               
+                    <div class="govuk-button-group">
+                        <button type="submit"  class="govuk-button" data-module="govuk-button" name="saveReview" value="continue">
+                            Continue
+                        </button>
+                        <button type="submit"  class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
+                            Save as draft
+                        </button>
+                    </div>
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            To continue to the next step, you must complete all sections.
+                        </strong>
+                    </div>
+                    </div>
+
+                }
+
+           @*  </div> *@
+        </div>
+    </main>
+
+</div>

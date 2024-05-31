@@ -32,6 +32,34 @@ namespace DVSAdmin.BusinessLogic
 
             CreateMap<UniqueReferenceNumberDto, UniqueReferenceNumber>();
 
+            CreateMap<Role, RoleDto>();
+            CreateMap<RoleDto, Role>();
+            CreateMap<IdentityProfile, IdentityProfileDto>();
+            CreateMap<IdentityProfileDto, IdentityProfile>();
+            CreateMap<SupplementaryScheme, SupplementarySchemeDto>();
+            CreateMap<SupplementarySchemeDto, SupplementaryScheme>();
+            CreateMap<CertificateInfoIdentityProfileMapping, CertificateInfoIdentityProfileMappingDto>();
+            CreateMap<CertificateInfoIdentityProfileMappingDto, CertificateInfoIdentityProfileMapping>();
+            CreateMap<CertificateInfoRoleMapping, CertificateInfoRoleMappingDto>();
+            CreateMap<CertificateInfoRoleMappingDto, CertificateInfoRoleMapping>();
+            CreateMap<CertificateInfoSupSchemeMapping, CertificateInfoSupSchemeMappingDto>();
+            CreateMap<CertificateInfoSupSchemeMappingDto, CertificateInfoSupSchemeMapping>();
+
+
+            CreateMap<CertificateInformation, CertificateInformationDto>()
+            .ForMember(dest => dest.CertificateInfoRoleMapping, opt => opt.MapFrom(src => src.CertificateInfoRoleMapping))
+            .ForMember(dest => dest.CertificateInfoIdentityProfileMapping, opt => opt.MapFrom(src => src.CertificateInfoIdentityProfileMapping))
+            .ForMember(dest => dest.CertificateInfoSupSchemeMappings, opt => opt.MapFrom(src => src.CertificateInfoSupSchemeMappings));
+
+            CreateMap<CertificateInformationDto, CertificateInformation>()
+           .ForMember(dest => dest.CertificateInfoRoleMapping, opt => opt.MapFrom(src => src.CertificateInfoRoleMapping))
+           .ForMember(dest => dest.CertificateInfoIdentityProfileMapping, opt => opt.MapFrom(src => src.CertificateInfoIdentityProfileMapping))
+           .ForMember(dest => dest.CertificateInfoSupSchemeMappings, opt => opt.MapFrom(src => src.CertificateInfoSupSchemeMappings));
+
+            CreateMap<CertificateReview, CertificateReviewDto>().ForMember(dest => dest.CertificateReviewRejectionReasonMappings,
+            opt => opt.MapFrom(src => src.CertificateReviewRejectionReasonMappings));
+            CreateMap<CertificateReviewDto, CertificateReview>().ForMember(dest => dest.CertificateReviewRejectionReasonMappings,
+            opt => opt.MapFrom(src => src.CertificateReviewRejectionReasonMappings));
 
 
         }

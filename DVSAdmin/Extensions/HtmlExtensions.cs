@@ -38,6 +38,16 @@ namespace DVSAdmin.Extensions
                     return "govuk-tag govuk-tag--red";
                 case URNStatusEnum.ValidatedByCAB:
                     return "govuk-tag govuk-tag--blue";
+                case CertificateInfoStatusEnum.Received:
+                    return "govuk-tag govuk-tag--blue";
+                case CertificateInfoStatusEnum.InReview:
+                    return "govuk-tag govuk-tag--yellow";
+                case CertificateInfoStatusEnum.Approved:
+                    return "govuk-tag govuk-tag--green";
+                case CertificateInfoStatusEnum.Rejected:
+                    return "govuk-tag govuk-tag--red";
+                case CertificateInfoStatusEnum.Expired:
+                    return "govuk-tag govuk-tag--red";
                 default:
                     return string.Empty;
             }
@@ -45,6 +55,7 @@ namespace DVSAdmin.Extensions
 
         public static HtmlString ToStyledStrongTag<TEnum>(this TEnum enumValue) where TEnum : struct, Enum
         {
+            
             string tagClass = GetTagClass(enumValue);
             string description = GetDescription(enumValue);
 

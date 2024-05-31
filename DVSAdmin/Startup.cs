@@ -81,6 +81,9 @@ namespace DVSAdmin
                 string region = string.Format(configuration.GetValue<string>("Region"));
                 return new CognitoClient(userPoolId, clientId, region);
             });
+
+            services.AddScoped<ICertificateReviewRepository, CertificateReviewRepository>();
+            services.AddScoped<ICertificateReviewService, CertificateReviewService>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {

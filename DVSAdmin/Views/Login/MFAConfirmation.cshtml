@@ -42,7 +42,7 @@
                         <div id="event-name-hint" class="govuk-hint">
                             This is a six-digit passcode. For example, 623452
                         </div>
-                        @Html.TextBoxFor(m => m.MFACode, new { @class = "govuk-input", id = "one-time-password", name = "one-time-password" })
+                        @Html.TextBoxFor(m => m.MFACode, new { @class = "govuk-input govuk-input--width-10", id = "one-time-password", name = "one-time-password" })
                         @Html.ValidationMessageFor(m => m.MFACode, "", new { @class = "govuk-error-message" })
                     </div>
                     <button type="submit" class="govuk-button govuk-!-margin-top-2" data-module="govuk-button">
