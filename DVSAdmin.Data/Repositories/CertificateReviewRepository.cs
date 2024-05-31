@@ -51,14 +51,16 @@ namespace DVSAdmin.Data.Repositories
                     existingEntity.CertificateReviewRejectionReasonMappings = cetificateReview.CertificateReviewRejectionReasonMappings;
                     cetificateReview.ModifiedDate = DateTime.UtcNow;
                     await context.SaveChangesAsync();
+                    genericResponse.InstanceId = existingEntity.Id;
 
                 }
                 else
                 {
                     cetificateReview.CreatedDate = DateTime.UtcNow;
-                    await context.CetificateReview.AddAsync(cetificateReview);
+                    var entity = await context.CetificateReview.AddAsync(cetificateReview);
                     await context.SaveChangesAsync();
-                }
+                    genericResponse.InstanceId = entity.Entity.Id;
+                }                
                 transaction.Commit();
                 genericResponse.Success = true;
             }
@@ -84,6 +86,7 @@ namespace DVSAdmin.Data.Repositories
             .Include(p => p.CertificateInfoIdentityProfileMapping)
             .Include(p => p.CertificateInfoRoleMapping)
             .Include(p => p.CertificateInfoSupSchemeMappings)
+            .Include(p=>p.CertificateReview)
             .Where(p => p.Id == certificateInfoId).FirstOrDefaultAsync()?? new CertificateInformation();
             return certificateInformation;
         }

@@ -47,11 +47,7 @@ namespace DVSAdmin.BusinessLogic.Services
         {
             var certificateInfo = await certificateReviewRepository.GetCertificateInformation(certificateInfoId);
 
-            CertificateInformationDto certificateInformationDto = automapper.Map<CertificateInformationDto>(certificateInfo);
-            var roleIds = certificateInformationDto.CertificateInfoRoleMapping.Select(mapping => mapping.RoleId);
-            var roles = await certificateReviewRepository.GetRoles();
-            List<RoleDto> roleDto = automapper.Map<List<RoleDto>>(roles);
-            certificateInformationDto.Roles = roleDto.Where(x => roleIds.Contains(x.Id)).ToList();
+            CertificateInformationDto certificateInformationDto = automapper.Map<CertificateInformationDto>(certificateInfo);          
 
             return certificateInformationDto;
         }

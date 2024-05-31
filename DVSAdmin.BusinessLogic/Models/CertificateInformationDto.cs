@@ -5,6 +5,7 @@ namespace DVSAdmin.BusinessLogic.Models
 {
     public class CertificateInformationDto
     {
+        public int Id { get; set; }
         public int PreRegistrationId { get; set; }      
         public string RegisteredName { get; set; }
         public string TradingName { get; set; }
@@ -28,6 +29,6 @@ namespace DVSAdmin.BusinessLogic.Models
         public CertificateReviewDto CertificateReview { get; set; }
 
         public int DaysLeftToComplete { get; set; }
-        public List<RoleDto>? Roles { get; set; }
+        
     }
 }

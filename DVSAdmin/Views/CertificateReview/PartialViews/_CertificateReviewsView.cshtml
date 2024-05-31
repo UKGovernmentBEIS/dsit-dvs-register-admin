@@ -20,8 +20,8 @@
 
                 @foreach (var item in Model.CertificateReviewList)
                 {
-                    <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"> <a class="govuk-link" href="#">@item.ServiceName</a></td>
+                    <tr class="govuk-table__row">                
+                    <td class="govuk-table__cell"> @Html.ActionLink(item.ServiceName, "CertificateValidation", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
                     <td class="govuk-table__cell"> @item.TradingName</td>
                     <td class="govuk-table__cell"> @item.CreatedBy</td>
                      <td class="govuk-table__cell">

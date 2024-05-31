@@ -23,8 +23,8 @@ namespace DVSAdmin.BusinessLogic.Models
         public bool IsDateOfExpiryCorrect { get; set; }
         public bool IsAuthenticyVerifiedCorrect { get; set; }
         public string CommentsForIncorrect { get; set; }
-        public bool InformationMatched { get; set; }
-        public string Comments { get; set; }
+        public bool? InformationMatched { get; set; }
+        public string? Comments { get; set; }
        
         public int VerifiedUser { get; set; }
         public CertificateInfoStatusEnum CertificateInfoStatus { get; set; }
