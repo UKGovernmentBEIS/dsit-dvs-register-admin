@@ -44,6 +44,8 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<CertificateInfoRoleMappingDto, CertificateInfoRoleMapping>();
             CreateMap<CertificateInfoSupSchemeMapping, CertificateInfoSupSchemeMappingDto>();
             CreateMap<CertificateInfoSupSchemeMappingDto, CertificateInfoSupSchemeMapping>();
+            CreateMap<CertificateReviewRejectionReason, CertificateReviewRejectionReasonDto>();
+            CreateMap<CertificateReviewRejectionReasonDto, CertificateReviewRejectionReason>();
 
 
             CreateMap<CertificateInformation, CertificateInformationDto>()

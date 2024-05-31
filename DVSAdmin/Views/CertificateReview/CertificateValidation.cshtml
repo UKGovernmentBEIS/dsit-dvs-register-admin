@@ -160,7 +160,9 @@
                        Value = Model.IsCabLogoCorrect,                      
                        HasError = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ?
-                       Html.ViewData.ModelState["IsCabLogoCorrect"].Errors[0].ErrorMessage: string.Empty
+                       Html.ViewData.ModelState["IsCabLogoCorrect"].Errors[0].ErrorMessage: string.Empty,
+                       Label1 = "Correct",
+                       Label2 = "Incorrect"
                        })
 
                    
@@ -184,8 +186,10 @@
                         Value = Model.IsCabDetailsCorrect,                   
                         HasError = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors[0].ErrorMessage : string.Empty
-                    })
+                        Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors[0].ErrorMessage : string.Empty,
+                        Label1 = "Correct",
+                        Label2 = "Incorrect"
+                            })
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Service provider details ----------------- *@
@@ -209,7 +213,9 @@
                         Value = Model.IsProviderDetailsCorrect,
                         HasError = Html.ViewData.ModelState.ContainsKey("IsProviderDetailsCorrect") && Html.ViewData.ModelState["IsProviderDetailsCorrect"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsProviderDetailsCorrect") && Html.ViewData.ModelState["IsProviderDetailsCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsProviderDetailsCorrect"].Errors[0].ErrorMessage : string.Empty
+                        Html.ViewData.ModelState["IsProviderDetailsCorrect"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Correct",
+                       Label2 = "Incorrect"
                     })
                                     
 
@@ -232,7 +238,9 @@
                        Value = Model.IsServiceNameCorrect,
                        HasError = Html.ViewData.ModelState.ContainsKey("IsServiceNameCorrect") && Html.ViewData.ModelState["IsServiceNameCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsServiceNameCorrect") && Html.ViewData.ModelState["IsServiceNameCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsServiceNameCorrect"].Errors[0].ErrorMessage : string.Empty
+                       Html.ViewData.ModelState["IsServiceNameCorrect"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Correct",
+                       Label2 = "Incorrect"
                    })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -250,7 +258,9 @@
                        Value = Model.IsRolesCertifiedCorrect,
                        HasError = Html.ViewData.ModelState.ContainsKey("IsRolesCertifiedCorrect") && Html.ViewData.ModelState["IsRolesCertifiedCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsRolesCertifiedCorrect") && Html.ViewData.ModelState["IsRolesCertifiedCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsRolesCertifiedCorrect"].Errors[0].ErrorMessage : string.Empty
+                        Html.ViewData.ModelState["IsRolesCertifiedCorrect"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Correct",
+                       Label2 = "Incorrect"
                    })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -269,7 +279,9 @@
                        Value = Model.IsCertificationScopeCorrect,
                        HasError = Html.ViewData.ModelState.ContainsKey("IsCertificationScopeCorrect") && Html.ViewData.ModelState["IsCertificationScopeCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCertificationScopeCorrect") && Html.ViewData.ModelState["IsCertificationScopeCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsCertificationScopeCorrect"].Errors[0].ErrorMessage : string.Empty
+                        Html.ViewData.ModelState["IsCertificationScopeCorrect"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Correct",
+                       Label2 = "Incorrect"
                    })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -287,7 +299,9 @@
                        Value = Model.IsServiceSummaryCorrect,
                        HasError = Html.ViewData.ModelState.ContainsKey("IsServiceSummaryCorrect") && Html.ViewData.ModelState["IsServiceSummaryCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsServiceSummaryCorrect") && Html.ViewData.ModelState["IsServiceSummaryCorrect"].Errors.Count > 0 ?
-                      Html.ViewData.ModelState["IsServiceSummaryCorrect"].Errors[0].ErrorMessage : string.Empty
+                      Html.ViewData.ModelState["IsServiceSummaryCorrect"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Correct",
+                       Label2 = "Incorrect"
                    })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -306,7 +320,9 @@
                         Value = Model.IsURLLinkToServiceCorrect,
                          HasError = Html.ViewData.ModelState.ContainsKey("IsURLLinkToServiceCorrect") && Html.ViewData.ModelState["IsURLLinkToServiceCorrect"].Errors.Count > 0,
                          ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsURLLinkToServiceCorrect") && Html.ViewData.ModelState["IsURLLinkToServiceCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsURLLinkToServiceCorrect"].Errors[0].ErrorMessage : string.Empty
+                        Html.ViewData.ModelState["IsURLLinkToServiceCorrect"].Errors[0].ErrorMessage : string.Empty,
+                        Label1 = "Correct",
+                        Label2 = "Incorrect"
                     })
 
                     <hr class="govuk-section-break govuk-section-break--m">
@@ -326,7 +342,9 @@
                        Value = Model.IsIdentityProfilesCorrect,
                        HasError = Html.ViewData.ModelState.ContainsKey("IsIdentityProfilesCorrect") && Html.ViewData.ModelState["IsIdentityProfilesCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsIdentityProfilesCorrect") && Html.ViewData.ModelState["IsIdentityProfilesCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsIdentityProfilesCorrect"].Errors[0].ErrorMessage : string.Empty
+                        Html.ViewData.ModelState["IsIdentityProfilesCorrect"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Correct",
+                       Label2 = "Incorrect"
                    })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -345,7 +363,9 @@
                        Value = Model.IsQualityAssessmentCorrect,
                        HasError = Html.ViewData.ModelState.ContainsKey("IsQualityAssessmentCorrect") && Html.ViewData.ModelState["IsQualityAssessmentCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsQualityAssessmentCorrect") && Html.ViewData.ModelState["IsQualityAssessmentCorrect"].Errors.Count > 0 ?
-                       Html.ViewData.ModelState["IsQualityAssessmentCorrect"].Errors[0].ErrorMessage : string.Empty
+                       Html.ViewData.ModelState["IsQualityAssessmentCorrect"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Correct",
+                       Label2 = "Incorrect"
                    })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -364,7 +384,9 @@
                     Value = Model.IsServiceProvisionCorrect,
                     HasError = Html.ViewData.ModelState.ContainsKey("IsServiceProvisionCorrect") && Html.ViewData.ModelState["IsServiceProvisionCorrect"].Errors.Count > 0,
                     ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsServiceProvisionCorrect") && Html.ViewData.ModelState["IsServiceProvisionCorrect"].Errors.Count > 0 ?
-                    Html.ViewData.ModelState["IsServiceProvisionCorrect"].Errors[0].ErrorMessage : string.Empty
+                    Html.ViewData.ModelState["IsServiceProvisionCorrect"].Errors[0].ErrorMessage : string.Empty,
+                    Label1 = "Correct",
+                    Label2 = "Incorrect"
                    })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -383,7 +405,9 @@
                     Value = Model.IsLocationCorrect,
                     HasError = Html.ViewData.ModelState.ContainsKey("IsLocationCorrect") && Html.ViewData.ModelState["IsLocationCorrect"].Errors.Count > 0,
                     ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsLocationCorrect") && Html.ViewData.ModelState["IsLocationCorrect"].Errors.Count > 0 ?
-                    Html.ViewData.ModelState["IsLocationCorrect"].Errors[0].ErrorMessage : string.Empty
+                    Html.ViewData.ModelState["IsLocationCorrect"].Errors[0].ErrorMessage : string.Empty,
+                    Label1 = "Correct",
+                    Label2 = "Incorrect"
                     })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -402,7 +426,9 @@
                         Value = Model.IsDateOfIssueCorrect,
                         HasError = Html.ViewData.ModelState.ContainsKey("IsDateOfIssueCorrect") && Html.ViewData.ModelState["IsDateOfIssueCorrect"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDateOfIssueCorrect") && Html.ViewData.ModelState["IsDateOfIssueCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsDateOfIssueCorrect"].Errors[0].ErrorMessage : string.Empty
+                        Html.ViewData.ModelState["IsDateOfIssueCorrect"].Errors[0].ErrorMessage : string.Empty,
+                        Label1 = "Correct",
+                        Label2 = "Incorrect"
                     })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -421,7 +447,9 @@
                     Value = Model.IsDateOfExpiryCorrect,
                     HasError = Html.ViewData.ModelState.ContainsKey("IsDateOfExpiryCorrect") && Html.ViewData.ModelState["IsDateOfExpiryCorrect"].Errors.Count > 0,
                     ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDateOfExpiryCorrect") && Html.ViewData.ModelState["IsDateOfExpiryCorrect"].Errors.Count > 0 ?
-                    Html.ViewData.ModelState["IsDateOfExpiryCorrect"].Errors[0].ErrorMessage : string.Empty
+                    Html.ViewData.ModelState["IsDateOfExpiryCorrect"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Correct",
+                   Label2 = "Incorrect"
                     })
 
 
@@ -441,7 +469,9 @@
                         Value = Model.IsAuthenticyVerifiedCorrect,
                         HasError = Html.ViewData.ModelState.ContainsKey("IsAuthenticyVerifiedCorrect") && Html.ViewData.ModelState["IsAuthenticyVerifiedCorrect"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsAuthenticyVerifiedCorrect") && Html.ViewData.ModelState["IsAuthenticyVerifiedCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsAuthenticyVerifiedCorrect"].Errors[0].ErrorMessage : string.Empty
+                        Html.ViewData.ModelState["IsAuthenticyVerifiedCorrect"].Errors[0].ErrorMessage : string.Empty,
+                        Label1 = "Correct",
+                        Label2 = "Incorrect"
                     })
 
                     <hr class="govuk-section-break govuk-section-break--l">
@@ -502,11 +532,11 @@
                             To continue to the next step, you must complete all sections.
                         </strong>
                     </div>
-                    </div>
+                 </div>
 
                 }
 
-           @*  </div> *@
+           
         </div>
     </main>
 

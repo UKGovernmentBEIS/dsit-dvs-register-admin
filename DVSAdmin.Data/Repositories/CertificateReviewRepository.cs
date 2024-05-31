@@ -48,10 +48,14 @@ namespace DVSAdmin.Data.Repositories
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
                     existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
                     if(cetificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.Rejected)
-                    existingEntity.CertificateReviewRejectionReasonMappings = cetificateReview.CertificateReviewRejectionReasonMappings;
+                    {
+                        existingEntity.CertificateReviewRejectionReasonMappings = cetificateReview.CertificateReviewRejectionReasonMappings;
+                        existingEntity.RejectionComments = cetificateReview.RejectionComments;
+                    }
+                  
                     cetificateReview.ModifiedDate = DateTime.UtcNow;
                     await context.SaveChangesAsync();
-                    genericResponse.InstanceId = existingEntity.Id;
+                   
 
                 }
                 else
@@ -73,6 +77,9 @@ namespace DVSAdmin.Data.Repositories
             }
             return genericResponse;
         }
+
+
+      
 
         public async Task<List<CertificateInformation>> GetCertificateInformationList()
         {
@@ -104,6 +111,11 @@ namespace DVSAdmin.Data.Repositories
         public async Task<List<SupplementaryScheme>> GetSupplementarySchemes()
         {
             return await context.SupplementaryScheme.OrderBy(c => c.SchemeName).ToListAsync();
+        }
+
+        public async Task<List<CertificateReviewRejectionReason>> GetRejectionReasons()
+        {
+            return await context.CertificateReviewRejectionReason.ToListAsync();
         }
     }
 }

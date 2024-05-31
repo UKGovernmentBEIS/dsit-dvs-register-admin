@@ -7,6 +7,7 @@ using DVSAdmin.Extensions;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DVSAdmin.Controllers
 {
@@ -26,7 +27,8 @@ namespace DVSAdmin.Controllers
 
         [HttpGet("certificate-review-list")]
         public async Task<ActionResult> CertificateReviews()
-        {            
+        {
+            
             CertificateReviewListViewModel certificateReviewListViewModel = new CertificateReviewListViewModel();
             var certificateInfoList = await certificateReviewService.GetCertificateInformationList();
             certificateReviewListViewModel.CertificateReviewList = certificateInfoList.Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.Received
@@ -44,7 +46,7 @@ namespace DVSAdmin.Controllers
             CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
             if (certificateInfoId == 0)
             {
-                certificateValidationViewModel = GetCertificateValidationFromSession(HttpContext, "CertificateValidationData");
+                certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
             }
             else
             {
@@ -73,13 +75,22 @@ namespace DVSAdmin.Controllers
                     UserDto userDto = await userService.GetUser(loggedinUserEmail);
                     CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id);
                     GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto);
-
+                   
                     if (saveReview == "draft")
+                    {
                         return RedirectToAction("CertificateValidation", new { certificateInfoId = certificateValidationViewModel.CertificateInformationId });
+                    }
+                        
                     else if (saveReview == "continue")
-                        return RedirectToAction("CertificateReview");
+                    {
+                        HttpContext?.Session.Set("CertificateReviewDto", certificateReviewDto);
+                        return RedirectToAction("CertificateReview", new { reviewId = genericResponse.InstanceId });
+                    }                       
                     else
-                    return RedirectToAction("HandleException", "Error");
+                    {
+                        return RedirectToAction("HandleException", "Error");
+                    }
+                   
                 }
                 else
                 {
@@ -96,15 +107,93 @@ namespace DVSAdmin.Controllers
         [HttpGet("certificate-review")]
         public ActionResult CertificateReview()
         {
-           
-            return View();
+            CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
+            certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
+
+
+
+            CertificateReviewViewModel certificateReviewViewModel = new CertificateReviewViewModel();
+            certificateReviewViewModel.CertificateInformation = certificateValidationViewModel.CertificateInformation;
+          
+
+            return View(certificateReviewViewModel);
         }
 
-        [HttpGet("certificate-submissions")]
-        public ActionResult CertificateSubmissions()
+        [HttpPost("certificate-review")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SaveCertificateReview(CertificateReviewViewModel certificateReviewViewModel, string saveReview)
+        {
+            CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
+            certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
+            certificateReviewViewModel.CertificateInformation =certificateValidationViewModel.CertificateInformation;
+            
+            ValidateCertificateReviewViewModel(certificateReviewViewModel, certificateValidationViewModel, saveReview);          
+
+
+            if (ModelState.IsValid)
+            {
+                CertificateReviewDto certificateReviewDto = new CertificateReviewDto();
+                certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto")??new CertificateReviewDto();
+                certificateReviewDto.InformationMatched = certificateReviewViewModel.InformationMatched;
+                certificateReviewDto.Comments = certificateReviewViewModel.Comments;
+                
+                if (saveReview == "draft")
+                {
+                    certificateReviewDto.CertificateInfoStatus = CertificateInfoStatusEnum.InReview;
+                    GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto);
+                    return View(certificateReviewViewModel);
+                }
+                else if (saveReview == "approve")
+                {
+                    
+                    return RedirectToAction("ApproveSubmission");
+                }
+                else if (saveReview == "reject")
+                {
+                    HttpContext?.Session.Set("CertificateReviewViewData", certificateReviewViewModel);
+                    return RedirectToAction("RejectSubmission");
+                }
+                else
+                {
+                    return RedirectToAction("HandleException", "Error");
+                }
+            }
+            else
+            {
+                return View("CertificateReview", certificateReviewViewModel);
+            }
+        }
+
+        [HttpGet("reject-submission")]
+        public async Task<ActionResult> RejectSubmission()
+        {
+            CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
+            certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
+
+            CertificateReviewViewModel certificateReviewViewModel = new CertificateReviewViewModel();
+            certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewViewData")??new CertificateReviewViewModel();
+
+
+            CertficateRejectionViewModel certficateRejectionViewModel = new CertficateRejectionViewModel();
+            certficateRejectionViewModel.CertificateValidation = certificateValidationViewModel;
+            certficateRejectionViewModel.CertificateReview = certificateReviewViewModel;
+            certficateRejectionViewModel.SelectedReasons = new List<CertificateReviewRejectionReasonDto>();
+            certficateRejectionViewModel.RejectionReasons = await certificateReviewService.GetRejectionReasons();
+            certficateRejectionViewModel.SelectedRejectionReasonIds = certficateRejectionViewModel?.SelectedReasons?.Select(c => c.Id).ToList();
+            return View(certficateRejectionViewModel);
+        }
+
+
+        
+
+        [HttpGet("approve-submission")]
+        public ActionResult ApproveSubmission()
         {
             return View();
         }
+
+
+
 
         [HttpGet("archive-details")]
         public ActionResult ArchiveDetails()
@@ -188,11 +277,57 @@ namespace DVSAdmin.Controllers
         }
 
 
-        public static CertificateValidationViewModel GetCertificateValidationFromSession(HttpContext context, string key)
+        private void ValidateCertificateReviewViewModel(CertificateReviewViewModel certificateReviewViewModel, CertificateValidationViewModel certificateValidationViewModel, string reviewAction)
         {
-            CertificateValidationViewModel model = context?.Session.Get<CertificateValidationViewModel>(key);
-            return model;
+            
+
+            if(Convert.ToBoolean(certificateReviewViewModel.InformationMatched) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsCabLogoCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsCabDetailsCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsProviderDetailsCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsServiceNameCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsRolesCertifiedCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsCertificationScopeCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsServiceSummaryCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsURLLinkToServiceCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsIdentityProfilesCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsQualityAssessmentCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsServiceProvisionCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsLocationCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsDateOfIssueCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsDateOfExpiryCorrect) &&
+            Convert.ToBoolean(certificateValidationViewModel.IsAuthenticyVerifiedCorrect) && reviewAction == "reject")
+            {
+                ModelState.AddModelError("SubmitValidation", "Your decision to approve or reject must match with the selections");
+
+            }
+           else if ((!Convert.ToBoolean(certificateReviewViewModel.InformationMatched) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsCabLogoCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsCabDetailsCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsProviderDetailsCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsServiceNameCorrect) &&
+           !Convert.ToBoolean(certificateValidationViewModel.IsRolesCertifiedCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsCertificationScopeCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsServiceSummaryCorrect) &&
+           !Convert.ToBoolean(certificateValidationViewModel.IsURLLinkToServiceCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsIdentityProfilesCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsQualityAssessmentCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsServiceProvisionCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsLocationCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsDateOfIssueCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsDateOfExpiryCorrect) ||
+           !Convert.ToBoolean(certificateValidationViewModel.IsAuthenticyVerifiedCorrect) )&& reviewAction == "approve")
+            {
+                ModelState.AddModelError("SubmitValidation", "Your decision to approve or reject must match with the selections");
+
+            }
+
+
+
         }
+
+
+
         #endregion
     }
 }

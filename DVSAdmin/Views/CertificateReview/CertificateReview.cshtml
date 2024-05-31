@@ -1,8 +1,308 @@
-﻿@*@model DVSAdmin.Models.CertificateReviewModel;
-    @using DVSAdmin.CommonUtility.Models.Enums;*@
+﻿@model CertificateReviewViewModel
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using Newtonsoft.Json
+
 @{
-    ViewData["Title"] = "PreRegistrationReview";
+    ViewData["Title"] = "Certificate Validation";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
-Review
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "CertificateValidation", "CertificateReview", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+
+            <h1 class="govuk-heading-xl">Certificate review</h1>
+
+            @if (ViewData.ModelState.ErrorCount >0)
+            {
+                ViewData["Title"] = "Error: " + ViewData["Title"];
+                @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+            }
+
+
+            @using (Html.BeginForm("SaveCertificateReview", "CertificateReview", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.CertificateReviewId)
+
+
+                <div class="govuk-grid-column-full">
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header"> Service name </th>
+                                <th scope="col" class="govuk-table__header">Service Provider</th>
+                                <th scope="col" class="govuk-table__header">Conformity Assessment Body </th>
+                                <th scope="col" class="govuk-table__header">Role type</th>
+                                <th scope="col" class="govuk-table__header">Time submitted</th>
+                                <th scope="col" class="govuk-table__header">Review status</th>
+                                <th scope="col" class="govuk-table__header">Days left to complete checks</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+
+                                <th scope="row" class="govuk-table__header">@Model.CertificateInformation.ServiceName</th>
+                                <td class="govuk-table__cell">@Model.CertificateInformation.TradingName</td>
+                                <td class="govuk-table__cell">@Model.CertificateInformation.CreatedBy</td>
+                                <td class="govuk-table__cell">
+                                    @foreach (var role in @Model.CertificateInformation.CertificateInfoRoleMapping)
+                                    {
+                                        RoleEnum enumValue = (RoleEnum)role.RoleId;
+                                        <div> @Enum.GetName(enumValue) </div>
+                                    }
+                                </td>
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateInformation.CreatedDate)</td>
+                                @if (@Model.CertificateInformation.CertificateReview == null)
+                                {
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateInfoStatus)</td>
+                                }
+                                else
+                                {
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateReview.CertificateInfoStatus)</td>
+                                }
+                                <td class="govuk-table__cell">@Model.CertificateInformation.DaysLeftToComplete  days</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-m">Information match</h1>
+                    <p class="govuk-body">
+                        In this section, you will need to review the service provider s certificate
+                        against the submitted information below to check that the information
+                        matches. If you approve this submission, the information below will be
+                        publicly available.
+                    </p>
+
+
+                    <details class="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                Instructions for completing the information match
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text">
+
+
+                            <ol class="govuk-list govuk-list--number">
+                                <li>
+                                    Make sure that you have the service provider s certificate of
+                                    conformity open. You can download the file again using the
+                                    Download certificate button below.
+                                </li>
+                                <li>
+                                    Once you have the certificate open, compare the certification
+                                    information below.
+                                </li>
+                                <li>
+                                    After you have verified that all items match, scroll down to the
+                                    bottom of the page and click the ‘Yes, it matches the information on
+                                    the certificate option. If the items do not match, click the No, it
+                                    does not match.
+                                </li>
+                                <li>
+                                    If you need to pause your review or wish to complete it at a later time,
+                                    you can save your progress by clicking the Save as draft button
+                                    located at the bottom of the page. Additionally, if you have any
+                                    comments or notes regarding the verification, you can type them in
+                                    the free text area also at the bottom of the page.
+                                </li>
+                                <li>
+                                    . Once you have verified all items, scroll down to the bottom of the
+                                    page and select Approve submission or Reject submission to
+                                    proceed with the process.
+                                </li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <h1 class="govuk-heading-m">Provided certificate of conformity</h1>
+                    <p class="govuk-body">
+                        Download the certificate of conformity to compare against the details
+                        submitted by the Conformity Assessment Body (CAB)
+                    </p>
+
+                    <span class="govuk-caption-xl">@Model.CertificateInformation.FileName</span>
+
+                    <div id="download-certificate-hint" class="govuk-hint">
+                        PDF, 19.5 KB, 1 page
+                        This file may not be suitable for users of assistive technology.
+                    </div>
+
+                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" aria-describedby="download-certificate-hint">
+                        Download certificate of conformity
+                    </button>
+
+                    <hr class="govuk-section-break govuk-section-break--m">
+
+                </div>
+                <div class="govuk-grid-column-full">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Registered name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.CertificateInformation.RegisteredName
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Trading name(s)
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.CertificateInformation.TradingName
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Company address details
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStringWithLineBreaks(Model.CertificateInformation.Address)
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Name of service
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.CertificateInformation.ServiceName
+                            </dd>
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Name of role(s) certified
+                                against
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @foreach (var item in Model?.CertificateInformation?.Roles)
+                                {
+                                    <div>@item.RoleName</div> <br />
+                                }
+                            </dd>
+
+                        </div>
+
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Identity profiles
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @foreach (var item in Model?.CertificateInformation?.IdentityProfiles)
+                                {
+                                    <div>@item.IdentityProfileName</div> <br />
+                                }
+                            </dd>
+
+                        </div>
+
+
+                        @if (Model?.CertificateInformation?.SupplementarySchemes != null)
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Supplementary schemes
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @foreach (var item in Model?.CertificateInformation?.SupplementarySchemes)
+                                    {
+                                        <div>@item.SchemeName</div> <br />
+                                    }
+                                </dd>
+
+                            </div>
+                        }
+                    </dl>
+                </div>
+                <div class="govuk-grid-column-two-thirds">
+                    <h2 class="govuk-heading-m">Information match</h2>
+
+                    <p class="govuk-body">
+                        The information above matches the service provider's certificate of
+                        conformity.
+                    </p>
+                  
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ReviewRadioButtonView.cshtml", new RadioButtonGroupViewModel
+                   {
+                       PropertyName = "InformationMatched",
+                       Value = Model.InformationMatched,
+                       HasError = Html.ViewData.ModelState.ContainsKey("InformationMatched") && Html.ViewData.ModelState["InformationMatched"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("InformationMatched") && Html.ViewData.ModelState["InformationMatched"].Errors.Count > 0 ?
+                       Html.ViewData.ModelState["InformationMatched"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Yes, it matches the information on the certificate",
+                       Label2 = "No, it does not match"
+                   })
+
+
+
+                    @if (Html.ViewData.ModelState.ContainsKey("Comments") && Html.ViewData.ModelState["Comments"].Errors.Count > 0)
+                    {
+                        <div class="govuk-form-group govuk-form-group--error">
+                            <h1 class="govuk-label-wrapper">
+                                <label class="govuk-label govuk-label--s" for="comments">
+                                    Comments
+                                </label>
+
+                            </h1>
+                            <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
+                            <p id="comments-error" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comments)
+                            </p>
+                            @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea govuk-textarea--error", @id = "comments", @name = "comment", @rows = "5" })
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div class="govuk-form-group">
+                            <h1 class="govuk-label-wrapper">
+                                <label class="govuk-label govuk-label--s" for="comments">
+                                    Comments
+                                </label>
+                            </h1>
+
+                            @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5" })
+                        </div>
+
+                    }
+                </div>
+
+                <div class="govuk-grid-column-full">
+                    @Html.ValidationMessageFor(m => m.SubmitValidation, "", new { @class = "govuk-error-message", id = "submit-error" })
+
+                    <div class="govuk-button-group" id="submitvalidation">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
+                            Approve submission
+                        </button>
+                        <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
+                            Reject submission
+                        </button>
+                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
+                            Save as draft
+                        </button>
+                    </div>
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            To proceed with approval, this submission must have passed all
+                            certificate validation and information match checks.
+                        </strong>
+                    </div>
+                </div>
+            }
+
+
+        </div>
+    </main>
+</div>

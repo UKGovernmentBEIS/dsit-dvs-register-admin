@@ -1,0 +1,365 @@
+﻿@model CertficateRejectionViewModel
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "RejectSubmission";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "CertificateValidation", "CertificateReview", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+
+            <h1 class="govuk-heading-xl">Reject submission</h1>
+            <p class="govuk-body">
+                You are about to reject the following submission:
+            </p>
+            @if (ViewData.ModelState.ErrorCount >0)
+            {
+                ViewData["Title"] = "Error: " + ViewData["Title"];
+                @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+            }
+
+              @using (Html.BeginForm("SaveCertificateReview", "CertificateReview", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                <div class="govuk-grid-column-full">
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header"> Service name </th>
+                                <th scope="col" class="govuk-table__header">Service Provider</th>
+                                <th scope="col" class="govuk-table__header">Conformity Assessment Body </th>
+                                <th scope="col" class="govuk-table__header">Role type</th>
+                                <th scope="col" class="govuk-table__header">Time submitted</th>
+                                <th scope="col" class="govuk-table__header">Review status</th>
+                                <th scope="col" class="govuk-table__header">Days left to complete checks</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+
+                                <th scope="row" class="govuk-table__header">@Model.CertificateValidation.CertificateInformation.ServiceName</th>
+                                <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.TradingName</td>
+                                <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.CreatedBy</td>
+                                <td class="govuk-table__cell">
+                                    @foreach (var role in @Model.CertificateValidation.CertificateInformation.CertificateInfoRoleMapping)
+                                    {
+                                        RoleEnum enumValue = (RoleEnum)role.RoleId;
+                                        <div> @Enum.GetName(enumValue) </div>
+                                    }
+                                </td>
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateValidation.CertificateInformation.CreatedDate)</td>
+                                @if (@Model.CertificateValidation.CertificateInformation.CertificateReview == null)
+                                {
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.CertificateInformation.CertificateInfoStatus)</td>
+                                }
+                                else
+                                {
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.CertificateInformation.CertificateReview.CertificateInfoStatus)</td>
+                                }
+                                <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.DaysLeftToComplete  days</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h1 class="govuk-heading-m">What was rejected</h1>
+
+                    
+                    <dl class="govuk-summary-list">
+                        @if(!Convert.ToBoolean(Model?.CertificateValidation?.IsCabLogoCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Logos and certificate number
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsCabDetailsCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Conformity Assessment Body details
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsProviderDetailsCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Service provider details
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsServiceNameCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Name of service
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsRolesCertifiedCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Roles certified against
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsCertificationScopeCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Scope of certification
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsServiceSummaryCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                   Summary of service
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsURLLinkToServiceCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    URL link to service
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsIdentityProfilesCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    GPG45 identity profiles
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsQualityAssessmentCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    GPG44 quality assessment
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsServiceProvisionCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Methods of service provision
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsLocationCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Geographical location
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsDateOfIssueCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Date of issue
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsDateOfExpiryCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Date of expiry
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateValidation?.IsAuthenticyVerifiedCorrect))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Authenticity verification
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        Incorrect
+                                    </strong>
+                                </dd>
+                            </div>
+                        }
+                        @if (!Convert.ToBoolean(Model?.CertificateReview?.InformationMatched))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Information match
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--red">
+                                        No, it does not match
+                                    </strong>
+                                </dd>
+                            </div>
+                        }                      
+                        
+                       
+                    </dl>
+                </div>
+                <div class="govuk-grid-column-three-quarters">
+                    <h1 class="govuk-heading-s">Coments</h1>
+                    <p class="govuk-body">
+                        @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateValidation?.CommentsForIncorrect)
+                    </p>
+                    <p class="govuk-body">
+                        @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateReview?.Comments)
+                    </p>
+                    <h1 class="govuk-heading-l">
+                        Rejection information to be sent to the
+                        Conformity Assessment Body
+                    </h1>
+                    <p class="govuk-body">
+                        You should now give details of the reason(s) for rejection to be sent by email
+                        to the CAB. Please select reason(s) from the below list which align with the
+                        rejection criteria shown above. You should also provide specific details and
+                        outline any action required in the text box below
+                    </p>
+
+
+
+                    <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("SelectedRejectionReasonIds") && Html.ViewData.ModelState["SelectedRejectionReasonIds"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                <h1 class="govuk-fieldset__heading">
+                                    Select reason(s) for rejection to be sent to the CAB
+                                </h1>
+                            </legend>
+
+                            @Html.ValidationMessageFor(m => m.SelectedReasons, "", new { @class = "govuk-error-message", id = "selectedidentityprofileids-error" })
+                            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                                @foreach (var item in Model.RejectionReasons)
+                                {
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" type="checkbox" name="SelectedRejectionReasonIds" value="reason_@item.Id"
+                                        @(Model.SelectedRejectionReasonIds.Contains(item.Id) ? "checked" : "") />
+                                        <label class="govuk-label govuk-checkboxes__label" for="reason_@item.Id">@item.Reason</label>
+                                    </div>
+                                }
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <p class="govuk-body">
+                        Please use the textbox below to give further details on the reason for
+                        rejection and any required amendments for re submission. If you had selected
+                        Other , please specify details below.
+                    </p>
+
+                    <h1 class="govuk-heading-s"> Give further details on reason(s) selected and any required amendments</h1>
+                    <div id="comments-hint" class="govuk-hint">
+                        For example: ‘UKDIATF logo is missing from the certificate. Please add
+                        UKDIATF logo to the certificate.
+                    </div>
+
+                    @if (Html.ViewData.ModelState.ContainsKey("Comments") && Html.ViewData.ModelState["Comments"].Errors.Count > 0)
+                    {
+                        <div class="govuk-form-group govuk-form-group--error">                         
+                            <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
+                            <p id="comments-error" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comments)
+                            </p>
+                            @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea govuk-textarea--error", @id = "comments", @name = "comment", @rows = "5" })
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="govuk-form-group">                        
+
+                            @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5" })
+                        </div>
+
+                    }
+                </div>
+                }
+
+        </div>
+    </main>
+</div>
+
