@@ -143,87 +143,9 @@
                     <hr class="govuk-section-break govuk-section-break--m">
 
                 </div>
-                <div class="govuk-grid-column-full">
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Registered name
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.RegisteredName
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Trading name(s)
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.TradingName
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Company address details
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @HtmlExtensions.ToStringWithLineBreaks(Model.CertificateInformation.Address)
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Name of service
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.ServiceName
-                            </dd>
-                        </div>
 
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Name of role(s) certified
-                                against
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @foreach (var item in Model?.CertificateInformation?.Roles)
-                                {
-                                    <div>@item.RoleName</div>
-                                }
-                            </dd>
-
-                        </div>
-
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Identity profiles
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @foreach (var item in Model?.CertificateInformation?.IdentityProfiles)
-                                {
-                                    <div>@item.IdentityProfileName</div>
-                                }
-                            </dd>
-
-                        </div>
-
-
-                        @if (Model?.CertificateInformation?.SupplementarySchemes != null)
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Supplementary schemes
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @foreach (var item in Model?.CertificateInformation?.SupplementarySchemes)
-                                    {
-                                        <div>@item.SchemeName</div> 
-                                    }
-                                </dd>
-
-                            </div>
-                        }
-                    </dl>
-                </div>
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateDetailsView.cshtml", Model.CertificateInformation)
+          
                 <div class="govuk-grid-column-two-thirds">
                     <h2 class="govuk-heading-m">Information match</h2>
 

@@ -17,12 +17,15 @@ namespace DVSAdmin.Controllers
 
         private readonly ILogger<CertificateReviewController> logger;
         private readonly ICertificateReviewService certificateReviewService;
+        private readonly IPreRegistrationReviewService preRegistrationReviewService;
         private readonly IUserService userService;
-        public CertificateReviewController(ILogger<CertificateReviewController> logger, ICertificateReviewService certificateReviewService, IUserService userService)
+        public CertificateReviewController(ILogger<CertificateReviewController> logger, ICertificateReviewService certificateReviewService, IUserService userService,
+            IPreRegistrationReviewService preRegistrationReviewService)
         {
             this.logger = logger;
             this.certificateReviewService = certificateReviewService;
             this.userService = userService;
+            this.preRegistrationReviewService = preRegistrationReviewService;
         }
 
         [HttpGet("certificate-review-list")]
@@ -165,6 +168,11 @@ namespace DVSAdmin.Controllers
                         HttpContext?.Session.Set("CertificateReviewDto", certificateReviewDto);
                         return RedirectToAction("RejectSubmission");
                     }
+                    else if (saveReview == "approve")
+                    {
+                        HttpContext?.Session.Set("CertificateReviewDto", certificateReviewDto);
+                        return RedirectToAction("ApproveSubmission");
+                    }
                     else
                     {
                         return RedirectToAction(Constants.ErrorPath);
@@ -183,6 +191,8 @@ namespace DVSAdmin.Controllers
 
         }
 
+
+        #region Reject Flow
         [HttpGet("reject-submission")]
         public async Task<ActionResult> RejectSubmission()
         {
@@ -297,12 +307,34 @@ namespace DVSAdmin.Controllers
             return View();
         }
 
+        #endregion
 
         [HttpGet("approve-submission")]
-        public ActionResult ApproveSubmission()
+        public async Task<ActionResult> ApproveSubmission()
+        {
+            CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
+            certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
+
+            CertificateReviewViewModel certificateReviewViewModel = new CertificateReviewViewModel();
+            certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData")??new CertificateReviewViewModel();
+
+            CertificateApprovalViewModel certificateApprovalViewModel = new CertificateApprovalViewModel();
+            certificateApprovalViewModel.CertificateReview = certificateReviewViewModel;
+            certificateApprovalViewModel.CertificateValidation= certificateValidationViewModel;
+            certificateApprovalViewModel.Email =  HttpContext?.Session.Get<string>("Email")??string.Empty;
+
+            PreRegistrationDto preRegistrationDto = await preRegistrationReviewService.GetPreRegistrationDetails(certificateValidationViewModel.PreRegistrationId);
+            certificateApprovalViewModel.PreRegistration = preRegistrationDto;
+            return View(certificateApprovalViewModel);
+        }
+        
+
+        [HttpGet("approval-confirmation")]
+        public ActionResult ApprovalConfirmation()
         {
             return View();
         }
+
 
         [HttpGet("archive-details")]
         public ActionResult ArchiveDetails()

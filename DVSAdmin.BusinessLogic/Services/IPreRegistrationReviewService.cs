@@ -10,5 +10,6 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public Task<PreRegistrationDto> GetPreRegistration(int preRegistrationId);
         public Task<GenericResponse> SavePreRegistrationReview(PreRegistrationReviewDto preRegistrationReviewDto, ReviewTypeEnum reviewType);
+        public Task<PreRegistrationDto> GetPreRegistrationDetails(int preRegistrationId);
     }
 }
