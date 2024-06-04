@@ -23,7 +23,7 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CetificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId && e.PreRegistrationId == cetificateReview.PreRegistrationId);
+                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId && e.PreRegistrationId == cetificateReview.PreRegistrationId);
 
                 if (existingEntity != null)
                 {
@@ -64,15 +64,16 @@ namespace DVSAdmin.Data.Repositories
 
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
                     existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
-                    cetificateReview.ModifiedDate = DateTime.UtcNow;
-                    await context.SaveChangesAsync();
+                    existingEntity.ModifiedDate = DateTime.UtcNow;
+                    genericResponse.InstanceId = existingEntity.Id;
+                   await context.SaveChangesAsync();
                    
 
                 }
                 else
                 {
                     cetificateReview.CreatedDate = DateTime.UtcNow;
-                    var entity = await context.CetificateReview.AddAsync(cetificateReview);
+                    var entity = await context.CertificateReview.AddAsync(cetificateReview);
                     await context.SaveChangesAsync();
                     genericResponse.InstanceId = entity.Entity.Id;
                 }                
@@ -107,6 +108,14 @@ namespace DVSAdmin.Data.Repositories
             .Include(p=>p.CertificateReview)
             .Where(p => p.Id == certificateInfoId).FirstOrDefaultAsync()?? new CertificateInformation();
             return certificateInformation;
+        }
+
+        public async Task<CertificateReview> GetCertificateReview(int reviewId)
+        {
+            CertificateReview certificateReview = new CertificateReview();
+            certificateReview = await context.CertificateReview
+            .Where(p => p.Id == reviewId).FirstOrDefaultAsync()?? new CertificateReview();
+            return certificateReview;
         }
 
         public async Task<List<Role>> GetRoles()

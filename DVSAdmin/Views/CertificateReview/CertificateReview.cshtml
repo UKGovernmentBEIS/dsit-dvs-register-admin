@@ -135,9 +135,10 @@
                         This file may not be suitable for users of assistive technology.
                     </div>
 
-                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" aria-describedby="download-certificate-hint">
+                    <a href="#" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                         Download certificate of conformity
-                    </button>
+                    </a>
+
 
                     <hr class="govuk-section-break govuk-section-break--m">
 
@@ -185,7 +186,7 @@
                             <dd class="govuk-summary-list__value">
                                 @foreach (var item in Model?.CertificateInformation?.Roles)
                                 {
-                                    <div>@item.RoleName</div> <br />
+                                    <div>@item.RoleName</div>
                                 }
                             </dd>
 
@@ -199,7 +200,7 @@
                             <dd class="govuk-summary-list__value">
                                 @foreach (var item in Model?.CertificateInformation?.IdentityProfiles)
                                 {
-                                    <div>@item.IdentityProfileName</div> <br />
+                                    <div>@item.IdentityProfileName</div>
                                 }
                             </dd>
 
@@ -215,7 +216,7 @@
                                 <dd class="govuk-summary-list__value">
                                     @foreach (var item in Model?.CertificateInformation?.SupplementarySchemes)
                                     {
-                                        <div>@item.SchemeName</div> <br />
+                                        <div>@item.SchemeName</div> 
                                     }
                                 </dd>
 
@@ -280,17 +281,39 @@
                 <div class="govuk-grid-column-full">
                     @Html.ValidationMessageFor(m => m.SubmitValidation, "", new { @class = "govuk-error-message", id = "submit-error" })
 
-                    <div class="govuk-button-group" id="submitvalidation">
-                        <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
-                            Approve submission
-                        </button>
-                        <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
-                            Reject submission
-                        </button>
-                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
-                            Save as draft
-                        </button>
-                    </div>
+
+
+                    @if (Model.CertificateInformation.CertificateReview == null || (Model.CertificateInformation.CertificateReview != null &&
+                   Model.CertificateInformation.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview))
+                   {
+                        <div class="govuk-button-group" id="submitvalidation">
+                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
+                                Approve submission
+                            </button>
+                            <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
+                                Reject submission
+                            </button>
+                            <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
+                                Save as draft
+                            </button>
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div class="govuk-button-group" id="submitvalidation">
+                            <button type="submit" disabled aria-disabled="true" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
+                                Approve submission
+                            </button>
+                            <button type="submit" disabled aria-disabled="true"  class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
+                                Reject submission
+                            </button>
+                            <button type="submit" disabled aria-disabled="true" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
+                                Save as draft
+                            </button>
+                        </div>
+                    }
+
                     <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">

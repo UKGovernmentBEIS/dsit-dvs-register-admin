@@ -2,10 +2,10 @@
 
 namespace DVSAdmin.Controllers
 {
-    [Route("preregistration-review/service-error")]
+    [Route("")]
     public class ErrorController : Controller
     {
-        [HttpGet]
+        [HttpGet("preregistration-review/service-error")]
         public IActionResult HandleException()
         {
             HttpContext.Session.Clear();

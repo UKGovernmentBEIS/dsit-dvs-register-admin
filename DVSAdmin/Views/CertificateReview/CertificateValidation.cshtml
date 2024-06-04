@@ -132,9 +132,9 @@
                         This file may not be suitable for users of assistive technology.
                     </div>
 
-                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" aria-describedby="download-certificate-hint">
-                        Download certificate of conformity
-                    </button>
+                    <a href="#" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                        Download certificate of conformity                      
+                    </a>
 
                     <hr class="govuk-section-break govuk-section-break--m">
 
@@ -516,15 +516,29 @@
 
 
                 <div class="govuk-grid-column-full">
-               
-                    <div class="govuk-button-group">
-                        <button type="submit"  class="govuk-button" data-module="govuk-button" name="saveReview" value="continue">
-                            Continue
-                        </button>
-                        <button type="submit"  class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
-                            Save as draft
-                        </button>
-                    </div>
+
+                    @if (Model.CertificateInformation.CertificateReview == null || (Model.CertificateInformation.CertificateReview != null &&
+                        Model.CertificateInformation.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview))
+                    {
+                        <div class="govuk-button-group">
+                            <button type="submit"  class="govuk-button" data-module="govuk-button" name="saveReview" value="continue">
+                                Continue
+                            </button>
+                            <button type="submit"  class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
+                                Save as draft
+                            </button>
+                        </div>
+                    }
+                  else{
+                        <div class="govuk-button-group">
+                            <button type="submit" disabled aria-disabled="true"  class="govuk-button" data-module="govuk-button" name="saveReview" value="continue">
+                                Continue
+                            </button>
+                            <button type="submit" disabled aria-disabled="true"  class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
+                                Save as draft
+                            </button>
+                        </div>
+                    }
                     <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">

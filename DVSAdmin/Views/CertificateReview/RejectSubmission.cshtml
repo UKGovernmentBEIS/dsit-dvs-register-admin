@@ -8,7 +8,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateValidation", "CertificateReview", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", null, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
 
@@ -24,7 +24,8 @@
 
             @using (Html.BeginForm("SaveRejectSubmission", "CertificateReview", FormMethod.Post))
                 {
-                    @Html.AntiForgeryToken()
+                string checkboxid = string.Empty;
+                @Html.AntiForgeryToken()
 
                 <div class="govuk-grid-column-full">
                     <table class="govuk-table">
@@ -44,7 +45,7 @@
 
                                 <th scope="row" class="govuk-table__header">@Model.CertificateValidation.CertificateInformation.ServiceName</th>
                                 <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.TradingName</td>
-                                <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.CreatedBy</td>
+                                <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.SubmittedCAB</td>
                                 <td class="govuk-table__cell">
                                     @foreach (var role in @Model.CertificateValidation.CertificateInformation.CertificateInfoRoleMapping)
                                     {
@@ -283,7 +284,7 @@
                        
                     </dl>
                 </div>
-                <div class="govuk-grid-column-three-quarters">
+                <div class="govuk-grid-column-two-thirds">
                     <h1 class="govuk-heading-s">Coments</h1>
                     <p class="govuk-body">
                         @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateValidation?.CommentsForIncorrect)
@@ -303,9 +304,13 @@
                     </p>
 
 
+                </div>
+
 
                     @if (Html.ViewData.ModelState.ContainsKey("SelectedRejectionReasonIds") && Html.ViewData.ModelState["SelectedRejectionReasonIds"].Errors.Count > 0)
                     {
+
+                    <div class="govuk-grid-column-full">
                         <div class="govuk-form-group govuk-form-group--error">
                             <fieldset class="govuk-fieldset">
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
@@ -316,22 +321,25 @@
                                 <p id="selectedrejectionreasonids-error" class="govuk-error-message">
                                     <span class="govuk-visually-hidden">Error:</span> @Html.ValidationMessageFor(m => m.SelectedRejectionReasonIds, "", new { @class = "govuk-error-message" })
                                 </p>
-                                <div class="govuk-checkboxes" id="selectedrejectionreasonids" data-module="govuk-checkboxes">
-                                    @foreach (var reason in Model.RejectionReasons)
+                                <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                                    @foreach (var reason in Model?.RejectionReasons)
                                     {
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedRejectionReasonIds" value="@reason.Id" id="reason_@reason.Id" aria-describedby="selectedrejectionreasonids-error"
+                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedRejectionReasonIds" value="@reason.Id" aria-describedby="selectedrejectionreasonids-error" id="@("selectedrejectionreasonids"+checkboxid)"
                                             @(Model.SelectedRejectionReasonIds.Contains(reason.Id) ? "checked" : "") />
-                                            <label class="govuk-label govuk-checkboxes__label" for="reason_@reason.Id">@reason.Reason</label>
+                                            <label class="govuk-label govuk-checkboxes__label" for="@("selectedrejectionreasonids"+checkboxid)">@reason.Reason</label>
                                         </div>
+                                        checkboxid = (reason.Id + 1).ToString();
                                     }
                                 </div>
 
                             </fieldset>
                         </div>
+                        </div>
                     }
                     else
                     {
+                    <div class="govuk-grid-column-three-quarters">
                         <div class="govuk-form-group">
                             <fieldset class="govuk-fieldset">
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
@@ -341,22 +349,26 @@
                                 </legend>
 
 
-                                <div class="govuk-checkboxes" id="selectedrejectionreasonids" data-module="govuk-checkboxes">
+                                <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                                    
                                     @foreach (var reason in Model.RejectionReasons)
-                                    {
+                                    {                                        
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedRejectionReasonIds" value="@reason.Id" id="reason_@reason.Id" 
+                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedRejectionReasonIds" value="@reason.Id" id="@("selectedrejectionreasonids"+checkboxid)"
                                             @(Model.SelectedRejectionReasonIds.Contains(reason.Id) ? "checked" : "") />
-                                            <label class="govuk-label govuk-checkboxes__label" for="reason_@reason.Id">@reason.Reason</label>
+                                            <label class="govuk-label govuk-checkboxes__label" for="@("selectedrejectionreasonids"+checkboxid)">@reason.Reason</label>
                                         </div>
+                                        checkboxid = (reason.Id + 1).ToString();
+
                                     }
                                 </div>
 
                             </fieldset>
                         </div>
+                        </div>
                     }
 
-
+                <div class="govuk-grid-column-two-thirds">
                     <p class="govuk-body">
                         Please use the textbox below to give further details on the reason for
                         rejection and any required amendments for re submission. If you had selected
@@ -397,9 +409,9 @@
                         </strong>
                     </div>
 
-
-                 
                 </div>
+                 
+               
                 <div class="govuk-grid-column-full">
 
                     <hr class="govuk-section-break govuk-section-break--visible">
@@ -425,6 +437,8 @@
                         </button>
                     </div>                
                 </div>
+
+                @Html.Hidden("RejectionReasons", JsonConvert.SerializeObject(Model.RejectionReasons))
                 }
 
         </div>

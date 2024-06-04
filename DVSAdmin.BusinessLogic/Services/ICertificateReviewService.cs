@@ -10,5 +10,6 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<CertificateInformationDto> GetCertificateInformation(int certificateInfoId);
         public Task<List<CertificateInformationDto>> GetCertificateInformationList();
         public  Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons();
+        public  Task<CertificateReviewDto> GetCertificateReview(int reviewId);
     }
 }

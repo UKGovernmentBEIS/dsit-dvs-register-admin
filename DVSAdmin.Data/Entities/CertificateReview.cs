@@ -35,12 +35,12 @@ namespace DVSAdmin.Data.Entities
         public bool IsDateOfExpiryCorrect { get; set; }
         public bool IsAuthenticyVerifiedCorrect { get; set; }
         public string CommentsForIncorrect { get; set; }
-        public bool InformationMatched { get; set; }
-        public string Comments { get; set; }
-        public int VerifiedUser { get; set; }      
+        public bool? InformationMatched { get; set; }
+        public string? Comments { get; set; }
+        public string? RejectionComments { get; set; }
+        public int VerifiedUser { get; set; }
         public CertificateInfoStatusEnum CertificateInfoStatus { get; set; }
         public ICollection<CertificateReviewRejectionReasonMappings>? CertificateReviewRejectionReasonMappings { get; set; }
-        public string? RejectionComments { get; set; }
 
     }
 }

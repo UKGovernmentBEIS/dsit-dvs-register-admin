@@ -15,7 +15,7 @@ namespace DVSAdmin.Data
         public DbSet<PreRegistrationReview> PreRegistrationReview { get; set; }
         public DbSet<UniqueReferenceNumber> UniqueReferenceNumber { get; set; }
 
-        public DbSet<CertificateReview> CetificateReview { get; set; }
+        public DbSet<CertificateReview> CertificateReview { get; set; }
         public DbSet<CertificateReviewRejectionReason> CertificateReviewRejectionReason { get; set; }
         public DbSet<CertificateReviewRejectionReasonMappings> CertificateReviewRejectionReasonMappings { get; set; }
 

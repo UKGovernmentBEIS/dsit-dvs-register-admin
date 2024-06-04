@@ -59,6 +59,8 @@ namespace DVSAdmin.BusinessLogic
            .ForMember(dest => dest.CertificateInfoIdentityProfileMapping, opt => opt.MapFrom(src => src.CertificateInfoIdentityProfileMapping))
            .ForMember(dest => dest.CertificateInfoSupSchemeMappings, opt => opt.MapFrom(src => src.CertificateInfoSupSchemeMappings));
 
+            CreateMap<CertificateReviewRejectionReasonMappings, CertificateReviewRejectionReasonMappingsDto>();
+            CreateMap<CertificateReviewRejectionReasonMappingsDto, CertificateReviewRejectionReasonMappings>();
             CreateMap<CertificateReview, CertificateReviewDto>().ForMember(dest => dest.CertificateReviewRejectionReasonMappings,
             opt => opt.MapFrom(src => src.CertificateReviewRejectionReasonMappings));
             CreateMap<CertificateReviewDto, CertificateReview>().ForMember(dest => dest.CertificateReviewRejectionReasonMappings,
