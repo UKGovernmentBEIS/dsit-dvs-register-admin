@@ -22,7 +22,7 @@
                 @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
             }
 
-              @using (Html.BeginForm("SaveCertificateReview", "CertificateReview", FormMethod.Post))
+            @using (Html.BeginForm("SaveRejectSubmission", "CertificateReview", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
 
@@ -69,7 +69,7 @@
 
                     <h1 class="govuk-heading-m">What was rejected</h1>
 
-                    
+                    <hr class="govuk-section-break govuk-section-break--visible">
                     <dl class="govuk-summary-list">
                         @if(!Convert.ToBoolean(Model?.CertificateValidation?.IsCabLogoCorrect))
                         {
@@ -304,27 +304,58 @@
 
 
 
-                    <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("SelectedRejectionReasonIds") && Html.ViewData.ModelState["SelectedRejectionReasonIds"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                        <fieldset class="govuk-fieldset">
-                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                                <h1 class="govuk-fieldset__heading">
-                                    Select reason(s) for rejection to be sent to the CAB
-                                </h1>
-                            </legend>
+                    @if (Html.ViewData.ModelState.ContainsKey("SelectedRejectionReasonIds") && Html.ViewData.ModelState["SelectedRejectionReasonIds"].Errors.Count > 0)
+                    {
+                        <div class="govuk-form-group govuk-form-group--error">
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                    <h1 class="govuk-fieldset__heading">
+                                        Select reason(s) for rejection to be sent to the CAB
+                                    </h1>
+                                </legend>
+                                <p id="selectedrejectionreasonids-error" class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">Error:</span> @Html.ValidationMessageFor(m => m.SelectedRejectionReasonIds, "", new { @class = "govuk-error-message" })
+                                </p>
+                                <div class="govuk-checkboxes" id="selectedrejectionreasonids" data-module="govuk-checkboxes">
+                                    @foreach (var reason in Model.RejectionReasons)
+                                    {
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedRejectionReasonIds" value="@reason.Id" id="reason_@reason.Id" aria-describedby="selectedrejectionreasonids-error"
+                                            @(Model.SelectedRejectionReasonIds.Contains(reason.Id) ? "checked" : "") />
+                                            <label class="govuk-label govuk-checkboxes__label" for="reason_@reason.Id">@reason.Reason</label>
+                                        </div>
+                                    }
+                                </div>
 
-                            @Html.ValidationMessageFor(m => m.SelectedReasons, "", new { @class = "govuk-error-message", id = "selectedidentityprofileids-error" })
-                            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                                @foreach (var item in Model.RejectionReasons)
-                                {
-                                    <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" type="checkbox" name="SelectedRejectionReasonIds" value="reason_@item.Id"
-                                        @(Model.SelectedRejectionReasonIds.Contains(item.Id) ? "checked" : "") />
-                                        <label class="govuk-label govuk-checkboxes__label" for="reason_@item.Id">@item.Reason</label>
-                                    </div>
-                                }
-                            </div>
-                        </fieldset>
-                    </div>
+                            </fieldset>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="govuk-form-group">
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                    <h1 class="govuk-fieldset__heading">
+                                        Select the role(s)
+                                    </h1>
+                                </legend>
+
+
+                                <div class="govuk-checkboxes" id="selectedrejectionreasonids" data-module="govuk-checkboxes">
+                                    @foreach (var reason in Model.RejectionReasons)
+                                    {
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedRejectionReasonIds" value="@reason.Id" id="reason_@reason.Id" 
+                                            @(Model.SelectedRejectionReasonIds.Contains(reason.Id) ? "checked" : "") />
+                                            <label class="govuk-label govuk-checkboxes__label" for="reason_@reason.Id">@reason.Reason</label>
+                                        </div>
+                                    }
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    }
+
 
                     <p class="govuk-body">
                         Please use the textbox below to give further details on the reason for
@@ -356,6 +387,43 @@
                         </div>
 
                     }
+
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            The details provided above will also be included in the email sent to
+                            the CAB.
+                        </strong>
+                    </div>
+
+
+                 
+                </div>
+                <div class="govuk-grid-column-full">
+
+                    <hr class="govuk-section-break govuk-section-break--visible">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email address of
+                                CAB
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.CertificateValidation.CertificateInformation.CreatedBy
+                            </dd>
+                        </div>
+
+
+                    </dl>
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="proceed">
+                            Proceed with rejection
+                        </button>
+                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
+                            Cancel
+                        </button>
+                    </div>                
                 </div>
                 }
 

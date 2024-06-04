@@ -8,6 +8,7 @@ using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DVSAdmin.Controllers
 {
@@ -28,7 +29,9 @@ namespace DVSAdmin.Controllers
         [HttpGet("certificate-review-list")]
         public async Task<ActionResult> CertificateReviews()
         {
-            
+
+            HttpContext.Session?.Set("Email", "aiswarya.rajendran@dsit.gov.uk");
+
             CertificateReviewListViewModel certificateReviewListViewModel = new CertificateReviewListViewModel();
             var certificateInfoList = await certificateReviewService.GetCertificateInformationList();
             certificateReviewListViewModel.CertificateReviewList = certificateInfoList.Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.Received
@@ -65,16 +68,18 @@ namespace DVSAdmin.Controllers
         {
             CertificateInformationDto certificateInformationDto = await certificateReviewService.GetCertificateInformation(certificateValidationViewModel.CertificateInformationId);
             certificateValidationViewModel.CertificateInformation = certificateInformationDto;
-            HttpContext?.Session.Set("CertificateValidationData", certificateValidationViewModel);
+           
             certificateValidationViewModel.CommentsForIncorrect = InputSanitizeExtensions.CleanseInput(certificateValidationViewModel.CommentsForIncorrect??string.Empty);
+            HttpContext?.Session.Set("CertificateValidationData", certificateValidationViewModel);
+
             string loggedinUserEmail = HttpContext?.Session.Get<string>("Email");
             if (!string.IsNullOrEmpty(loggedinUserEmail))
             {
                 if (ModelState.IsValid)
                 {
                     UserDto userDto = await userService.GetUser(loggedinUserEmail);
-                    CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id);
-                    GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto);
+                    CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, CertificateInfoStatusEnum.InReview, null);
+                    GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto,CertificateReviewTypeEnum.Validation);
                    
                     if (saveReview == "draft")
                     {
@@ -83,7 +88,7 @@ namespace DVSAdmin.Controllers
                         
                     else if (saveReview == "continue")
                     {
-                        HttpContext?.Session.Set("CertificateReviewDto", certificateReviewDto);
+                        //HttpContext?.Session.Set("CertificateReviewDto", certificateReviewDto); // save dto o session , remaining save happens in next page
                         return RedirectToAction("CertificateReview", new { reviewId = genericResponse.InstanceId });
                     }                       
                     else
@@ -112,7 +117,7 @@ namespace DVSAdmin.Controllers
 
 
 
-            CertificateReviewViewModel certificateReviewViewModel = new CertificateReviewViewModel();
+            CertificateReviewViewModel certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewViewData")??new CertificateReviewViewModel();
             certificateReviewViewModel.CertificateInformation = certificateValidationViewModel.CertificateInformation;
           
 
@@ -122,46 +127,54 @@ namespace DVSAdmin.Controllers
         [HttpPost("certificate-review")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SaveCertificateReview(CertificateReviewViewModel certificateReviewViewModel, string saveReview)
-        {
+        {  
             CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
             certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
             certificateReviewViewModel.CertificateInformation =certificateValidationViewModel.CertificateInformation;
-            
-            ValidateCertificateReviewViewModel(certificateReviewViewModel, certificateValidationViewModel, saveReview);          
+            certificateReviewViewModel.Comments =  InputSanitizeExtensions.CleanseInput(certificateValidationViewModel.CommentsForIncorrect??string.Empty);
+
+            HttpContext?.Session.Set("CertificateReviewData", certificateReviewViewModel);
+            ValidateCertificateReviewViewModel(certificateReviewViewModel, certificateValidationViewModel, saveReview);
 
 
-            if (ModelState.IsValid)
+
+            string loggedinUserEmail = HttpContext?.Session.Get<string>("Email");
+            if (!string.IsNullOrEmpty(loggedinUserEmail))
             {
-                CertificateReviewDto certificateReviewDto = new CertificateReviewDto();
-                certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto")??new CertificateReviewDto();
-                certificateReviewDto.InformationMatched = certificateReviewViewModel.InformationMatched;
-                certificateReviewDto.Comments = certificateReviewViewModel.Comments;
-                
-                if (saveReview == "draft")
+                if (ModelState.IsValid)
                 {
-                    certificateReviewDto.CertificateInfoStatus = CertificateInfoStatusEnum.InReview;
-                    GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto);
-                    return View(certificateReviewViewModel);
-                }
-                else if (saveReview == "approve")
-                {
-                    
-                    return RedirectToAction("ApproveSubmission");
-                }
-                else if (saveReview == "reject")
-                {
-                    HttpContext?.Session.Set("CertificateReviewViewData", certificateReviewViewModel);
-                    return RedirectToAction("RejectSubmission");
+                    CertificateInfoStatusEnum certificateInfoStatus = GetCertificateReviewStatus(saveReview);
+                    UserDto userDto = await userService.GetUser(loggedinUserEmail);
+                    CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, certificateInfoStatus, certificateReviewViewModel);
+                    if(saveReview == "draft")
+                    {
+                        GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto, CertificateReviewTypeEnum.InformationMatch);
+                        return View(certificateReviewViewModel);
+                    }
+                    else if (saveReview == "reject")
+                    {
+                        HttpContext?.Session.Set("CertificateReviewDto", certificateReviewDto);
+                        return RedirectToAction("RejectSubmission");
+                    }
+                    else
+                    {
+                        return RedirectToAction("HandleException", "Error");
+                    }
+
+
                 }
                 else
                 {
-                    return RedirectToAction("HandleException", "Error");
+                    return View("CertificateReview", certificateReviewViewModel);
+
                 }
             }
             else
             {
-                return View("CertificateReview", certificateReviewViewModel);
+                return RedirectToAction("HandleException", "Error");
             }
+
+           
         }
 
         [HttpGet("reject-submission")]
@@ -173,18 +186,59 @@ namespace DVSAdmin.Controllers
             CertificateReviewViewModel certificateReviewViewModel = new CertificateReviewViewModel();
             certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewViewData")??new CertificateReviewViewModel();
 
-
-            CertficateRejectionViewModel certficateRejectionViewModel = new CertficateRejectionViewModel();
+            CertficateRejectionViewModel certficateRejectionViewModel = HttpContext?.Session.Get<CertficateRejectionViewModel>("CertficateRejectionData")??
+             new CertficateRejectionViewModel
+             {
+                 SelectedReasons = new List<CertificateReviewRejectionReasonDto>(),
+                 RejectionReasons = await certificateReviewService.GetRejectionReasons()
+             };
             certficateRejectionViewModel.CertificateValidation = certificateValidationViewModel;
-            certficateRejectionViewModel.CertificateReview = certificateReviewViewModel;
-            certficateRejectionViewModel.SelectedReasons = new List<CertificateReviewRejectionReasonDto>();
-            certficateRejectionViewModel.RejectionReasons = await certificateReviewService.GetRejectionReasons();
+            certficateRejectionViewModel.CertificateReview = certificateReviewViewModel;           
+            
             certficateRejectionViewModel.SelectedRejectionReasonIds = certficateRejectionViewModel?.SelectedReasons?.Select(c => c.Id).ToList();
+
             return View(certficateRejectionViewModel);
         }
 
+        [HttpPost("reject-submission")]
+        public ActionResult SaveRejectSubmission(CertficateRejectionViewModel certficateRejectionViewModel, string saveReview)
+        {
+            if(saveReview == "proceed")
+            {
+                CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
+                certificateReviewDto.RejectionComments = certficateRejectionViewModel.Comments;
+                ICollection<CertificateReviewRejectionReasonMappingsDto> rejectionReasonIdDtos = new List<CertificateReviewRejectionReasonMappingsDto>();
+                foreach (var item in certficateRejectionViewModel?.SelectedReasons)
+                {
+                    rejectionReasonIdDtos.Add(new CertificateReviewRejectionReasonMappingsDto { CertificateReviewRejectionReasonId = item.Id });
+                }
+                certificateReviewDto.CertificateReviewRejectionReasonMappings =  new List<CertificateReviewRejectionReasonMappingsDto>();
+                certificateReviewDto.CertificateReviewRejectionReasonMappings = rejectionReasonIdDtos;
+                HttpContext?.Session.Set("CertificateReviewDto", certificateReviewDto);
 
-        
+                return RedirectToAction("ConfirmRejection");
+            }
+            else if(saveReview == "cancel")
+            {
+                return RedirectToAction("RejectSubmission");
+            }
+            else
+            {
+                return RedirectToAction("HandleException", "Error");
+            }
+           
+           
+           
+        }
+
+        [HttpGet("confirm-rejection")]
+        public ActionResult ConfirmRejection()
+        {
+            return View();
+        }
+
+
+
 
         [HttpGet("approve-submission")]
         public ActionResult ApproveSubmission()
@@ -217,7 +271,17 @@ namespace DVSAdmin.Controllers
         }
 
         #region Private methods
-        private CertificateReviewDto MapViewModelToDto(CertificateValidationViewModel certificateValidationViewModel, int userId )
+
+
+        private CertificateInfoStatusEnum GetCertificateReviewStatus(string reviewAction)
+        {
+            if(reviewAction == "approve")
+                return CertificateInfoStatusEnum.Approved;
+            else if(reviewAction == "reject")
+                return CertificateInfoStatusEnum.Rejected;
+            else return CertificateInfoStatusEnum.InReview;
+        }
+        private CertificateReviewDto MapViewModelToDto(CertificateValidationViewModel certificateValidationViewModel, int userId, CertificateInfoStatusEnum reviewStatus, CertificateReviewViewModel? certificateReviewViewModel )
         {
             CertificateReviewDto certificateReviewDto = new CertificateReviewDto();
             certificateReviewDto.PreRegistrationId = certificateValidationViewModel.PreRegistrationId;
@@ -240,7 +304,14 @@ namespace DVSAdmin.Controllers
             certificateReviewDto.IsAuthenticyVerifiedCorrect = Convert.ToBoolean(certificateValidationViewModel.IsAuthenticyVerifiedCorrect); 
             certificateReviewDto.CommentsForIncorrect =  certificateValidationViewModel.CommentsForIncorrect?? string.Empty;        
             certificateReviewDto.VerifiedUser = userId;
-            certificateReviewDto.CertificateInfoStatus = CertificateInfoStatusEnum.InReview;
+            certificateReviewDto.CertificateInfoStatus = reviewStatus;
+            if(certificateReviewViewModel != null)
+            {
+                certificateReviewDto.Comments = certificateReviewViewModel.Comments;
+                certificateReviewDto.InformationMatched = certificateReviewViewModel.InformationMatched;
+
+            }
+            
             return certificateReviewDto;
 
         }

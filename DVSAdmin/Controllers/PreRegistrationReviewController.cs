@@ -36,13 +36,13 @@ namespace DVSAdmin.Controllers
                 UserDto userDto = await userService.GetUser(loggedinUserEmail);
                 PreRegReviewListViewModel preRegReviewListViewModel = new PreRegReviewListViewModel();
                 var preregistrations = await preRegistrationReviewService.GetPreRegistrations();
-                preRegReviewListViewModel.PrimaryChecksList = preregistrations.Where(x => (x.DaysLeftToComplete>0 && 
-                x.ApplicationReviewStatus == ApplicationReviewStatusEnum.Received && x.Id !=x?.PreRegistrationReview?.PreRegistrationId)||
-                x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.InPrimaryReview
+                preRegReviewListViewModel.PrimaryChecksList = preregistrations.Where(x => 
+                (x.ApplicationReviewStatus == ApplicationReviewStatusEnum.Received && x.Id !=x?.PreRegistrationReview?.PreRegistrationId)||
+                (x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.InPrimaryReview
                 ||  x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckPassed
                 ||  x?.PreRegistrationReview?.ApplicationReviewStatus ==ApplicationReviewStatusEnum.PrimaryCheckFailed
                 ||  x?.PreRegistrationReview?.ApplicationReviewStatus ==ApplicationReviewStatusEnum.SentBackBySecondReviewer
-                 && x.PreRegistrationReview.SecondaryCheckUserId != userDto.Id).ToList();
+                 && x.PreRegistrationReview.SecondaryCheckUserId != userDto.Id) && x.DaysLeftToComplete>0).ToList();
 
                 preRegReviewListViewModel.SecondaryChecksList = preregistrations
                 .Where(x => x.PreRegistrationReview !=null    && x.DaysLeftToComplete>0
