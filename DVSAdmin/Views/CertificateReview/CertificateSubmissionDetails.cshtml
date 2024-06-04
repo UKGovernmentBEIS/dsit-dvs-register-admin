@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Approve submission - GOV.UK";
+    ViewData["Title"] = "Submission details - GOV.UK";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -9,12 +9,8 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
 
-                <h1 class="govuk-heading-xl">Approve submission</h1>
+                <h1 class="govuk-heading-xl">Submission details</h1>
 
-                <p class="govuk-body">
-                    You are about to confirm that the following submission has passed certificate review and that the information provided matches the certificate.
-                </p>
-                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
@@ -39,8 +35,12 @@
                                 1 Feb 2024
                             </td>
                             <td class="govuk-table__cell">
-                                <strong class="govuk-tag govuk-tag--yellow">
-                                    In review
+                                <strong class="govuk-tag govuk-tag--green">
+                                    Approved for
+                                    publication
+                                </strong>
+                                <strong class="govuk-tag govuk-tag--red">
+                                    Rejected
                                 </strong>
                             </td>
                             <td class="govuk-table__cell">1 day</td>
@@ -48,51 +48,28 @@
                         </tr>
                     </tbody>
                 </table>
-                <h2 class="govuk-heading-l">What will happen once you approve</h2>
-                <p class="govuk-body">
-                    The CAB and OfDIA will receive a confirmation of this decision.
+                <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
+                <p class="govuk-body-l">
+                    Certificate-150324-Northrow-Remote Verify
                 </p>
-                <h3 class="govuk-heading-m">Who will receive the decision notification</h3>
-
-
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Email address of CAB
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            name.lastname@email.com
-                        </dd>
-                    </div>
-                </dl>
-
                 <p class="govuk-body">
-                    The provider will also receive an email asking for consent to publish its details on the register of digital identity and attribute service providers.
+                    <span class="govuk-hint">
+                        PDF, 19.5 KB, 1 page
+                    </span>
+                </p>
+                <p class="govuk-body">
+                    <span class="govuk-hint">
+                        This file may not be suitable for users of assistive technology.
+                    </span>
                 </p>
 
-                <h3 class="govuk-heading-m">Who will receive the email asking for consent to publish</h3>
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Email address of application sponsor
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            name.lastname@email.com
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Email address of additional contact
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            name.lastname@email.com
-                        </dd>
-                    </div>
-                </dl>
+                <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="downloadCertificate">
+                    Download certificate of conformity
+                </button>
 
-                <h2 class="govuk-heading-l">Details that the provider needs to consent to publish</h2>
 
-                <h3 class="govuk-heading-m">Certificate information</h3>
+                <h2 class="govuk-heading-l">Submitted information</h2>
+
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -116,10 +93,12 @@
                         </dt>
                         <dd class="govuk-summary-list__value">
                             <address>
-                                85 Great Portland Street <br />
-                                W1W 7LT<br />
-                                London<br />
-                                United Kingdom<br />
+                                5126 N Ravenswood Ave<br />
+                                Unit 8<br />
+                                Chicago<br />
+                                Illinois<br />
+                                60640<br />
+                                United States
                             </address>
                         </dd>
                     </div>
@@ -209,14 +188,46 @@
                         </dd>
                     </div>
                 </dl>
-                <div class="govuk-button-group">
-                    <button type="submit" class="govuk-button" data-module="govuk-button" name="proceedWithApproval" value="proceedWithApproval">
-                        Proceed with approval
-                    </button>
-                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="cancelApproval" value="cancelApproval">
-                        Cancel
-                    </button>
-                </div>
+
+                <h2 class="govuk-heading-l">Review summary</h2>
+
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Certificate validation
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <strong class="govuk-tag govuk-tag--green">
+                                Approved
+                            </strong>
+                            <strong class="govuk-tag govuk-tag--red">
+                                Incorrect
+                            </strong>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Information match
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <strong class="govuk-tag govuk-tag--green">
+                                Yes, it matches the information on the certificate
+                            </strong>
+                            <strong class="govuk-tag govuk-tag--red">
+                                No, it does not match
+                            </strong>
+                        </dd>
+                    </div>
+                </dl>
+
+                <h3 class="govuk-heading-m">Comments</h3>
+                <p class="govuk-body">
+                    All checks passed
+                </p>
+                <p class="govuk-body">
+                    UKDIATF logo is missing
+                </p>
+
             </div>
         </div>
     </main>
