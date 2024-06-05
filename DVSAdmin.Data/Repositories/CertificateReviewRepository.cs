@@ -17,7 +17,7 @@ namespace DVSAdmin.Data.Repositories
             this.logger=logger;
         }
 
-        public async Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview, CertificateReviewTypeEnum certificateReviewType)
+        public async Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview)
         {
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = context.Database.BeginTransaction();
@@ -27,49 +27,29 @@ namespace DVSAdmin.Data.Repositories
 
                 if (existingEntity != null)
                 {
-                    if(cetificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview) 
-                    {
-                        if(certificateReviewType == CertificateReviewTypeEnum.Validation)
-                        {
-                            existingEntity.IsCabLogoCorrect = cetificateReview.IsCabLogoCorrect;
-                            existingEntity.IsCabDetailsCorrect  = cetificateReview.IsCabDetailsCorrect;
-                            existingEntity.IsProviderDetailsCorrect = cetificateReview.IsProviderDetailsCorrect;
-                            existingEntity.IsServiceNameCorrect = cetificateReview.IsServiceNameCorrect;
-                            existingEntity.IsRolesCertifiedCorrect = cetificateReview.IsRolesCertifiedCorrect;
-                            existingEntity.IsCertificationScopeCorrect = cetificateReview.IsCertificationScopeCorrect;
-                            existingEntity.IsServiceSummaryCorrect = cetificateReview.IsServiceSummaryCorrect;
-                            existingEntity.IsURLLinkToServiceCorrect = cetificateReview.IsURLLinkToServiceCorrect;
-                            existingEntity.IsIdentityProfilesCorrect = cetificateReview.IsIdentityProfilesCorrect;
-                            existingEntity.IsQualityAssessmentCorrect = cetificateReview.IsQualityAssessmentCorrect;
-                            existingEntity.IsServiceProvisionCorrect = cetificateReview.IsServiceProvisionCorrect;
-                            existingEntity.IsLocationCorrect = cetificateReview.IsLocationCorrect;
-                            existingEntity.IsDateOfIssueCorrect = cetificateReview.IsDateOfIssueCorrect;
-                            existingEntity.IsDateOfExpiryCorrect = cetificateReview.IsDateOfExpiryCorrect;
-                            existingEntity.IsAuthenticyVerifiedCorrect = cetificateReview.IsAuthenticyVerifiedCorrect;
-                            existingEntity.CommentsForIncorrect = cetificateReview.CommentsForIncorrect;
-
-                        }
-                        else if (certificateReviewType == CertificateReviewTypeEnum.InformationMatch)
-                        {
-                            existingEntity.InformationMatched = cetificateReview.InformationMatched;
-                            existingEntity.Comments = cetificateReview.Comments;
-
-                        }
-                    }
-                    else if(cetificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.Rejected)
-                    {
-                        existingEntity.CertificateReviewRejectionReasonMappings = cetificateReview.CertificateReviewRejectionReasonMappings;
-                        existingEntity.RejectionComments = cetificateReview.RejectionComments;
-                    }
-
+                    existingEntity.IsCabLogoCorrect = cetificateReview.IsCabLogoCorrect;
+                    existingEntity.IsCabDetailsCorrect  = cetificateReview.IsCabDetailsCorrect;
+                    existingEntity.IsProviderDetailsCorrect = cetificateReview.IsProviderDetailsCorrect;
+                    existingEntity.IsServiceNameCorrect = cetificateReview.IsServiceNameCorrect;
+                    existingEntity.IsRolesCertifiedCorrect = cetificateReview.IsRolesCertifiedCorrect;
+                    existingEntity.IsCertificationScopeCorrect = cetificateReview.IsCertificationScopeCorrect;
+                    existingEntity.IsServiceSummaryCorrect = cetificateReview.IsServiceSummaryCorrect;
+                    existingEntity.IsURLLinkToServiceCorrect = cetificateReview.IsURLLinkToServiceCorrect;
+                    existingEntity.IsIdentityProfilesCorrect = cetificateReview.IsIdentityProfilesCorrect;
+                    existingEntity.IsQualityAssessmentCorrect = cetificateReview.IsQualityAssessmentCorrect;
+                    existingEntity.IsServiceProvisionCorrect = cetificateReview.IsServiceProvisionCorrect;
+                    existingEntity.IsLocationCorrect = cetificateReview.IsLocationCorrect;
+                    existingEntity.IsDateOfIssueCorrect = cetificateReview.IsDateOfIssueCorrect;
+                    existingEntity.IsDateOfExpiryCorrect = cetificateReview.IsDateOfExpiryCorrect;
+                    existingEntity.IsAuthenticyVerifiedCorrect = cetificateReview.IsAuthenticyVerifiedCorrect;
+                    existingEntity.CommentsForIncorrect = cetificateReview.CommentsForIncorrect;                   
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
                     existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
                     existingEntity.ModifiedDate = DateTime.UtcNow;
-                    genericResponse.InstanceId = existingEntity.Id;
-                   await context.SaveChangesAsync();
-                   
-
+                    genericResponse.InstanceId = existingEntity.Id;                    
+                    await context.SaveChangesAsync();
                 }
+                
                 else
                 {
                     cetificateReview.CreatedDate = DateTime.UtcNow;
@@ -89,9 +69,69 @@ namespace DVSAdmin.Data.Repositories
             }
             return genericResponse;
         }
+        public async Task<GenericResponse> UpdateCertificateReview(CertificateReview cetificateReview)
+        {
+            GenericResponse genericResponse = new GenericResponse();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId && e.PreRegistrationId == cetificateReview.PreRegistrationId);
 
+                if (existingEntity != null)
+                {
+                    existingEntity.InformationMatched = cetificateReview.InformationMatched;
+                    existingEntity.Comments = cetificateReview.Comments;
+                    existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
+                    existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
+                    existingEntity.ModifiedDate = DateTime.UtcNow;
+                    genericResponse.InstanceId = existingEntity.Id;
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
 
-      
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
+        public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReview cetificateReview)
+        {
+            GenericResponse genericResponse = new GenericResponse();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId && e.PreRegistrationId == cetificateReview.PreRegistrationId);
+
+                if (existingEntity != null)
+                {
+                    existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
+                    existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
+                    existingEntity.RejectionComments = cetificateReview.RejectionComments;
+                    existingEntity.CertificateReviewRejectionReasonMappings = cetificateReview.CertificateReviewRejectionReasonMappings;
+                    existingEntity.ModifiedDate = DateTime.UtcNow;
+                    genericResponse.InstanceId = existingEntity.Id;
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
 
         public async Task<List<CertificateInformation>> GetCertificateInformationList()
         {
@@ -137,5 +177,7 @@ namespace DVSAdmin.Data.Repositories
         {
             return await context.CertificateReviewRejectionReason.ToListAsync();
         }
+
+       
     }
 }

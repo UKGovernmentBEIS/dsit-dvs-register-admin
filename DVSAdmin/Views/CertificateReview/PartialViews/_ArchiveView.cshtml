@@ -23,9 +23,10 @@
         {
             <tr class="govuk-table__row">
 
-                <td class="govuk-table__cell"> <a class="govuk-link" href="#">@item.ServiceName</a></td>
+                <td class="govuk-table__cell"> @Html.ActionLink(item.ServiceName, "CertificateSubmissionDetails", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
+              
                 <td class="govuk-table__cell"> @item.TradingName</td>
-                <td class="govuk-table__cell"> @item.CreatedBy</td>
+                <td class="govuk-table__cell"> @item.SubmittedCAB</td>
                 <td class="govuk-table__cell">
 
                     @foreach (var role in item.CertificateInfoRoleMapping)
@@ -36,9 +37,16 @@
                 </td>
 
                 <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedDate)</td>
-                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateInfoStatus)</td>
-                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CertificateReview.ModifiedDate)</td>
-
+                @if (item.CertificateReview != null)
+                {
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateInfoStatus)</td>
+                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CertificateReview.ModifiedDate)</td>
+                }
+                else
+                {
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateInfoStatus)</td>
+                    <td class="govuk-table__cell"> </td>                  
+                }
             </tr>
         }
     </tbody>

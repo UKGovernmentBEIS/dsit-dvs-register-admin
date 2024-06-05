@@ -52,7 +52,8 @@ namespace DVSAdmin.BusinessLogic
             .ForMember(dest => dest.CertificateInfoRoleMapping, opt => opt.MapFrom(src => src.CertificateInfoRoleMapping))
             .ForMember(dest => dest.CertificateInfoIdentityProfileMapping, opt => opt.MapFrom(src => src.CertificateInfoIdentityProfileMapping))
             .ForMember(dest => dest.CertificateInfoSupSchemeMappings, opt => opt.MapFrom(src => src.CertificateInfoSupSchemeMappings))
-             .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftResolverCertificateReview>());
+            .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftResolverCertificateReview>())
+            .ForMember(dest => dest.CertificateInfoStatus, opt => opt.MapFrom<CertificateReviewStatusResolver>());
 
             CreateMap<CertificateInformationDto, CertificateInformation>()
            .ForMember(dest => dest.CertificateInfoRoleMapping, opt => opt.MapFrom(src => src.CertificateInfoRoleMapping))

@@ -143,8 +143,11 @@
                     <hr class="govuk-section-break govuk-section-break--m">
 
                 </div>
-
+                <div class="govuk-grid-column-full">
+                <h3 class="govuk-heading-m">Certificate information</h3>
+              
                 @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateDetailsView.cshtml", Model.CertificateInformation)
+                </div>
           
                 <div class="govuk-grid-column-two-thirds">
                     <h2 class="govuk-heading-m">Information match</h2>

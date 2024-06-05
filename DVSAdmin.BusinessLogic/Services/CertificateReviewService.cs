@@ -35,13 +35,28 @@ namespace DVSAdmin.BusinessLogic.Services
 
 
 
-        public async Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto, CertificateReviewTypeEnum certificateReviewType)
+        public async Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto)
         {
             CertificateReview certificateReview = new CertificateReview();
             automapper.Map(cetificateReviewDto, certificateReview);
-            GenericResponse genericResponse = await certificateReviewRepository.SaveCertificateReview(certificateReview, certificateReviewType);
+            GenericResponse genericResponse = await certificateReviewRepository.SaveCertificateReview(certificateReview);
             return genericResponse;
 
+        }
+        public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto)
+        {
+            CertificateReview certificateReview = new CertificateReview();
+            automapper.Map(cetificateReviewDto, certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview);
+            return genericResponse;
+        }
+
+        public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto)
+        {
+            CertificateReview certificateReview = new CertificateReview();
+            automapper.Map(cetificateReviewDto, certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReviewRejection(certificateReview);
+            return genericResponse;
         }
 
         public async Task<CertificateInformationDto> GetCertificateInformation(int certificateInfoId)
@@ -83,6 +98,6 @@ namespace DVSAdmin.BusinessLogic.Services
             return automapper.Map<List<CertificateReviewRejectionReasonDto>>(rejectionReasonList);
         }
 
-
+       
     }
 }

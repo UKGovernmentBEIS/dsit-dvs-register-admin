@@ -6,7 +6,9 @@ namespace DVSAdmin.Data.Repositories
 {
     public interface ICertificateReviewRepository
     {
-        public Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview, CertificateReviewTypeEnum certificateReviewType);
+        public Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview);
+        public Task<GenericResponse> UpdateCertificateReview(CertificateReview cetificateReview);
+        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReview cetificateReview);
         public Task<CertificateInformation> GetCertificateInformation(int certificateInfoId);
         public Task<List<Role>> GetRoles();
         public Task<List<IdentityProfile>> GetIdentityProfiles();
