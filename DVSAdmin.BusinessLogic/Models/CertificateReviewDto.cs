@@ -4,6 +4,7 @@ namespace DVSAdmin.BusinessLogic.Models
 {
     public class CertificateReviewDto
     {
+        public int Id { get; set; }
         public int PreRegistrationId { get; set; }       
         public int CertificateInformationId { get; set; }   
 

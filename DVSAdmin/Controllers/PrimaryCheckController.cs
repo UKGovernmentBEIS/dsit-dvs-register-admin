@@ -257,7 +257,7 @@ namespace DVSAdmin.Controllers
 
 
         [HttpGet("primary-check-approval-confirmation")]
-        public IActionResult PrimaryCheckPassedConfirmation(PreRegistrationReviewDto preRegistrationReviewDto)
+        public IActionResult PrimaryCheckPassedConfirmation()
         {
             PreRegistrationReviewViewModel preRegistrationReviewViewModel = new PreRegistrationReviewViewModel();
             preRegistrationReviewViewModel = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");

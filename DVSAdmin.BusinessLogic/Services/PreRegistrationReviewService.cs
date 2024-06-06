@@ -43,6 +43,13 @@ namespace DVSAdmin.BusinessLogic.Services
             return preRegistrationDto;
         }
 
+        public async Task<PreRegistrationDto> GetPreRegistrationDetails(int preRegistrationId)
+        {
+            var preRegistration = await preRegistrationReviewRepository.GetPreRegistration(preRegistrationId);           
+            PreRegistrationDto preRegistrationDto = automapper.Map<PreRegistrationDto>(preRegistration);         
+            return preRegistrationDto;
+        }
+
         public async Task<List<PreRegistrationDto>> GetPreRegistrations()
         {
             var preRegistrations = await preRegistrationReviewRepository.GetPreRegistrations();

@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewData["Title"] = "Confirm rejection";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "RejectSubmission", "CertificateReview", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">
+                    You are about to reject this
+                    submission
+                </h1>
+                <p class="govuk-body">
+                    The provider’s information will not be published in the register. The
+                    Conformity Assessment Body and OfDIA will receive an email with this
+                    decision. The Conformity Assessment Body will need to make the necessary
+                    amendments and create a new submission in the Conformity Assessment
+                    Body service to submit the updated certificate information.
+                </p>
+
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-visually-hidden">Warning</span>
+                        Once you reject this submission, this action can't be undone.
+                    </strong>
+                </div>
+
+                @using (Html.BeginForm("ProceedConfirmRejection", "CertificateReview", FormMethod.Post))
+                 {
+                    <div class="govuk-button-group">
+
+                        <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="proceed">
+                           Reject submission
+                        </button>
+                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
+                            Cancel
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+</div>
+

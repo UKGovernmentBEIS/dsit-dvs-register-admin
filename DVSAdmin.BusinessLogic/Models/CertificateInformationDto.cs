@@ -29,6 +29,11 @@ namespace DVSAdmin.BusinessLogic.Models
         public CertificateReviewDto CertificateReview { get; set; }
 
         public int DaysLeftToComplete { get; set; }
-        
+        public List<RoleDto> Roles { get; set; }
+        public List<IdentityProfileDto> IdentityProfiles { get; set; }
+        public List<SupplementarySchemeDto>? SupplementarySchemes { get; set; }
+
+        public string? SubmittedCAB { get; set; }
+
     }
 }

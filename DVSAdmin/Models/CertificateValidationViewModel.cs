@@ -1,4 +1,5 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace DVSAdmin.Models
@@ -55,8 +56,7 @@ namespace DVSAdmin.Models
         public bool? IsAuthenticyVerifiedCorrect { get; set; }
 
         [Required(ErrorMessage = "Required")]
-        public string? CommentsForIncorrect { get; set; }      
-
-       
+        public string? CommentsForIncorrect { get; set; }
+        
     }
 }

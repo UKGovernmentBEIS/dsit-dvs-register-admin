@@ -6,7 +6,9 @@
         public bool? Value { get; set; }
         public string ErrorMessage { get; set; }
         public bool HasError { get; set; }
+        public string Label1 { get; set; }
+        public string Label2 { get; set; }
 
-       
+
     }
 }

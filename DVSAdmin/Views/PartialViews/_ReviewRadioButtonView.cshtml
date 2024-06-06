@@ -10,15 +10,15 @@
         }
         <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
-                @Html.RadioButton(Model.PropertyName, true, Model.Value == true, new { id = Model.PropertyName.ToLower(), @class = "govuk-radios__input" })
+                @Html.RadioButton(Model.PropertyName, true, Model.Value == true, new { @id = Model.PropertyName.ToLower(), @class = "govuk-radios__input" })
                 <label class="govuk-label govuk-radios__label" for="@Model.PropertyName.ToLower()">
-                    Correct
+                    @Model.Label1
                 </label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButton(Model.PropertyName, false, Model.Value == false, new { id = Model.PropertyName.ToLower() + "-incorrect", @class = "govuk-radios__input" })
-                <label class="govuk-label govuk-radios__label" for="@Model.PropertyName.ToLower()-incorrect">
-                    Incorrect
+                @Html.RadioButton(Model.PropertyName, false, Model.Value == false, new { @id = Model.PropertyName.ToLower() + "-2", @class = "govuk-radios__input" })
+                <label class="govuk-label govuk-radios__label" for="@Model.PropertyName.ToLower()-2">
+                    @Model.Label2
                 </label>
             </div>
         </div>

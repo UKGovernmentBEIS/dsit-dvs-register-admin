@@ -34,5 +34,6 @@ namespace DVSAdmin.Data.Entities
         public DateTime ConformityExpiryDate { get; set; }
         public CertificateInfoStatusEnum CertificateInfoStatus { get;set; }
         public CertificateReview CertificateReview { get; set; }
+        public string? SubmittedCAB { get; set; }
     }
 }
