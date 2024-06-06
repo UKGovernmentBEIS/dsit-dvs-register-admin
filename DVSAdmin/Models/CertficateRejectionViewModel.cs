@@ -9,12 +9,12 @@ namespace DVSAdmin.Models
         public CertificateValidationViewModel? CertificateValidation { get; set; }
         public CertificateReviewViewModel? CertificateReview { get; set; }          
 
-        [Required(ErrorMessage = "Required")]
+        [Required(ErrorMessage = "Give further details on reason(s) selected and any required amendments")]
         public string? Comments { get; set; }
 
         public List<CertificateReviewRejectionReasonDto>? RejectionReasons { get; set; }
 
-        [EnsureMinimumCount(ErrorMessage = "Select the reasons")]
+        [EnsureMinimumCount(ErrorMessage = "Select one or more reasons for rejection")]
         public List<int>? SelectedRejectionReasonIds { get; set; }
         public List<CertificateReviewRejectionReasonDto>? SelectedReasons { get; set; }
 
