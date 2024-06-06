@@ -55,7 +55,7 @@ namespace DVSAdmin.Models
         [Required(ErrorMessage = "Select an option")]
         public bool? IsAuthenticyVerifiedCorrect { get; set; }
 
-        [Required(ErrorMessage = "Required")]
+        [Required(ErrorMessage = "Enter a comment")]
         public string? CommentsForIncorrect { get; set; }
         
     }

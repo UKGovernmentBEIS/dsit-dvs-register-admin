@@ -30,9 +30,7 @@ namespace DVSAdmin.Controllers
 
         [HttpGet("certificate-review-list")]
         public async Task<ActionResult> CertificateReviews()
-        {        
-
-            
+        {          
             CertificateReviewListViewModel certificateReviewListViewModel = new CertificateReviewListViewModel();
             var certificateInfoList = await certificateReviewService.GetCertificateInformationList();
             certificateReviewListViewModel.CertificateReviewList = certificateInfoList.Where(x => 
@@ -389,7 +387,7 @@ namespace DVSAdmin.Controllers
             }
             else if(saveReview == "cancel")
             {
-                return RedirectToAction("ApproveSubmission");
+                return RedirectToAction("CertificateReview");
             }
             else
             {
@@ -522,24 +520,20 @@ namespace DVSAdmin.Controllers
             Convert.ToBoolean(certificateValidationViewModel.IsDateOfExpiryCorrect) &&
             Convert.ToBoolean(certificateValidationViewModel.IsAuthenticyVerifiedCorrect);
 
-            if (isValidationsCorrect && isInformationMatch && reviewAction == "reject")
+            if (isValidationsCorrect && !isInformationMatch  && reviewAction == "approve")
             {
-                ModelState.AddModelError("SubmitValidation", "Your decision to approve or reject must match with the selections");
+                ModelState.AddModelError("InformationMatched", "You must select 'Yes, it matches the information on the certificate' in the information match to approve this submission");
+            }
+            else if (!isValidationsCorrect && reviewAction == "approve")
+            {
+                ModelState.AddModelError("SubmitValidation", "You must answer 'Correct' for all certificate validation questions to approve this submission");
 
             }
-           else if (!isValidationsCorrect  && !isInformationMatch && reviewAction == "approve")
+            else if (isValidationsCorrect && isInformationMatch && reviewAction == "reject")
             {
-                ModelState.AddModelError("SubmitValidation", "Certificate validations and information match has rejected options");
-                          
+                ModelState.AddModelError("SubmitValidation", "You cannot reject an application that has passed all certificate validation and information match checks");
             }
-            else if( !isValidationsCorrect && reviewAction == "approve")
-            {
-                ModelState.AddModelError("SubmitValidation", "Certificate validations has rejected options");
-            }
-            else if (!isInformationMatch && reviewAction == "approve")
-            {
-                ModelState.AddModelError("SubmitValidation", "Information not matched");
-            }
+
         }
         #endregion
     }
