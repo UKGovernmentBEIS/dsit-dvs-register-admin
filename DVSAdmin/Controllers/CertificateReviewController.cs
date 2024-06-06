@@ -30,9 +30,7 @@ namespace DVSAdmin.Controllers
 
         [HttpGet("certificate-review-list")]
         public async Task<ActionResult> CertificateReviews()
-        {
-
-            HttpContext.Session?.Set("Email", "aiswarya.rajendran@dsit.gov.uk");
+        {        
 
             
             CertificateReviewListViewModel certificateReviewListViewModel = new CertificateReviewListViewModel();
