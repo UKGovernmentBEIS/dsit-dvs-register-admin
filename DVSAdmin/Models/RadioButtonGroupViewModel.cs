@@ -1,6 +1,6 @@
 ﻿namespace DVSAdmin.Models
 {
-    public class RadioButtonGroupViewModel
+    public class TwoRadioButtonGroupViewModel
     {
         public string PropertyName { get; set; }
         public bool? Value { get; set; }

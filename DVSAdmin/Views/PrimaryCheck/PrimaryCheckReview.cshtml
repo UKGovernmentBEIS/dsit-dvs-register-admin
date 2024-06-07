@@ -14,7 +14,8 @@
                 {
                     @if (ViewData.ModelState.ErrorCount >0)
                     {
-                        @await Html.PartialAsync("~/Views/PartialViews/_PrimaryCheckErrorSummary.cshtml", Model)
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
                     <h1 class="govuk-heading-xl">Application review</h1>
               
@@ -328,24 +329,18 @@
                         </div>
                     }                   
                 </dl>
-                 <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsCompanyApproved") && Html.ViewData.ModelState["IsCompanyApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                <h3 class="govuk-heading-s">Select an option for this section</h3>
-                 @Html.ValidationMessageFor(m => m.IsCompanyApproved, "", new { @class = "govuk-error-message" })
-                <div class="govuk-radios" data-module="govuk-radios">
-                    <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.IsCompanyApproved, true, new { @id = "company-approved", @class = "govuk-radios__input" })
-                                <label class="govuk-label govuk-radios__label" for="company-approved">
-                            Approve
-                        </label>
-                    </div>
-                    <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.IsCompanyApproved, false, new { @id = "company-rejected", @class = "govuk-radios__input" })
-                                <label class="govuk-label govuk-radios__label" for="company-rejected">
-                            Reject
-                        </label>
-                    </div>
-                </div>
-                </div>
+          
+
+                 @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsCompanyApproved",
+                   Value = Model.IsCompanyApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsCompanyApproved") && Html.ViewData.ModelState["IsCompanyApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCompanyApproved") && Html.ViewData.ModelState["IsCompanyApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsCompanyApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
 
                 @* --------------Check list Approval ----------------- *@
                 <hr class="govuk-section-break govuk-section-break--l">
@@ -370,23 +365,19 @@
                     </li>
                     
                 </ul>
-                 <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsCheckListApproved") && Html.ViewData.ModelState["IsCheckListApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                @Html.ValidationMessageFor(m => m.IsCheckListApproved, "", new { @class = "govuk-error-message" })
-                <div class="govuk-radios" data-module="govuk-radios">
-                    <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.IsCheckListApproved, true, new { @id = "checklist-approved", @class = "govuk-radios__input" })
-                        <label class="govuk-label govuk-radios__label" for="checklist-approved">
-                            Approve
-                        </label>
-                    </div>
-                    <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.IsCheckListApproved, false, new { @id = "checklist-rejected", @class = "govuk-radios__input" })
-                        <label class="govuk-label govuk-radios__label" for="checklist-rejected">
-                            Reject
-                        </label>
-                    </div>
-                </div>
-                </div>
+         
+
+               @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsCheckListApproved",
+                   Value = Model.IsCheckListApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsCheckListApproved") && Html.ViewData.ModelState["IsCheckListApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCheckListApproved") && Html.ViewData.ModelState["IsCheckListApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsCheckListApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+
 
                 @* --------------Directorships Approval ----------------- *@
                 <hr class="govuk-section-break govuk-section-break--l">
@@ -407,24 +398,18 @@
                         Previous or outstanding administrations
                     </li>                    
 
-                </ul>
-                <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsDirectorshipsApproved") && Html.ViewData.ModelState["IsDirectorshipsApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                    @Html.ValidationMessageFor(m => m.IsDirectorshipsApproved, "", new { @class = "govuk-error-message" })
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsDirectorshipsApproved, true, new { @id = "directorships-approved", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="directorships-approved">
-                                Approve
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsDirectorshipsApproved, false, new { @id = "directorships-rejected", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="directorships-rejected">
-                                Reject
-                            </label>
-                        </div>
-                    </div>
-                </div>
+                </ul>         
+
+                 @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsDirectorshipsApproved",
+                   Value = Model.IsDirectorshipsApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsApproved") && Html.ViewData.ModelState["IsDirectorshipsApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsApproved") && Html.ViewData.ModelState["IsDirectorshipsApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsDirectorshipsApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
 
                 @* --------------Directorships and Relationships Approval ----------------- *@
                 <hr class="govuk-section-break govuk-section-break--l">
@@ -437,47 +422,33 @@
                     </li>                   
 
                 </ul>
-                <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsDirectorshipsAndRelationApproved") && Html.ViewData.ModelState["IsDirectorshipsAndRelationApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                    @Html.ValidationMessageFor(m => m.IsDirectorshipsAndRelationApproved, "", new { @class = "govuk-error-message" })
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsDirectorshipsAndRelationApproved, true, new { @id = "directors-approved", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="directors-approved">
-                                Approve
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsDirectorshipsAndRelationApproved, false, new { @id = "directors-rejected", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="directors-rejected">
-                                Reject
-                            </label>
-                        </div>
-                    </div>
-                </div>
 
+               @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsDirectorshipsAndRelationApproved",
+                   Value = Model.IsDirectorshipsAndRelationApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsAndRelationApproved") && Html.ViewData.ModelState["IsDirectorshipsAndRelationApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsAndRelationApproved") && Html.ViewData.ModelState["IsDirectorshipsAndRelationApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsDirectorshipsAndRelationApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
                 @* --------------Trading Address checks ----------------- *@
                 <hr class="govuk-section-break govuk-section-break--l">
                 <h1 class="govuk-heading-m">Trading as address checks (if applicable)</h1>
                 <p class="govuk-body"><a href="#" class="govuk-link">Link to Trading as address check</a></p>
 
-                
-                <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsTradingAddressApproved") && Html.ViewData.ModelState["IsTradingAddressApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                    @Html.ValidationMessageFor(m => m.IsTradingAddressApproved, "", new { @class = "govuk-error-message" })
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsTradingAddressApproved, true, new { @id = "trading-approved", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="trading-approved">
-                                Approve
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsTradingAddressApproved, false, new { @id = "trading-rejected", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="trading-rejected">
-                                Reject
-                            </label>
-                        </div>
-                    </div>
-                </div>
+               @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsTradingAddressApproved",
+                   Value = Model.IsTradingAddressApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsTradingAddressApproved") && Html.ViewData.ModelState["IsTradingAddressApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsTradingAddressApproved") && Html.ViewData.ModelState["IsTradingAddressApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsTradingAddressApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+          
 
                 @* --------------sanction list checks ----------------- *@
                 <hr class="govuk-section-break govuk-section-break--l">
@@ -489,92 +460,66 @@
                         <p class="govuk-body"><a href="#" class="govuk-link">OFSI check</a></p>
                     </li>
                 </ul>
-                <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsSanctionListApproved") && Html.ViewData.ModelState["IsSanctionListApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                    @Html.ValidationMessageFor(m => m.IsSanctionListApproved, "", new { @class = "govuk-error-message" })
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsSanctionListApproved, true, new { @id = "sanction-approved", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="sanction-approved">
-                                Approve
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsSanctionListApproved, false, new { @id = "sanction-rejected", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="sanction-rejected">
-                                Reject
-                            </label>
-                        </div>
-                    </div>
-                </div>
+        
+
+                @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsSanctionListApproved",
+                   Value = Model.IsSanctionListApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsSanctionListApproved") && Html.ViewData.ModelState["IsSanctionListApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsSanctionListApproved") && Html.ViewData.ModelState["IsSanctionListApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsSanctionListApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
 
                 @* --------------UNFC checks ----------------- *@
                 <hr class="govuk-section-break govuk-section-break--l">
                 <h1 class="govuk-heading-m">UNFC check (if applicable)</h1>
                 <p class="govuk-body"><a href="#" class="govuk-link">Link to UNFC check</a></p>
-               
-                <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsUNFCApproved") && Html.ViewData.ModelState["IsUNFCApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                    @Html.ValidationMessageFor(m => m.IsUNFCApproved, "", new { @class = "govuk-error-message" })
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsUNFCApproved, true, new { @id = "unfc-approved", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="unfc-approved">
-                                Approve
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsUNFCApproved, false, new { @id = "unfc-rejected", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="unfc-rejected">
-                                Reject
-                            </label>
-                        </div>
-                    </div>
-                </div>
+
+                 @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsUNFCApproved",
+                   Value = Model.IsUNFCApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsUNFCApproved") && Html.ViewData.ModelState["IsUNFCApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsUNFCApproved") && Html.ViewData.ModelState["IsUNFCApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsUNFCApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })            
 
                 @* --------------EC checks ----------------- *@
                 <hr class="govuk-section-break govuk-section-break--l">
                 <h1 class="govuk-heading-m">EC check (if applicable)</h1>
                 <p class="govuk-body"><a href="#" class="govuk-link">Link to EC check</a></p>
-
-                <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsECCheckApproved") && Html.ViewData.ModelState["IsECCheckApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                    @Html.ValidationMessageFor(m => m.IsECCheckApproved, "", new { @class = "govuk-error-message" })
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsECCheckApproved, true, new { @id = "ec-approved", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="ec-approved">
-                                Approve
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsECCheckApproved, false, new { @id = "ec-rejected", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="ec-rejected">
-                                Reject
-                            </label>
-                        </div>
-                    </div>
-                </div>
+                @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsECCheckApproved",
+                   Value = Model.IsECCheckApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsECCheckApproved") && Html.ViewData.ModelState["IsECCheckApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsECCheckApproved") && Html.ViewData.ModelState["IsECCheckApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsECCheckApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+            
 
                 @* --------------TARIC checks ----------------- *@
                 <hr class="govuk-section-break govuk-section-break--l">
                 <h1 class="govuk-heading-m">TARIC check (if applicable)</h1>
                 <p class="govuk-body"><a href="#" class="govuk-link">Link to TARIC check</a></p>
-
-                <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsTARICApproved") && Html.ViewData.ModelState["IsTARICApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                    @Html.ValidationMessageFor(m => m.IsTARICApproved, "", new { @class = "govuk-error-message" })
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsTARICApproved, true, new { @id = "taric-approved", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="taric-approved">
-                                Approve
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsTARICApproved, false, new { @id = "taric-rejected", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="taric-rejected">
-                                Reject
-                            </label>
-                        </div>
-                    </div>
-                </div>
+                   @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+                   {
+                   PropertyName = "IsTARICApproved",
+                   Value = Model.IsTARICApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsTARICApproved") && Html.ViewData.ModelState["IsTARICApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsTARICApproved") && Html.ViewData.ModelState["IsTARICApproved"].Errors.Count > 0 ?
+                   Html.ViewData.ModelState["IsTARICApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+                   })
+        
 
                 @* --------------Banned Political affiliation ----------------- *@
                 <hr class="govuk-section-break govuk-section-break--l">
@@ -597,23 +542,18 @@
 
                 </ul>
 
-                <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsBannedPoliticalApproved") && Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                    @Html.ValidationMessageFor(m => m.IsBannedPoliticalApproved, "", new { @class = "govuk-error-message" })
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsBannedPoliticalApproved, true, new { @id = "bannedpolitical-approved", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="bannedpolitical-approved">
-                                Approve
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsBannedPoliticalApproved, false, new { @id = "bannedpolitical-rejected", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="bannedpolitical-rejected">
-                                Reject
-                            </label>
-                        </div>
-                    </div>
-                </div>
+
+               @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsBannedPoliticalApproved",
+                   Value = Model.IsBannedPoliticalApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsBannedPoliticalApproved") && Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsBannedPoliticalApproved") && Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+           
 
 
                 @* --------------Providers webpage ----------------- *@
@@ -631,32 +571,60 @@
 
                 </ul>
 
-                <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsProvidersWebpageApproved") && Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                    @Html.ValidationMessageFor(m => m.IsProvidersWebpageApproved, "", new { @class = "govuk-error-message" })
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsProvidersWebpageApproved, true, new { @id = "providers-approved", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="providers-approved">
-                                Approve
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.IsProvidersWebpageApproved, false, new { @id = "providers-rejected", @class = "govuk-radios__input" })
-                            <label class="govuk-label govuk-radios__label" for="providers-rejected">
-                                Reject
-                            </label>
-                        </div>
-                    </div>
-                </div>
+
+
+               @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsProvidersWebpageApproved",
+                   Value = Model.IsProvidersWebpageApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsProvidersWebpageApproved") && Html.ViewData.ModelState["IsProvidersWebpageApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsProvidersWebpageApproved") && Html.ViewData.ModelState["IsProvidersWebpageApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsProvidersWebpageApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+
+            
 
 
                     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
              @*    ---------Comments and Save ------- *@
 
 
-                <p class="govuk-body govuk-!-font-weight-bold"> Comments</p>
-                    @Html.ValidationMessageFor(m => m.Comment, "", new { @class = "govuk-error-message" })
-                    @Html.TextAreaFor(model => model.Comment, new { @class = "govuk-textarea", @id = "primarycheck-comment", @name = "comment", @rows = "5" })
+
+
+                        @if (Html.ViewData.ModelState.ContainsKey("Comment") && Html.ViewData.ModelState["Comment"].Errors.Count > 0)
+                        {
+                            <div class="govuk-form-group govuk-form-group--error">
+                                <h1 class="govuk-label-wrapper">
+                                    <label class="govuk-label govuk-label--s" for="comment">
+                                        Comments
+                                    </label>
+
+                                </h1>
+                                <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
+                                <p  class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comment)
+                                </p>
+                                @Html.TextAreaFor(model => model.Comment, new { @class = "govuk-textarea govuk-textarea--error", @id = "comment", @name = "comment-name", @rows = "5" })
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="govuk-form-group">
+                                <h1 class="govuk-label-wrapper">
+                                    <label class="govuk-label govuk-label--s" for="comment">
+                                        Comments
+                                    </label>
+                                </h1>
+
+                                @Html.TextAreaFor(model => model.Comment, new { @class = "govuk-textarea", @id = "comment", @name = "comment-name", @rows = "5" })
+                            </div>
+
+                        }
+
+
                     </div>
 
                     @Html.ValidationMessageFor(m => m.SubmitValidation, "", new { @class = "govuk-error-message", id = "submit-error" })

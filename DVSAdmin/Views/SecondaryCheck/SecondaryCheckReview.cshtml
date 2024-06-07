@@ -16,7 +16,8 @@
                 {
                     @if (ViewData.ModelState.ErrorCount >0)
                     {
-                        @await Html.PartialAsync("~/Views/PartialViews/_SecondaryCheckErrorSummary.cshtml", Model)
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
                     @Html.HiddenFor(m => m.PreRegistrationId)
                     @Html.HiddenFor(m => m.PrimaryCheckUserId)
@@ -579,9 +580,36 @@
                     @*    ---------Comments and Save ------- *@
 
 
-                    <p class="govuk-body govuk-!-font-weight-bold"> Comments</p>
-                    @Html.ValidationMessageFor(m => m.Comment, "", new { @class = "govuk-error-message", id = "comment-error" })
-                    @Html.TextAreaFor(model => model.Comment, new { @class = "govuk-textarea", @id = "secondarycheck-comment", @name = "comment", @rows = "5" })
+                    @if (Html.ViewData.ModelState.ContainsKey("Comment") && Html.ViewData.ModelState["Comment"].Errors.Count > 0)
+                    {
+                        <div class="govuk-form-group govuk-form-group--error">
+                            <h1 class="govuk-label-wrapper">
+                                <label class="govuk-label govuk-label--s" for="comment">
+                                    Comments
+                                </label>
+
+                            </h1>
+                            <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
+                            <p class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comment)
+                            </p>
+                            @Html.TextAreaFor(model => model.Comment, new { @class = "govuk-textarea govuk-textarea--error", @id = "comment", @name = "comment-name", @rows = "5" })
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div class="govuk-form-group">
+                            <h1 class="govuk-label-wrapper">
+                                <label class="govuk-label govuk-label--s" for="comment">
+                                    Comments
+                                </label>
+                            </h1>
+
+                            @Html.TextAreaFor(model => model.Comment, new { @class = "govuk-textarea", @id = "comment", @name = "comment-name", @rows = "5" })
+                        </div>
+
+                    }
 
 
                     @Html.ValidationMessageFor(m => m.SubmitValidation, "", new { @class = "govuk-error-message", id = "submit-error" })
