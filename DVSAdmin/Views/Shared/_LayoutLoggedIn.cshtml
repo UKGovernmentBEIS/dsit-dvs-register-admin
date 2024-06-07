@@ -20,10 +20,12 @@
                     </a>
                 </div>
                 <div class="govuk-header__content">
-                    <strong class="govuk-tag">
-                        ADMINSTRATOR VIEW
-                    </strong>
-                    @Html.ActionLink("Sign Out", "OfDiaSignOut", "Login", null, new { @class = "govuk-header__link" })
+                    <span class="govuk-header__service-name">
+                        OfDIA Review Portal
+                    </span>
+                    <nav class="dsit-sign-out-nav">
+                        @Html.ActionLink("Sign Out", "OfDiaSignOut", "Login", null, new { @class = "govuk-header__link dsit-sign-out-nav__link" })
+                    </nav>
                 </div>
             </div>
         </div>

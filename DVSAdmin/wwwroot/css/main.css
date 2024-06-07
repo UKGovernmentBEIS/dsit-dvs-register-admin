@@ -43,7 +43,7 @@
 /*# sourceMappingURL=_all.scss.map */
 /*# sourceMappingURL=_base.scss.map */
 :root {
-  --govuk-frontend-version: "5.1.0";
+  --govuk-frontend-version: "5.3.1";
   --govuk-frontend-breakpoint-mobile: 20rem;
   --govuk-frontend-breakpoint-tablet: 40.0625rem;
   --govuk-frontend-breakpoint-desktop: 48.0625rem;
@@ -2607,6 +2607,7 @@ x:-moz-any-link {
 }
 
 .govuk-checkboxes__input {
+  z-index: 1;
   width: 44px;
   height: 44px;
   margin: 0;
@@ -2616,7 +2617,7 @@ x:-moz-any-link {
 
 .govuk-checkboxes__label {
   align-self: center;
-  max-width: calc(100% - (($govuk-checkboxes-label-padding-left-right * 2) + $govuk-touch-target-size));
+  max-width: calc(100% - 74px);
   margin-bottom: 0;
   padding: 7px 15px;
   cursor: pointer;
@@ -4633,6 +4634,40 @@ x:-moz-any-link {
 }
 
 /*# sourceMappingURL=_index.scss.map */
+/*# sourceMappingURL=_index.scss.map */
+/*# sourceMappingURL=_index.scss.map */
+/*# sourceMappingURL=_index.scss.map */
+/*# sourceMappingURL=_index.scss.map */
+/*# sourceMappingURL=_index.scss.map */
+@media (min-width: 20em) {
+  .govuk-password-input__wrapper {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.govuk-password-input__input::-ms-reveal {
+  display: none;
+}
+
+.govuk-password-input__toggle {
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+.govuk-password-input__toggle[hidden] {
+  display: none;
+}
+@media (min-width: 20em) {
+  .govuk-password-input__toggle {
+    width: auto;
+    flex-shrink: 0;
+    flex-basis: 5em;
+    margin-top: 0;
+    margin-left: 5px;
+  }
+}
+
+/*# sourceMappingURL=_index.scss.map */
 .govuk-tag {
   font-family: "GDS Transport", arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -4813,6 +4848,7 @@ x:-moz-any-link {
 }
 
 .govuk-radios__input {
+  z-index: 1;
   width: 44px;
   height: 44px;
   margin: 0;
@@ -4822,7 +4858,7 @@ x:-moz-any-link {
 
 .govuk-radios__label {
   align-self: center;
-  max-width: calc(100% - ($govuk-radios-label-padding-left-right + $govuk-touch-target-size + govuk-spacing(3)));
+  max-width: calc(100% - 74px);
   margin-bottom: 0;
   padding: 7px 15px;
   cursor: pointer;
@@ -7446,26 +7482,12 @@ x:-moz-any-link {
 /*# sourceMappingURL=_width.scss.map */
 /*# sourceMappingURL=_all.scss.map */
 /*# sourceMappingURL=all.scss.map */
-.alert {
-  padding: 15px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border-left: 10px solid #2b8cc4;
-  background-color: #dbeff9;
+.dsit-sign-out-nav {
+  float: right;
 }
-.alert p:last-child {
-  margin-bottom: 0;
-}
-
-@media (min-width: 40.0625em) {
-  .dsit-checkboxes-2-col {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .dsit-checkboxes-2-col__item {
-    flex: 1 1 50%;
-    flex-wrap: nowrap;
-  }
+.dsit-sign-out-nav__link {
+  font-weight: 700;
+  line-height: 1.8em;
 }
 
 /*# sourceMappingURL=main.css.map */
