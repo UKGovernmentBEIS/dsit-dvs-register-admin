@@ -72,7 +72,7 @@
 
 
                 <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-m">Information match</h1>
+                    <h2 class="govuk-heading-l">Information match</h2>
                     <p class="govuk-body">
                         In this section, you will need to review the service provider s certificate
                         against the submitted information below to check that the information
@@ -122,7 +122,7 @@
                         </div>
                     </details>
 
-                    <h1 class="govuk-heading-m">Provided certificate of conformity</h1>
+                    <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
                     <p class="govuk-body">
                         Download the certificate of conformity to compare against the details
                         submitted by the Conformity Assessment Body (CAB)
@@ -150,7 +150,7 @@
                 </div>
           
                 <div class="govuk-grid-column-two-thirds">
-                    <h2 class="govuk-heading-m">Information match</h2>
+                    <h3 class="govuk-heading-m">Information match</h3>
 
                     <p class="govuk-body">
                         The information above matches the service provider's certificate of
@@ -174,12 +174,12 @@
                     @if (Html.ViewData.ModelState.ContainsKey("Comments") && Html.ViewData.ModelState["Comments"].Errors.Count > 0)
                     {
                         <div class="govuk-form-group govuk-form-group--error">
-                            <h1 class="govuk-label-wrapper">
+                            <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="comments">
                                     Comments
                                 </label>
 
-                            </h1>
+                            </h3>
                             <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
                             <p id="comments-error" class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comments)
@@ -191,11 +191,11 @@
                     else
                     {
                         <div class="govuk-form-group">
-                            <h1 class="govuk-label-wrapper">
+                            <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="comments">
                                     Comments
                                 </label>
-                            </h1>
+                            </h3>
 
                             @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5" })
                         </div>

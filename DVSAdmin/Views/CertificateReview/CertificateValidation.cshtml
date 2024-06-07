@@ -15,15 +15,6 @@
     <main class="govuk-main-wrapper">
 
         <div class="govuk-grid-row">
-           
-                <h1 class="govuk-heading-xl">Certificate review</h1>
-
-                @if (ViewData.ModelState.ErrorCount >0)
-                {                  
-                    ViewData["Title"] = "Error: " + ViewData["Title"];
-                    @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)                   
-                }
-
                 @using (Html.BeginForm("SaveCertificateValidation", "CertificateReview", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken();
@@ -31,7 +22,14 @@
                     @Html.HiddenFor(m => m.CertificateInformationId)
 
                 <div class="govuk-grid-column-full">
-                  <table class="govuk-table">
+                    <h1 class="govuk-heading-xl">Certificate review</h1>
+
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                    }
+                    <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
                                 <th scope="col" class="govuk-table__header"> Service name </th>
@@ -56,7 +54,7 @@
                                         <div> @Enum.GetName(enumValue) </div>
                                     }
                                 </td>
-                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateInformation.CreatedDate)</td>                               
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateInformation.CreatedDate)</td>
                                 @if (@Model.CertificateInformation.CertificateReview == null)
                                 {
                                     <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateInfoStatus)</td>
@@ -73,7 +71,7 @@
                 </div>
 
                 <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-m">Certificate validation</h1>
+                    <h2 class="govuk-heading-l">Certificate validation</h2>
                     <p class="govuk-body">
                         In this section, you will need to review the service provider s certificate to
                         check whether it contains the correct information and whether the
@@ -115,11 +113,11 @@
                                     Once you have verified all items, scroll down to the bottom of the
                                     page and click the 'Continue' button to proceed with the process.
                                 </li>
-                            </ol>                           
+                            </ol>
                         </div>
                     </details>
 
-                    <h1 class="govuk-heading-m">Provided certificate of conformity</h1>
+                    <h3 class="govuk-heading-l">Provided certificate of conformity</h3>
                     <p class="govuk-body">
                         Download the certificate of conformity to compare against the details
                         submitted by the Conformity Assessment Body (CAB)
@@ -133,14 +131,14 @@
                     </div>
 
                     <a href="#" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                        Download certificate of conformity                      
+                        Download certificate of conformity
                     </a>
 
                     <hr class="govuk-section-break govuk-section-break--m">
 
-                    <h2 class="govuk-heading-m">General</h2>
+                    <h3 class="govuk-heading-m">General</h3>
                     @* --------------Logos and certificate number ----------------- *@
-                    <h1 class="govuk-heading-s">Logos and certificate number</h1>                 
+                    <h4 class="govuk-heading-s">Logos and certificate number</h4>
                     <p class="govuk-body">The certificate contains the following:</p>
                     <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                         <li>
@@ -157,19 +155,19 @@
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                        {
                        PropertyName = "IsCabLogoCorrect",
-                       Value = Model.IsCabLogoCorrect,                      
+                       Value = Model.IsCabLogoCorrect,
                        HasError = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ?
-                       Html.ViewData.ModelState["IsCabLogoCorrect"].Errors[0].ErrorMessage: string.Empty,
+                       Html.ViewData.ModelState["IsCabLogoCorrect"].Errors[0].ErrorMessage : string.Empty,
                        Label1 = "Correct",
                        Label2 = "Incorrect"
                        })
 
-                   
+
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Conformity Assessment Body details ----------------- *@
-                    <h1 class="govuk-heading-s">Conformity Assessment Body details</h1>
+                    <h4 class="govuk-heading-s">Conformity Assessment Body details</h4>
                     <p class="govuk-body">The certificate contains the following:</p>
                     <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                         <li>
@@ -177,13 +175,13 @@
                         </li>
                         <li>
                             Address of the CAB
-                        </li>                       
+                        </li>
                     </ul>
 
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                     {
                         PropertyName = "IsCabDetailsCorrect",
-                        Value = Model.IsCabDetailsCorrect,                   
+                        Value = Model.IsCabDetailsCorrect,
                         HasError = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -193,7 +191,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Service provider details ----------------- *@
-                    <h1 class="govuk-heading-s">Service provider details</h1>
+                    <h4 class="govuk-heading-s">Service provider details</h4>
                     <p class="govuk-body">The certificate contains the following:</p>
                     <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                         <li>
@@ -217,15 +215,15 @@
                        Label1 = "Correct",
                        Label2 = "Incorrect"
                     })
-                                    
+
 
 
                     <hr class="govuk-section-break govuk-section-break--m">
 
-                    <h2 class="govuk-heading-m">Statement of conformity</h2>
+                    <h3 class="govuk-heading-m">Statement of conformity</h3>
 
                     @* --------------Name of service ----------------- *@
-                    <h1 class="govuk-heading-s">Name of service</h1>
+                    <h4 class="govuk-heading-s">Name of service</h4>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity that includes the name of
                         the service.
@@ -245,7 +243,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Roles certified against----------------- *@
-                    <h1 class="govuk-heading-s">Roles certified against</h1>
+                    <h4 class="govuk-heading-s">Roles certified against</h4>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity which includes the roles
                         certified against.
@@ -265,7 +263,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Scope of certification----------------- *@
-                    <h1 class="govuk-heading-s">Scope of certification</h1>
+                    <h4 class="govuk-heading-s">Scope of certification</h4>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity which details the scope of
                         certification, including any recognised supplementary schemes (Right to
@@ -286,7 +284,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Summary of service----------------- *@
-                    <h1 class="govuk-heading-s">Summary of service</h1>
+                    <h4 class="govuk-heading-s">Summary of service</h4>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity which includes a summary
                         of the service.
@@ -306,7 +304,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------URL link to service----------------- *@
-                    <h1 class="govuk-heading-s">URL link to service</h1>
+                    <h4 class="govuk-heading-s">URL link to service</h4>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity that includes a URL link to
                         a website providing access to the service. This URL link may be slightly
@@ -327,8 +325,8 @@
 
                     <hr class="govuk-section-break govuk-section-break--m">
                     @* --------------GPG45 identity profiles----------------- *@
-                    <h1 class="govuk-heading-m">Unique designation of services</h1>
-                    <h1 class="govuk-heading-s">GPG45 identity profiles</h1>
+                    <h3 class="govuk-heading-m">Unique designation of services</h3>
+                    <h4 class="govuk-heading-s">GPG45 identity profiles</h4>
                     <p class="govuk-body">
                         The certificate includes GPG45 identity profiles assessed. If the provider has
                         been certified on supplementary schemes, the profiles listed meet the
@@ -350,7 +348,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------GPG44 quality assessment----------------- *@
 
-                    <h1 class="govuk-heading-s">GPG44 quality assessment</h1>
+                    <h4 class="govuk-heading-s">GPG44 quality assessment</h4>
                     <p class="govuk-body">
                         The certificate includes GPG44 Quality of Authentication and Quality of
                         Protection assessed, if applicable.
@@ -371,7 +369,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Methods of service provision----------------- *@
 
-                    <h1 class="govuk-heading-s">Methods of service provision</h1>
+                    <h4 class="govuk-heading-s">Methods of service provision</h4>
                     <p class="govuk-body">
                         The certificate includes methods of service provision (e.g. online, person to
                         person, physical sites).
@@ -392,7 +390,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Geographical location----------------- *@
 
-                    <h1 class="govuk-heading-s">Geographical location</h1>
+                    <h4 class="govuk-heading-s">Geographical location</h4>
                     <p class="govuk-body">
                         The certificate includes the geographical location of service provision, if
                         applicable.
@@ -413,7 +411,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Date of issue----------------- *@
 
-                    <h1 class="govuk-heading-s">Date of issue</h1>
+                    <h4 class="govuk-heading-s">Date of issue</h4>
                     <p class="govuk-body">
                         The certificate includes a valid date of issue. The issue date should not be in
                         the future.
@@ -434,7 +432,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Date of expiry----------------- *@
 
-                    <h1 class="govuk-heading-s">Date of expiry</h1>
+                    <h4 class="govuk-heading-s">Date of expiry</h4>
                     <p class="govuk-body">
                         The certificate includes a valid date of expiry. The expiry date should not be
                         more than 2 years after the date of issue.
@@ -456,7 +454,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* -------------Authenticity verification----------------- *@
 
-                    <h1 class="govuk-heading-s">Authenticity verification</h1>
+                    <h4 class="govuk-heading-s">Authenticity verification</h4>
                     <p class="govuk-body">
                         The certificate includes means by which the authenticity of the certificate can
                         be verified.
@@ -481,12 +479,12 @@
                     @if (Html.ViewData.ModelState.ContainsKey("CommentsForIncorrect") && Html.ViewData.ModelState["CommentsForIncorrect"].Errors.Count > 0)
                     {
                         <div class="govuk-form-group govuk-form-group--error">
-                            <h1 class="govuk-label-wrapper">
+                            <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="commentsforincorrect">
                                     Comments
                                 </label>
 
-                            </h1>
+                            </h3>
                             <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
                             <p id="commentsforincorrect-error" class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.CommentsForIncorrect)
@@ -498,11 +496,11 @@
                     else
                     {
                         <div class="govuk-form-group">
-                            <h1 class="govuk-label-wrapper">
+                            <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="commentsforincorrect">
                                    Comments
                                 </label>
-                            </h1>
+                            </h3>
 
                             @Html.TextAreaFor(model => model.CommentsForIncorrect, new { @class = "govuk-textarea", @id = "commentsforincorrect", @name = "comment", @rows = "5" })
                         </div>
