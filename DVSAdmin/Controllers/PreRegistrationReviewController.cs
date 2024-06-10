@@ -35,14 +35,16 @@ namespace DVSAdmin.Controllers
             {
                 UserDto userDto = await userService.GetUser(loggedinUserEmail);
                 PreRegReviewListViewModel preRegReviewListViewModel = new PreRegReviewListViewModel();
+                
                 var preregistrations = await preRegistrationReviewService.GetPreRegistrations();
-                preRegReviewListViewModel.PrimaryChecksList = preregistrations.Where(x => 
-                (x.ApplicationReviewStatus == ApplicationReviewStatusEnum.Received && x.Id !=x?.PreRegistrationReview?.PreRegistrationId)||
+
+                preRegReviewListViewModel.PrimaryChecksList = preregistrations.Where(x => x.DaysLeftToComplete>0).
+                Where(x =>(x.ApplicationReviewStatus == ApplicationReviewStatusEnum.Received && x.Id !=x?.PreRegistrationReview?.PreRegistrationId)||
                 (x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.InPrimaryReview
                 ||  x?.PreRegistrationReview?.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckPassed
                 ||  x?.PreRegistrationReview?.ApplicationReviewStatus ==ApplicationReviewStatusEnum.PrimaryCheckFailed
                 ||  x?.PreRegistrationReview?.ApplicationReviewStatus ==ApplicationReviewStatusEnum.SentBackBySecondReviewer
-                 && x.PreRegistrationReview.SecondaryCheckUserId != userDto.Id) && x.DaysLeftToComplete>0).ToList();
+                 && x.PreRegistrationReview.SecondaryCheckUserId != userDto.Id)).ToList();
 
                 preRegReviewListViewModel.SecondaryChecksList = preregistrations
                 .Where(x => x.PreRegistrationReview !=null    && x.DaysLeftToComplete>0
@@ -55,7 +57,8 @@ namespace DVSAdmin.Controllers
 
 
                 preRegReviewListViewModel.ArchiveList = preregistrations
-                .Where(x => x.UniqueReferenceNumber !=null && (x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Rejected
+                .Where(x => x.UniqueReferenceNumber !=null && 
+                (x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Rejected
                 || x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Approved || x.UniqueReferenceNumber.URNStatus == URNStatusEnum.ValidatedByCAB ||
                 x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Rejected || x.UniqueReferenceNumber.URNStatus == URNStatusEnum.Expired)).ToList();
                 return View(preRegReviewListViewModel);
