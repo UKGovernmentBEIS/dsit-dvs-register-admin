@@ -6,7 +6,8 @@ namespace DVSAdmin.BusinessLogic.Models
     public class CertificateInformationDto
     {
         public int Id { get; set; }
-        public int PreRegistrationId { get; set; }      
+        public int PreRegistrationId { get; set; }
+        public PreRegistration PreRegistration { get; set; }
         public string RegisteredName { get; set; }
         public string TradingName { get; set; }
         public string PublicContactEmail { get; set; }
