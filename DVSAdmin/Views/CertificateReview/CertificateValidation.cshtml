@@ -48,7 +48,7 @@
 
                                 <th scope="row" class="govuk-table__header">@Model.CertificateInformation.ServiceName</th>                               
                                 <td class="govuk-table__cell">@Model.CertificateInformation.TradingName</td>
-                                <td class="govuk-table__cell">@Model.CertificateInformation.CreatedBy</td>
+                                <td class="govuk-table__cell">@Model.CertificateInformation.SubmittedCAB</td>
                                 <td class="govuk-table__cell">
                                     @foreach (var role in @Model.CertificateInformation.CertificateInfoRoleMapping)
                                     {
@@ -286,7 +286,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Summary of service----------------- *@
-                    <h1 class="govuk-heading-s">Scope of certification</h1>
+                    <h1 class="govuk-heading-s">Summary of service</h1>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity which includes a summary
                         of the service.
