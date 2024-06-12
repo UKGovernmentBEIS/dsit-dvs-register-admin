@@ -146,6 +146,7 @@ namespace DVSAdmin.Data.Repositories
             .Include(p => p.CertificateInfoRoleMapping)
             .Include(p => p.CertificateInfoSupSchemeMappings)
             .Include(p=>p.CertificateReview)
+            .Include(p => p.PreRegistration)
             .Where(p => p.Id == certificateInfoId).FirstOrDefaultAsync()?? new CertificateInformation();
             return certificateInformation;
         }

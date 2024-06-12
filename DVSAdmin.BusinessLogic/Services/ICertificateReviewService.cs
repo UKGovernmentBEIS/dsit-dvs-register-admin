@@ -8,8 +8,9 @@ namespace DVSAdmin.BusinessLogic.Services
     public interface ICertificateReviewService
     {
         public Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto);
-        public Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto);
-        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto);
+        public Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, CertificateInformationDto certificateInformationDto);
+        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, CertificateInformationDto certificateInformationDto, 
+        List<CertificateReviewRejectionReasonDto> rejectionReasons);
         public Task<CertificateInformationDto> GetCertificateInformation(int certificateInfoId);
         public Task<List<CertificateInformationDto>> GetCertificateInformationList();
         public  Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons();

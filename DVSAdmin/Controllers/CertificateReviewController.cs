@@ -175,7 +175,7 @@ namespace DVSAdmin.Controllers
                     CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, certificateInfoStatus, certificateReviewViewModel);
                     if(saveReview == "draft")
                     {
-                        GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto);
+                        GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto, certificateReviewViewModel.CertificateInformation);
                         if (genericResponse.Success)
                         {
                             return RedirectToAction("CertificateReview", new { reviewId = certificateReviewViewModel .CertificateReviewId});
@@ -301,9 +301,14 @@ namespace DVSAdmin.Controllers
         {
             if(saveReview == "proceed")
             {
+                CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
+                certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
+
+                CertficateRejectionViewModel certficateRejectionViewModel = HttpContext?.Session.Get<CertficateRejectionViewModel>("CertficateRejectionData")??new CertficateRejectionViewModel();
+
                 CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
                 certificateReviewDto.CertificateInfoStatus = CertificateInfoStatusEnum.Rejected;
-                GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewRejection(certificateReviewDto);
+                GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewRejection(certificateReviewDto, certificateValidationViewModel.CertificateInformation, certficateRejectionViewModel.SelectedReasons);
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("RejectionConfirmation");
@@ -373,11 +378,13 @@ namespace DVSAdmin.Controllers
             if(saveReview == "approve")
             {
                 HttpContext.Session.Remove("CertificateReviewDto");
+                CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
+                certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();                             
 
                 certificateReviewDto.CertificateInfoStatus = CertificateInfoStatusEnum.Approved;
-                GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto);
+                GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto, certificateValidationViewModel.CertificateInformation);
                 if (genericResponse.Success)
-                {
+                {                   
                     return RedirectToAction("ApprovalConfirmation");
                 }
                 else

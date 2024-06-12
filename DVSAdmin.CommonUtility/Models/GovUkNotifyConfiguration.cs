@@ -17,5 +17,9 @@
         public FailedLoginAttemptTemplate FailedLoginAttemptTemplate { get; set; } 
         public ApplicationRejectedConfirmationTemplate ApplicationRejectedConfirmationTemplate { get; set; }
         public ApplicationApprovedConfirmationTemplate ApplicationApprovedConfirmationTemplate { get; set; }
+        public CertificateInfoApprovedToCabTemplate CertificateInfoApprovedToCabTemplate { get; set; }
+        public CertificateInfoApprovedToDSIT CertificateInfoApprovedToDSIT { get; set; }
+        public CertificateInfoRejectedToCabTemplate CertificateInfoRejectedToCabTemplate { get; set; }
+        public CertificateInfoRejectedToDSITTemplate CertificateInfoRejectedToDSITTemplate { get; set; }
     }
 }

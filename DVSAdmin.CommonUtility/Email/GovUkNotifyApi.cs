@@ -221,5 +221,86 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+
+        public async Task<bool> SendCertificateInfoApprovedToCab(string recipientName, string URN, string serviceName, string emailAddress)
+        {
+            var template = govUkNotifyConfig.CertificateInfoApprovedToCabTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.RecipientName,  recipientName},
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN}
+            
+            };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendCertificateInfoApprovedToDSIT(string URN, string serviceName)
+        {
+            var template = govUkNotifyConfig.CertificateInfoApprovedToDSIT;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {               
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN}
+
+            };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendCertificateInfoRejectedToCab(string recipientName, string URN, string serviceName, string emailAddress)
+        {
+            var template = govUkNotifyConfig.CertificateInfoRejectedToCabTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.RecipientName,  recipientName},
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN}
+
+            };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendCertificateInfoRejectedToDSIT(string URN, string serviceName, string rejectionCategory, string rejectionComments)
+        {
+            var template = govUkNotifyConfig.CertificateInfoRejectedToDSITTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {             
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN},
+                { template.RejectionCategory,  rejectionCategory},
+                { template.RejectionComments,  rejectionComments},
+
+
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
     }
 }
