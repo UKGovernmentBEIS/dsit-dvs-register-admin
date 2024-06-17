@@ -2,7 +2,10 @@
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using Newtonsoft.Json
-
+@{
+    ViewData["Title"] = "Application review";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
 
 
 <div class="govuk-width-container">
@@ -50,8 +53,8 @@
                             </tr>
                         </tbody>
                     </table>
-                    <h1 class="govuk-heading-l">Application details</h1>
-                    <h1 class="govuk-heading-m">Contact details of the application sponsor</h1>
+                    <h2 class="govuk-heading-l">Application details</h2>
+                    <h3 class="govuk-heading-m">Contact details of the application sponsor</h3>
 
                     
 
@@ -191,7 +194,7 @@
 
                     @* --------------Country ----------------- *@
 
-                    <h1 class="govuk-heading-m govuk-!-padding-top-5">Countries and territories the company currently trades in</h1>  
+                    <h3 class="govuk-heading-m govuk-!-padding-top-5">Countries and territories the company currently trades in</h3>
 
 
                      <dl class="govuk-summary-list">
@@ -253,7 +256,7 @@
                     @* --------------Company  ----------------- *@
 
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m govuk-!-padding-top-5">Company overview</h1>
+                    <h3 class="govuk-heading-m govuk-!-padding-top-5">Company overview</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -336,7 +339,8 @@
 
                     @* --------------Check list Approval ----------------- *@
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m">Companies House or charity information</h1>
+                    <h2 class="govuk-heading-l">Approval checklist</h2>
+                    <h3 class="govuk-heading-m">Companies House or charity information</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -371,7 +375,7 @@
 
                     @* --------------Directorships Approval ----------------- *@
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m">Directorships</h1>
+                    <h3 class="govuk-heading-m">Directorships</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -403,7 +407,7 @@
 
                     @* --------------Directorships and Relationships Approval ----------------- *@
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m">Directors and relationships</h1>
+                    <h3 class="govuk-heading-m">Directors and relationships</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -426,7 +430,7 @@
 
                     @* --------------Trading Address checks ----------------- *@
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m">Trading as address checks (if applicable)</h1>
+                    <h3 class="govuk-heading-m">Trading as address checks (if applicable)</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -444,7 +448,7 @@
 
                     @* --------------sanction list checks ----------------- *@
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m">Sanctions list checks</h1>
+                    <h3 class="govuk-heading-m">Sanctions list checks</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -466,7 +470,7 @@
 
                     @* --------------UNFC checks ----------------- *@
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m">UNFC check (if applicable)</h1>
+                    <h3 class="govuk-heading-m">UNFC check (if applicable)</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -483,7 +487,7 @@
 
                     @* --------------EC checks ----------------- *@
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m">EC check (if applicable)</h1>
+                    <h3 class="govuk-heading-m">EC check (if applicable)</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -500,7 +504,7 @@
 
                     @* --------------TARIC checks ----------------- *@
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m">TARIC check (if applicable)</h1>
+                    <h3 class="govuk-heading-m">TARIC check (if applicable)</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -517,7 +521,7 @@
 
                     @* --------------Banned Political affiliation ----------------- *@
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m">Banned Political affiliations</h1>
+                    <h3 class="govuk-heading-m">Banned Political affiliations</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -551,7 +555,7 @@
 
                     @* --------------Providers webpage ----------------- *@
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h1 class="govuk-heading-m">Providers webpage</h1>
+                    <h3 class="govuk-heading-m">Providers webpage</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -583,12 +587,12 @@
                     @if (Html.ViewData.ModelState.ContainsKey("Comment") && Html.ViewData.ModelState["Comment"].Errors.Count > 0)
                     {
                         <div class="govuk-form-group govuk-form-group--error">
-                            <h1 class="govuk-label-wrapper">
+                            <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="comment">
                                     Comments
                                 </label>
 
-                            </h1>
+                            </h3>
                             <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
                             <p class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comment)
@@ -600,11 +604,11 @@
                     else
                     {
                         <div class="govuk-form-group">
-                            <h1 class="govuk-label-wrapper">
+                            <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="comment">
                                     Comments
                                 </label>
-                            </h1>
+                            </h3>
 
                             @Html.TextAreaFor(model => model.Comment, new { @class = "govuk-textarea", @id = "comment", @name = "comment-name", @rows = "5" })
                         </div>
