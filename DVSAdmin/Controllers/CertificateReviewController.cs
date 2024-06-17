@@ -193,7 +193,7 @@ namespace DVSAdmin.Controllers
                     else if (saveReview == "approve")
                     {
                         HttpContext?.Session.Set("CertificateReviewDto", certificateReviewDto);
-                        return RedirectToAction("ConfirmApproval");
+                        return RedirectToAction("ApproveSubmission");
                     }
                     else
                     {
@@ -394,7 +394,7 @@ namespace DVSAdmin.Controllers
             }
             else if(saveReview == "cancel")
             {
-                return RedirectToAction("CertificateReview");
+                return RedirectToAction("ApproveSubmission");
             }
             else
             {
