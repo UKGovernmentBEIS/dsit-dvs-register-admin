@@ -23,19 +23,13 @@
                 <div class="govuk-tabs" data-module="govuk-tabs">
                     <ul class="govuk-tabs__list">
                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                            <a class="govuk-tabs__tab" href="#action-required">
-                                Action required
-                            </a>
+                            @Html.ActionLink("Action required", null, null, null, new { @class = "govuk-tabs__tab", @href = "#action-required" })
                         </li>
                         <li class="govuk-tabs__list-item">
-                            <a class="govuk-tabs__tab" href="#publications-complete">
-                                Publication complete
-                            </a>
+                            @Html.ActionLink("Publication complete", null, null, null, new { @class = "govuk-tabs__tab", @href = "#publications-complete" })
                         </li>
                         <li class="govuk-tabs__list-item">
-                            <a class="govuk-tabs__tab" href="#remove-rejected">
-                                Remove or rejected
-                            </a>
+                            @Html.ActionLink("Remove or rejected", null, null, null, new { @class = "govuk-tabs__tab", @href = "#remove-rejected" })
                         </li>
                     </ul>
 
