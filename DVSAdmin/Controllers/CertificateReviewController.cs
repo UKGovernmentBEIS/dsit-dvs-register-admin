@@ -11,26 +11,24 @@ using Newtonsoft.Json;
 
 namespace DVSAdmin.Controllers
 {
+    [ValidCognitoToken]
     [Route("certificate-review")]
     public class CertificateReviewController : Controller
     {
 
         private readonly ILogger<CertificateReviewController> logger;
-        private readonly ICertificateReviewService certificateReviewService;
-        private readonly IPreRegistrationReviewService preRegistrationReviewService;
+        private readonly ICertificateReviewService certificateReviewService;      
         private readonly IUserService userService;
-        public CertificateReviewController(ILogger<CertificateReviewController> logger, ICertificateReviewService certificateReviewService, IUserService userService,
-            IPreRegistrationReviewService preRegistrationReviewService)
+        public CertificateReviewController(ILogger<CertificateReviewController> logger, ICertificateReviewService certificateReviewService, IUserService userService)
         {
             this.logger = logger;
             this.certificateReviewService = certificateReviewService;
-            this.userService = userService;
-            this.preRegistrationReviewService = preRegistrationReviewService;
+            this.userService = userService;           
         }
 
         [HttpGet("certificate-review-list")]
         public async Task<ActionResult> CertificateReviews()
-        {          
+        {           
             CertificateReviewListViewModel certificateReviewListViewModel = new CertificateReviewListViewModel();
             var certificateInfoList = await certificateReviewService.GetCertificateInformationList();
             certificateReviewListViewModel.CertificateReviewList = certificateInfoList.Where(x => 
@@ -66,9 +64,9 @@ namespace DVSAdmin.Controllers
         {
             CertificateDetailsViewModel certificateDetailsViewModel = new CertificateDetailsViewModel();
             CertificateInformationDto certificateInformationDto = await certificateReviewService.GetCertificateInformation(certificateInfoId);
-            certificateDetailsViewModel.PreRegistration = await preRegistrationReviewService.GetPreRegistration(certificateInformationDto.PreRegistrationId);
+            certificateDetailsViewModel.PreRegistration = certificateInformationDto.Provider.PreRegistration;
 
-            
+
             CertificateValidationViewModel certificateValidationViewModel = MapDtoToViewModel(certificateInformationDto);
             CertificateReviewViewModel certificateReviewViewModel = new CertificateReviewViewModel();
             certificateReviewViewModel.CertificateInformation = certificateInformationDto;
@@ -357,9 +355,9 @@ namespace DVSAdmin.Controllers
             certificateApprovalViewModel.CertificateReview = certificateReviewViewModel;
             certificateApprovalViewModel.CertificateValidation= certificateValidationViewModel;
             certificateApprovalViewModel.Email =  HttpContext?.Session.Get<string>("Email")??string.Empty;
-
-            PreRegistrationDto preRegistrationDto = await preRegistrationReviewService.GetPreRegistrationDetails(certificateValidationViewModel.PreRegistrationId);
-            certificateApprovalViewModel.PreRegistration = preRegistrationDto;
+            //To get data with updated status
+            CertificateInformationDto certificateInformationDto = await certificateReviewService.GetCertificateInformation(certificateValidationViewModel.CertificateInformationId);  
+            certificateApprovalViewModel.PreRegistration = certificateInformationDto.Provider.PreRegistration;
             return View(certificateApprovalViewModel);
         }
         
@@ -445,7 +443,7 @@ namespace DVSAdmin.Controllers
             CertificateReviewDto certificateReviewDto = new CertificateReviewDto();
             certificateReviewDto.PreRegistrationId = certificateValidationViewModel.PreRegistrationId;
             certificateReviewDto.CertificateInformationId =certificateValidationViewModel.CertificateInformationId;
-
+            certificateReviewDto.ProviderId = certificateValidationViewModel.CertificateInformation.ProviderId;
             certificateReviewDto.IsCabLogoCorrect = Convert.ToBoolean(certificateValidationViewModel.IsCabLogoCorrect);
             certificateReviewDto.IsCabDetailsCorrect = Convert.ToBoolean(certificateValidationViewModel.IsCabDetailsCorrect);
             certificateReviewDto.IsProviderDetailsCorrect = Convert.ToBoolean(certificateValidationViewModel.IsProviderDetailsCorrect);
@@ -480,7 +478,7 @@ namespace DVSAdmin.Controllers
 
             CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
             certificateValidationViewModel.CertificateInformation = certificateInformationDto;
-            certificateValidationViewModel.PreRegistrationId = certificateInformationDto.PreRegistrationId;
+            certificateValidationViewModel.PreRegistrationId = certificateInformationDto.Provider.PreRegistrationId;
             certificateValidationViewModel.CertificateInformationId =certificateInformationDto.Id;
             if (certificateInformationDto.CertificateReview!= null)
             {

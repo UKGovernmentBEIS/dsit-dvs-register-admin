@@ -10,7 +10,7 @@
                 Registered name
             </dt>
             <dd class="govuk-summary-list__value">
-                @Model.RegisteredName
+            @Model.Provider.RegisteredName
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -18,7 +18,7 @@
                 Trading name(s)
             </dt>
             <dd class="govuk-summary-list__value">
-                @Model.TradingName
+            @Model.Provider.TradingName
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -26,7 +26,7 @@
                 Company address details
             </dt>
             <dd class="govuk-summary-list__value">
-                @HtmlExtensions.ToStringWithLineBreaks(Model.Address)
+            @HtmlExtensions.ToStringWithLineBreaks(Model.Provider.Address)
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -34,7 +34,7 @@
                 Name of service
             </dt>
             <dd class="govuk-summary-list__value">
-                @Model.ServiceName
+            @Model.ServiceName
             </dd>
         </div>
 

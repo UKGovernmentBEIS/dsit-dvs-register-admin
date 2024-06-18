@@ -20,9 +20,9 @@
 
                 @foreach (var item in Model.CertificateReviewList)
                 {
-                    <tr class="govuk-table__row">                
-                    <td class="govuk-table__cell"> @Html.ActionLink(item.ServiceName, "CertificateValidation", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
-                    <td class="govuk-table__cell"> @item.TradingName</td>
+                    <tr class="govuk-table__row">
+                <td class="govuk-table__cell"> @Html.ActionLink(item.ServiceName, "CertificateValidation", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
+                <td class="govuk-table__cell"> @item.Provider.TradingName</td>
                     <td class="govuk-table__cell"> @item.SubmittedCAB</td>
                      <td class="govuk-table__cell">
                        @foreach(var role in item.CertificateInfoRoleMapping)

@@ -12,16 +12,11 @@ namespace DVSAdmin.Data.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+       
 
-        [ForeignKey("PreRegistration")]
-        public int PreRegistrationId { get; set; }
-        public PreRegistration PreRegistration { get; set; }
-        public string RegisteredName { get; set; }
-        public string TradingName { get; set; }
-        public string PublicContactEmail { get; set; }
-        public string TelephoneNumber { get; set; }
-        public string WebsiteAddress { get; set; }
-        public string Address { get; set; }
+        [ForeignKey("Provider")]
+        public int ProviderId { get; set; }
+        public Provider Provider { get; set; }
         public string ServiceName { get; set; }
         public ICollection<CertificateInfoRoleMapping> CertificateInfoRoleMapping { get; set; }
         public ICollection<CertificateInfoIdentityProfileMapping> CertificateInfoIdentityProfileMapping { get; set; }
