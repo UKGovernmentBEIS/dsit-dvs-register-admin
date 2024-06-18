@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Publish service";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "ProviderReview", "ProviderReview", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">You are publishing the following service provider on the register</h1>
+                <p class="govuk-body">Please review the information you are about to publish below.</p>
+                <h2 class="govuk-heading-m">Basic information</h2>
+                <dl class="govuk-summary-list govuk-!-margin-bottom-8">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Public contact email
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            Remote Verify
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Telephone number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            07532167283
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Website address
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            www.northrow.co.uk
+                        </dd>
+                    </div>
+                </dl>
+                <h2 class="govuk-heading-m">Service 1: Remote Verify</h2>
+                @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ServiceDetailsView.cshtml")
+                <div class="govuk-button-group" id="submitvalidation">
+                    <button type="submit" class="govuk-button" data-module="govuk-button" name="ProceedPublication" value="approve">
+                        Proceed with publication
+                    </button>
+                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="cancel" value="cancel">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
