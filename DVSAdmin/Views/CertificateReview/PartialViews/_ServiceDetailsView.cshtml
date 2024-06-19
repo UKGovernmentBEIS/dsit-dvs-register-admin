@@ -1,7 +1,6 @@
-﻿@using DVSAdmin.BusinessLogic.Models
-@using DVSAdmin.CommonUtility.Models.Enums;
+﻿@using DVSAdmin.CommonUtility.Models.Enums;
 @using DVSAdmin.Extensions;
-@model CertificateInformationDto
+@model CertificateInformationViewModel
 <div class="govuk-grid-column-full">
     <table class="govuk-table">
         <thead class="govuk-table__head">
@@ -19,7 +18,7 @@
             <tr class="govuk-table__row">
 
                 <th scope="row" class="govuk-table__header">@Model.ServiceName</th>
-                <td class="govuk-table__cell">@Model.Provider.TradingName</td>
+                <td class="govuk-table__cell">@Model.TradingName</td>
                 <td class="govuk-table__cell">@Model.SubmittedCAB</td>
                 <td class="govuk-table__cell">
                     @foreach (var role in @Model.CertificateInfoRoleMapping)

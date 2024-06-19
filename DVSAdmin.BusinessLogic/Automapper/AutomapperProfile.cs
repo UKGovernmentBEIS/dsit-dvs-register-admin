@@ -2,7 +2,6 @@
 using DVSAdmin.BusinessLogic.Automapper;
 using DVSAdmin.BusinessLogic.Extensions;
 using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.BusinessLogic.Models.CAB;
 using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.BusinessLogic

@@ -56,8 +56,8 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview);
             if(genericResponse.Success && cetificateReviewDto.CertificateInfoStatus == CertificateInfoStatusEnum.Approved)
             {
-               // await emailSender.SendCertificateInfoApprovedToCab(certificateInformationDto.CreatedBy, certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
-                //await emailSender.SendCertificateInfoApprovedToDSIT(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName);
+                await emailSender.SendCertificateInfoApprovedToCab(certificateInformationDto.CreatedBy, certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
+                await emailSender.SendCertificateInfoApprovedToDSIT(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName);
                 TokenDetails tokenDetails = jwtService.GenerateToken();
                 string consentLink = configuration["ReviewPortalLink"] +"consent/give-consent?token="+tokenDetails.Token;
 
@@ -106,7 +106,7 @@ namespace DVSAdmin.BusinessLogic.Services
             CertificateInformationDto certificateInformationDto = automapper.Map<CertificateInformationDto>(certificateInfo);
             var roles = await certificateReviewRepository.GetRoles();
             List<RoleDto> roleDtos = automapper.Map<List<RoleDto>>(roles);
-           
+
             var roleIds = certificateInformationDto.CertificateInfoRoleMapping.Select(mapping => mapping.RoleId);
             certificateInformationDto.Roles = roleDtos.Where(x => roleIds.Contains(x.Id)).ToList();
 
@@ -118,8 +118,8 @@ namespace DVSAdmin.BusinessLogic.Services
             var schemes = await certificateReviewRepository.GetSupplementarySchemes();
             List<SupplementarySchemeDto> supplementarySchemeDtos = automapper.Map<List<SupplementarySchemeDto>>(schemes);
             var schemeids = certificateInformationDto.CertificateInfoSupSchemeMappings?.Select(x => x.SupplementarySchemeId);
-            if(schemeids!=null && schemeids.Count() > 0)
-            certificateInformationDto.SupplementarySchemes = supplementarySchemeDtos.Where(x => schemeids.Contains(x.Id)).ToList();           
+            if (schemeids!=null && schemeids.Count() > 0)
+                certificateInformationDto.SupplementarySchemes = supplementarySchemeDtos.Where(x => schemeids.Contains(x.Id)).ToList();
 
 
             return certificateInformationDto;
