@@ -16,5 +16,6 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<CertificateInformation>> GetCertificateInformationList();
         public Task<List<CertificateReviewRejectionReason>> GetRejectionReasons();
         public Task<CertificateReview> GetCertificateReview(int reviewId);
+        public Task<GenericResponse> UpdateCertificateReviewStatus(int certificateReviewId, string modifiedBy);
     }
 }

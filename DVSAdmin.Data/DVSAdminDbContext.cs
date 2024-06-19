@@ -27,5 +27,8 @@ namespace DVSAdmin.Data
         public DbSet<CertificateInfoIdentityProfileMapping> CertificateInfoIdentityProfileMapping { get; set; }
         public DbSet<SupplementaryScheme> SupplementaryScheme { get; set; }
         public DbSet<CertificateInfoSupSchemeMapping> CertificateInfoSupSchemeMappings { get; set; }
+
+        public DbSet<Provider> Provider { get; set; }
+        public DbSet<ConsentToken> ConsentToken { get; set; }
     }
 }

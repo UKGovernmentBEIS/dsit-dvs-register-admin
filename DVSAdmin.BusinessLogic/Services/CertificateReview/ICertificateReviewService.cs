@@ -1,4 +1,5 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.BusinessLogic.Models.CAB;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
@@ -15,5 +16,7 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<List<CertificateInformationDto>> GetCertificateInformationList();
         public  Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons();
         public  Task<CertificateReviewDto> GetCertificateReview(int reviewId);
+        public Task<CertificateInformationDto> GetProviderAndCertificateDetailsByToken(string token, string tokenId);
+        public Task<GenericResponse> UpdateCertificateReviewStatus(string token, string tokenId);
     }
 }

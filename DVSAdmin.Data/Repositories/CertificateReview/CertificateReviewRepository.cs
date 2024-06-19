@@ -180,6 +180,51 @@ namespace DVSAdmin.Data.Repositories
             return await context.CertificateReviewRejectionReason.ToListAsync();
         }
 
-       
+
+        public async Task<GenericResponse> UpdateCertificateReviewStatus(int certificateReviewId, string modifiedBy)
+        {
+            GenericResponse genericResponse = new GenericResponse();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                var reviewEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.Id == certificateReviewId);
+
+
+                if(reviewEntity != null)                
+                {
+                    var certificateInfoEntity = await context.CertificateInformation.FirstOrDefaultAsync(e => e.Id == reviewEntity.CertificateInformationId);
+                    var providerEntity = await context.Provider.FirstOrDefaultAsync(e => e.Id == reviewEntity.ProviderId);
+
+                    if(certificateInfoEntity != null && providerEntity != null)
+                    {
+                        //update review table status so that it won't appear in review list again
+                        reviewEntity.CertificateInfoStatus = CertificateInfoStatusEnum.ReadyToPublish;
+                        reviewEntity.ModifiedBy = modifiedBy;
+                        reviewEntity.ModifiedDate = DateTime.UtcNow;
+
+                       
+                        certificateInfoEntity.CertificateInfoStatus = CertificateInfoStatusEnum.ReadyToPublish;
+                        certificateInfoEntity.ModifiedBy = modifiedBy;
+                        certificateInfoEntity.ModifiedDate = DateTime.UtcNow;
+
+
+                        providerEntity.ProviderStatus = ProviderStatusEnum.ActionRequired;
+                        providerEntity.ModifiedTime = DateTime.UtcNow;
+
+                        await context.SaveChangesAsync();
+                        transaction.Commit();
+                        genericResponse.Success = true;
+                    }
+                } 
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
     }
 }

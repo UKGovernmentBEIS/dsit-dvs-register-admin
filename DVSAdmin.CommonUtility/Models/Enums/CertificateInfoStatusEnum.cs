@@ -10,12 +10,14 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         Received = 1,
         [Description("In review")]
         InReview = 2,
-        [Description("Approved for publication")]
+        [Description("Approved - sent for provider consent")]
         Approved = 3,
         [Description("Rejected")]
         Rejected = 4,
         [Description("Expired")]
-        Expired = 5
+        Expired = 5,
+        [Description("Ready to publish")]
+        ReadyToPublish = 6
 
 
     }
