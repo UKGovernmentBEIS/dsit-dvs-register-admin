@@ -1,0 +1,23 @@
+﻿@model ConsentViewModel
+@{
+    ViewData["Title"] = "Consent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+  @using (Html.BeginForm("GiveConsent", "Consent", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m=>m.token)
+   
+    <div>
+        @Model.CertificateInformation.ServiceName
+
+    </div>
+   
+    <button type="submit" class="govuk-button" data-module="govuk-button">
+        Give Consent
+    </button>
+}
+
+

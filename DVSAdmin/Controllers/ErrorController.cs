@@ -17,5 +17,11 @@ namespace DVSAdmin.Controllers
             HttpContext.Session.Clear();
             return View("ServiceIssue");
         }
+        [HttpGet("consent/service-error")]
+        public IActionResult ConsentHandleException()
+        {
+            HttpContext.Session.Clear();
+            return View("ConsentError");
+        }
     }
 }

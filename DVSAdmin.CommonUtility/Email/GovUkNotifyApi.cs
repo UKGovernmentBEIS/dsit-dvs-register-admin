@@ -302,5 +302,25 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+
+        public async Task<bool> SendConsentToPublishToDIP(string URN, string serviceName, string recipientName, string emailAddress, string consentLink)
+        {
+            var template = govUkNotifyConfig.DIPConsentToPublishTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN},
+                { template.RecipientName,  recipientName},
+                { template.ConsentLink,  consentLink}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
     }
 }

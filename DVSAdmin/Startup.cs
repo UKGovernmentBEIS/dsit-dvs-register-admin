@@ -8,6 +8,7 @@ using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.Data.Repositories;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.JWT;
 
 namespace DVSAdmin
 {
@@ -36,6 +37,7 @@ namespace DVSAdmin
             ConfigureDvsRegisterServices(services);
             ConfigureAutomapperServices(services);
             ConfigureGovUkNotify(services);
+            ConfigureJwtServices(services);
 
         }
 
@@ -84,6 +86,8 @@ namespace DVSAdmin
 
             services.AddScoped<ICertificateReviewRepository, CertificateReviewRepository>();
             services.AddScoped<ICertificateReviewService, CertificateReviewService>();
+            services.AddScoped<IConsentService, ConsentService>();
+            services.AddScoped<IConsentRepository, ConsentRepository>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {
@@ -94,6 +98,12 @@ namespace DVSAdmin
             services.AddScoped<IEmailSender, GovUkNotifyApi>();
             services.Configure<GovUkNotifyConfiguration>(
                 configuration.GetSection(GovUkNotifyConfiguration.ConfigSection));
+        }
+        private void ConfigureJwtServices(IServiceCollection services)
+        {
+            services.AddScoped<IJwtService, JwtService>();
+            services.Configure<JwtSettings>(
+                configuration.GetSection(JwtSettings.ConfigSection));
         }
     }
 }

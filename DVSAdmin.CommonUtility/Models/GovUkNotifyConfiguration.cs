@@ -21,5 +21,6 @@
         public CertificateInfoApprovedToDSIT CertificateInfoApprovedToDSIT { get; set; }
         public CertificateInfoRejectedToCabTemplate CertificateInfoRejectedToCabTemplate { get; set; }
         public CertificateInfoRejectedToDSITTemplate CertificateInfoRejectedToDSITTemplate { get; set; }
+        public DIPConsentToPublishTemplate DIPConsentToPublishTemplate { get; set; }
     }
 }

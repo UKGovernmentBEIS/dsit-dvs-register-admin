@@ -17,11 +17,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.6.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.5.1" />
     <PackageReference Include="QRCoder" Version="1.5.1" />
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +33,8 @@
     <None Remove="Extensions\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Views\Consent\Consent.cshtml" />
+    <None Include="Views\Consent\ConsentSuccess.cshtml" />
     <None Include="Views\PartialViews\_ArchiveView.cshtml" />
     <None Include="Views\PartialViews\_PrimaryChecksView.cshtml" />
     <None Include="Views\PartialViews\_SecondaryChecksView.cshtml" />

@@ -1,9 +1,9 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.Net;
 
 public class ValidCognitoTokenAttribute : ActionFilterAttribute
 {   
@@ -42,7 +42,8 @@ public class ValidCognitoTokenAttribute : ActionFilterAttribute
                 ValidAudience = cognitoAudience
             };
 
-            var principal = new JwtSecurityTokenHandler().ValidateToken(sessionToken, validationParameters, out var validatedToken);
+            var tokenHandler = new JsonWebTokenHandler();
+            var claimsPrincipal = tokenHandler.ValidateTokenAsync(sessionToken, validationParameters);
 
             base.OnActionExecuting(context);
         }
