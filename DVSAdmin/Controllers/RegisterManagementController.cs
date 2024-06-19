@@ -10,5 +10,30 @@ namespace DVSAdmin.Controllers
         {
             return View();
         }
+        [HttpGet("provider-review")]
+        public IActionResult ProviderReview()
+        {
+            return View();
+        }
+        [HttpGet("service-details")]
+        public IActionResult ServiceDetails()
+        {
+            return View();
+        }
+        [HttpGet("publish-service")]
+        public IActionResult PublishService()
+        {
+            return View();
+        }
+        [HttpGet("what-next")]
+        public IActionResult WhatNext()
+        {
+            return View();
+        }
+        [HttpGet("provider-published")]
+        public IActionResult ProviderPublished()
+        {
+            return View();
+        }
     }
 }
