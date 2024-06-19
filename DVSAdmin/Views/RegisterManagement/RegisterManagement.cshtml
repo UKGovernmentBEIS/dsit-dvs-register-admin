@@ -28,9 +28,6 @@
                         <li class="govuk-tabs__list-item">
                             @Html.ActionLink("Publication complete", null, null, null, new { @class = "govuk-tabs__tab", @href = "#publications-complete" })
                         </li>
-                        <li class="govuk-tabs__list-item">
-                            @Html.ActionLink("Remove or rejected", null, null, null, new { @class = "govuk-tabs__tab", @href = "#remove-rejected" })
-                        </li>
                     </ul>
 
                     <div class="govuk-tabs__panel" id="action-required">
@@ -38,9 +35,6 @@
                     </div>
                     <div class="govuk-tabs__panel" id="publications-complete">
                         @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_PublicationCompleteView.cshtml", Model)
-                    </div>
-                    <div class="govuk-tabs__panel" id="remove-rejected">
-                        @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_RemoveOrRejectView.cshtml", Model)
                     </div>
                 </div>
             </div>
