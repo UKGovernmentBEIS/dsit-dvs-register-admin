@@ -44,8 +44,8 @@
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
 
-                                <th scope="row" class="govuk-table__header">@Model.CertificateInformation.ServiceName</th>                               
-                                <td class="govuk-table__cell">@Model.CertificateInformation.TradingName</td>
+                                <th scope="row" class="govuk-table__header">@Model.CertificateInformation.ServiceName</th>
+                                <td class="govuk-table__cell">@Model.CertificateInformation.Provider.TradingName</td>
                                 <td class="govuk-table__cell">@Model.CertificateInformation.SubmittedCAB</td>
                                 <td class="govuk-table__cell">
                                     @foreach (var role in @Model.CertificateInformation.CertificateInfoRoleMapping)

@@ -51,8 +51,8 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview);
             if(genericResponse.Success && cetificateReviewDto.CertificateInfoStatus == CertificateInfoStatusEnum.Approved)
             {
-                await emailSender.SendCertificateInfoApprovedToCab(certificateInformationDto.CreatedBy, certificateInformationDto.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
-                await emailSender.SendCertificateInfoApprovedToDSIT(certificateInformationDto.PreRegistration.URN, certificateInformationDto.ServiceName);
+                await emailSender.SendCertificateInfoApprovedToCab(certificateInformationDto.CreatedBy, certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
+                await emailSender.SendCertificateInfoApprovedToDSIT(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName);
 
             }
             return genericResponse;
@@ -68,8 +68,8 @@ namespace DVSAdmin.BusinessLogic.Services
             if(genericResponse.Success && cetificateReviewDto.CertificateInfoStatus == CertificateInfoStatusEnum.Rejected)
             {
                 string rejectReasons = string.Join("\r", rejectionReasons.Select(x => x.Reason.ToString()).ToArray());
-                await emailSender.SendCertificateInfoRejectedToCab(certificateInformationDto.CreatedBy, certificateInformationDto.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
-                await emailSender.SendCertificateInfoRejectedToDSIT(certificateInformationDto.PreRegistration.URN, certificateInformationDto.ServiceName, rejectReasons, certificateReview.RejectionComments);
+                await emailSender.SendCertificateInfoRejectedToCab(certificateInformationDto.CreatedBy, certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
+                await emailSender.SendCertificateInfoRejectedToDSIT(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, rejectReasons, certificateReview.RejectionComments);
 
             }
            

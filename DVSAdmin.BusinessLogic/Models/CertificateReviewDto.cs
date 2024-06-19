@@ -6,7 +6,8 @@ namespace DVSAdmin.BusinessLogic.Models
     {
         public int Id { get; set; }
         public int PreRegistrationId { get; set; }       
-        public int CertificateInformationId { get; set; }   
+        public int CertificateInformationId { get; set; }
+        public int ProviderId { get; set; }
 
         public bool IsCabLogoCorrect { get; set; }
         public bool IsCabDetailsCorrect { get; set; }

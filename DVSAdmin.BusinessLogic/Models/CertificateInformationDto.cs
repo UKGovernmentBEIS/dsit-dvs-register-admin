@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models.Enums;
+﻿using DVSAdmin.BusinessLogic.Models.CAB;
+using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.BusinessLogic.Models
@@ -6,15 +7,10 @@ namespace DVSAdmin.BusinessLogic.Models
     public class CertificateInformationDto
     {
         public int Id { get; set; }
-        public int PreRegistrationId { get; set; }
-        public PreRegistration PreRegistration { get; set; }
-        public string RegisteredName { get; set; }
-        public string TradingName { get; set; }
-        public string PublicContactEmail { get; set; }
-        public string TelephoneNumber { get; set; }
-        public string WebsiteAddress { get; set; }
-        public string Address { get; set; }
+        public int ProviderId { get; set; }
+        public ProviderDto Provider { get; set; }
         public string ServiceName { get; set; }
+
         public ICollection<CertificateInfoRoleMappingDto> CertificateInfoRoleMapping { get; set; }
         public ICollection<CertificateInfoIdentityProfileMappingDto> CertificateInfoIdentityProfileMapping { get; set; }
         public bool HasSupplementarySchemes { get; set; }

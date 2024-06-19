@@ -23,7 +23,7 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId && e.PreRegistrationId == cetificateReview.PreRegistrationId);
+                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId && e.ProviderId ==cetificateReview.ProviderId);
 
                 if (existingEntity != null)
                 {
@@ -75,7 +75,7 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId && e.PreRegistrationId == cetificateReview.PreRegistrationId);
+                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId  && e.ProviderId ==cetificateReview.ProviderId);
 
                 if (existingEntity != null)
                 {
@@ -107,7 +107,7 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId && e.PreRegistrationId == cetificateReview.PreRegistrationId);
+                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId  && e.ProviderId ==cetificateReview.ProviderId);
 
                 if (existingEntity != null)
                 {
@@ -135,7 +135,7 @@ namespace DVSAdmin.Data.Repositories
 
         public async Task<List<CertificateInformation>> GetCertificateInformationList()
         {
-            return await context.CertificateInformation.Include(p=>p.CertificateInfoRoleMapping).Include(p => p.CertificateReview).OrderBy(c => c.CreatedDate).ToListAsync();
+            return await context.CertificateInformation.Include(p=>p.CertificateInfoRoleMapping).Include(p => p.CertificateReview).Include(p => p.Provider).OrderBy(c => c.CreatedDate).ToListAsync();
         }
 
         public async Task<CertificateInformation> GetCertificateInformation(int certificateInfoId)
@@ -146,7 +146,8 @@ namespace DVSAdmin.Data.Repositories
             .Include(p => p.CertificateInfoRoleMapping)
             .Include(p => p.CertificateInfoSupSchemeMappings)
             .Include(p=>p.CertificateReview)
-            .Include(p => p.PreRegistration)
+            .Include(p => p.Provider)
+             .Include(p => p.Provider.PreRegistration)
             .Where(p => p.Id == certificateInfoId).FirstOrDefaultAsync()?? new CertificateInformation();
             return certificateInformation;
         }
