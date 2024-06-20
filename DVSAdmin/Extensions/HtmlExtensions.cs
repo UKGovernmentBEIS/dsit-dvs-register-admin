@@ -12,42 +12,41 @@ namespace DVSAdmin.Extensions
 
         private static string GetTagClass<TEnum>(TEnum value) where TEnum : struct, Enum
         {
+            
             switch (value)
             {
-                case ApplicationReviewStatusEnum.Received:
-                    return "govuk-tag govuk-tag--blue";
-                case ApplicationReviewStatusEnum.InPrimaryReview:
-                    return "govuk-tag govuk-tag--yellow";
-                case ApplicationReviewStatusEnum.PrimaryCheckFailed:
-                    return "govuk-tag govuk-tag--red";
-                case ApplicationReviewStatusEnum.PrimaryCheckPassed:
-                    return "govuk-tag govuk-tag--green";
-                case ApplicationReviewStatusEnum.ApplicationRejected:
-                    return "govuk-tag govuk-tag--red";
-                case ApplicationReviewStatusEnum.ApplicationApproved:
-                    return "govuk-tag govuk-tag--green";
-                case URNStatusEnum.Expired:
-                    return "govuk-tag govuk-tag--red";
-                case ApplicationReviewStatusEnum.SentBackBySecondReviewer:
-                    return "govuk-tag govuk-tag--red";
-                case URNStatusEnum.Created:
-                    return "govuk-tag govuk-tag--blue";
-                case URNStatusEnum.Approved:
-                    return "govuk-tag govuk-tag--green";
-                case URNStatusEnum.Rejected:
-                    return "govuk-tag govuk-tag--red";
-                case URNStatusEnum.ValidatedByCAB:
-                    return "govuk-tag govuk-tag--blue";
+                case ApplicationReviewStatusEnum.Received:                   
+                case URNStatusEnum.Created:                   
+                case URNStatusEnum.ValidatedByCAB:                  
                 case CertificateInfoStatusEnum.Received:
-                    return "govuk-tag govuk-tag--blue";
-                case CertificateInfoStatusEnum.InReview:
-                    return "govuk-tag govuk-tag--yellow";
+                case CertificateInfoStatusEnum.Published:
+                case ProviderStatusEnum.Published:
+                return "govuk-tag govuk-tag--blue";
+
+
+                case ApplicationReviewStatusEnum.PrimaryCheckPassed:                        
+                case ApplicationReviewStatusEnum.ApplicationApproved:                    
+                case URNStatusEnum.Approved:                  
                 case CertificateInfoStatusEnum.Approved:
-                    return "govuk-tag govuk-tag--green";
-                case CertificateInfoStatusEnum.Rejected:
-                    return "govuk-tag govuk-tag--red";
+                return "govuk-tag govuk-tag--green";
+
+                case ApplicationReviewStatusEnum.SentBackBySecondReviewer:                   
+                case ApplicationReviewStatusEnum.PrimaryCheckFailed:                   
+                case ApplicationReviewStatusEnum.ApplicationRejected:  
+                case URNStatusEnum.Expired:                   
+                case URNStatusEnum.Rejected:                    
+                case CertificateInfoStatusEnum.Rejected:                  
                 case CertificateInfoStatusEnum.Expired:
-                    return "govuk-tag govuk-tag--red";
+                return "govuk-tag govuk-tag--red";
+
+
+
+                case ApplicationReviewStatusEnum.InPrimaryReview:    
+                case CertificateInfoStatusEnum.InReview:
+                case ProviderStatusEnum.ReadyToPublish:
+                case ProviderStatusEnum.ActionRequired:
+                return "govuk-tag govuk-tag--yellow";
+
                 default:
                     return string.Empty;
             }
