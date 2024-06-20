@@ -1,4 +1,4 @@
-﻿@model DVSAdmin.BusinessLogic.Models.CertificateInformationDto;
+﻿@model CertificateInformationViewModel;
 @using DVSAdmin.Extensions;
 
 
@@ -10,7 +10,7 @@
                 Registered name
             </dt>
             <dd class="govuk-summary-list__value">
-            @Model.Provider.RegisteredName
+            @Model.RegisteredName
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -18,7 +18,7 @@
                 Trading name(s)
             </dt>
             <dd class="govuk-summary-list__value">
-            @Model.Provider.TradingName
+            @Model.TradingName
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -26,7 +26,7 @@
                 Company address details
             </dt>
             <dd class="govuk-summary-list__value">
-            @HtmlExtensions.ToStringWithLineBreaks(Model.Provider.Address)
+            @HtmlExtensions.ToStringWithLineBreaks(Model.Address)
             </dd>
         </div>
         <div class="govuk-summary-list__row">

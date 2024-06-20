@@ -9,6 +9,7 @@ using DVSAdmin.Data.Repositories;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.JWT;
+using DVSAdmin.Data.Repositories.RegisterManagement;
 
 namespace DVSAdmin
 {
@@ -88,6 +89,8 @@ namespace DVSAdmin
             services.AddScoped<ICertificateReviewService, CertificateReviewService>();
             services.AddScoped<IConsentService, ConsentService>();
             services.AddScoped<IConsentRepository, ConsentRepository>();
+            services.AddScoped<IRegManagementService, RegManagementService>();
+            services.AddScoped<IRegManagementRepository, RegManagementRepository>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {

@@ -1,7 +1,4 @@
-﻿@using DVSAdmin.BusinessLogic.Models
-@using DVSAdmin.CommonUtility.Models.Enums;
-@using DVSAdmin.Extensions;
-@model CertificateInformationDto
+﻿@model CertificateInformationViewModel
 
 <h3 class="govuk-heading-m">Contact information</h3>
 <dl class="govuk-summary-list">
@@ -10,7 +7,7 @@
             Public contact email
         </dt>
         <dd class="govuk-summary-list__value">
-            @Model.Provider.PublicContactEmail
+            @Model.PublicContactEmail
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -18,7 +15,7 @@
             Telephone number
         </dt>
         <dd class="govuk-summary-list__value">
-            @Model.Provider.TelephoneNumber
+            @Model.TelephoneNumber
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -26,7 +23,7 @@
             Website address
         </dt>
         <dd class="govuk-summary-list__value">
-            @Model.Provider.WebsiteAddress
+            @Model.WebsiteAddress
         </dd>
     </div>
 </dl>

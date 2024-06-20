@@ -2,7 +2,6 @@
 using DVSAdmin.BusinessLogic.Automapper;
 using DVSAdmin.BusinessLogic.Extensions;
 using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.BusinessLogic.Models.CAB;
 using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.BusinessLogic
@@ -70,9 +69,9 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<CertificateReviewDto, CertificateReview>().ForMember(dest => dest.CertificateReviewRejectionReasonMappings,
             opt => opt.MapFrom(src => src.CertificateReviewRejectionReasonMappings));
 
-            CreateMap<Provider, ProviderDto>();
-            CreateMap<ProviderDto, Provider>();
-           
+            CreateMap<Provider, ProviderDto>().ForMember(dest => dest.CertificateInformation, opt => opt.MapFrom(src => src.CertificateInformation)); 
+            CreateMap<ProviderDto, Provider>().ForMember(dest => dest.CertificateInformation, opt => opt.MapFrom(src => src.CertificateInformation));
+
 
 
         }
