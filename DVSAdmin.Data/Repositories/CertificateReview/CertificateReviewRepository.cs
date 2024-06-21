@@ -111,6 +111,7 @@ namespace DVSAdmin.Data.Repositories
 
                 if (existingEntity != null)
                 {
+                    existingEntity.InformationMatched = cetificateReview.InformationMatched;
                     existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
                     existingEntity.RejectionComments = cetificateReview.RejectionComments;

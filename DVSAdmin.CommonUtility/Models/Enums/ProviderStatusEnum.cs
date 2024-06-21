@@ -9,6 +9,10 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("Received")]
         Received = 1,
         [Description("Action required")]
-        ActionRequired = 2
+        ActionRequired = 2,
+        [Description("Ready to publish")]
+        ReadyToPublish = 3,
+        [Description("Published")]
+        Published = 4
     }
 }

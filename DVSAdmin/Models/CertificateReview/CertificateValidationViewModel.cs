@@ -1,6 +1,4 @@
-﻿using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.CommonUtility.Models.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DVSAdmin.Models
 {
@@ -8,7 +6,7 @@ namespace DVSAdmin.Models
     {
         public int PreRegistrationId { get; set; }
         public int CertificateInformationId { get; set; }
-        public CertificateInformationDto? CertificateInformation { get; set; }
+        public CertificateInformationViewModel? CertificateInformation { get; set; }
 
         [Required(ErrorMessage = "Select an option")]
         public bool? IsCabLogoCorrect { get; set; }

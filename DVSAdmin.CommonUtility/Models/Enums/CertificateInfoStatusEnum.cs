@@ -17,7 +17,9 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("Expired")]
         Expired = 5,
         [Description("Ready to publish")]
-        ReadyToPublish = 6
+        ReadyToPublish = 6,
+        [Description("Published")]
+        Published = 7
 
 
     }

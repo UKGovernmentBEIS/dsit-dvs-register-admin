@@ -1,6 +1,6 @@
 ﻿using DVSAdmin.CommonUtility.Models.Enums;
 
-namespace DVSAdmin.BusinessLogic.Models.CAB
+namespace DVSAdmin.BusinessLogic.Models
 {
     public class ProviderDto
     {
@@ -13,7 +13,10 @@ namespace DVSAdmin.BusinessLogic.Models.CAB
         public string TelephoneNumber { get; set; }
         public string WebsiteAddress { get; set; }
         public string Address { get; set; }       
-        public ProviderStatusEnum ProviderStatus { get; set; }       
-        public DateTime? PublishedTime { get; set; }      
+        public ProviderStatusEnum ProviderStatus { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? ModifiedTime { get; set; }
+        public DateTime? PublishedTime { get; set; }
+        public List<CertificateInformationDto> CertificateInformation { get; set; }
     }
 }
