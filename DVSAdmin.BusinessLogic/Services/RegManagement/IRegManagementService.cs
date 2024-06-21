@@ -7,5 +7,6 @@ namespace DVSAdmin.BusinessLogic.Services
     {
         public Task<List<ProviderDto>> GetProviders();
         public Task<ProviderDto> GetProviderDetails(int providerId);
+        public Task<ProviderDto> GetProviderWithServiceDeatils(int providerId);
     }
 }

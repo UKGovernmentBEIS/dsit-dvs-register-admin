@@ -1,13 +1,13 @@
-﻿
+﻿@using DVSAdmin.Extensions;
+@using DVSAdmin.BusinessLogic.Models
+@model CertificateInformationDto
 <dl class="govuk-summary-list govuk-!-margin-bottom-8">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
             Publication status
         </dt>
         <dd class="govuk-summary-list__value">
-            <strong class="govuk-tag govuk-tag--yellow">
-                Ready to publish
-            </strong>
+            @HtmlExtensions.ToStyledStrongTag(Model.CertificateInfoStatus)
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -15,7 +15,7 @@
             Registered name
         </dt>
         <dd class="govuk-summary-list__value">
-            Northrow Limited
+            @Model.Provider.RegisteredName
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -23,7 +23,7 @@
             Trading name(s)
         </dt>
         <dd class="govuk-summary-list__value">
-            Northrow
+            @Model.Provider.TradingName
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -31,10 +31,7 @@
             Company address details
         </dt>
         <dd class="govuk-summary-list__value">
-            85 Great Portland Street<br />
-            London<br />
-            W1W 7LT<br />
-            United Kingdom
+            @HtmlExtensions.ToStringWithLineBreaks(Model.Provider.Address)
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -42,7 +39,7 @@
             Name of service
         </dt>
         <dd class="govuk-summary-list__value">
-            Remote Verify
+            @Model.ServiceName
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -50,7 +47,10 @@
             Role(s) certified against
         </dt>
         <dd class="govuk-summary-list__value">
-            Identity Service Provider (IDSP)
+            @foreach (var item in Model.Roles)
+            {
+                <div>@item.RoleName</div>
+            }
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -58,24 +58,37 @@
             Identity profiles
         </dt>
         <dd class="govuk-summary-list__value">
-            M1A
+            @foreach (var item in Model.IdentityProfiles)
+            {
+                <div>@item.IdentityProfileName</div>
+            }
         </dd>
     </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            Supplementary schemes
-        </dt>
-        <dd class="govuk-summary-list__value">
-            Right to Work
-        </dd>
-    </div>
+
+    @if (Model.HasSupplementarySchemes && Model.SupplementarySchemes!=null)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Supplementary schemes
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @foreach (var item in Model.SupplementarySchemes)
+                {
+                    <div>@item.SchemeName</div>
+                }
+            </dd>
+        </div>
+
+    }
+
+
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
             Service provider’s certificate
             of conformity
         </dt>
         <dd class="govuk-summary-list__value">
-            Certificate-150324-Northrow-Remote Verify
+            @Model.FileName
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -83,7 +96,7 @@
             Date of issue
         </dt>
         <dd class="govuk-summary-list__value">
-            21 October 2022
+            @DateTimeExtensions.FormatDateTime(@Model.ConformityIssueDate, "dd MMMM yyyy")
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -91,7 +104,7 @@
             Date of expiry
         </dt>
         <dd class="govuk-summary-list__value">
-            21 October 2024
+            @DateTimeExtensions.FormatDateTime(@Model.ConformityExpiryDate, "dd MMMM yyyy")
         </dd>
     </div>
 </dl>

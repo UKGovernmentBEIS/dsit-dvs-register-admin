@@ -4,9 +4,7 @@
     ViewData["Title"] = "Provider Details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
-@{
-    int serviceCount = 0;
-}
+
 <div class="govuk-width-container">
     @Html.ActionLink("Back", "RegisterManagement", "RegisterManagement", null, new { @class = "govuk-back-link" })  
     <main class="govuk-main-wrapper">
@@ -17,17 +15,17 @@
                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_PublicationStatusTableView.cshtml",Model.Provider)
                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ProviderContactView.cshtml", Model.Provider)
                
-               @foreach(var item in Model.CertificateInformationList)
+               @foreach(var item in Model.Provider.CertificateInformation)
                 {
-                        serviceCount++;
+                       
                         <div class="govuk-summary-card">
                         <div class="govuk-summary-card__title-wrapper">
                             <h2 class="govuk-summary-card__title">
-                                    Service @serviceCount
+                                    Service @item.ServiceNumber
                             </h2>
                             <ul class="govuk-summary-card__actions">
                                 <li class="govuk-summary-card__action">
-                                    <a class="govuk-link" href="service-details?serviceId=@item.Id">View service details <span class="govuk-visually-hidden"> of @Model.Provider.TradingName service @item.ServiceName</span></a>
+                                    <a class="govuk-link" href="service-details?serviceId=@item.Id&serviceNumber=@item.ServiceNumber">View service details <span class="govuk-visually-hidden"> of @Model.Provider.TradingName service @item.ServiceName</span></a>
                                 </li>
                             </ul>
                         </div>
@@ -52,11 +50,10 @@
                             </dl>
                         </div>
                     </div>
-                }
-              
+                }              
 
                 <div class="govuk-button-group">                  
-                    <a href="#" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                    <a href="publish-service?providerId=@Model.Provider.Id&isReview=false" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
                         Publish provider
                     </a>
 

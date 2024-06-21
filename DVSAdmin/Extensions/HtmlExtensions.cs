@@ -43,6 +43,7 @@ namespace DVSAdmin.Extensions
 
                 case ApplicationReviewStatusEnum.InPrimaryReview:    
                 case CertificateInfoStatusEnum.InReview:
+                case CertificateInfoStatusEnum.ReadyToPublish:
                 case ProviderStatusEnum.ReadyToPublish:
                 case ProviderStatusEnum.ActionRequired:
                 return "govuk-tag govuk-tag--yellow";

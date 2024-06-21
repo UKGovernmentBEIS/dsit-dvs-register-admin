@@ -136,7 +136,10 @@ namespace DVSAdmin.Data.Repositories
 
         public async Task<List<CertificateInformation>> GetCertificateInformationList()
         {
-            return await context.CertificateInformation.Include(p=>p.CertificateInfoRoleMapping).Include(p => p.CertificateReview).Include(p => p.Provider).OrderBy(c => c.CreatedDate).ToListAsync();
+            return await context.CertificateInformation.Include(p=>p.CertificateInfoRoleMapping)
+            .Include(p => p.CertificateInfoIdentityProfileMapping)
+            .Include(p => p.CertificateInfoSupSchemeMappings)
+            .Include(p => p.CertificateReview).Include(p => p.Provider).OrderBy(c => c.CreatedDate).ToListAsync();
         }
 
         public async Task<CertificateInformation> GetCertificateInformation(int certificateInfoId)
