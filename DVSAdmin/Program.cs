@@ -10,6 +10,7 @@ var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 Console.WriteLine(environment);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+
 builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
 .AddJsonFile($"appsettings.{environment}.json", optional: true)
 .AddEnvironmentVariables();
