@@ -69,11 +69,16 @@ namespace DVSAdmin.BusinessLogic.Services
                 consentToken.CreatedTime = DateTime.UtcNow;
                 genericResponse = await consentRepository.SaveConsentToken(consentToken);
                 if (genericResponse.Success)
-                {
-                    await emailSender.SendConsentToPublishToDIP(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.FullName, certificateInformationDto.Provider.PreRegistration.Email, consentLink);
+                {                    
+                   //if there is additional contact sent consent link to sponsor email and notification email to additional contact
                     if (!string.IsNullOrEmpty(certificateInformationDto.Provider.PreRegistration.SponsorEmail))
                     {
                         await emailSender.SendConsentToPublishToDIP(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.SponsorFullName, certificateInformationDto.Provider.PreRegistration.SponsorEmail, consentLink);
+                        await emailSender.SendConsentToPublishToAdditionalContact(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.FullName, certificateInformationDto.Provider.PreRegistration.Email);
+                    }
+                    else
+                    {
+                        await emailSender.SendConsentToPublishToDIP(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.FullName, certificateInformationDto.Provider.PreRegistration.Email,consentLink);
                     }
                 }
 
@@ -142,8 +147,7 @@ namespace DVSAdmin.BusinessLogic.Services
         {
             ConsentToken consentToken = await consentRepository.GetConsentToken(token, tokenId);
             CertificateReview certificateReview = await certificateReviewRepository.GetCertificateReview(consentToken.CertificateReviewId);
-            CertificateInformationDto certificateInformationDto = await GetCertificateInformation(certificateReview.CertificateInformationId);
-           
+            CertificateInformationDto certificateInformationDto = await GetCertificateInformation(certificateReview.CertificateInformationId);           
             return certificateInformationDto;
 
         }
