@@ -3,6 +3,8 @@ using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.Models;
 using Microsoft.AspNetCore.Mvc;
 using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Data.Entities;
+using DVSRegister.Extensions;
 
 namespace DVSAdmin.Controllers
 {
@@ -11,11 +13,14 @@ namespace DVSAdmin.Controllers
     {
         private readonly ILogger<RegisterManagementController> logger;
         private readonly IRegManagementService regManagementService;
-       
-        public RegisterManagementController(ILogger<RegisterManagementController> logger, IRegManagementService regManagementService)
+        private readonly ICertificateReviewService certificateReviewService;
+
+        public RegisterManagementController(ILogger<RegisterManagementController> logger, IRegManagementService regManagementService,
+           ICertificateReviewService certificateReviewService )
         {
             this.logger = logger;
-            this.regManagementService = regManagementService;           
+            this.regManagementService = regManagementService;   
+            this.certificateReviewService = certificateReviewService;
         }
         [HttpGet("register-management-list")]
         public IActionResult RegisterManagement()
@@ -25,27 +30,54 @@ namespace DVSAdmin.Controllers
         [HttpGet("provider-details")]
         public async Task<IActionResult> ProviderDetails(int providerId)
         {
+
             ProviderDto providerDto = await regManagementService.GetProviderDetails(providerId);
+            providerDto.CertificateInformation = AssignServiceNumber(providerDto.CertificateInformation);
+
             ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
             providerDetailsViewModel.Provider = providerDto;
-            providerDetailsViewModel.CertificateInformationList = new List<CertificateInformationDto>();
-            providerDetailsViewModel.CertificateInformationList = providerDto.CertificateInformation
-           .Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish).ToList();
             return View(providerDetailsViewModel);
         }
+
+     
+
         [HttpGet("service-details")]
-        public IActionResult ServiceDetails(int serviceId)
+        public async Task<IActionResult> ServiceDetails(int serviceId, int serviceNumber)
         {
-            return View();
+            CertificateInformationDto certificateInformation = await certificateReviewService.GetCertificateInformation(serviceId);
+            ServiceDetailsViewModel serviceDetailsViewModel = new ServiceDetailsViewModel();
+            serviceDetailsViewModel.CertificateInformation = certificateInformation;
+          serviceDetailsViewModel.ServiceNumber = serviceNumber;
+            return View(serviceDetailsViewModel);
         }
+
+        /// <summary>
+        /// This method is used to show 2 pages
+        /// for viewing services and review before publish
+        /// </summary>
+        /// <param name="providerId"></param>
+        /// <param name="isReview"></param>
+        /// <returns></returns>
         [HttpGet("publish-service")]
-        public IActionResult PublishService()
+        public async Task<IActionResult> PublishService(int providerId, bool isReview)
         {
-            return View();
+            ViewBag.IsReview = isReview;
+            ProviderDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);
+            List<CertificateInformationDto> certificateInformation = AssignServiceNumber(providerDto.CertificateInformation);
+            ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
+            providerDetailsViewModel.Provider = providerDto;          
+            providerDetailsViewModel.Provider.CertificateInformation= certificateInformation
+           .Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish).ToList();
+            List<int> ServiceIds = providerDetailsViewModel.Provider.CertificateInformation.Select(item => item.Id).ToList();
+            HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);
+            return View(providerDetailsViewModel);
         }
-        [HttpGet("what-next")]
-        public IActionResult WhatNext()
+
+
+        [HttpGet("proceed-publication")]
+        public IActionResult ProceedPublication(int providerId)
         {
+           
             return View();
         }
         [HttpGet("provider-published")]
@@ -53,5 +85,17 @@ namespace DVSAdmin.Controllers
         {
             return View();
         }
+
+        #region Private Methods
+        private List<CertificateInformationDto> AssignServiceNumber(List<CertificateInformationDto> certificateInformationDtos)
+        {
+            certificateInformationDtos.Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish
+           || x.CertificateInfoStatus == CertificateInfoStatusEnum.Published).ToList();
+            certificateInformationDtos.Select((item, index) => new { item, index })
+           .ToList().ForEach(x => x.item.ServiceNumber = x.index + 1);
+            return certificateInformationDtos;
+        }
+
+        #endregion
     }
 }

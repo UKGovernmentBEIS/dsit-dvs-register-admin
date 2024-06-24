@@ -6,6 +6,7 @@ namespace DVSAdmin.BusinessLogic.Models
     {
         public int Id { get; set; }
         public int ProviderId { get; set; }
+        public int ServiceNumber { get; set; }
         public ProviderDto Provider { get; set; }
         public string ServiceName { get; set; }
 

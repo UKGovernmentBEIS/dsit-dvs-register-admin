@@ -10,17 +10,19 @@ namespace DVSAdmin.BusinessLogic.Services
     public class RegManagementService : IRegManagementService
     {
         private readonly IRegManagementRepository regManagementRepository;
+        private readonly ICertificateReviewRepository certificateReviewRepository;
         private readonly IMapper automapper;
         private readonly ILogger<PreRegistrationReviewService> logger;
         private readonly IEmailSender emailSender;
 
         public RegManagementService(IRegManagementRepository regManagementRepository, IMapper automapper,
-          ILogger<PreRegistrationReviewService> logger, IEmailSender emailSender)
+          ILogger<PreRegistrationReviewService> logger, IEmailSender emailSender, ICertificateReviewRepository certificateReviewRepository)
         {
             this.regManagementRepository = regManagementRepository;
             this.automapper = automapper;
             this.logger = logger;
             this.emailSender = emailSender;
+            this.certificateReviewRepository = certificateReviewRepository;
         }        
          public async Task<List<ProviderDto>> GetProviders()
         {
@@ -32,6 +34,41 @@ namespace DVSAdmin.BusinessLogic.Services
         {
             var provider = await regManagementRepository.GetProviderDetails(providerId);
             ProviderDto providerDto = automapper.Map<ProviderDto>(provider);
+            return providerDto;
+        }
+
+        public async Task<ProviderDto> GetProviderWithServiceDeatils(int providerId)
+        {
+            var provider = await regManagementRepository.GetProviderDetails(providerId);
+            ProviderDto providerDto = automapper.Map<ProviderDto>(provider);
+
+            var roles = await certificateReviewRepository.GetRoles();
+            List<RoleDto> roleDtos = automapper.Map<List<RoleDto>>(roles);
+
+            var identityProfiles = await certificateReviewRepository.GetIdentityProfiles();
+            List<IdentityProfileDto> identityProfileDtos = automapper.Map<List<IdentityProfileDto>>(identityProfiles);
+
+            var schemes = await certificateReviewRepository.GetSupplementarySchemes();
+            List<SupplementarySchemeDto> supplementarySchemeDtos = automapper.Map<List<SupplementarySchemeDto>>(schemes);
+
+            var certificateInfoList = await certificateReviewRepository.GetCertificateInformationList();
+
+
+
+            List<CertificateInformationDto> certificateInformationDtos = automapper.Map<List<CertificateInformationDto>>(certificateInfoList);
+
+            foreach (var item in certificateInformationDtos)
+            {
+                var roleIds = item.CertificateInfoRoleMapping.Select(mapping => mapping.RoleId);
+                item.Roles = roleDtos.Where(x => roleIds.Contains(x.Id)).ToList();
+                var identityProfileids = item.CertificateInfoIdentityProfileMapping.Select(mapping => mapping.IdentityProfileId);
+                item.IdentityProfiles = identityProfileDtos.Where(x => identityProfileids.Contains(x.Id)).ToList();
+                var schemeids = item.CertificateInfoSupSchemeMappings?.Select(x => x.SupplementarySchemeId);
+                if (schemeids!=null && schemeids.Count() > 0)
+                    item.SupplementarySchemes = supplementarySchemeDtos.Where(x => schemeids.Contains(x.Id)).ToList();
+            }
+
+            providerDto.CertificateInformation = certificateInformationDtos;
             return providerDto;
         }
 

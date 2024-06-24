@@ -1,16 +1,36 @@
-﻿@{
+﻿@model ProviderDetailsViewModel
+@{
     ViewData["Title"] = "Publish service";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
+@{
+   bool isReview= ViewBag.IsReview??false;
+}
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ProviderReview", "ProviderReview", null, new { @class = "govuk-back-link" })
-    <main class="govuk-main-wrapper">
+    @if (isReview)
+    {
+        @Html.ActionLink("Back", "PublishService", "RegisterManagement", new { @providerId = @Model.Provider.Id, @isReview  = false}, new { @class = "govuk-back-link" })
+    }
+    else
+    {
+        @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { @providerId = @Model.Provider.Id }, new { @class = "govuk-back-link" })
+    }
+
+          
+         
+        @Html.HiddenFor(m => m.Provider.CertificateInformation)
+        <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
 
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">You are publishing the following service provider on the register</h1>
-                <p class="govuk-body">Please review the information you are about to publish below.</p>
+                @if (isReview)
+                {
+                    <p class="govuk-body">Please review the information you are about to publish below.</p>
+                
+                }
+          
                 <h2 class="govuk-heading-m">Basic information</h2>
                 <dl class="govuk-summary-list govuk-!-margin-bottom-8">
                     <div class="govuk-summary-list__row">
@@ -18,7 +38,7 @@
                             Public contact email
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            Remote Verify
+                           @Model.Provider.PublicContactEmail
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -26,7 +46,7 @@
                             Telephone number
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            07532167283
+                            @Model.Provider.TelephoneNumber
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -34,22 +54,55 @@
                             Website address
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            www.northrow.co.uk
+                            @Model.Provider.WebsiteAddress
                         </dd>
                     </div>
                 </dl>
-                <h2 class="govuk-heading-m">Service 1: Remote Verify</h2>
-                @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ServiceDetailsView.cshtml")
-                <div class="govuk-button-group" id="submitvalidation">
-                    <button type="submit" class="govuk-button" data-module="govuk-button" name="ProceedPublication" value="approve">
-                        Proceed with publication
-                    </button>
-                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="cancel" value="cancel">
-                        Cancel
-                    </button>
-                </div>
+
+                @foreach(var item in Model.Provider.CertificateInformation)
+                {
+                    <h2 class="govuk-heading-m">Service @item.ServiceNumber: Remote Verify</h2>
+                    @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ServiceDetailsView.cshtml", item)
+                  
+                    
+                }
+
+                @if(isReview)
+                {
+                    <div class="govuk-button-group" >
+                     @*    <button type="submit" class="govuk-button" data-module="govuk-button" name="ProceedPublication" value="approve">
+                            Proceed with publication
+                        </button> *@
+
+                        <a href="proceed-publication?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                            Proceed with publication
+                        </a>
+
+                        <a href="publish-service?providerId=@Model.Provider.Id&isReview=false" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                            Cancel
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="govuk-button-group" >
+                        <a href="publish-service?providerId=@Model.Provider.Id&isReview=true" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                            Publish provider
+                        </a>
+
+                        <a href="provider-details?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                            Cancel
+                        </a>
+                      
+                      
+                    </div>
+                }
+
+             
             </div>
         </div>
     </main>
+
+  
 </div>
 

@@ -4,7 +4,7 @@ namespace DVSAdmin.Models
 {
     public class ProviderDetailsViewModel
     {
-        public ProviderDto Provider { get; set; }
-        public List<CertificateInformationDto> CertificateInformationList { get; set; }
+        public ProviderDto Provider { get; set; }        
+       
     }
 }
