@@ -1,23 +1,77 @@
 ﻿@model ConsentViewModel
 @{
-    ViewData["Title"] = "Consent";
+    ViewData["Title"] = "You are about to agree to publish your service on the register";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
-  @using (Html.BeginForm("GiveConsent", "Consent", FormMethod.Post))
+@using (Html.BeginForm("GiveConsent", "Consent", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    @Html.HiddenFor(m=>m.token)
-   
+    @Html.HiddenFor(m => m.token)
+
     <div>
         @Model.CertificateInformation.ServiceName
 
     </div>
-   
-    <button type="submit" class="govuk-button" data-module="govuk-button">
-        Give Consent
-    </button>
+
+    <div class="govuk-width-container">
+        @Html.ActionLink("Back", "ProviderReview", "ProviderReview", null, new { @class = "govuk-back-link" })
+        <main class="govuk-main-wrapper">
+            <div class="govuk-grid-row">
+
+                <div class="govuk-grid-column-full">
+                    <h1 class="govuk-heading-xl">You are about to agree to publish your service on the register</h1>
+                    <p class="govuk-body">To consent to publish your service on the register, please click the Give consent to publish’ button below.</p>
+                    <h2 class="govuk-heading-m">Basic information</h2>
+                    <dl class="govuk-summary-list govuk-!-margin-bottom-8">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Public contact email
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                Remote Verify
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Telephone number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                07532167283
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Website address
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                www.northrow.co.uk
+                            </dd>
+                        </div>
+                    </dl>
+                    <h2 class="govuk-heading-m">Service 1: Remote Verify</h2>
+                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml")
+                    <div class="govuk-checkboxes govuk-!-margin-bottom-6" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="contact" name="contact" type="checkbox" value="email" data-aria-controls="conditional-contact">
+                            <label class="govuk-label govuk-checkboxes__label" for="contact">
+                                I consent to publish these details on the register
+                            </label>
+                        </div>
+                    </div>
+                    <div class="govuk-button-group" id="submitvalidation">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="confirm" value="approve">
+                            Confirm
+                        </button>
+                    </div>
+                    <p class="govuk-body">Once you consent to publication it may take up to 24 hours for your service to appear on the register.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
 }
 
 

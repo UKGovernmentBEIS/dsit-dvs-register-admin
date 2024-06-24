@@ -62,7 +62,7 @@
                 @foreach(var item in Model.Provider.CertificateInformation)
                 {
                     <h2 class="govuk-heading-m">Service @item.ServiceNumber: Remote Verify</h2>
-                    @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ServiceDetailsView.cshtml", item)
+                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", item)
                   
                     
                 }
