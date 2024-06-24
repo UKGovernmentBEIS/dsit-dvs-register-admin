@@ -22,5 +22,7 @@
         public CertificateInfoRejectedToCabTemplate CertificateInfoRejectedToCabTemplate { get; set; }
         public CertificateInfoRejectedToDSITTemplate CertificateInfoRejectedToDSITTemplate { get; set; }
         public DIPConsentToPublishTemplate DIPConsentToPublishTemplate { get; set; }
+        public AdditionalContactConsentTemplate AdditionalContactConsentTemplate { get; set; }
+
     }
 }

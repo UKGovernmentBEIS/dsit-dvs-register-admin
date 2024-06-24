@@ -4,23 +4,26 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@{
+    ViewData["HidePublishStatus"] = true;// setting variable to hide status field in partial view
 
+}
 @using (Html.BeginForm("GiveConsent", "Consent", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.token)
-
-    <div>
-        @Model.CertificateInformation.ServiceName
-
-    </div>
-
+   
     <div class="govuk-width-container">
         @Html.ActionLink("Back", "ProviderReview", "ProviderReview", null, new { @class = "govuk-back-link" })
         <main class="govuk-main-wrapper">
             <div class="govuk-grid-row">
 
                 <div class="govuk-grid-column-full">
+                    @if (ViewData.ModelState.ErrorCount >0)
+                    {
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                    }
                     <h1 class="govuk-heading-xl">You are about to agree to publish your service on the register</h1>
                     <p class="govuk-body">To consent to publish your service on the register, please click the Give consent to publish’ button below.</p>
                     <h2 class="govuk-heading-m">Basic information</h2>
@@ -30,7 +33,7 @@
                                 Public contact email
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                Remote Verify
+                                @Model.CertificateInformation.Provider.PublicContactEmail
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -38,7 +41,7 @@
                                 Telephone number
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                07532167283
+                                @Model.CertificateInformation.Provider.TelephoneNumber
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -46,20 +49,41 @@
                                 Website address
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                www.northrow.co.uk
+                                @Model.CertificateInformation.Provider.WebsiteAddress
                             </dd>
                         </div>
                     </dl>
-                    <h2 class="govuk-heading-m">Service 1: Remote Verify</h2>
-                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml")
-                    <div class="govuk-checkboxes govuk-!-margin-bottom-6" data-module="govuk-checkboxes">
-                        <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="contact" name="contact" type="checkbox" value="email" data-aria-controls="conditional-contact">
-                            <label class="govuk-label govuk-checkboxes__label" for="contact">
-                                I consent to publish these details on the register
-                            </label>
-                        </div>
+
+
+
+                    <h2 class="govuk-heading-m">Service 1:  @Model.CertificateInformation.ServiceName </h2>
+                   
+                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.CertificateInformation)
+                    <h2 class="govuk-heading-l">Certificate of conformity</h2>
+                    <span class="govuk-caption-xl">@Model.CertificateInformation.FileName</span>
+                    <div id="download-certificate-hint" class="govuk-hint">
+                        PDF, 19.5 KB, 1 page
+                        This file may not be suitable for users of assistive technology.
                     </div>
+
+                    <a href="#" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                        Download certificate of conformity
+                    </a>
+
+                    <hr class="govuk-section-break govuk-section-break--m">              
+
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_CheckBoxView.cshtml", new ConsentCheckBoxViewModel
+                   {
+                        PropertyName = "HasConsent",
+                        Value = Model.HasConsent,
+                        HasError = Html.ViewData.ModelState.ContainsKey("HasConsent") && Html.ViewData.ModelState["HasConsent"].Errors.Count > 0,
+                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("HasConsent") && Html.ViewData.ModelState["HasConsent"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["HasConsent"].Errors[0].ErrorMessage : string.Empty,
+                        Label = "I agree to publish these details on the register"
+                     
+                   })
                     <div class="govuk-button-group" id="submitvalidation">
                         <button type="submit" class="govuk-button" data-module="govuk-button" name="confirm" value="approve">
                             Confirm
