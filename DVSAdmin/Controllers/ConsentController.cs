@@ -33,6 +33,10 @@ namespace DVSAdmin.Controllers
                 if (tokenDetails!= null && tokenDetails.IsAuthorised)
                 {
                     CertificateInformationDto certificateInformationDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
+                    if(certificateInformationDto!= null && certificateInformationDto.CertificateInfoStatus == CommonUtility.Models.Enums.CertificateInfoStatusEnum.ReadyToPublish)
+                    {
+                        return RedirectToAction(Constants.ErrorPath);
+                    }
                     consentViewModel.CertificateInformation = certificateInformationDto;
                 }
                 else
@@ -59,14 +63,23 @@ namespace DVSAdmin.Controllers
                 
                 if(tokenDetails!= null && tokenDetails.IsAuthorised)
                 {
-                    GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewStatus(tokenDetails.Token, tokenDetails.TokenId);
-                    if (genericResponse.Success)
+                    if (ModelState.IsValid)
                     {
-                        return RedirectToAction("ConsentSuccess");
+                        GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewStatus(tokenDetails.Token, tokenDetails.TokenId);
+                        if (genericResponse.Success)
+                        {
+                            return RedirectToAction("ConsentSuccess");
+                        }
+                        else
+                        {
+                            return RedirectToAction(Constants.ErrorPath);
+                        } 
                     }
                     else
                     {
-                        return RedirectToAction(Constants.ErrorPath);
+                        CertificateInformationDto certificateInformationDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
+                        consentViewModel.CertificateInformation = certificateInformationDto;
+                        return View("Consent", consentViewModel);
                     }
                 }
                 else

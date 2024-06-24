@@ -142,9 +142,8 @@ namespace DVSAdmin.BusinessLogic.Services
         {
             ConsentToken consentToken = await consentRepository.GetConsentToken(token, tokenId);
             CertificateReview certificateReview = await certificateReviewRepository.GetCertificateReview(consentToken.CertificateReviewId);
-            CertificateInformation certificateInformation = certificateReview.CertificateInformation;
-            CertificateInformationDto certificateInformationDto = new CertificateInformationDto();
-            automapper.Map(certificateInformation, certificateInformationDto);
+            CertificateInformationDto certificateInformationDto = await GetCertificateInformation(certificateReview.CertificateInformationId);
+           
             return certificateInformationDto;
 
         }
