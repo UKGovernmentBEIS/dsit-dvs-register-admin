@@ -19,7 +19,9 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("Ready to publish")]
         ReadyToPublish = 6,
         [Description("Published")]
-        Published = 7
+        Published = 7,
+        [Description("Removed")]
+        Removed = 8
 
 
     }

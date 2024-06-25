@@ -1,5 +1,6 @@
-﻿@{
-    ViewData["Title"] = "What will happen once you publish the service provider on the register";
+﻿@model ProviderDetailsViewModel
+@{
+    ViewData["Title"] = "You are about to publish this service provider on the register";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -9,44 +10,19 @@
         <div class="govuk-grid-row">
 
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl">What will happen once you publish the service provider on the register</h1>
-                <p class="govuk-body">The service provider’s information will be publicly available on the register of trusted digital identity and attribute service providers.</p>
-                <h2 class="govuk-heading-m">Who will receive confirmation of this decision</h2>
-                <p class="govuk-body">The service provider will receive an email confirming that their details have been published. </p>
-                <dl class="govuk-summary-list govuk-!-margin-bottom-8">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Email address of application sponsor
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            name.lastname@email.com
-                        </dd>
-                    </div>
-                </dl>
+                <h1 class="govuk-heading-xl">You are about to publish this service provider on the register</h1>
+                <p class="govuk-body">The service provider will receive a confirmation email. The Conformity Assessment Body will also be notified of this decision.</p>
 
-                <h2 class="govuk-heading-m">Who will also receive an email notification</h2>
-                <p class="govuk-body">The Conformity Assessment Body and DSIT will also receive an email notification.</p>
-                <dl class="govuk-summary-list govuk-!-margin-bottom-8">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Email address of application sponsor
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            name.lastname@email.com
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Email address of additional contact
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            name.lastname@email.com
-                        </dd>
-                    </div>
-                </dl>
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-visually-hidden">Warning</span>
+                        Once you publish this service provider’s details, this action can’t be undone.
+                    </strong>
+                </div>
                 <div class="govuk-button-group" id="submitvalidation">
-                    <button type="submit" class="govuk-button" data-module="govuk-button" name="ProceedPublication" value="approve">
-                        Proceed with publication
+                    <button type="submit" class="govuk-button" data-module="govuk-button" name="publish" value="approve">
+                        Publish
                     </button>
                     <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="cancel" value="cancel">
                         Cancel

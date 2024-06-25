@@ -153,11 +153,23 @@ namespace DVSAdmin.BusinessLogic.Services
         }
         public async Task<GenericResponse> UpdateCertificateReviewStatus(string token, string tokenId)
         {
+           
             GenericResponse genericResponse = new GenericResponse();
             ConsentToken consentToken = await consentRepository.GetConsentToken(token, tokenId);
             if (!string.IsNullOrEmpty(consentToken.Token)  && !string.IsNullOrEmpty(consentToken.TokenId))   //proceed update status if token exists           
             {
-                genericResponse =  await certificateReviewRepository.UpdateCertificateReviewStatus(consentToken.CertificateReviewId,"DIP");
+                var reviewEntity = await certificateReviewRepository.GetCertificateReview(consentToken.CertificateReviewId);
+                if (reviewEntity != null)
+                {
+                    ProviderStatusEnum providerStatus = ProviderStatusEnum.ActionRequired;
+                    List<CertificateInformation> serviceList = await certificateReviewRepository.GetCertificateInformationListByProvider(reviewEntity.ProviderId);
+                    if (serviceList.Any(item => item.CertificateInfoStatus == CertificateInfoStatusEnum.Published))
+                    {
+                        providerStatus = ProviderStatusEnum.PublishedActionRequired;
+                    }                    
+                    genericResponse =  await certificateReviewRepository.UpdateCertificateReviewStatus(consentToken.CertificateReviewId, "DIP", providerStatus);
+                }
+              
             }
             return genericResponse;
         }
