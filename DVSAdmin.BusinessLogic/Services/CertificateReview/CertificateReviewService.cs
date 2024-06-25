@@ -151,11 +151,12 @@ namespace DVSAdmin.BusinessLogic.Services
             return certificateInformationDto;
 
         }
-        public async Task<GenericResponse> UpdateCertificateReviewStatus(string token, string tokenId)
+        public async Task<GenericResponse> UpdateCertificateReviewStatus(string token, string tokenId, CertificateInformationDto certificateInformationDto)
         {
            
             GenericResponse genericResponse = new GenericResponse();
             ConsentToken consentToken = await consentRepository.GetConsentToken(token, tokenId);
+            PreRegistrationDto preRegistrationDto = certificateInformationDto.Provider.PreRegistration;
             if (!string.IsNullOrEmpty(consentToken.Token)  && !string.IsNullOrEmpty(consentToken.TokenId))   //proceed update status if token exists           
             {
                 var reviewEntity = await certificateReviewRepository.GetCertificateReview(consentToken.CertificateReviewId);
@@ -163,11 +164,17 @@ namespace DVSAdmin.BusinessLogic.Services
                 {
                     ProviderStatusEnum providerStatus = ProviderStatusEnum.ActionRequired;
                     List<CertificateInformation> serviceList = await certificateReviewRepository.GetCertificateInformationListByProvider(reviewEntity.ProviderId);
+                  
                     if (serviceList.Any(item => item.CertificateInfoStatus == CertificateInfoStatusEnum.Published))
                     {
                         providerStatus = ProviderStatusEnum.PublishedActionRequired;
                     }                    
                     genericResponse =  await certificateReviewRepository.UpdateCertificateReviewStatus(consentToken.CertificateReviewId, "DIP", providerStatus);
+                    if (genericResponse.Success)
+                    {
+                        genericResponse.Success = await emailSender.SendAgreementToPublishToDIP(preRegistrationDto?.FullName??string.Empty, preRegistrationDto?.Email??string.Empty) &&
+                       await emailSender.SendAgreementToPublishToDSIT(preRegistrationDto?.URN??string.Empty, certificateInformationDto.ServiceName);
+                    }
                 }
               
             }

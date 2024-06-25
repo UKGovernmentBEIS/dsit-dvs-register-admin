@@ -341,5 +341,41 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+
+        public async Task<bool> SendAgreementToPublishToDIP(string recipientName, string emailAddress)
+        {
+            var template = govUkNotifyConfig.AgreementToPublishTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+               
+                { template.RecipientName,  recipientName}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendAgreementToPublishToDSIT(string URN, string serviceName)
+        {
+            var template = govUkNotifyConfig.AgreementToPublishToDSITTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.URN,  URN},
+                { template.ServiceName,  serviceName},
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
     }
 }

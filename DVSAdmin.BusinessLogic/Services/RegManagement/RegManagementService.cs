@@ -78,7 +78,7 @@ namespace DVSAdmin.BusinessLogic.Services
         {
             GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerId, userEmail, CertificateInfoStatusEnum.Published);
             ProviderStatusEnum providerStatus = ProviderStatusEnum.Published;
-            CertificateInfoStatusEnum certificateStatus = CertificateInfoStatusEnum.Published;
+            Provider provider = await regManagementRepository.GetProviderDetails(providerId);
             List<CertificateInformation> serviceList = await certificateReviewRepository.GetCertificateInformationListByProvider(providerId);
 
             //If no service is currently published AND one service status = Ready to publish:
@@ -103,6 +103,7 @@ namespace DVSAdmin.BusinessLogic.Services
             }
 
             genericResponse = await regManagementRepository.UpdateProviderStatus(providerId,  providerStatus);
+         
 
             return genericResponse;
         }

@@ -60,12 +60,13 @@ namespace DVSAdmin.Controllers
             if(!string.IsNullOrEmpty(consentViewModel.token))
             {
                 TokenDetails tokenDetails = await jwtService.ValidateToken(consentViewModel.token);
-                
+               
                 if(tokenDetails!= null && tokenDetails.IsAuthorised)
                 {
+                    CertificateInformationDto certificateInformationDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
                     if (ModelState.IsValid)
                     {
-                        GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewStatus(tokenDetails.Token, tokenDetails.TokenId);
+                        GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewStatus(tokenDetails.Token, tokenDetails.TokenId, certificateInformationDto);
                         if (genericResponse.Success)
                         {
                             return RedirectToAction("ConsentSuccess");
@@ -77,7 +78,7 @@ namespace DVSAdmin.Controllers
                     }
                     else
                     {
-                        CertificateInformationDto certificateInformationDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
+                       
                         consentViewModel.CertificateInformation = certificateInformationDto;
                         return View("Consent", consentViewModel);
                     }

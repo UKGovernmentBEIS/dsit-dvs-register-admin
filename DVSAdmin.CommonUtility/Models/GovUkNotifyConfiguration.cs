@@ -1,4 +1,6 @@
-﻿namespace DVSAdmin.CommonUtility.Models
+﻿using DVSAdmin.CommonUtility.Models.Consent;
+
+namespace DVSAdmin.CommonUtility.Models
 {
     public class GovUkNotifyConfiguration
     {
@@ -23,6 +25,8 @@
         public CertificateInfoRejectedToDSITTemplate CertificateInfoRejectedToDSITTemplate { get; set; }
         public DIPConsentToPublishTemplate DIPConsentToPublishTemplate { get; set; }
         public AdditionalContactConsentTemplate AdditionalContactConsentTemplate { get; set; }
+        public AgreementToPublishTemplate AgreementToPublishTemplate { get; set; }
+        public AgreementToPublishToDSITTemplate AgreementToPublishToDSITTemplate { get; set; }
 
     }
 }
