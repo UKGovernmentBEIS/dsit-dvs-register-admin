@@ -165,9 +165,10 @@ namespace DVSAdmin.Controllers
             {
                 var mfaResponse = await _signUpService.ConfirmMFAToken(HttpContext?.Session.Get<string>("Session"), HttpContext?.Session.Get<string>("Email"), loginPageViewModel.MFACode);
 
-                if (mfaResponse.Length > 0)
+                if (mfaResponse.IdToken.Length > 0)
                 {
-                    HttpContext?.Session.Set("IdToken", mfaResponse);
+                    HttpContext?.Session.Set("IdToken", mfaResponse.IdToken);
+                    HttpContext?.Session.Set("AccessToken", mfaResponse.AccessToken);
                     return RedirectToAction("LandingPage", "OfDia");
                 }
                 else
@@ -186,7 +187,9 @@ namespace DVSAdmin.Controllers
         [HttpGet("sign-out")]
         public IActionResult OfDiaSignOut()
         {
+            string accesstoken = HttpContext?.Session.Get<string>("AccessToken");
             HttpContext?.Session.Clear();
+            _signUpService.SignOut(accesstoken);
             return RedirectToAction("LoginPage", "Login");
         }
 

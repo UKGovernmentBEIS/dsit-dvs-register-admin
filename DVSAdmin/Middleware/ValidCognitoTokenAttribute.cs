@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DVSAdmin.CommonUtility;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -51,7 +52,7 @@ public class ValidCognitoTokenAttribute : ActionFilterAttribute
         {
             Console.WriteLine($"Exception ex"+ex.Message);
             // If an exception occurs (indicating the token is invalid), redirect to the Login page
-            context.Result = new RedirectToActionResult("HandleException", "Error", "preregistration-review/service-error");
+            context.Result = new RedirectToActionResult("", "Login", null);
         }
     }
 }
