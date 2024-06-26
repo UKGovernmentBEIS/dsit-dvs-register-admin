@@ -14,6 +14,6 @@ namespace DVSAdmin.BusinessLogic.Services
         public  Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons();
         public  Task<CertificateReviewDto> GetCertificateReview(int reviewId);
         public Task<CertificateInformationDto> GetProviderAndCertificateDetailsByToken(string token, string tokenId);
-        public Task<GenericResponse> UpdateCertificateReviewStatus(string token, string tokenId);
+        public Task<GenericResponse> UpdateCertificateReviewStatus(string token, string tokenId, CertificateInformationDto certificateInformationDto);
     }
 }

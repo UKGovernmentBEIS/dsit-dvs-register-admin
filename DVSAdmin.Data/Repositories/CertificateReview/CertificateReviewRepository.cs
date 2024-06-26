@@ -142,6 +142,13 @@ namespace DVSAdmin.Data.Repositories
             .Include(p => p.CertificateReview).Include(p => p.Provider).OrderBy(c => c.CreatedDate).ToListAsync();
         }
 
+        public async Task<List<CertificateInformation>> GetCertificateInformationListByProvider(int providerId)
+        {
+            return await context.CertificateInformation.Where(p => p.ProviderId == providerId && 
+            (p.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish || p.CertificateInfoStatus == CertificateInfoStatusEnum.Published))
+            .ToListAsync()??new List<CertificateInformation>();
+        }
+
         public async Task<CertificateInformation> GetCertificateInformation(int certificateInfoId)
         {
             CertificateInformation certificateInformation = new CertificateInformation();
@@ -185,7 +192,7 @@ namespace DVSAdmin.Data.Repositories
         }
 
 
-        public async Task<GenericResponse> UpdateCertificateReviewStatus(int certificateReviewId, string modifiedBy)
+        public async Task<GenericResponse> UpdateCertificateReviewStatus(int certificateReviewId, string modifiedBy, ProviderStatusEnum providerStatus)
         {
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = context.Database.BeginTransaction();
@@ -212,7 +219,7 @@ namespace DVSAdmin.Data.Repositories
                         certificateInfoEntity.ModifiedDate = DateTime.UtcNow;
 
 
-                        providerEntity.ProviderStatus = ProviderStatusEnum.ActionRequired;
+                        providerEntity.ProviderStatus = providerStatus;
                         providerEntity.ModifiedTime = DateTime.UtcNow;
 
                         await context.SaveChangesAsync();

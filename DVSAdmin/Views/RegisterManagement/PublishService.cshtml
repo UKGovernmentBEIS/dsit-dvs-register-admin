@@ -5,6 +5,7 @@
 }
 
 @{
+    //To differentiate between review and details page
    bool isReview= ViewBag.IsReview??false;
 }
 <div class="govuk-width-container">
@@ -70,10 +71,6 @@
                 @if(isReview)
                 {
                     <div class="govuk-button-group" >
-                     @*    <button type="submit" class="govuk-button" data-module="govuk-button" name="ProceedPublication" value="approve">
-                            Proceed with publication
-                        </button> *@
-
                         <a href="proceed-publication?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
                             Proceed with publication
                         </a>

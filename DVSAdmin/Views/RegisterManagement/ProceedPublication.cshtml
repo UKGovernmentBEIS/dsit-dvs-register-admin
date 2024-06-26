@@ -1,0 +1,79 @@
+﻿@model ProviderDetailsViewModel
+@{
+    ViewData["Title"] = "What will happen once you publish the service provider on the register";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "ProviderReview", "ProviderReview", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">What will happen once you publish the service provider on the register</h1>
+                <p class="govuk-body">The service provider’s information will be publicly available on the register of trusted digital identity and attribute service providers.</p>
+                <h2 class="govuk-heading-m">Who will receive confirmation of this decision</h2>
+                <p class="govuk-body">The service provider will receive an email confirming that their details have been published. </p>
+
+                <dl class="govuk-summary-list govuk-!-margin-bottom-8">
+                @if (@Model.Provider.PreRegistration.IsApplicationSponsor)
+                {                   
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Email address of application sponsor
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Provider.PreRegistration.Email
+                    </dd>
+                </div>
+                    
+                }
+                else
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Email address of application sponsor
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Provider.PreRegistration.SponsorEmail
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Email address of application sponsor
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Provider.PreRegistration.Email
+                        </dd>
+                    </div>
+                    
+                }
+                </dl>              
+
+                <h2 class="govuk-heading-m">Who will also receive an email notification</h2>
+                <p class="govuk-body">The Conformity Assessment Body and DSIT will also receive an email notification.</p>
+                <dl class="govuk-summary-list govuk-!-margin-bottom-8">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Email address of CAB
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Provider.CertificateInformation[0].CreatedBy
+                        </dd>
+                    </div>
+                 
+                </dl>
+                <div class="govuk-button-group" id="submitvalidation">
+                    <a href="about-to-publish?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                        Proceed with publication
+                    </a>
+
+                    <a href="publish-service?providerId=@Model.Provider.Id&isReview=true" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+

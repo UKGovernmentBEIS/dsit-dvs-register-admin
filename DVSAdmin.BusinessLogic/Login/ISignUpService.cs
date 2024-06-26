@@ -1,4 +1,5 @@
 ﻿using System;
+using Amazon.CognitoIdentityProvider.Model;
 using DVSAdmin.CommonUtility.Models;
 
 namespace DVSAdmin.BusinessLogic.Services
@@ -13,7 +14,8 @@ namespace DVSAdmin.BusinessLogic.Services
 
 		public Task<string> SignInAndWaitForMfa(string email, string password);
 
-		public Task<string> ConfirmMFAToken(string session, string email, string token);
+		public Task<AuthenticationResultType> ConfirmMFAToken(string session, string email, string token);
+		public void SignOut(string accesssToken);
     }
 }
 

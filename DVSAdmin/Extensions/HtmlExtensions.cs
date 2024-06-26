@@ -37,7 +37,9 @@ namespace DVSAdmin.Extensions
                 case URNStatusEnum.Rejected:                    
                 case CertificateInfoStatusEnum.Rejected:                  
                 case CertificateInfoStatusEnum.Expired:
-                return "govuk-tag govuk-tag--red";
+                case CertificateInfoStatusEnum.Removed:
+                case ProviderStatusEnum.RemovedFromRegister:                  
+                 return "govuk-tag govuk-tag--red";
 
 
 
@@ -46,7 +48,8 @@ namespace DVSAdmin.Extensions
                 case CertificateInfoStatusEnum.ReadyToPublish:
                 case ProviderStatusEnum.ReadyToPublish:
                 case ProviderStatusEnum.ActionRequired:
-                return "govuk-tag govuk-tag--yellow";
+                case ProviderStatusEnum.PublishedActionRequired:
+                    return "govuk-tag govuk-tag--yellow";
 
                 default:
                     return string.Empty;

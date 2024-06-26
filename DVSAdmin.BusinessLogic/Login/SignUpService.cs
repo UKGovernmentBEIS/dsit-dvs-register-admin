@@ -1,4 +1,5 @@
 ﻿using System;
+using Amazon.CognitoIdentityProvider.Model;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.Models;
@@ -61,9 +62,14 @@ namespace DVSAdmin.BusinessLogic.Services
             return response;
         }
 
-        public async Task<string> ConfirmMFAToken(string session, string email, string token)
+        public async Task<AuthenticationResultType> ConfirmMFAToken(string session, string email, string token)
         {
             return await _cognitoClient.ConfirmMFAToken(session, email, token);
+        }
+
+        public async void SignOut(string accesssToken)
+        {
+            await _cognitoClient.SignOutUserAsync(accesssToken);
         }
     }
 }

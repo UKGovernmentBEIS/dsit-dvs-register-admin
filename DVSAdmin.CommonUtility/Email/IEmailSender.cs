@@ -19,8 +19,12 @@
         public Task<bool> SendCertificateInfoApprovedToDSIT(string URN, string serviceName);
         public Task<bool> SendCertificateInfoRejectedToCab(string recipientName, string URN, string serviceName, string emailAddress);
         public Task<bool> SendCertificateInfoRejectedToDSIT(string URN, string serviceName, string rejectionCategory, string rejectionComments);
+
+        //Consent - closing loop
         public Task<bool> SendConsentToPublishToDIP(string URN, string serviceName, string recipientName, string emailAddress, string consentLink);
-       public Task<bool> SendConsentToPublishToAdditionalContact(string URN, string serviceName, string recipientName, string emailAddress);
+        public Task<bool> SendConsentToPublishToAdditionalContact(string URN, string serviceName, string recipientName, string emailAddress);
+        public Task<bool> SendAgreementToPublishToDIP(string recipientName, string emailAddress);
+        public Task<bool> SendAgreementToPublishToDSIT(string URN, string serviceName);
 
     }
 }

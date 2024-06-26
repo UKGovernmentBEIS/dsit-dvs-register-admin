@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Email;
+using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.Extensions.Logging;
@@ -51,11 +53,7 @@ namespace DVSAdmin.BusinessLogic.Services
             var schemes = await certificateReviewRepository.GetSupplementarySchemes();
             List<SupplementarySchemeDto> supplementarySchemeDtos = automapper.Map<List<SupplementarySchemeDto>>(schemes);
 
-            var certificateInfoList = await certificateReviewRepository.GetCertificateInformationList();
-
-
-
-            List<CertificateInformationDto> certificateInformationDtos = automapper.Map<List<CertificateInformationDto>>(certificateInfoList);
+           List<CertificateInformationDto> certificateInformationDtos = automapper.Map<List<CertificateInformationDto>>(provider.CertificateInformation);
 
             foreach (var item in certificateInformationDtos)
             {
@@ -72,5 +70,38 @@ namespace DVSAdmin.BusinessLogic.Services
             return providerDto;
         }
 
+        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, string userEmail)
+        {
+            GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerId, userEmail, CertificateInfoStatusEnum.Published);
+            ProviderStatusEnum providerStatus = ProviderStatusEnum.Published;
+            Provider provider = await regManagementRepository.GetProviderDetails(providerId);
+            List<CertificateInformation> serviceList = await certificateReviewRepository.GetCertificateInformationListByProvider(providerId);
+
+            //If no service is currently published AND one service status = Ready to publish:
+            //Then provider status = Action required            
+            if (serviceList.All(item => item.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish))
+            {
+                providerStatus = ProviderStatusEnum.ActionRequired;
+            }
+            //If all service status = Published:
+            //Then provider status = Published
+            if (serviceList.All(item => item.CertificateInfoStatus == CertificateInfoStatusEnum.Published))
+            {
+                providerStatus = ProviderStatusEnum.Published;
+            }
+
+            //If at least one service status = Published AND one service status = Ready to publish:
+            //Then provider = Published – action required.
+            if (serviceList.Any(item => item.CertificateInfoStatus == CertificateInfoStatusEnum.Published)  &&
+             serviceList.Any(item => item.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish))
+            {
+                providerStatus = ProviderStatusEnum.PublishedActionRequired;
+            }
+
+            genericResponse = await regManagementRepository.UpdateProviderStatus(providerId,  providerStatus);
+         
+
+            return genericResponse;
+        }
     }
 }
