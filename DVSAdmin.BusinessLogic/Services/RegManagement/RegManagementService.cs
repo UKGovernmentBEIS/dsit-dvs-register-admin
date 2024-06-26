@@ -53,11 +53,7 @@ namespace DVSAdmin.BusinessLogic.Services
             var schemes = await certificateReviewRepository.GetSupplementarySchemes();
             List<SupplementarySchemeDto> supplementarySchemeDtos = automapper.Map<List<SupplementarySchemeDto>>(schemes);
 
-            var certificateInfoList = await certificateReviewRepository.GetCertificateInformationList();
-
-
-
-            List<CertificateInformationDto> certificateInformationDtos = automapper.Map<List<CertificateInformationDto>>(certificateInfoList);
+           List<CertificateInformationDto> certificateInformationDtos = automapper.Map<List<CertificateInformationDto>>(provider.CertificateInformation);
 
             foreach (var item in certificateInformationDtos)
             {
