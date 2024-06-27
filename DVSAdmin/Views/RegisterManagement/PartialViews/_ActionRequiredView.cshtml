@@ -1,4 +1,10 @@
-﻿
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.Models;
+@model DVSAdmin.Models.RegManagement.ProviderListViewModel;
+
+
 <h2 class="govuk-heading-l">Action required</h2>
 <table class="govuk-table">
     <thead class="govuk-table__head">
@@ -11,40 +17,27 @@
         </tr>
     </thead>
 
+
     <tbody class="govuk-table__body">
-        <tr class="govuk-table__row">
+        @foreach (var item in Model.ActionRequiredList)
+        {
+            <tr class="govuk-table__row">
 
-            <td class="govuk-table__cell"> @Html.ActionLink("Northrow  Limited", "RegisterManagementSubmissionDetails", "RegisterManagement", null, new { @class = "govuk-link" })</td>
-            <td class="govuk-table__cell">
-                <strong class="govuk-tag govuk-tag--yellow">
-                    Ready to publish
-                </strong>
-            </td>
-            <td class="govuk-table__cell">10:24 am; 1 Mar 2024</td>
-            <td class="govuk-table__cell">Kantara</td>
-            <td class="govuk-table__cell">
-                <div class="govuk-!-margin-bottom-1">Tenant eligibility checker</div>
-                <div class="govuk-!-margin-bottom-1">Online identity assurance</div>
-            </td>
-        </tr>
-        <tr class="govuk-table__row">
-
-            <td class="govuk-table__cell"> @Html.ActionLink("VerifySphere", "RegisterManagementSubmissionDetails", "RegisterManagement", null, new { @class = "govuk-link" })</td>
-            <td class="govuk-table__cell">
-                <strong class="govuk-tag govuk-tag--yellow">
-                    Published - action
-                    required
-                </strong>
-            </td>
-            <td class="govuk-table__cell">10:24 am; 2 Mar 2024</td>
-            <td class="govuk-table__cell">BSI</td>
-            <td class="govuk-table__cell">
-                <div class="govuk-!-margin-bottom-1">Digital credential validator</div>
-                <div class="govuk-!-margin-bottom-1">Online identity assurance</div>
-            </td>
-        </tr>
+                <td class="govuk-table__cell"> @Html.ActionLink(@item.TradingName, "ProviderDetails", "RegisterManagement", new { @providerId = item.Id }, new { @class = "govuk-link" })</td>
+                <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@item.ProviderStatus) </td>
+                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(@item.ModifiedTime)</td>
+                <td class="govuk-table__cell">@item.CertificateInformation[0].SubmittedCAB</td>
+                <td class="govuk-table__cell">
+                    @foreach (var item1 in item.CertificateInformation)
+                    {
+                        <div class="govuk-!-margin-bottom-1">
+                            @item1.ServiceName
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
-
 </table>
 
 

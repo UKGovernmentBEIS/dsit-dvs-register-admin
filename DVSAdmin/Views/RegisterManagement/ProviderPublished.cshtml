@@ -1,10 +1,14 @@
-﻿@{
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.Models;
+@model ProviderDetailsViewModel
+@{
     ViewData["Title"] = "You have published this service provider on the register";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ProviderReview", "ProviderReview", null, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -26,18 +30,21 @@
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
 
-                            <td class="govuk-table__cell"> @Html.ActionLink("Northrow  Limited", "RegisterManagementSubmissionDetails", "RegisterManagement", null, new { @class = "govuk-link" })</td>
-                            <td class="govuk-table__cell">
-                                <strong class="govuk-tag govuk-tag--blue">
-                                    Published
-                                </strong>
-                            </td>
-                            <td class="govuk-table__cell">10:24 am; 1 Mar 2024</td>
-                            <td class="govuk-table__cell">Kantara</td>
-                            <td class="govuk-table__cell">
-                                <div class="govuk-!-margin-bottom-1">Tenant eligibility checker</div>
-                                <div class="govuk-!-margin-bottom-1">Online identity assurance</div>
-                            </td>
+                            @foreach (var item in Model.Provider.CertificateInformation)
+                            {
+                            <tr class="govuk-table__row">
+
+                                <td class="govuk-table__cell"> @Model.Provider.TradingName </td>
+                                <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(item.CertificateInfoStatus) </td>
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.Provider.ModifiedTime)</td>
+                                <td class="govuk-table__cell">@item.SubmittedCAB</td>
+                                <td class="govuk-table__cell">
+                                    <div class="govuk-!-margin-bottom-1">
+                                            @item.ServiceName
+                                    </div>
+                                </td>
+                            </tr>
+                            }
                         </tr>
                     </tbody>
 
@@ -49,9 +56,9 @@
                 <p class="govuk-body">The service provider, the Conformity Assessment Body and OfDIA will receive an email notification of the publication within 20 minutes.</p>
 
                 <div class="govuk-button-group" id="submitvalidation">
-                    <button type="submit" class="govuk-button" data-module="govuk-button" name="goBack" value="approve">
+                    <a href="/register-management-list" type="submit" class="govuk-button" data-module="govuk-button" name="goBack" value="approve">
                         Go back to register management
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
