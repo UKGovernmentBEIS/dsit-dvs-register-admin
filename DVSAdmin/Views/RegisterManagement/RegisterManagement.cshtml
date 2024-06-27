@@ -1,4 +1,4 @@
-﻿@model DVSAdmin.Models.CertificateReviewListViewModel;
+﻿@model DVSAdmin.Models.RegManagement.ProviderListViewModel;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @{
     ViewData["Title"] = "Register Management";
@@ -23,10 +23,14 @@
                 <div class="govuk-tabs" data-module="govuk-tabs">
                     <ul class="govuk-tabs__list">
                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                            @Html.ActionLink("Action required", null, null, null, new { @class = "govuk-tabs__tab", @href = "#action-required" })
+                            <a class="govuk-tabs__tab" href="#action-required">
+                                Action required
+                            </a>
                         </li>
                         <li class="govuk-tabs__list-item">
-                            @Html.ActionLink("Publication complete", null, null, null, new { @class = "govuk-tabs__tab", @href = "#publications-complete" })
+                            <a class="govuk-tabs__tab" href="#publications-complete">
+                                Publication complete
+                            </a>
                         </li>
                     </ul>
 

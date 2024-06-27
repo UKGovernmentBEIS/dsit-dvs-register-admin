@@ -6,22 +6,22 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "RegisterManagement", "RegisterManagement", null, new { @class = "govuk-back-link" })  
+    @Html.ActionLink("Back", "RegisterManagement", "RegisterManagement", null, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">@Model.Provider.TradingName</h1>
 
-                @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_PublicationStatusTableView.cshtml",Model.Provider)
+                @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_PublicationStatusTableView.cshtml", Model.Provider)
                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ProviderContactView.cshtml", Model.Provider)
-               
-               @foreach(var item in Model.Provider.CertificateInformation)
+
+                @foreach (var item in Model.Provider.CertificateInformation)
                 {
-                       
-                        <div class="govuk-summary-card">
+
+                    <div class="govuk-summary-card">
                         <div class="govuk-summary-card__title-wrapper">
                             <h2 class="govuk-summary-card__title">
-                                    Service @item.ServiceNumber
+                                Service @item.ServiceNumber
                             </h2>
                             <ul class="govuk-summary-card__actions">
                                 <li class="govuk-summary-card__action">
@@ -44,22 +44,24 @@
                                         Publication status
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        @HtmlExtensions.ToStyledStrongTag(@item.CertificateInfoStatus)                                       
+                                        @HtmlExtensions.ToStyledStrongTag(@item.CertificateInfoStatus)
                                     </dd>
                                 </div>
                             </dl>
                         </div>
                     </div>
-                }              
+                }
+                @if (!(@Model.Provider.ProviderStatus == DVSAdmin.CommonUtility.Models.Enums.ProviderStatusEnum.Published))
+                {
+                    <div class="govuk-button-group">
+                        <a href="publish-service?providerId=@Model.Provider.Id&isReview=false" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                            Publish provider
+                        </a>
 
-                <div class="govuk-button-group">                  
-                    <a href="publish-service?providerId=@Model.Provider.Id&isReview=false" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-                        Publish provider
-                    </a>
-
-                </div>
+                    </div>
+                }
             </div>
         </div>
-    </main> 
+    </main>
 </div>
 

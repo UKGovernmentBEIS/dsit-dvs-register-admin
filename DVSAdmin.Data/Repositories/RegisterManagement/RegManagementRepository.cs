@@ -13,30 +13,30 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         public RegManagementRepository(DVSAdminDbContext context, ILogger<RegManagementRepository> logger)
         {
             this.context = context;
-            this.logger=logger;
+            this.logger = logger;
         }
 
         public async Task<List<Provider>> GetProviders()
         {
-            return await context.Provider.OrderBy(c => c.CreatedTime).ToListAsync();
+            return await context.Provider.Include(p => p.CertificateInformation).OrderBy(c => c.CreatedTime).ToListAsync();
         }
 
         public async Task<Provider> GetProviderDetails(int providerId)
         {
             Provider provider = new Provider();
             provider = await context.Provider.Include(p => p.PreRegistration)
-           .Include(p => p.CertificateInformation.OrderBy(c=>c.CreatedDate))            
-           .Where(p => p.Id == providerId).OrderBy(c => c.CreatedTime).FirstOrDefaultAsync()?? new Provider();
+           .Include(p => p.CertificateInformation.OrderBy(c => c.CreatedDate))
+           .Where(p => p.Id == providerId).OrderBy(c => c.CreatedTime).FirstOrDefaultAsync() ?? new Provider();
             return provider;
         }
 
-        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds,int providerId, string userEmail, CertificateInfoStatusEnum certificateInfoStatus)
+        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, string userEmail, CertificateInfoStatusEnum certificateInfoStatus)
         {
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                foreach (var serviceId in serviceIds) 
+                foreach (var serviceId in serviceIds)
                 {
                     var existingService = await context.CertificateInformation.FirstOrDefaultAsync(e => e.Id == serviceId);
 
@@ -44,10 +44,10 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                     {
                         existingService.CertificateInfoStatus = certificateInfoStatus;
                         existingService.ModifiedBy = userEmail;
-                        existingService.ModifiedDate= DateTime.UtcNow;
+                        existingService.ModifiedDate = DateTime.UtcNow;
                     }
                     context.SaveChanges();
-                }                
+                }
                 transaction.Commit();
                 genericResponse.Success = true;
             }
@@ -69,7 +69,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             {
 
                 var existingProvider = await context.Provider.FirstOrDefaultAsync(e => e.Id == providerId);
-                if (existingProvider!=null)
+                if (existingProvider != null)
                 {
                     existingProvider.ProviderStatus = providerStatus;
                     existingProvider.PublishedTime = DateTime.UtcNow;
