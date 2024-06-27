@@ -25,8 +25,11 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         {
             Provider provider = new Provider();
             provider = await context.Provider.Include(p => p.PreRegistration)
-           .Include(p => p.CertificateInformation.OrderBy(c => c.CreatedDate))
-           .Where(p => p.Id == providerId).OrderBy(c => c.CreatedTime).FirstOrDefaultAsync() ?? new Provider();
+           .Include(p => p.CertificateInformation).ThenInclude(x=>x.CertificateInfoRoleMapping)
+           .Include(p => p.CertificateInformation).ThenInclude(x => x.CertificateInfoIdentityProfileMapping)
+           .Include(p => p.CertificateInformation).ThenInclude(x => x.CertificateInfoSupSchemeMappings)
+           .Include(p => p.CertificateInformation).OrderBy(p=>p.ModifiedTime)
+           .Where(p => p.Id == providerId).OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new Provider();
             return provider;
         }
 

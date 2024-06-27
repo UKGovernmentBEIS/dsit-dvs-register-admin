@@ -10,6 +10,7 @@
         public const int DaysLeftToCompleteCertificateReview = 7;
         public const int URNExpiryDays = 60;
         public const string IncorrectPassword = "Incorrect Password";
+        public const int DaysLeftToPublish = 5;
 
     }
 }

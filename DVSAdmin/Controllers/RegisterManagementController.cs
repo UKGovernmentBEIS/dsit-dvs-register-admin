@@ -29,16 +29,15 @@ namespace DVSAdmin.Controllers
             this.regManagementService = regManagementService;
             this.certificateReviewService = certificateReviewService;
         }
+
         [HttpGet("register-management-list")]
         public async Task<IActionResult> RegisterManagement()
         {
             ProviderListViewModel providerListViewModel = new ProviderListViewModel();
-            var ProvidersList = await regManagementService.GetProviders();
-
-            providerListViewModel.ActionRequiredList = ProvidersList.Where(x => x.ProviderStatus == ProviderStatusEnum.ReadyToPublish || x.ProviderStatus == ProviderStatusEnum.ActionRequired).ToList();
-
-            providerListViewModel.PublicationCompleteList = ProvidersList.Where(x => x.ProviderStatus == ProviderStatusEnum.Published).ToList();
-
+            var providersList = await regManagementService.GetProviders();
+            providerListViewModel.ActionRequiredList = providersList.Where(x => x.ProviderStatus == ProviderStatusEnum.ActionRequired 
+            ||  x.ProviderStatus == ProviderStatusEnum.PublishedActionRequired).ToList();
+            providerListViewModel.PublicationCompleteList = providersList.Where(x => x.ProviderStatus == ProviderStatusEnum.Published).ToList();
             return View(providerListViewModel);
         }
         [HttpGet("provider-details")]
@@ -78,8 +77,18 @@ namespace DVSAdmin.Controllers
             providerDetailsViewModel.Provider = providerDto;
             providerDetailsViewModel.Provider.CertificateInformation = certificateInformation
            .Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish).ToList();
-            List<int> ServiceIds = providerDetailsViewModel.Provider.CertificateInformation.Select(item => item.Id).ToList();
-            HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);
+            if(!isReview)  // set service provider ids to be saved in the screen before review
+            {
+                List<int> ServiceIds = providerDetailsViewModel.Provider.CertificateInformation.Select(item => item.Id).ToList();
+                HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);
+            }
+            else
+            {//in review make sure only the service ids are shown in previous screen
+                List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
+                providerDetailsViewModel.Provider.CertificateInformation =  providerDetailsViewModel.Provider.CertificateInformation.
+                Where(item => serviceids.Contains(item.Id)).ToList();
+            }
+    
             return View(providerDetailsViewModel);
         }
 
@@ -87,7 +96,10 @@ namespace DVSAdmin.Controllers
         [HttpGet("proceed-publication")]
         public async Task<IActionResult> ProceedPublication(int providerId)
         {
+            //To make sure only the service ids reviewed in previous screen is fetched
+            List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
             ProviderDto providerDto = await regManagementService.GetProviderDetails(providerId);
+            providerDto.CertificateInformation =  providerDto.CertificateInformation.Where(item => serviceids.Contains(item.Id)).ToList();
             ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
             providerDetailsViewModel.Provider = providerDto;
             return View(providerDetailsViewModel);

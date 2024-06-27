@@ -29,23 +29,19 @@
 
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
-
+                            <td class="govuk-table__cell"> @Model.Provider.TradingName </td>
+                            <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@Model.Provider.ProviderStatus) </td>
+                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.Provider.ModifiedTime)</td>
+                            <td class="govuk-table__cell">@Model.Provider.CertificateInformation[0].SubmittedCAB</td>
+                            <td class="govuk-table__cell">
                             @foreach (var item in Model.Provider.CertificateInformation)
-                            {
-                            <tr class="govuk-table__row">
-
-                                <td class="govuk-table__cell"> @Model.Provider.TradingName </td>
-                                <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(item.CertificateInfoStatus) </td>
-                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.Provider.ModifiedTime)</td>
-                                <td class="govuk-table__cell">@item.SubmittedCAB</td>
-                                <td class="govuk-table__cell">
-                                    <div class="govuk-!-margin-bottom-1">
-                                            @item.ServiceName
-                                    </div>
-                                </td>
-                            </tr>
+                            {   
+                                <div class="govuk-!-margin-bottom-1">
+                                        @item.ServiceName
+                                </div>
                             }
-                        </tr>
+                            </td>
+                        
                     </tbody>
 
                 </table>
@@ -56,7 +52,7 @@
                 <p class="govuk-body">The service provider, the Conformity Assessment Body and OfDIA will receive an email notification of the publication within 20 minutes.</p>
 
                 <div class="govuk-button-group" id="submitvalidation">
-                    <a href="/register-management-list" type="submit" class="govuk-button" data-module="govuk-button" name="goBack" value="approve">
+                    <a href="register-management-list" type="submit" class="govuk-button" data-module="govuk-button" name="goBack" value="approve">
                         Go back to register management
                     </a>
                 </div>
