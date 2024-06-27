@@ -10,12 +10,13 @@ using DVSAdmin.CommonUtility;
 
 namespace DVSAdmin.Controllers
 {
+    [ValidCognitoToken]
     [Route("register-management")]
     //Methods/Actions/Views for publishing services
     //Session is used only in PublishService method to keep published service ids
-    //There are no user input fields in other methods
-    //Any change in the controller routes to be verified 
-    //with button or ahref actions in .cshtml and modified 
+    //as there are no user input fields in other methods
+    //Any change in the controller routes to be verified
+    //with button or ahref actions in .cshtml
     public class RegisterManagementController : Controller
     {
         private readonly ILogger<RegisterManagementController> logger;
