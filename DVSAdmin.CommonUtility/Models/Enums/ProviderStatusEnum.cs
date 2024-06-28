@@ -15,7 +15,7 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("Published")]
         Published = 4,
         [Description("Published - action required")]
-        PublishedActionRequired = 5,
+        PublishedActionRequired = 5
        
     }
 }

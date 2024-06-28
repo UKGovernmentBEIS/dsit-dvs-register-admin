@@ -76,7 +76,9 @@ namespace DVSAdmin.BusinessLogic.Services
             ProviderStatusEnum providerStatus = ProviderStatusEnum.Published;
             Provider provider = await regManagementRepository.GetProviderDetails(providerId);
             List<CertificateInformation> serviceList = await certificateReviewRepository.GetCertificateInformationListByProvider(providerId);
-
+            PreRegistration preRegistration = provider.PreRegistration;
+            string verifiedCab = serviceList[0].CreatedBy??string.Empty;
+            string services = string.Join("\r", serviceList.Where(item => serviceIds.Contains(item.Id)).Select(x => x.ServiceName.ToString()).ToArray())??string.Empty;
             //If no service is currently published AND one service status = Ready to publish:
             //Then provider status = Action required            
             if (serviceList.All(item => item.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish))
@@ -100,6 +102,16 @@ namespace DVSAdmin.BusinessLogic.Services
 
             genericResponse = await regManagementRepository.UpdateProviderStatus(providerId,  providerStatus);
          
+            if(genericResponse.Success)
+            {
+                await emailSender.SendServicePublishedToDIP(preRegistration?.FullName??string.Empty, services, preRegistration?.Email??string.Empty);
+                if(!string.IsNullOrEmpty(preRegistration?.SponsorEmail) && !string.IsNullOrEmpty(preRegistration?.SponsorFullName))
+                {
+                    await emailSender.SendServicePublishedToDIP(preRegistration.SponsorFullName, services, preRegistration.SponsorEmail);
+                }
+                await emailSender.SendServicePublishedToCAB(verifiedCab, services, verifiedCab);
+                await emailSender.SendServicePublishedToDSIT(preRegistration?.URN??string.Empty, services);  
+            }
 
             return genericResponse;
         }
