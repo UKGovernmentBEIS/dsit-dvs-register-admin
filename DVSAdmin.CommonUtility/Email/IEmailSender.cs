@@ -26,5 +26,9 @@
         public Task<bool> SendAgreementToPublishToDIP(string recipientName, string emailAddress);
         public Task<bool> SendAgreementToPublishToDSIT(string URN, string serviceName);
 
+        //reg - management
+        public Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName,string emailAddress);
+        public Task<bool> SendServicePublishedToCAB(string recipientName, string serviceName, string emailAddress);
+        public Task<bool> SendServicePublishedToDSIT(string URN, string serviceName);
     }
 }

@@ -27,6 +27,9 @@ namespace DVSAdmin.CommonUtility.Models
         public AdditionalContactConsentTemplate AdditionalContactConsentTemplate { get; set; }
         public AgreementToPublishTemplate AgreementToPublishTemplate { get; set; }
         public AgreementToPublishToDSITTemplate AgreementToPublishToDSITTemplate { get; set; }
+        public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }
+        public ServicePublishedCABTemplate ServicePublishedCABTemplate { get; set; }
+        public ServicePublishedDSITTemplate ServicePublishedDSITTemplate { get;set; }
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models.Enums;
+﻿using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -18,5 +19,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public DateTime? ModifiedTime { get; set; }
         public DateTime? PublishedTime { get; set; }
         public List<CertificateInformationDto> CertificateInformation { get; set; }
+
+        public int DaysLeftToComplete { get; set; } 
     }
 }
