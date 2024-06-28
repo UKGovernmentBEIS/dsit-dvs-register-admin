@@ -49,9 +49,7 @@ namespace DVSAdmin.Controllers
                 preRegReviewListViewModel.SecondaryChecksList = preregistrations
                 .Where(x => x.PreRegistrationReview !=null    && x.DaysLeftToComplete>0
                 &&(x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckPassed ||
-                x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckFailed ||
-                x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationApproved ||
-                x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationRejected)
+                x.PreRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckFailed)
                 && x.PreRegistrationReview.PrimaryCheckUserId != userDto.Id).ToList();
 
 

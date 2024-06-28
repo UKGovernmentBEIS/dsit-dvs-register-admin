@@ -18,7 +18,8 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
         public async Task<List<Provider>> GetProviders()
         {
-            return await context.Provider.Include(p => p.CertificateInformation).OrderBy(c => c.CreatedTime).ToListAsync();
+            return await context.Provider.Include(p => p.CertificateInformation.Where(x=>x.CertificateInfoStatus == CertificateInfoStatusEnum.Published
+            ||x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish)).OrderBy(c => c.CreatedTime).ToListAsync();
         }
 
         public async Task<Provider> GetProviderDetails(int providerId)
