@@ -110,8 +110,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> AboutToPublish(int providerId)
         {
             string email = HttpContext?.Session.Get<string>("Email") ?? string.Empty;
-            List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
-            HttpContext.Session.Remove("ServiceIdsToPublish");
+            List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();          
             if (serviceids != null && serviceids.Any())
             {
                 GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerId, email);
@@ -126,12 +125,13 @@ namespace DVSAdmin.Controllers
         [HttpGet("provider-published")]
         public async Task<IActionResult> ProviderPublished(int providerId)
         {
-            ProviderDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);
-            List<CertificateInformationDto> certificateInformation = AssignServiceNumber(providerDto.CertificateInformation);
+            ProviderDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);          
+            List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
             ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
             providerDetailsViewModel.Provider = providerDto;
-            providerDetailsViewModel.Provider.CertificateInformation = certificateInformation
-           .Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.Published).ToList();
+            providerDetailsViewModel.Provider.CertificateInformation = providerDto.CertificateInformation
+           .Where(x => serviceids.Contains(x.Id)).ToList();
+            HttpContext.Session.Remove("ServiceIdsToPublish");
             return View(providerDetailsViewModel);
         }
 
