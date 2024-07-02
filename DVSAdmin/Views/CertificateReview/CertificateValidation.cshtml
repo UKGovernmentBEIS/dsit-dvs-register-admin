@@ -154,11 +154,12 @@
 
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                        {
-                       PropertyName = "IsCabLogoCorrect",
-                       Value = Model.IsCabLogoCorrect,
-                       HasError = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0,
-                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ?
-                       Html.ViewData.ModelState["IsCabLogoCorrect"].Errors[0].ErrorMessage : string.Empty,
+                       PropertyName = "IsCabDetailsCorrect",
+                       Value = Model.IsCabDetailsCorrect,
+                       HasError = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") &&
+                        Html.ViewData.ModelState["IsCabLogoCorrect"] != null && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") &&
+                        Html.ViewData.ModelState["IsCabLogoCorrect"] != null && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ? Html.ViewData.ModelState["IsCabLogoCorrect"].Errors[0].ErrorMessage : string.Empty,
                        Label1 = "Correct",
                        Label2 = "Incorrect"
                        })
@@ -180,13 +181,14 @@
 
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                     {
-                        PropertyName = "IsCabDetailsCorrect",
-                        Value = Model.IsCabDetailsCorrect,
-                        HasError = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors.Count > 0,
-                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors[0].ErrorMessage : string.Empty,
-                        Label1 = "Correct",
-                        Label2 = "Incorrect"
+                       PropertyName = "IsCabDetailsCorrect",
+                       Value = Model.IsCabDetailsCorrect,
+                       HasError = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") &&
+                        Html.ViewData.ModelState["IsCabLogoCorrect"] != null && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") &&
+                        Html.ViewData.ModelState["IsCabLogoCorrect"] != null && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ? Html.ViewData.ModelState["IsCabLogoCorrect"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Correct",
+                       Label2 = "Incorrect"
                             })
 
                     <hr class="govuk-section-break govuk-section-break--s">
