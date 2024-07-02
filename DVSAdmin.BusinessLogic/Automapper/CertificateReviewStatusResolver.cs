@@ -15,7 +15,11 @@ namespace DVSAdmin.BusinessLogic.Automapper
                 TimeSpan difference = DateTime.Now - source.CreatedDate.Value;
                 if (difference.TotalDays > Constants.DaysLeftToCompleteCertificateReview)
                 {
-                    return CertificateInfoStatusEnum.Expired;
+                    if (source.CertificateReview == null || (source.CertificateReview!=null && source.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview))
+                    {
+                        return CertificateInfoStatusEnum.Expired;
+                    }
+
                 }
             }
 
