@@ -72,7 +72,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             try
             {
 
-                var existingProvider = await context.Provider.FirstOrDefaultAsync(e => e.Id == providerId);
+                var existingProvider = await context.Provider.FirstOrDefaultAsync(e => e.Id == providerId);     
                 if (existingProvider != null)
                 {
                     existingProvider.ProviderStatus = providerStatus;
@@ -86,6 +86,26 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             catch (Exception ex)
             {
                 genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
+        public async Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog)
+        {
+            GenericResponse genericResponse = new GenericResponse();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {               
+               await context.RegisterPublishLog.AddAsync(registerPublishLog);
+               await context.SaveChangesAsync();
+               transaction.Commit();
+               genericResponse.Success = true;
+            }
+            catch (Exception ex)
+            {                
                 genericResponse.Success = false;
                 transaction.Rollback();
                 logger.LogError(ex.Message);

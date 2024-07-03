@@ -75,6 +75,7 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerId, userEmail, CertificateInfoStatusEnum.Published);
             ProviderStatusEnum providerStatus = ProviderStatusEnum.Published;
             Provider provider = await regManagementRepository.GetProviderDetails(providerId);
+            ProviderStatusEnum currentStatus = provider.ProviderStatus;// keep current status for log
             List<CertificateInformation> serviceList = await certificateReviewRepository.GetCertificateInformationListByProvider(providerId);
             PreRegistration preRegistration = provider.PreRegistration;
             string verifiedCab = serviceList[0].CreatedBy??string.Empty;
@@ -104,6 +105,20 @@ namespace DVSAdmin.BusinessLogic.Services
          
             if(genericResponse.Success)
             {
+                //insert provider log
+                RegisterPublishLog registerPublishLog = new RegisterPublishLog();
+                registerPublishLog.ProviderId = providerId;
+                registerPublishLog.CreatedTime = DateTime.UtcNow;
+                if (currentStatus == ProviderStatusEnum.ActionRequired) //Action required will be the status just before publishing provider for first time - which is updated through consent
+                {
+                    registerPublishLog.Description = provider.TradingName+ ":First published";
+                }
+                else // else status will be Published- Action Required 
+                {
+                    registerPublishLog.Description = serviceIds.Count +  " new services included";
+                }
+                await regManagementRepository.SavePublishRegisterLog(registerPublishLog);
+
                 await emailSender.SendServicePublishedToDIP(preRegistration?.FullName??string.Empty, services, preRegistration?.Email??string.Empty);
                 if(!string.IsNullOrEmpty(preRegistration?.SponsorEmail) && !string.IsNullOrEmpty(preRegistration?.SponsorFullName))
                 {
