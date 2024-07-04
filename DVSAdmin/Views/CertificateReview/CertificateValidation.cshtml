@@ -183,7 +183,7 @@
                         PropertyName = "IsCabDetailsCorrect",
                         Value = Model.IsCabDetailsCorrect,
                         HasError = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors.Count > 0,
-                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ?
+                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors[0].ErrorMessage : string.Empty,
                         Label1 = "Correct",
                         Label2 = "Incorrect"
