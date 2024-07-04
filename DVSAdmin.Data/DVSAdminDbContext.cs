@@ -30,5 +30,6 @@ namespace DVSAdmin.Data
 
         public DbSet<Provider> Provider { get; set; }
         public DbSet<ConsentToken> ConsentToken { get; set; }
+        public DbSet<RegisterPublishLog> RegisterPublishLog { get; set; }
     }
 }
