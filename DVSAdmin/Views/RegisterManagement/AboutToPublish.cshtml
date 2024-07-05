@@ -5,7 +5,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ProviderReview", "ProviderReview", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "ProceedPublication", "RegisterManagement", new { @providerId = @Model.Provider.Id }, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
 
@@ -20,14 +20,21 @@
                         Once you publish this service provider’s details, this action can’t be undone.
                     </strong>
                 </div>
-                <div class="govuk-button-group" id="submitvalidation">
-                    <button type="submit" class="govuk-button" data-module="govuk-button" name="publish" value="approve">
-                        Publish
-                    </button>
-                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="cancel" value="cancel">
-                        Cancel
-                    </button>
-                </div>
+
+
+                @using (Html.BeginForm("Publish", "RegisterManagement", FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.Provider.Id)
+
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="action" value="publish">
+                            Publish
+                        </button>
+                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="action" value="cancel">
+                            Cancel
+                        </button>
+                    </div>
+                }
             </div>
         </div>
     </main>

@@ -54,8 +54,8 @@
                 @if (!(@Model.Provider.ProviderStatus == DVSAdmin.CommonUtility.Models.Enums.ProviderStatusEnum.Published))
                 {
                     <div class="govuk-button-group">
-                        <a href="publish-service?providerId=@Model.Provider.Id&isReview=false" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-                            Publish provider
+                        <a href="publish-service?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                            Publish
                         </a>
 
                     </div>

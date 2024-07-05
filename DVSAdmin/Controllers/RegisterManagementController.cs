@@ -7,6 +7,7 @@ using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility;
+using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.Controllers
 {
@@ -69,27 +70,18 @@ namespace DVSAdmin.Controllers
         /// <param name="isReview"></param>
         /// <returns></returns>
         [HttpGet("publish-service")]
-        public async Task<IActionResult> PublishService(int providerId, bool isReview)
+        public async Task<IActionResult> PublishService(int providerId)
         {
-            ViewBag.IsReview = isReview;
+           
             ProviderDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);
             List<CertificateInformationDto> certificateInformation = AssignServiceNumber(providerDto.CertificateInformation);
             ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
             providerDetailsViewModel.Provider = providerDto;
             providerDetailsViewModel.Provider.CertificateInformation = certificateInformation
            .Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish).ToList();
-            if(!isReview)  // set service provider ids to be saved in the screen before review
-            {
-                List<int> ServiceIds = providerDetailsViewModel.Provider.CertificateInformation.Select(item => item.Id).ToList();
-                HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);
-            }
-            else
-            {//in review make sure only the service ids are shown in previous screen
-                List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
-                providerDetailsViewModel.Provider.CertificateInformation =  providerDetailsViewModel.Provider.CertificateInformation.
-                Where(item => serviceids.Contains(item.Id)).ToList();
-            }
-    
+            List<int> ServiceIds = providerDetailsViewModel.Provider.CertificateInformation.Select(item => item.Id).ToList();
+            HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);
+              
             return View(providerDetailsViewModel);
         }
 
@@ -98,7 +90,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ProceedPublication(int providerId)
         {
             //To make sure only the service ids reviewed in previous screen is fetched
-            List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
+            List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();          
             ProviderDto providerDto = await regManagementService.GetProviderDetails(providerId);
             providerDto.CertificateInformation =  providerDto.CertificateInformation.Where(item => serviceids.Contains(item.Id)).ToList();
             ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
@@ -107,19 +99,47 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpGet("about-to-publish")]
-        public async Task<IActionResult> AboutToPublish(int providerId)
+        public ActionResult AboutToPublish(int providerId)
+        {         
+           ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
+           providerDetailsViewModel.Provider= new ProviderDto { Id = providerId }; 
+           return View(providerDetailsViewModel);
+        }
+
+        [HttpPost("about-to-publish")]
+        public async Task<IActionResult> Publish(ProviderDetailsViewModel providerDetailsViewModel, string action)
         {
-            string email = HttpContext?.Session.Get<string>("Email") ?? string.Empty;
-            List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();          
-            if (serviceids != null && serviceids.Any())
+            if(action == "publish")
             {
-                GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerId, email);
-                if (genericResponse.Success)
+                string email = HttpContext?.Session.Get<string>("Email") ?? string.Empty;
+                List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
+                if (serviceids != null && serviceids.Any())
                 {
-                    return RedirectToAction("ProviderPublished", new { providerId = providerId });
+                    GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Provider.Id, email);
+                    if (genericResponse.Success)
+                    {
+                        return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Provider.Id });
+
+                    }
+                    else
+                    {
+                        return RedirectToAction(Constants.ErrorPath);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction(Constants.ErrorPath);
                 }
             }
-            return RedirectToAction(Constants.ErrorPath);
+            else if(action == "cancel")
+            {
+                return RedirectToAction("ProceedPublication", new { providerId = providerDetailsViewModel.Provider.Id });
+            }
+            else
+            {
+                return RedirectToAction(Constants.ErrorPath);
+            }           
+         
         }
 
         [HttpGet("provider-published")]

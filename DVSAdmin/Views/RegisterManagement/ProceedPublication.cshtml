@@ -5,7 +5,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ProviderReview", "ProviderReview", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "PublishService", "RegisterManagement", new { providerId = Model.Provider.Id }, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
 
@@ -68,7 +68,7 @@
                         Proceed with publication
                     </a>
 
-                    <a href="publish-service?providerId=@Model.Provider.Id&isReview=true" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    <a href="publish-service?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                         Cancel
                     </a>
                 </div>
