@@ -4,21 +4,9 @@
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
-@{
-    //To differentiate between review and details page
-   bool isReview= ViewBag.IsReview??false;
-}
-<div class="govuk-width-container">
-    @if (isReview)
-    {
-        @Html.ActionLink("Back", "PublishService", "RegisterManagement", new { @providerId = @Model.Provider.Id, @isReview  = false}, new { @class = "govuk-back-link" })
-    }
-    else
-    {
-        @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { @providerId = @Model.Provider.Id }, new { @class = "govuk-back-link" })
-    }
 
-          
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { @providerId = @Model.Provider.Id }, new { @class = "govuk-back-link" })          
          
         @Html.HiddenFor(m => m.Provider.CertificateInformation)
         <main class="govuk-main-wrapper">
@@ -26,11 +14,7 @@
 
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">You are publishing the following service provider on the register</h1>
-                @if (isReview)
-                {
-                    <p class="govuk-body">Please review the information you are about to publish below.</p>
-                
-                }
+                <p class="govuk-body">Please review the information you are about to publish below.</p>
           
                 <h2 class="govuk-heading-m">Basic information</h2>
                 <dl class="govuk-summary-list govuk-!-margin-bottom-8">
@@ -68,38 +52,18 @@
                     
                 }
 
-                @if(isReview)
-                {
-                    <div class="govuk-button-group" >
-                        <a href="proceed-publication?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-                            Proceed with publication
-                        </a>
+                <div class="govuk-button-group">
+                    <a href="proceed-publication?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                        Proceed with publication
+                    </a>
 
-                        <a href="publish-service?providerId=@Model.Provider.Id&isReview=false" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                            Cancel
-                        </a>
-                    </div>
-                }
-                else
-                {
-                    <div class="govuk-button-group" >
-                        <a href="publish-service?providerId=@Model.Provider.Id&isReview=true" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-                            Publish provider
-                        </a>
-
-                        <a href="provider-details?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                            Cancel
-                        </a>
-                      
-                      
-                    </div>
-                }
-
-             
+                    <a href="publish-service?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                        Cancel
+                    </a>
+                </div>             
             </div>
         </div>
     </main>
-
   
 </div>
 
