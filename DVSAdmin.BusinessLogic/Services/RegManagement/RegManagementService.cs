@@ -109,9 +109,11 @@ namespace DVSAdmin.BusinessLogic.Services
                 RegisterPublishLog registerPublishLog = new RegisterPublishLog();
                 registerPublishLog.ProviderId = providerId;
                 registerPublishLog.CreatedTime = DateTime.UtcNow;
+                registerPublishLog.ProviderName = provider.TradingName;
+                registerPublishLog.Services = services;
                 if (currentStatus == ProviderStatusEnum.ActionRequired) //Action required will be the status just before publishing provider for first time - which is updated through consent
                 {
-                    registerPublishLog.Description = provider.TradingName+ ":First published";
+                    registerPublishLog.Description = "First published";
                 }
                 else // else status will be Published- Action Required 
                 {

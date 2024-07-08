@@ -13,6 +13,8 @@ namespace DVSAdmin.Data.Entities
         [ForeignKey("Provider")]
         public int ProviderId { get; set; }
         public Provider Provider { get; set; }
+        public string? ProviderName { get; set; }
+        public string? Services { get; set; }
         public string Description { get; set; }
         public DateTime CreatedTime { get; set; }
     }
