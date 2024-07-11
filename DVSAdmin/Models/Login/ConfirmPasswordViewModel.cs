@@ -26,6 +26,8 @@ namespace DVSAdmin.Models
         public string? OneTimePassword { get; set; }
 
         public string? ErrorMessage { get; set; }
+
+        public bool? PasswordReset { get; set; }
     }
 }
 

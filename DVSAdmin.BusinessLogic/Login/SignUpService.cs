@@ -25,6 +25,10 @@ namespace DVSAdmin.BusinessLogic.Services
             return await _cognitoClient.ConfirmPasswordAndGenerateMFAToken(email, password, oneTimePassword);
         }
 
+        public async Task<GenericResponse> ResetPassword(string email, string password, string oneTimePassword)
+        {
+            return await _cognitoClient.ConfirmPasswordReset(email, password, oneTimePassword);
+        }
         public async Task<string> ForgotPassword(string email)
         {
             return await _cognitoClient.ForgotPassword(email);

@@ -26,6 +26,9 @@ namespace DVSAdmin.Models
 
         [RegularExpression("^[0-9]{6}$", ErrorMessage = "The MFA confirmation code must be a 6-digit number.")]
         public string? MFAConfirmationCode { get; set; }
-	}
+
+        public bool? PasswordReset { get; set; }
+
+    }
 }
 
