@@ -190,7 +190,7 @@ namespace DVSAdmin.Controllers
             {
                 var mfaResponse = await _signUpService.ConfirmMFAToken(HttpContext?.Session.Get<string>("Session"), HttpContext?.Session.Get<string>("Email"), loginPageViewModel.MFACode);
 
-                if (mfaResponse.IdToken.Length > 0)
+                if (mfaResponse!=null && mfaResponse.IdToken.Length > 0)
                 {
                     HttpContext?.Session.Set("IdToken", mfaResponse.IdToken);
                     HttpContext?.Session.Set("AccessToken", mfaResponse.AccessToken);

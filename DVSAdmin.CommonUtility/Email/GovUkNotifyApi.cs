@@ -172,11 +172,12 @@ namespace DVSAdmin.CommonUtility.Email
 
             var personalisation = new Dictionary<string, dynamic>
             {
-                { template.TimeStamp,  timestamp}               
+                { template.TimeStamp,  timestamp}  ,
+                { template.Email,  emailAddress}
             };
             var emailModel = new GovUkNotifyEmailModel
             {
-                EmailAddress =  emailAddress,
+                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
                 TemplateId = template.Id,
                 Personalisation = personalisation
             };
