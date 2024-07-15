@@ -35,6 +35,7 @@
   <ItemGroup>
     <None Include="Views\Consent\Consent.cshtml" />
     <None Include="Views\Consent\ConsentSuccess.cshtml" />
+    <None Include="Views\Cookie\CookiePage.cshtml" />
     <None Include="Views\PartialViews\_ArchiveView.cshtml" />
     <None Include="Views\PartialViews\_PrimaryChecksView.cshtml" />
     <None Include="Views\PartialViews\_SecondaryChecksView.cshtml" />

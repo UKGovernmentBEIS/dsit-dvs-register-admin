@@ -10,6 +10,8 @@ using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.Data.Repositories.RegisterManagement;
+using DVSAdmin.BusinessLogic.Models.Cookies;
+using DVSAdmin.BusinessLogic.Services.Cookies;
 
 namespace DVSAdmin
 {
@@ -39,6 +41,7 @@ namespace DVSAdmin
             ConfigureAutomapperServices(services);
             ConfigureGovUkNotify(services);
             ConfigureJwtServices(services);
+            ConfigureCookieService(services);
 
         }
 
@@ -91,6 +94,7 @@ namespace DVSAdmin
             services.AddScoped<IConsentRepository, ConsentRepository>();
             services.AddScoped<IRegManagementService, RegManagementService>();
             services.AddScoped<IRegManagementRepository, RegManagementRepository>();
+            services.AddSingleton<CookieService>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {
@@ -107,6 +111,20 @@ namespace DVSAdmin
             services.AddScoped<IJwtService, JwtService>();
             services.Configure<JwtSettings>(
                 configuration.GetSection(JwtSettings.ConfigSection));
+        }
+        private void ConfigureCookieService(IServiceCollection services)
+        {
+            services.Configure<CookieServiceConfiguration>(
+                configuration.GetSection(CookieServiceConfiguration.ConfigSection));
+
+            // Change the default antiforgery cookie name so it doesn't include Asp.Net for security reasons
+            services.AddAntiforgery(options =>
+            {
+                options.Cookie.Name = "Antiforgery";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
+            services.AddScoped<ICookieService, CookieService>();
         }
     }
 }
