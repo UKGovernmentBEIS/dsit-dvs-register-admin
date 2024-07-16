@@ -151,7 +151,7 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("certificate-review")]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<ActionResult> SaveCertificateReview(CertificateReviewViewModel certificateReviewViewModel, string saveReview)
         {  
             CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
