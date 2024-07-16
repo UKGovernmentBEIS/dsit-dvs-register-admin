@@ -33,14 +33,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
-{
-    app.UseMiddleware<BasicAuthMiddleware>();
-}
-else
-{
-    app.UseMiddleware<ExceptionHandlerMiddleware>();
-}
+app.UseMiddleware<BasicAuthMiddleware>();
 
 
 app.UseHttpsRedirection();
