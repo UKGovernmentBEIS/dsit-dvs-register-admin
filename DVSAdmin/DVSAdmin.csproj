@@ -5,23 +5,23 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>563b2270-0f86-41cc-a56a-0127bc8a6a36</UserSecretsId>
+    <ScopedCssEnabled>false</ScopedCssEnabled>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.5.1" />
-    <PackageReference Include="QRCoder" Version="1.5.1" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="QRCoder" Version="1.6.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DVSAdmin.BusinessLogic\DVSAdmin.BusinessLogic.csproj" />
@@ -33,9 +33,10 @@
     <None Remove="Extensions\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Views\Consent\Consent.cshtml" />
+    <None Include="Views\Consent\ConsentSuccess.cshtml" />
     <None Include="Views\PartialViews\_ArchiveView.cshtml" />
     <None Include="Views\PartialViews\_PrimaryChecksView.cshtml" />
-    <None Include="Views\PartialViews\_PrimaryCheckErrorSummary.cshtml" />
     <None Include="Views\PartialViews\_SecondaryChecksView.cshtml" />
     <None Include="Views\PrimaryCheck\ConfirmPrimaryCheckFail.cshtml" />
     <None Include="Views\PrimaryCheck\ConfirmPrimaryCheckPass.cshtml" />

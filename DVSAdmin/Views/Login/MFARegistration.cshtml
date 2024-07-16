@@ -8,7 +8,7 @@
 
 
 @using (Html.BeginForm("MFAConfirmationCheck", "Login", FormMethod.Post))
-{ 
+{
     <div class="govuk-width-container">
         <main class="govuk-main-wrapper">
             <div class="govuk-grid-row">
@@ -45,11 +45,11 @@
 
                     <p class="govuk-body">After installing your authenticator app on your device, open it and scan the QR code or manually enter the provided code. Your authenticator app will be set up for the service. A six-digit passcode will appear in the authenticator app which you can then enter on the service. This code will expire after 3 minutes. You can now use your authenticator app to sign in to your account.</p>
 
-                    <div class="govuk-inset-text">
+                    <div>
                         <img src="data:image/png;base64, @qrCodeImageBase64" alt="QR Code for MFA Code" style="max-width: 200px; width: 30vw; height: auto; min-width: 100px;" />
 
-                        <p class="govuk-body">Or you can use the following Secret Key to register</p>
-                        <p class="govuk-body"><b>@Model.SecretToken	</b></p>
+                        <p class="govuk-body">Alternatively, you may use the following Secret Key for manual entry:</p>
+                        <p class="govuk-body">@Model.SecretToken</p>
                     </div>
 
                     <p class="govuk-body">Enter the one time MFA code</p>

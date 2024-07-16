@@ -1,0 +1,47 @@
+﻿@model DVSAdmin.Models.CertificateValidationViewModel;
+@using Newtonsoft.Json
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.Extensions;
+@{
+    ViewData["Title"] = "Certificate rejection Confirmation";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">
+                    You have rejected this<br> submission
+                </h1>
+                <p class="govuk-body">
+                    You have chosen to reject the following submission:
+                </p>
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsView.cshtml", Model.CertificateInformation)
+
+                <p class="govuk-body">
+                    The Conformity Assessment Body and OfDIA will receive an email notification of the submission decision within 20 minutes.
+                </p>
+
+
+                <div class="govuk-button-group">
+
+                    <a href="/certificate-review/certificate-review-list" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                        Go back to certificate review
+                    </a>
+                
+                </div>
+               
+
+            </div>
+        </div>
+    </main>
+</div>
+
+
+
+

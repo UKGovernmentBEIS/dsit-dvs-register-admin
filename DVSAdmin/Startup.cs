@@ -8,6 +8,8 @@ using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.Data.Repositories;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.JWT;
+using DVSAdmin.Data.Repositories.RegisterManagement;
 
 namespace DVSAdmin
 {
@@ -36,6 +38,7 @@ namespace DVSAdmin
             ConfigureDvsRegisterServices(services);
             ConfigureAutomapperServices(services);
             ConfigureGovUkNotify(services);
+            ConfigureJwtServices(services);
 
         }
 
@@ -81,6 +84,13 @@ namespace DVSAdmin
                 string region = string.Format(configuration.GetValue<string>("Region"));
                 return new CognitoClient(userPoolId, clientId, region);
             });
+
+            services.AddScoped<ICertificateReviewRepository, CertificateReviewRepository>();
+            services.AddScoped<ICertificateReviewService, CertificateReviewService>();
+            services.AddScoped<IConsentService, ConsentService>();
+            services.AddScoped<IConsentRepository, ConsentRepository>();
+            services.AddScoped<IRegManagementService, RegManagementService>();
+            services.AddScoped<IRegManagementRepository, RegManagementRepository>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {
@@ -91,6 +101,12 @@ namespace DVSAdmin
             services.AddScoped<IEmailSender, GovUkNotifyApi>();
             services.Configure<GovUkNotifyConfiguration>(
                 configuration.GetSection(GovUkNotifyConfiguration.ConfigSection));
+        }
+        private void ConfigureJwtServices(IServiceCollection services)
+        {
+            services.AddScoped<IJwtService, JwtService>();
+            services.Configure<JwtSettings>(
+                configuration.GetSection(JwtSettings.ConfigSection));
         }
     }
 }

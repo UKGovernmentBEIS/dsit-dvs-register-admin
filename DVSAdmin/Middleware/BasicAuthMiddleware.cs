@@ -37,6 +37,12 @@ namespace DVSAdmin.Middleware
             catch (Exception ex)
             {
                 logger.LogError($"An unexpected error occurred: {ex}");
+                logger.LogError($"Stacktrace: {ex.StackTrace}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("Inner Exception");
+                    Console.WriteLine(String.Concat(ex.InnerException.StackTrace, ex.InnerException.Message));
+                }
                 // Redirect to error page 
                 httpContext.Response.Redirect(Constants.ErrorPath);
             }
@@ -45,18 +51,23 @@ namespace DVSAdmin.Middleware
         {
             try
             {
-                var authHeader = AuthenticationHeaderValue.Parse(httpContext.Request.Headers["Authorization"]);
-                var credentialBytes = Convert.FromBase64String(authHeader.Parameter);
-                var credentials = Encoding.UTF8.GetString(credentialBytes).Split(new[] { ':' }, 2);
-                var username = credentials[0];
-                var password = credentials[1];
+                bool returnValue = false;
+                bool hasAuthorizationHeader = httpContext.Request.Headers.ContainsKey("Authorization");
+                if (hasAuthorizationHeader)
+                {
+                    var authHeader = AuthenticationHeaderValue.Parse(httpContext.Request.Headers["Authorization"]);
+                    var credentialBytes = Convert.FromBase64String(authHeader.Parameter);
+                    var credentials = Encoding.UTF8.GetString(credentialBytes).Split(new[] { ':' }, 2);
+                    var username = credentials[0];
+                    var password = credentials[1];
 
-                var returnValue = configuration.Username == username
-                       && configuration.Password == password;
-                Console.WriteLine("Configuration Username and Password: " + configuration.Username + "-" + configuration.Password);
-                Console.WriteLine("Given Username and Password: " + username + "-" + password);
-                Console.WriteLine("Computed Return Value: " + returnValue);
-
+                    returnValue = configuration.Username == username
+                           && configuration.Password == password;
+                    if (!returnValue)
+                    {
+                        Console.WriteLine("Basic Auth Details Entered Wrong ");
+                    }
+                }
                 return returnValue;
             }
             catch (Exception ex)

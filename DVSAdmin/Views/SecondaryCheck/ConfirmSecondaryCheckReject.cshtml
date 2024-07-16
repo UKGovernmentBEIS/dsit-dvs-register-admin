@@ -3,7 +3,7 @@
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @{
-    ViewData["Title"] = "ConfirmSecondaryCheckReject";
+    ViewData["Title"] = "Rejecting this application";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -13,6 +13,11 @@
     <main class="govuk-main-wrapper">
         @using (Html.BeginForm("ProceedSecondaryCheckRejection", "SecondaryCheck", FormMethod.Post))
         {
+            @if (ViewData.ModelState.ErrorCount >0)
+            {
+                ViewData["Title"] = "Error: " + ViewData["Title"];
+                @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+            }
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">
@@ -61,14 +66,14 @@
                         @Html.ValidationMessageFor(m => m.RejectionReason, "", new { @class = "govuk-error-message" })
                         <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
                             <div class="govuk-radios__item">
-                                @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.DiligenceCheck, new { @id = "rejection-diligencecheck", @class = "govuk-radios__input" })
-                                <label class="govuk-label govuk-radios__label" for="rejection-diligencecheck">
+                                    @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.DiligenceCheck, new { @id = "rejectionreason", @class = "govuk-radios__input" })
+                                    <label class="govuk-label govuk-radios__label" for="rejectionreason">
                                     Failed due diligence check
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
-                                @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.IncorrectInfo, new { @id = "rejection-incorrectinfo", @class = "govuk-radios__input" })
-                                <label class="govuk-label govuk-radios__label" for="rejection-incorrectinfo">
+                                    @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.IncorrectInfo, new { @id = "rejectionreason-2", @class = "govuk-radios__input" })
+                                    <label class="govuk-label govuk-radios__label" for="rejectionreason-2">
                                     Submitted incorrect information
                                 </label>
                             </div>
@@ -76,6 +81,7 @@
                     </fieldset>
                 </div>
 
+                   
                 <h2 class="govuk-heading-m">Who will receive the application decision notification</h2>
                 <div id="applicationSponsor-hint" class="govuk-hint">
                     The applicant will receive an email with this decision from the OfDIA Review

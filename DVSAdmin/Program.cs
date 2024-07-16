@@ -10,6 +10,7 @@ var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 Console.WriteLine(environment);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+
 builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
 .AddJsonFile($"appsettings.{environment}.json", optional: true)
 .AddEnvironmentVariables();
@@ -32,14 +33,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
-{
-    app.UseMiddleware<BasicAuthMiddleware>();
-}
-else
-{
-    app.UseMiddleware<ExceptionHandlerMiddleware>();
-}
+app.UseMiddleware<BasicAuthMiddleware>();
 
 
 app.UseHttpsRedirection();

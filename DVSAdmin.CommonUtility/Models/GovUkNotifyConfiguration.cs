@@ -1,4 +1,6 @@
-﻿namespace DVSAdmin.CommonUtility.Models
+﻿using DVSAdmin.CommonUtility.Models.Consent;
+
+namespace DVSAdmin.CommonUtility.Models
 {
     public class GovUkNotifyConfiguration
     {
@@ -17,5 +19,17 @@
         public FailedLoginAttemptTemplate FailedLoginAttemptTemplate { get; set; } 
         public ApplicationRejectedConfirmationTemplate ApplicationRejectedConfirmationTemplate { get; set; }
         public ApplicationApprovedConfirmationTemplate ApplicationApprovedConfirmationTemplate { get; set; }
+        public CertificateInfoApprovedToCabTemplate CertificateInfoApprovedToCabTemplate { get; set; }
+        public CertificateInfoApprovedToDSIT CertificateInfoApprovedToDSIT { get; set; }
+        public CertificateInfoRejectedToCabTemplate CertificateInfoRejectedToCabTemplate { get; set; }
+        public CertificateInfoRejectedToDSITTemplate CertificateInfoRejectedToDSITTemplate { get; set; }
+        public DIPConsentToPublishTemplate DIPConsentToPublishTemplate { get; set; }
+        public AdditionalContactConsentTemplate AdditionalContactConsentTemplate { get; set; }
+        public AgreementToPublishTemplate AgreementToPublishTemplate { get; set; }
+        public AgreementToPublishToDSITTemplate AgreementToPublishToDSITTemplate { get; set; }
+        public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }
+        public ServicePublishedCABTemplate ServicePublishedCABTemplate { get; set; }
+        public ServicePublishedDSITTemplate ServicePublishedDSITTemplate { get;set; }
+
     }
 }

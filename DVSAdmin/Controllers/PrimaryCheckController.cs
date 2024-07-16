@@ -257,7 +257,7 @@ namespace DVSAdmin.Controllers
 
 
         [HttpGet("primary-check-approval-confirmation")]
-        public IActionResult PrimaryCheckPassedConfirmation(PreRegistrationReviewDto preRegistrationReviewDto)
+        public IActionResult PrimaryCheckPassedConfirmation()
         {
             PreRegistrationReviewViewModel preRegistrationReviewViewModel = new PreRegistrationReviewViewModel();
             preRegistrationReviewViewModel = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
@@ -340,9 +340,15 @@ namespace DVSAdmin.Controllers
         }
         private void AddModelErrorForInvalidActions(PreRegistrationReviewViewModel pregistrationReviewViewModel, string reviewAction)
         {
+            
+
             if (pregistrationReviewViewModel.PrimaryCheckUserId == pregistrationReviewViewModel.SecondaryCheckUserId)
             {
                 ModelState.AddModelError("SubmitValidation", "Primary and secondary check user should be different");
+            }
+            if ((reviewAction == "approve" || reviewAction == "reject") &&  string.IsNullOrEmpty(pregistrationReviewViewModel.Comment))
+            {
+                ModelState.AddModelError("Comment", "You need to complete all sections to be able to proceed with primary check");
             }
             else
             {
@@ -381,10 +387,7 @@ namespace DVSAdmin.Controllers
                 }
 
 
-                if ((reviewAction == "approve" || reviewAction == "reject") &&  string.IsNullOrEmpty(pregistrationReviewViewModel.Comment))
-                {
-                    ModelState.AddModelError("Comment", "Enter a comment to explain the checks completed");
-                }
+               
             }
 
         }

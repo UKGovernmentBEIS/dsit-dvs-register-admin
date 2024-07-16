@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Notify.Client;
 using Notify.Exceptions;
-using System.Net.Mail;
 
 namespace DVSAdmin.CommonUtility.Email
 {
@@ -173,11 +172,12 @@ namespace DVSAdmin.CommonUtility.Email
 
             var personalisation = new Dictionary<string, dynamic>
             {
-                { template.TimeStamp,  timestamp}               
+                { template.TimeStamp,  timestamp}  ,
+                { template.Email,  emailAddress}
             };
             var emailModel = new GovUkNotifyEmailModel
             {
-                EmailAddress =  emailAddress,
+                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
                 TemplateId = template.Id,
                 Personalisation = personalisation
             };
@@ -216,6 +216,214 @@ namespace DVSAdmin.CommonUtility.Email
             var emailModel = new GovUkNotifyEmailModel
             {
                 EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendCertificateInfoApprovedToCab(string recipientName, string URN, string serviceName, string emailAddress)
+        {
+            var template = govUkNotifyConfig.CertificateInfoApprovedToCabTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.RecipientName,  recipientName},
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN}
+            
+            };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendCertificateInfoApprovedToDSIT(string URN, string serviceName)
+        {
+            var template = govUkNotifyConfig.CertificateInfoApprovedToDSIT;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {               
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN}
+
+            };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendCertificateInfoRejectedToCab(string recipientName, string URN, string serviceName, string emailAddress)
+        {
+            var template = govUkNotifyConfig.CertificateInfoRejectedToCabTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.RecipientName,  recipientName},
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN}
+
+            };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendCertificateInfoRejectedToDSIT(string URN, string serviceName, string rejectionCategory, string rejectionComments)
+        {
+            var template = govUkNotifyConfig.CertificateInfoRejectedToDSITTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {             
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN},
+                { template.RejectionCategory,  rejectionCategory},
+                { template.RejectionComments,  rejectionComments},
+
+
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendConsentToPublishToDIP(string URN, string serviceName, string recipientName, string emailAddress, string consentLink)
+        {
+            var template = govUkNotifyConfig.DIPConsentToPublishTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN},
+                { template.RecipientName,  recipientName},
+                { template.ConsentLink,  consentLink}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendConsentToPublishToAdditionalContact(string URN, string serviceName, string recipientName, string emailAddress)
+        {
+            var template = govUkNotifyConfig.AdditionalContactConsentTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN},
+                { template.RecipientName,  recipientName}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendAgreementToPublishToDIP(string recipientName, string emailAddress)
+        {
+            var template = govUkNotifyConfig.AgreementToPublishTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+               
+                { template.RecipientName,  recipientName}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendAgreementToPublishToDSIT(string URN, string serviceName)
+        {
+            var template = govUkNotifyConfig.AgreementToPublishToDSITTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.URN,  URN},
+                { template.ServiceName,  serviceName}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName, string emailAddress)
+        {
+            var template = govUkNotifyConfig.ServicePublishedDIPTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.RecipientName,  recipientName}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendServicePublishedToCAB(string recipientName, string serviceName, string emailAddress)
+        {
+            var template = govUkNotifyConfig.ServicePublishedCABTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.RecipientName,  recipientName}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendServicePublishedToDSIT(string URN, string serviceName)
+        {
+            var template = govUkNotifyConfig.ServicePublishedDSITTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.URN,  URN}
+
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
                 TemplateId = template.Id,
                 Personalisation = personalisation
             };

@@ -1,9 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.Net;
+using System.Security.Claims;
 
 public class ValidCognitoTokenAttribute : ActionFilterAttribute
 {   
@@ -13,14 +14,11 @@ public class ValidCognitoTokenAttribute : ActionFilterAttribute
         {
             var cognitoClient = context.HttpContext.RequestServices.GetService<CognitoClient>();
             var sessionToken = context.HttpContext.Session.GetString("IdToken");
-            sessionToken = sessionToken.Substring(1, sessionToken.Length - 2);
-       
             if (string.IsNullOrEmpty(sessionToken))
             {
-                context.Result = new RedirectToActionResult("", "Login", null);
-                return;
+                throw new UnauthorizedAccessException("Invalid token");
             }
-
+            sessionToken = sessionToken.Substring(1, sessionToken.Length - 2);
             string cognitoIssuer = $"https://cognito-idp.{cognitoClient._region}.amazonaws.com/{cognitoClient._userPoolId}";
             string jwtKeySetUrl = $"{cognitoIssuer}/.well-known/jwks.json";
             string cognitoAudience = cognitoClient._clientId;
@@ -42,7 +40,18 @@ public class ValidCognitoTokenAttribute : ActionFilterAttribute
                 ValidAudience = cognitoAudience
             };
 
-            var principal = new JwtSecurityTokenHandler().ValidateToken(sessionToken, validationParameters, out var validatedToken);
+            var tokenHandler = new JsonWebTokenHandler();
+            var result = tokenHandler.ValidateTokenAsync(sessionToken, validationParameters);
+
+            if (result.Result.IsValid)
+            {
+                var claimsPrincipal = new ClaimsPrincipal(result.Result.ClaimsIdentity);
+                context.HttpContext.User = claimsPrincipal;
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Invalid token");
+            }
 
             base.OnActionExecuting(context);
         }
@@ -50,7 +59,7 @@ public class ValidCognitoTokenAttribute : ActionFilterAttribute
         {
             Console.WriteLine($"Exception ex"+ex.Message);
             // If an exception occurs (indicating the token is invalid), redirect to the Login page
-            context.Result = new RedirectToActionResult("HandleException", "Error", "preregistration-review/service-error");
+            context.Result = new RedirectToActionResult("LoginPage", "Login", null);
         }
     }
 }
