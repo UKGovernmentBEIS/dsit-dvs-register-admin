@@ -1,0 +1,679 @@
+﻿@model DVSAdmin.Models.PreRegistrationReviewViewModel;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "Application review";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+ 
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "PreRegistrationReview", "PreRegistrationReview", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                @using (Html.BeginForm("SavePrimaryCheckReview", "PrimaryCheck", FormMethod.Post))
+                {
+                    @if (ViewData.ModelState.ErrorCount >0)
+                    {
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                    }
+                    <h1 class="govuk-heading-xl">Application review</h1>
+              
+                 @Html.HiddenFor(m => m.PreRegistrationId)
+                    @Html.HiddenFor(m => m.PrimaryCheckUserId)
+                    @Html.HiddenFor(m => m.SecondaryCheckUserId)
+                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header"> Unique Reference # </th>
+                            <th scope="col" class="govuk-table__header">Digital Identity <br />and Attribute <br /> Service Provider</th>
+                            <th scope="col" class="govuk-table__header">Time Submitted</th>
+                            <th scope="col" class="govuk-table__header">Status</th>
+                            <th scope="col" class="govuk-table__header">Days left to <br />complete</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                          <tr class="govuk-table__row">
+                                <td class="govuk-table__cell"> @Html.ActionLink(Model.PreRegistration.URN, "PrimaryCheckReview", "PreRegistrationReview", new { @preRegistrationId = Model.PreRegistration.Id }, new { @class = "govuk-link" })</td>
+                                <td class="govuk-table__cell">@Model.PreRegistration.TradingName</td>
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.PreRegistration.CreatedDate)</td>
+                                @if (Model.PreRegistration.PreRegistrationReview != null)
+                                {
+                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.PreRegistration.PreRegistrationReview.ApplicationReviewStatus)</td>
+                                }
+                                else
+                                {
+                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.PreRegistration.ApplicationReviewStatus)</td>
+                                }
+                                <td class="govuk-table__cell">@Model.PreRegistration.DaysLeftToComplete  days</td>
+                            </tr>
+                    </tbody>
+                </table>
+                <h2 class="govuk-heading-l">Application details</h2>
+                <h3 class="govuk-heading-m">Contact details of the application sponsor</h3>
+
+
+                    @if (Model.PreRegistration.IsApplicationSponsor)
+                    {
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Full name of application
+                                    sponsor
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.FullName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Job title of application sponsor
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.JobTitle
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Email address of application sponsor
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.Email
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Telephone number of application sponsor
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.TelephoneNumber
+                                </dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Additional contact details provided
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    No
+                                </dd>
+
+                            </div>
+                        </dl>
+                    }
+
+                    else
+                    {
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Full name of application
+                                    sponsor
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.SponsorFullName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Job title of application sponsor
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.SponsorJobTitle
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Email address of application sponsor
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.SponsorEmail
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Telephone number of application sponsor
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.SponsorTelephoneNumber
+                                </dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Additional contact details provided
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    Yes
+                                </dd>
+
+                            </div>
+                        </dl>
+
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Full name of additional contact
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.FullName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Job title of additional contact
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.JobTitle
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Email address of additional contact
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.Email
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Telephone number of additional contact
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreRegistration.TelephoneNumber
+
+                                </dd>
+                            </div>
+                        </dl>
+                    }
+
+                @* --------------Country ----------------- *@
+               
+                <h3 class="govuk-heading-m govuk-!-padding-top-5">Countries and territories the company currently trades in</h3>
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+
+                @if(Model.PreRegistration.Countries.Count>30)
+                {
+                     <div class="govuk-grid-row">
+
+                    <div class="govuk-grid-column-one-quarter">
+                        <p class="govuk-body govuk-!-font-weight-bold"> List of Countries</p>  
+                    </div>
+                        @foreach (var countryList in Model.PreRegistration.CountrySubList)
+                        {
+                                <div class="govuk-grid-column-one-quarter govuk-body govuk-!-font-weight-regular">
+                                @foreach (var country in countryList)
+                                {
+                                        @country.CountryName
+                           
+                                    <br >
+                                }
+                            </div>
+                        }                           
+                    </div>
+
+                }
+                else
+                {
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-one-third">
+                            <p class="govuk-body govuk-!-font-weight-bold"> List of Countries</p>
+                        </div>
+                        @foreach (var countryList in Model.PreRegistration.CountrySubList)
+                        {
+                            <div class="govuk-grid-column-one-third govuk-body govuk-!-font-weight-regular">
+                                @foreach (var country in countryList)
+                                {
+                                    @country.CountryName
+
+                                    <br>
+                                }
+                            </div>
+                        }
+
+                    </div>
+                }
+
+                <div id="required-fields">
+
+               <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("IsCountryApproved") && Html.ViewData.ModelState["IsCountryApproved"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
+                 <h3 class="govuk-heading-s">Select an option for this section</h3> 
+                   @Html.ValidationMessageFor(m => m.IsCountryApproved, "", new { @class = "govuk-error-message" })
+                <div class="govuk-radios" data-module="govuk-radios">                              
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.IsCountryApproved, true, new { @id = "country-approved", @class = "govuk-radios__input" })
+                        <label class="govuk-label govuk-radios__label" for="country-approved">
+                            Approve
+                        </label>
+                    </div>
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.IsCountryApproved, false, new { @id = "country-rejected", @class = "govuk-radios__input" })
+                        <label class="govuk-label govuk-radios__label" for="country-rejected">
+                            Reject
+                        </label>
+                    </div>
+                </div>
+                </div>
+
+                @* --------------Company  ----------------- *@
+               
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h3 class="govuk-heading-m govuk-!-padding-top-5">Company overview</h3>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Registered name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.PreRegistration.RegisteredCompanyName
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Trading name(s)
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.PreRegistration.TradingName
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Companies House or charity
+                            registration number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.PreRegistration.CompanyRegistrationNumber
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Parent company located
+                            outside the UK
+                        </dt>
+                        @if (Model.PreRegistration.HasParentCompany)
+                        {
+                            <dd class="govuk-summary-list__value">
+                                Yes
+                            </dd>
+                        }
+                        else
+                        {
+                            <dd class="govuk-summary-list__value">
+                                No
+                            </dd>
+                        }
+
+                    </div>
+
+                    @if(Model.PreRegistration.HasParentCompany)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Registered name of parent
+                                company
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.PreRegistration.ParentCompanyRegisteredName
+                            </dd>                           
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Country of parent company
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.PreRegistration.ParentCompanyLocation
+                            </dd>
+                        </div>
+                    }                   
+                </dl>
+          
+
+                 @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsCompanyApproved",
+                   Value = Model.IsCompanyApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsCompanyApproved") && Html.ViewData.ModelState["IsCompanyApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCompanyApproved") && Html.ViewData.ModelState["IsCompanyApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsCompanyApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+
+                @* --------------Check list Approval ----------------- *@
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h2 class="govuk-heading-l">Approval checklist</h2>
+                <h3 class="govuk-heading-m">Companies House or charity information</h3>
+                <p class="govuk-body"><a href="#" class="govuk-link">Link to Companies House or charity website</a></p>
+
+                <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                    <li>
+                        Legal status
+                    </li>
+                    <li>
+                        If accounts are up to date
+                    </li>
+                    <li>
+                        Existing certifications
+                    </li>
+                    <li>
+                        Previous or outstanding administrations
+                    </li>
+                    <li>
+                        Address checks
+                    </li>
+                    
+                </ul>
+         
+
+               @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsCheckListApproved",
+                   Value = Model.IsCheckListApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsCheckListApproved") && Html.ViewData.ModelState["IsCheckListApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCheckListApproved") && Html.ViewData.ModelState["IsCheckListApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsCheckListApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+
+
+                @* --------------Directorships Approval ----------------- *@
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h3 class="govuk-heading-m">Directorships</h3>
+                <p class="govuk-body"><a href="#" class="govuk-link">Link to Directorships website</a></p>
+
+                <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                    <li>
+                        Validity
+                    </li>
+                    <li>
+                        Sanctioned directors
+                    </li>
+                    <li>
+                        Persons of interest
+                    </li>
+                    <li>
+                        Previous or outstanding administrations
+                    </li>                    
+
+                </ul>         
+
+                 @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsDirectorshipsApproved",
+                   Value = Model.IsDirectorshipsApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsApproved") && Html.ViewData.ModelState["IsDirectorshipsApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsApproved") && Html.ViewData.ModelState["IsDirectorshipsApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsDirectorshipsApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+
+                @* --------------Directorships and Relationships Approval ----------------- *@
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h3 class="govuk-heading-m">Directors and relationships</h3>
+                <p class="govuk-body"><a href="#" class="govuk-link">Link to Directors and relationships</a></p>
+
+                <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                    <li>
+                        Directors and Partners relationships to organisations on sanction lis
+                    </li>                   
+
+                </ul>
+
+               @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsDirectorshipsAndRelationApproved",
+                   Value = Model.IsDirectorshipsAndRelationApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsAndRelationApproved") && Html.ViewData.ModelState["IsDirectorshipsAndRelationApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsAndRelationApproved") && Html.ViewData.ModelState["IsDirectorshipsAndRelationApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsDirectorshipsAndRelationApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+                @* --------------Trading Address checks ----------------- *@
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h3 class="govuk-heading-m">Trading as address checks (if applicable)</h3>
+                <p class="govuk-body"><a href="#" class="govuk-link">Link to Trading as address check</a></p>
+
+               @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsTradingAddressApproved",
+                   Value = Model.IsTradingAddressApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsTradingAddressApproved") && Html.ViewData.ModelState["IsTradingAddressApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsTradingAddressApproved") && Html.ViewData.ModelState["IsTradingAddressApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsTradingAddressApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+          
+
+                @* --------------sanction list checks ----------------- *@
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h3 class="govuk-heading-m">Sanctions list checks</h3>
+                <p class="govuk-body"><a href="#" class="govuk-link">Link to Sanctions list checks</a></p>
+
+                <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                    <li>
+                        <p class="govuk-body"><a href="#" class="govuk-link">OFSI check</a></p>
+                    </li>
+                </ul>
+        
+
+                @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsSanctionListApproved",
+                   Value = Model.IsSanctionListApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsSanctionListApproved") && Html.ViewData.ModelState["IsSanctionListApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsSanctionListApproved") && Html.ViewData.ModelState["IsSanctionListApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsSanctionListApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+
+                @* --------------UNFC checks ----------------- *@
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h3 class="govuk-heading-m">UNFC check (if applicable)</h3>
+                <p class="govuk-body"><a href="#" class="govuk-link">Link to UNFC check</a></p>
+
+                 @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsUNFCApproved",
+                   Value = Model.IsUNFCApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsUNFCApproved") && Html.ViewData.ModelState["IsUNFCApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsUNFCApproved") && Html.ViewData.ModelState["IsUNFCApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsUNFCApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })            
+
+                @* --------------EC checks ----------------- *@
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h3 class="govuk-heading-m">EC check (if applicable)</h3>
+                <p class="govuk-body"><a href="#" class="govuk-link">Link to EC check</a></p>
+                @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsECCheckApproved",
+                   Value = Model.IsECCheckApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsECCheckApproved") && Html.ViewData.ModelState["IsECCheckApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsECCheckApproved") && Html.ViewData.ModelState["IsECCheckApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsECCheckApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+            
+
+                @* --------------TARIC checks ----------------- *@
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h3 class="govuk-heading-m">TARIC check (if applicable)</h3>
+                <p class="govuk-body"><a href="#" class="govuk-link">Link to TARIC check</a></p>
+                   @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+                   {
+                   PropertyName = "IsTARICApproved",
+                   Value = Model.IsTARICApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsTARICApproved") && Html.ViewData.ModelState["IsTARICApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsTARICApproved") && Html.ViewData.ModelState["IsTARICApproved"].Errors.Count > 0 ?
+                   Html.ViewData.ModelState["IsTARICApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+                   })
+        
+
+                @* --------------Banned Political affiliation ----------------- *@
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h3 class="govuk-heading-m">Banned Political affiliations</h3>
+                <p class="govuk-body"><a href="#" class="govuk-link">Link to Banned Political affiliations</a></p>
+
+                <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                    <li>
+                        Money Laundering and Terrorism Funding
+                    </li>
+                    <li>
+                        Funding that can pose risks
+                    </li>
+                    <li>
+                        Existing certifications
+                    </li>
+                    <li>
+                        ICO check historical breach and fine information
+                    </li>
+
+                </ul>
+
+
+               @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsBannedPoliticalApproved",
+                   Value = Model.IsBannedPoliticalApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsBannedPoliticalApproved") && Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsBannedPoliticalApproved") && Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+           
+
+
+                @* --------------Providers webpage ----------------- *@
+                <hr class="govuk-section-break govuk-section-break--l">
+                <h3 class="govuk-heading-m">Providers webpage</h3>
+                <p class="govuk-body"><a href="#" class="govuk-link">Link to Providers webpage</a></p>
+
+                <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                    <li>
+                        Authenticity
+                    </li>
+                    <li>
+                        SSL certificate
+                    </li>                
+
+                </ul>
+
+
+
+               @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+               {
+                   PropertyName = "IsProvidersWebpageApproved",
+                   Value = Model.IsProvidersWebpageApproved,
+                   HasError = Html.ViewData.ModelState.ContainsKey("IsProvidersWebpageApproved") && Html.ViewData.ModelState["IsProvidersWebpageApproved"].Errors.Count > 0,
+                   ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsProvidersWebpageApproved") && Html.ViewData.ModelState["IsProvidersWebpageApproved"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["IsProvidersWebpageApproved"].Errors[0].ErrorMessage : string.Empty,
+                   Label1 = "Approve",
+                   Label2 = "Reject"
+               })
+
+            
+
+
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+             @*    ---------Comments and Save ------- *@
+
+
+
+
+                        @if (Html.ViewData.ModelState.ContainsKey("Comment") && Html.ViewData.ModelState["Comment"].Errors.Count > 0)
+                        {
+                            <div class="govuk-form-group govuk-form-group--error">
+                                <h3 class="govuk-label-wrapper">
+                                    <label class="govuk-label govuk-label--s" for="comment">
+                                        Comments
+                                    </label>
+
+                                </h3>
+                                <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
+                                <p  class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comment)
+                                </p>
+                                @Html.TextAreaFor(model => model.Comment, new { @class = "govuk-textarea govuk-textarea--error", @id = "comment", @name = "comment-name", @rows = "5" })
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="govuk-form-group">
+                                <h3 class="govuk-label-wrapper">
+                                    <label class="govuk-label govuk-label--s" for="comment">
+                                        Comments
+                                    </label>
+                                </h3>
+
+                                @Html.TextAreaFor(model => model.Comment, new { @class = "govuk-textarea", @id = "comment", @name = "comment-name", @rows = "5" })
+                            </div>
+
+                        }
+
+
+                    </div>
+
+                    @Html.ValidationMessageFor(m => m.SubmitValidation, "", new { @class = "govuk-error-message", id = "submit-error" })
+                    @if (Model.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckPassed || Model.ApplicationReviewStatus ==  ApplicationReviewStatusEnum.PrimaryCheckFailed
+                     || Model.ApplicationReviewStatus ==  ApplicationReviewStatusEnum.ApplicationRejected || Model.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationApproved)
+                    {     
+                        <div class="govuk-button-group">
+                            <button type="submit" disabled aria-disabled="true" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
+                                Approve for primary check
+                            </button>
+                            <button type="submit" disabled aria-disabled="true" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
+                                Reject for primary check
+                            </button>
+                            <button type="submit" disabled aria-disabled="true" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
+                                Save as draft
+                            </button>
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div class="govuk-button-group">
+                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
+                                Pass primary check
+                            </button>
+                            <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
+                                Fail primary check
+                            </button>
+                            <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
+                                Save as draft
+                            </button>
+                        </div>                       
+                    }
+
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>                            
+                            To pass the primary check on this application, all sections have to be approved. 
+                            To fail the primary check on this application, at least one section has to be rejected.
+                        </strong>
+                    </div>            
+                }
+            </div>
+            </div>
+        </main>
+
+    </div>

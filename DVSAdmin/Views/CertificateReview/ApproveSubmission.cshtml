@@ -1,0 +1,134 @@
+﻿@model CertificateApprovalViewModel
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@{
+    ViewData["Title"] = "Approve submission - GOV.UK";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+
+                <h1 class="govuk-heading-xl">Approve submission</h1>
+
+                <p class="govuk-body">
+                    You are about to confirm that the following submission has passed certificate review and that the information provided matches the certificate.
+                </p>
+                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Service name</th>
+                            <th scope="col" class="govuk-table__header">Service provider</th>
+                            <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
+                            <th scope="col" class="govuk-table__header">Role type</th>
+                            <th scope="col" class="govuk-table__header">Time submitted</th>
+                            <th scope="col" class="govuk-table__header">Review status</th>
+                            <th scope="col" class="govuk-table__header">Days left to complete checks</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+
+                            <th scope="row" class="govuk-table__header">@Model.CertificateValidation.CertificateInformation.ServiceName</th>
+                            <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.TradingName</td>
+                            <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.SubmittedCAB</td>
+                            <td class="govuk-table__cell">
+                                @foreach (var role in @Model.CertificateValidation.CertificateInformation.CertificateInfoRoleMapping)
+                                {
+                                    RoleEnum enumValue = (RoleEnum)role.RoleId;
+                                    <div> @Enum.GetName(enumValue) </div>
+                                }
+                            </td>
+                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateValidation.CertificateInformation.CreatedDate)</td>
+                            @if (@Model.CertificateValidation.CertificateInformation.CertificateReview == null)
+                            {
+                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.CertificateInformation.CertificateInfoStatus)</td>
+                            }
+                            else
+                            {
+                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.CertificateInformation.CertificateReview.CertificateInfoStatus)</td>
+                            }
+                            <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.DaysLeftToComplete  days</td>
+
+                        </tr>
+                    </tbody>
+                </table>
+                <h2 class="govuk-heading-l">What will happen once you approve</h2>
+                <p class="govuk-body">
+                    The CAB and OfDIA will receive a confirmation of this decision.
+                </p>
+                <h3 class="govuk-heading-m">Who will receive the decision notification</h3>
+
+
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Email address of CAB
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Email
+                        </dd>
+                    </div>
+                </dl>
+
+                <p class="govuk-body">
+                    The provider will also receive an email asking for consent to publish its details on the register of digital identity and attribute service providers.
+                </p>
+
+                <h3 class="govuk-heading-m">Who will receive the email asking for consent to publish</h3>
+                <hr class="govuk-section-break govuk-section-break--visible">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Email address of application sponsor
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.PreRegistration.Email
+                        </dd>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty( @Model.PreRegistration.SponsorEmail))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email address of additional contact
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.PreRegistration.SponsorEmail
+                            </dd>
+                        </div>
+                        
+                    }
+                   
+                </dl>
+
+                <h2 class="govuk-heading-l">Details that the provider needs to consent to publish</h2>
+
+               
+                <h3 class="govuk-heading-m">Certificate information</h3>
+              
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateDetailsView.cshtml", Model.CertificateValidation.CertificateInformation)
+
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ContactView.cshtml", Model.CertificateValidation.CertificateInformation)
+
+               
+                <div class="govuk-button-group">
+
+                    <a href="/certificate-review/confirm-approval" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                        Proceed with approval
+                    </a>
+                    <a href="/certificate-review/certificate-review" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                       Cancel
+                    </a>
+               
+                </div>
+            </div>
+        </div>
+    </main>
+
+</div>
+

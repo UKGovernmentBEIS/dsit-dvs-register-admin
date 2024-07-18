@@ -1,0 +1,55 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.Models;
+@model DVSAdmin.Models.RegManagement.ProviderListViewModel;
+
+
+<h2 class="govuk-heading-l">Action required</h2>
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Service provider</th>
+            <th scope="col" class="govuk-table__header">Publication status</th>
+            <th scope="col" class="govuk-table__header">Time and date of<br />provider consent to publish</th>
+            <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
+            <th scope="col" class="govuk-table__header">Services</th>
+            <th scope="col" class="govuk-table__header">Days Left</th>
+        </tr>
+    </thead>
+
+
+    <tbody class="govuk-table__body">
+        @if(Model.ActionRequiredList!=null)
+        {
+            @foreach (var item in Model.ActionRequiredList)
+            {
+                @if(item.CertificateInformation!=null && item.CertificateInformation.Count()>0)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell"> @Html.ActionLink(@item.TradingName, "ProviderDetails", "RegisterManagement", new { @providerId = item.Id }, new { @class = "govuk-link" })</td>
+                        <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@item.ProviderStatus) </td>
+                        <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(@item.ModifiedTime)</td>
+                        <td class="govuk-table__cell">@item.CertificateInformation[0].SubmittedCAB</td>
+                        <td class="govuk-table__cell">
+                            @foreach (var item1 in item.CertificateInformation)
+                            {
+                                <div class="govuk-!-margin-bottom-1">
+                                    @item1.ServiceName
+                                </div>
+                            }
+
+                        </td>
+                        <td class="govuk-table__cell">@item.DaysLeftToComplete Days</td>
+                    </tr>
+                }
+                
+            }
+        }
+       
+    </tbody>
+</table>
+
+
+
+

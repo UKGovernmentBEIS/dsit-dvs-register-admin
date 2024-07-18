@@ -1,0 +1,122 @@
+﻿@using DVSAdmin.Extensions;
+@using DVSAdmin.BusinessLogic.Models
+
+@{
+    bool hidePublishStatus = ViewData["HidePublishStatus"] as bool? ?? false;
+}
+@model CertificateInformationDto
+<dl class="govuk-summary-list govuk-!-margin-bottom-8">
+
+    @if (!hidePublishStatus)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Publication status
+            </dt>
+
+            <dd class="govuk-summary-list__value">
+                @HtmlExtensions.ToStyledStrongTag(Model.CertificateInfoStatus)
+            </dd>
+        </div>
+    }
+   
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Registered name
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.Provider.RegisteredName
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Trading name(s)
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.Provider.TradingName
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Company address details
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @HtmlExtensions.ToStringWithLineBreaks(Model.Provider.Address)
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Name of service
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.ServiceName
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Role(s) certified against
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @foreach (var item in Model.Roles)
+            {
+                <div>@item.RoleName</div>
+            }
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Identity profiles
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @foreach (var item in Model.IdentityProfiles)
+            {
+                <div>@item.IdentityProfileName</div>
+            }
+        </dd>
+    </div>
+
+    @if (Model.HasSupplementarySchemes && Model.SupplementarySchemes!=null)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Supplementary schemes
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @foreach (var item in Model.SupplementarySchemes)
+                {
+                    <div>@item.SchemeName</div>
+                }
+            </dd>
+        </div>
+
+    }
+
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Service provider’s certificate
+            of conformity
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.FileName
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Date of issue
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @DateTimeExtensions.FormatDateTime(@Model.ConformityIssueDate, "dd MMMM yyyy")
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Date of expiry
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @DateTimeExtensions.FormatDateTime(@Model.ConformityExpiryDate, "dd MMMM yyyy")
+        </dd>
+    </div>
+</dl>
+
+

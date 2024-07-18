@@ -1,0 +1,103 @@
+﻿@model CertificateInformationViewModel;
+@using DVSAdmin.Extensions;
+
+
+    
+    <hr class="govuk-section-break govuk-section-break--visible">
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Registered name
+            </dt>
+            <dd class="govuk-summary-list__value">
+            @Model.RegisteredName
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Trading name(s)
+            </dt>
+            <dd class="govuk-summary-list__value">
+            @Model.TradingName
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Company address details
+            </dt>
+            <dd class="govuk-summary-list__value">
+            @HtmlExtensions.ToStringWithLineBreaks(Model.Address)
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Name of service
+            </dt>
+            <dd class="govuk-summary-list__value">
+            @Model.ServiceName
+            </dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Name of role(s) certified
+                against
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @foreach (var item in Model?.Roles)
+                {
+                    <div>@item.RoleName</div>
+                }
+            </dd>
+
+        </div>
+
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Identity profiles
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @foreach (var item in Model?.IdentityProfiles)
+                {
+                    <div>@item.IdentityProfileName</div>
+                }
+            </dd>
+
+        </div>
+
+
+        @if (Model?.SupplementarySchemes != null)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Supplementary schemes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @foreach (var item in Model?.SupplementarySchemes)
+                    {
+                        <div>@item.SchemeName</div>
+                    }
+                </dd>
+
+            </div>
+        }
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Date of issue
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @DateTimeExtensions.FormatDateTime(@Model.ConformityIssueDate, "dd MMMM yyyy")
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Date of expiry
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @DateTimeExtensions.FormatDateTime(@Model.ConformityExpiryDate, "dd MMMM yyyy")
+            </dd>
+        </div>
+    </dl>
+
+
