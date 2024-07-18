@@ -2,12 +2,9 @@
 
 namespace DVSAdmin.Models
 {
-	public class SignUpViewModel
-	{
-        [Required(ErrorMessage = "Enter an email address in the correct format, like name@example.com.")]
-        [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com.")]
-      //  [RegularExpression(@"^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.)?gov\.uk$", ErrorMessage = "Invalid email address")]
-        public string? Email { get; set; }
+	public class SignUpViewModel : EnterEmailViewModel
+    {
+       
 
         [Required(ErrorMessage = "Enter a valid password")]
         [StringLength(255, ErrorMessage = "Password must be between 10 and 255 characters", MinimumLength = 10)]
@@ -27,7 +24,7 @@ namespace DVSAdmin.Models
         [RegularExpression("^[0-9]{6}$", ErrorMessage = "The MFA confirmation code must be a 6-digit number.")]
         public string? MFAConfirmationCode { get; set; }
 
-        public bool? PasswordReset { get; set; }
+      
 
     }
 }

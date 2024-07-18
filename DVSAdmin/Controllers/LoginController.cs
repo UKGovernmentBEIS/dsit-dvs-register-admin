@@ -28,29 +28,29 @@ namespace DVSAdmin.Controllers
         {
             if (passwordReset)
             {
-                SignUpViewModel signUpViewModel = new SignUpViewModel();
-                signUpViewModel.PasswordReset = passwordReset;
-                return View("EnterEmail", signUpViewModel);
+                EnterEmailViewModel enterEmailViewModel = new EnterEmailViewModel();
+                enterEmailViewModel.PasswordReset = passwordReset;
+                return View("EnterEmail", enterEmailViewModel);
             }
             return View("EnterEmail");
         }
 
         [HttpPost("create-new-account")]
-        public async Task<IActionResult> CreateNewAccount(SignUpViewModel signUpViewModel)
+        public async Task<IActionResult> CreateNewAccount(EnterEmailViewModel enterEmailViewModel)
         {
 
             if (ModelState["Email"].Errors.Count == 0)
             {
-                var forgotPasswordResponse = await _signUpService.ForgotPassword(signUpViewModel.Email);
+                var forgotPasswordResponse = await _signUpService.ForgotPassword(enterEmailViewModel.Email);
 
                 if (forgotPasswordResponse == "OK")
                 {
-                    HttpContext.Session?.Set("Email", signUpViewModel.Email);
-                    return RedirectToAction("ConfirmPassword", "Login", new { passwordReset = signUpViewModel.PasswordReset });
+                    HttpContext.Session?.Set("Email", enterEmailViewModel.Email);
+                    return RedirectToAction("ConfirmPassword", "Login", new { passwordReset = enterEmailViewModel.PasswordReset });
                 }
                 else
                 {
-                    ModelState.AddModelError("Email", "Incorrect Email provided");
+                    ModelState.AddModelError("Email", forgotPasswordResponse);
                     return View("EnterEmail");
                 }
             }
