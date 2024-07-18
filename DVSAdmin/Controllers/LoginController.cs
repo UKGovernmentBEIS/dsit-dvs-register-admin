@@ -137,12 +137,16 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("MFACode", "Wrong MFA Code Provided from Authenticator App");
+                    viewModel.SecretToken=MFARegistrationViewModel.SecretToken;
+                    viewModel.Email = MFARegistrationViewModel.Email;
+                    ModelState.AddModelError("MFACode", "Invalid MFA code provided");
                     return View("MFARegistration", viewModel);
                 }
             }
             else
             {
+                viewModel.SecretToken=MFARegistrationViewModel.SecretToken;
+                viewModel.Email = MFARegistrationViewModel.Email;
                 return View("MFARegistration", viewModel);
             }
             
