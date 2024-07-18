@@ -110,18 +110,23 @@ public class CognitoClient
             Password = password,
             ConfirmationCode = oneTimePassCode 
         };
-
-
         // Confirm Password Request
         try
         {
             await _provider.ConfirmForgotPasswordAsync(confirmForgotPasswordRequest);
         }
+        catch(CodeMismatchException ex)
+        {
+            Console.WriteLine($"Error confirming password : {ex.Message}");
+            genericResponse.Success = false;
+            genericResponse.ErrorMessage = "Invalid verification code provided";
+            return genericResponse;
+        }
         catch(Exception ex)
         {
             Console.WriteLine($"Error confirming password : { ex.Message}");
             genericResponse.Success = false;
-            genericResponse.Data = "Error while confirming password, please try again later";
+            genericResponse.ErrorMessage = "Error while confirming password, please try again later";
             return genericResponse;
         }
         

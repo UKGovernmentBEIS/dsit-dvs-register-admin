@@ -4,6 +4,7 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DVSAdmin.Controllers
 {
@@ -65,22 +66,23 @@ namespace DVSAdmin.Controllers
         [HttpGet("confirm-password")]
         public IActionResult ConfirmPassword(bool passwordReset)
         {
-            ConfirmPasswordViewModel confirmPasswordViewModel = new ConfirmPasswordViewModel();
-            confirmPasswordViewModel.Email = HttpContext?.Session.Get<string>("Email");
+            ConfirmPasswordViewModel confirmPasswordViewModel = new ConfirmPasswordViewModel();           
             confirmPasswordViewModel.PasswordReset = passwordReset;
+            string email = HttpContext?.Session.Get<string>("Email");
+            ViewBag.Email= email;
             return View("ConfirmPassword", confirmPasswordViewModel);
         }
 
         [HttpPost("confirm-password")]
         public async Task<IActionResult> ConfirmPasswordCheck(ConfirmPasswordViewModel confirmPasswordViewModel)
         {
-            confirmPasswordViewModel.Email = HttpContext?.Session.Get<string>("Email");
+            string email = HttpContext?.Session.Get<string>("Email");           
             if (ModelState["Password"].Errors.Count ==0 && ModelState["ConfirmPassword"].Errors.Count==0)
             {
                 GenericResponse confirmPasswordResponse = new GenericResponse();
                 if(confirmPasswordViewModel.PasswordReset!= null && confirmPasswordViewModel.PasswordReset ==true)
                 {
-                    confirmPasswordResponse = await _signUpService.ResetPassword(confirmPasswordViewModel.Email, confirmPasswordViewModel.Password, confirmPasswordViewModel.OneTimePassword);
+                    confirmPasswordResponse = await _signUpService.ResetPassword(email, confirmPasswordViewModel.Password, confirmPasswordViewModel.OneTimePassword);
                     if (confirmPasswordResponse.Success)
                     {
                         return View("PasswordChanged");
@@ -93,15 +95,15 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    confirmPasswordResponse = await _signUpService.ConfirmPassword(confirmPasswordViewModel.Email, confirmPasswordViewModel.Password, confirmPasswordViewModel.OneTimePassword);
+                    confirmPasswordResponse = await _signUpService.ConfirmPassword(email, confirmPasswordViewModel.Password, confirmPasswordViewModel.OneTimePassword);
                     if (confirmPasswordResponse.Success)
                     {
-                        HttpContext?.Session.Set("MFARegistrationViewModel", new MFARegistrationViewModel { Email = confirmPasswordViewModel.Email, Password = confirmPasswordViewModel.Password, SecretToken = confirmPasswordResponse.Data });
+                        HttpContext?.Session.Set("MFARegistrationViewModel", new MFARegistrationViewModel { Email = email, Password = confirmPasswordViewModel.Password, SecretToken = confirmPasswordResponse.Data });
                         return RedirectToAction("MFARegistration", "Login");
                     }
                     else
                     {
-                        ModelState.AddModelError("ErrorMessage", "Error in setting password");                      
+                        ModelState.AddModelError("OneTimePassword", confirmPasswordResponse.ErrorMessage);                      
                         return View("ConfirmPassword", confirmPasswordViewModel);
                     }
                 }               
