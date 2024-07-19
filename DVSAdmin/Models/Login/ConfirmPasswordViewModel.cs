@@ -5,7 +5,7 @@ namespace DVSAdmin.Models
 {
 	public class ConfirmPasswordViewModel
 	{
-        public string? Email { get; set; }
+       
 
         [Required(ErrorMessage = "Enter a valid password")]
         [StringLength(255, ErrorMessage = "Password must be between 10 and 255 characters", MinimumLength = 10)]
@@ -25,9 +25,8 @@ namespace DVSAdmin.Models
         [RegularExpression(@"^\d{6}$", ErrorMessage = "The OTP must be a 6-digit number")]
         public string? OneTimePassword { get; set; }
 
-        public string? ErrorMessage { get; set; }
-
         public bool? PasswordReset { get; set; }
+        public string? ErrorMessage { get; set; }
     }
 }
 
