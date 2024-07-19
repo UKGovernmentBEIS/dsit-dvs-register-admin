@@ -4,7 +4,6 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DVSAdmin.Controllers
 {
@@ -158,7 +157,7 @@ namespace DVSAdmin.Controllers
             return View("LoginPage");
         }
 
-        [HttpPost("login-to-account")]
+        [HttpPost("login")]
         public async Task<IActionResult> LoginToAccount(LoginViewModel loginPageViewModel)
         {
             if (ModelState["Email"].Errors.Count == 0 && ModelState["Password"].Errors.Count ==0)
@@ -196,11 +195,11 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("mfa-confirmation-login")]
-        public async Task<IActionResult> ConfirmMFACodeLogin(ConfirmMFAViewModel confirmMFAViewModel)
+        public async Task<IActionResult> ConfirmMFACodeLogin(MFACodeViewModel MFACodeViewModel)
         {
             if (ModelState["MFACode"].Errors.Count == 0)
             {
-                var mfaResponse = await _signUpService.ConfirmMFAToken(HttpContext?.Session.Get<string>("Session"), HttpContext?.Session.Get<string>("Email"), confirmMFAViewModel.MFACode);
+                var mfaResponse = await _signUpService.ConfirmMFAToken(HttpContext?.Session.Get<string>("Session"), HttpContext?.Session.Get<string>("Email"), MFACodeViewModel.MFACode);
 
                 if (mfaResponse!=null && mfaResponse.IdToken.Length > 0)
                 {
@@ -210,7 +209,7 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("MFACode", "There is a problem with your MFA Code");
+                    ModelState.AddModelError("MFACode", "Enter a valid MFA code");
                     return View("MFAConfirmation");
                 }
             }
