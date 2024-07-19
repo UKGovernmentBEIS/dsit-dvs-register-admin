@@ -23,9 +23,10 @@ namespace DVSAdmin.Models
 
         [Required(ErrorMessage = "Enter a valid OTP")]
         [RegularExpression(@"^\d{6}$", ErrorMessage = "The OTP must be a 6-digit number")]
-        public string? OneTimePassword { get; set; }      
+        public string? OneTimePassword { get; set; }
 
         public bool? PasswordReset { get; set; }
+        public string? ErrorMessage { get; set; }
     }
 }
 

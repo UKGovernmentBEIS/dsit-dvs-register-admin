@@ -76,7 +76,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ConfirmPasswordCheck(ConfirmPasswordViewModel confirmPasswordViewModel)
         {
             string email = HttpContext?.Session.Get<string>("Email");           
-            if (ModelState["Password"].Errors.Count ==0 && ModelState["ConfirmPassword"].Errors.Count==0)
+            if (ModelState.IsValid)
             {
                 GenericResponse confirmPasswordResponse = new GenericResponse();
                 if(confirmPasswordViewModel.PasswordReset!= null && confirmPasswordViewModel.PasswordReset ==true)
@@ -102,7 +102,15 @@ namespace DVSAdmin.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError("OneTimePassword", confirmPasswordResponse.ErrorMessage);                      
+                        if(confirmPasswordResponse.ErrorMessage == Constants.InvalidCode)
+                        {
+                            ModelState.AddModelError("OneTimePassword", confirmPasswordResponse.ErrorMessage);
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("ErrorMessage", confirmPasswordResponse.ErrorMessage);
+                        }
+                        
                         return View("ConfirmPassword", confirmPasswordViewModel);
                     }
                 }               
