@@ -11,6 +11,7 @@
         public const int URNExpiryDays = 60;
         public const string IncorrectPassword = "Incorrect Password";
         public const int DaysLeftToPublish = 5;
+        public const string IncorrectLoginDetails = "Enter a valid email address and password. After five incorrect attempts, your account will be temporarily locked";
 
     }
 }

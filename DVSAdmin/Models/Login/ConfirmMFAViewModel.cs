@@ -2,7 +2,7 @@
 
 namespace DVSAdmin.Models
 {
-	public class LoginPageViewModel : EnterEmailViewModel
+	public class ConfirmMFAViewModel : EnterEmailViewModel
     {      
 
 

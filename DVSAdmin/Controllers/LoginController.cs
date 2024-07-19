@@ -159,7 +159,7 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("login-to-account")]
-        public async Task<IActionResult> LoginToAccount(LoginPageViewModel loginPageViewModel)
+        public async Task<IActionResult> LoginToAccount(LoginViewModel loginPageViewModel)
         {
             if (ModelState["Email"].Errors.Count == 0 && ModelState["Password"].Errors.Count ==0)
             {
@@ -172,8 +172,14 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("Email", "Incorrect email or password");
-                    ModelState.AddModelError("Password", "Incorrect email or password");
+                    if (loginResponse == Constants.IncorrectPassword)
+                    {
+                        ModelState.AddModelError("Password", Constants.IncorrectLoginDetails);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Email", Constants.IncorrectLoginDetails);
+                    }
                     return View("LoginPage");
                 }
             }
@@ -190,11 +196,11 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("mfa-confirmation-login")]
-        public async Task<IActionResult> ConfirmMFACodeLogin(LoginPageViewModel loginPageViewModel)
+        public async Task<IActionResult> ConfirmMFACodeLogin(ConfirmMFAViewModel confirmMFAViewModel)
         {
             if (ModelState["MFACode"].Errors.Count == 0)
             {
-                var mfaResponse = await _signUpService.ConfirmMFAToken(HttpContext?.Session.Get<string>("Session"), HttpContext?.Session.Get<string>("Email"), loginPageViewModel.MFACode);
+                var mfaResponse = await _signUpService.ConfirmMFAToken(HttpContext?.Session.Get<string>("Session"), HttpContext?.Session.Get<string>("Email"), confirmMFAViewModel.MFACode);
 
                 if (mfaResponse!=null && mfaResponse.IdToken.Length > 0)
                 {
