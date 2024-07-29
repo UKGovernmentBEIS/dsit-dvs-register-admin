@@ -29,10 +29,9 @@
                         This file may not be suitable for users of assistive technology.
                     </span>
                 </p>
-
-                <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="downloadCertificate">
+                <a href="/certificate-review/download-certificate?key=@Model.CertificateValidation.CertificateInformation.FileLink&filename=@Model.CertificateValidation.CertificateInformation.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
                     Download certificate of conformity
-                </button>
+                </a>
 
 
                 <h2 class="govuk-heading-l">Submitted information</h2>
