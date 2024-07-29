@@ -19,11 +19,13 @@ namespace DVSAdmin.Controllers
         private readonly ILogger<CertificateReviewController> logger;
         private readonly ICertificateReviewService certificateReviewService;      
         private readonly IUserService userService;
-        public CertificateReviewController(ILogger<CertificateReviewController> logger, ICertificateReviewService certificateReviewService, IUserService userService)
+        private readonly IBucketService bucketService;
+        public CertificateReviewController(ILogger<CertificateReviewController> logger, ICertificateReviewService certificateReviewService, IUserService userService, IBucketService bucketService)
         {
             this.logger = logger;
             this.certificateReviewService = certificateReviewService;
-            this.userService = userService;           
+            this.userService = userService; 
+            this.bucketService = bucketService;
         }
 
         [HttpGet("certificate-review-list")]
@@ -401,8 +403,6 @@ namespace DVSAdmin.Controllers
             
         }
 
-        #endregion
-
         [HttpGet("approval-confirmation")]
         public async Task<ActionResult> ApprovalConfirmation()
         {
@@ -410,7 +410,37 @@ namespace DVSAdmin.Controllers
             ClearSessionVariables();
             return View(certificateValidationViewModel);
         }
-       
+
+        #endregion
+
+
+
+        /// <summary>
+        /// Download from s3
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+
+        [HttpGet("download-certificate")]
+        public async Task<IActionResult> DownloadCertificate(string key, string filename)
+        {
+            try
+            {
+                byte[]? fileContent = await bucketService.DownloadFileAsync(key);
+
+                if (fileContent == null || fileContent.Length == 0)
+                {
+                    return RedirectToAction(Constants.ErrorPath);
+                }
+                string contentType = "application/octet-stream";
+                return File(fileContent, contentType, filename);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction(Constants.ErrorPath);
+            }
+        }
+
 
         #region Private methods
 
