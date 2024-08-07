@@ -21,7 +21,7 @@ public class CognitoClient
         _provider = new AmazonCognitoIdentityProviderClient(new Amazon.Runtime.AnonymousAWSCredentials(), RegionEndpoint.EUWest2);
     }
 
-    private async Task<string> GetAccessToken(string email, string password)
+    private async Task<InitiateAuthResponse> GetAccessToken(string email, string password)
     {
         var authRequest = new InitiateAuthRequest
         {
@@ -36,7 +36,7 @@ public class CognitoClient
 
         var authResponse = await _provider.InitiateAuthAsync(authRequest);
 
-        return authResponse.AuthenticationResult.AccessToken;
+        return authResponse;
     }
 
     public async Task<string> ForgotPassword(string email)
@@ -51,10 +51,19 @@ public class CognitoClient
             var forgotPasswordResponse = await _provider.ForgotPasswordAsync(forgotPasswordRequest);
             return forgotPasswordResponse.HttpStatusCode.ToString();
         }
-        catch(Exception e)
+        catch (UserNotFoundException)
         {
-            Console.WriteLine($"{e.Message}");
-            return "KO";
+            return ("Enter a valid email address");
+        }
+        catch (LimitExceededException)
+        {
+            // Handle limit exceeded error
+            return ("Attempt limit exceeded, please try after some time.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return ("An error occurred");
         }
     }
 
@@ -101,18 +110,23 @@ public class CognitoClient
             Password = password,
             ConfirmationCode = oneTimePassCode 
         };
-
-
         // Confirm Password Request
         try
         {
             await _provider.ConfirmForgotPasswordAsync(confirmForgotPasswordRequest);
         }
+        catch(CodeMismatchException ex)
+        {
+            Console.WriteLine($"Error confirming password : {ex.Message}");
+            genericResponse.Success = false;
+            genericResponse.ErrorMessage = "Invalid verification code provided";
+            return genericResponse;
+        }
         catch(Exception ex)
         {
             Console.WriteLine($"Error confirming password : { ex.Message}");
             genericResponse.Success = false;
-            genericResponse.Data = "Error while confirming password, please try again later";
+            genericResponse.ErrorMessage = "Error while confirming password, please try again later";
             return genericResponse;
         }
         
@@ -120,10 +134,17 @@ public class CognitoClient
         // Generate MFA Token Request
         try
         {
+            InitiateAuthResponse initiateAuthResponse = await GetAccessToken(email, password);
+            if(initiateAuthResponse.ChallengeName!=null && initiateAuthResponse.ChallengeParameters!=null) 
+            {
+                genericResponse.ErrorMessage= "User account already exists";
+                return genericResponse;
+            }
             var associateSoftwareTokenRequest = new AssociateSoftwareTokenRequest
             {
-                AccessToken = await GetAccessToken(email, password)
+                AccessToken = initiateAuthResponse.AuthenticationResult.AccessToken
             };
+
             var associateSoftwareTokenResponse = await _provider.AssociateSoftwareTokenAsync(associateSoftwareTokenRequest);
 
             genericResponse.Success = true;
@@ -134,7 +155,7 @@ public class CognitoClient
         {
             Console.WriteLine($"Error adding MFA: {ex.Message}");
             genericResponse.Success = false;
-            genericResponse.Data = "Error while generating MFA Token, please try again later";
+            genericResponse.ErrorMessage = "Error while generating MFA Token, please try again later";
             return genericResponse;
         }
     }
@@ -143,9 +164,10 @@ public class CognitoClient
     {
         try
         {
+            InitiateAuthResponse initiateAuthResponse = await GetAccessToken(email, password);
             var verifySoftwareTokenRequest = new VerifySoftwareTokenRequest
             {
-                AccessToken = await GetAccessToken(email, password),
+                AccessToken = initiateAuthResponse.AuthenticationResult.AccessToken,
                 UserCode = mfaCode,
                 FriendlyDeviceName = "MFAEnabled-" + email
             };
@@ -155,7 +177,7 @@ public class CognitoClient
             {
                     var mfaOptions = new SetUserMFAPreferenceRequest()
                     {
-                        AccessToken = await GetAccessToken(email, password),
+                        AccessToken = initiateAuthResponse.AuthenticationResult.AccessToken,
                         SoftwareTokenMfaSettings = new SoftwareTokenMfaSettingsType
                         {
                             Enabled = true,
