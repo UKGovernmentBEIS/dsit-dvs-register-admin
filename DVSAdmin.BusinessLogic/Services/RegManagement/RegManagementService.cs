@@ -53,20 +53,20 @@ namespace DVSAdmin.BusinessLogic.Services
             var schemes = await certificateReviewRepository.GetSupplementarySchemes();
             List<SupplementarySchemeDto> supplementarySchemeDtos = automapper.Map<List<SupplementarySchemeDto>>(schemes);
 
-           List<CertificateInformationDto> certificateInformationDtos = automapper.Map<List<CertificateInformationDto>>(provider.CertificateInformation);
+       //    List<CertificateInformationDto> certificateInformationDtos = automapper.Map<List<CertificateInformationDto>>(provider.CertificateInformation);
 
-            foreach (var item in certificateInformationDtos)
-            {
-                var roleIds = item.CertificateInfoRoleMapping.Select(mapping => mapping.RoleId);
-                item.Roles = roleDtos.Where(x => roleIds.Contains(x.Id)).ToList();
-                var identityProfileids = item.CertificateInfoIdentityProfileMapping.Select(mapping => mapping.IdentityProfileId);
-                item.IdentityProfiles = identityProfileDtos.Where(x => identityProfileids.Contains(x.Id)).ToList();
-                var schemeids = item.CertificateInfoSupSchemeMappings?.Select(x => x.SupplementarySchemeId);
-                if (schemeids!=null && schemeids.Count() > 0)
-                    item.SupplementarySchemes = supplementarySchemeDtos.Where(x => schemeids.Contains(x.Id)).ToList();
-            }
+            //foreach (var item in certificateInformationDtos)
+            //{
+            //    var roleIds = item.CertificateInfoRoleMapping.Select(mapping => mapping.RoleId);
+            //    item.Roles = roleDtos.Where(x => roleIds.Contains(x.Id)).ToList();
+            //    var identityProfileids = item.CertificateInfoIdentityProfileMapping.Select(mapping => mapping.IdentityProfileId);
+            //    item.IdentityProfiles = identityProfileDtos.Where(x => identityProfileids.Contains(x.Id)).ToList();
+            //    var schemeids = item.CertificateInfoSupSchemeMappings?.Select(x => x.SupplementarySchemeId);
+            //    if (schemeids!=null && schemeids.Count() > 0)
+            //        item.SupplementarySchemes = supplementarySchemeDtos.Where(x => schemeids.Contains(x.Id)).ToList();
+            //}
 
-            providerDto.CertificateInformation = certificateInformationDtos;
+          //  providerDto.CertificateInformation = certificateInformationDtos;
             return providerDto;
         }
 

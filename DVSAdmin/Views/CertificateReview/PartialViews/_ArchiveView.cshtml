@@ -39,7 +39,7 @@
                 <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedDate)</td>
                 @if (item.CertificateReview != null && item.CertificateInfoStatus!= CertificateInfoStatusEnum.Expired)
                 {
-                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateInfoStatus)</td>
+                   @*  <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateInfoStatus)</td> *@
                     <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CertificateReview.ModifiedDate)</td>
                 }
                 else

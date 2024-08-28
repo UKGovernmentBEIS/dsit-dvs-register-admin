@@ -21,7 +21,7 @@
         {
             @foreach (var item in Model.PublicationCompleteList)
             {
-                @if(item.CertificateInformation!=null && item.CertificateInformation.Count()>0)
+               @*  @if(item.CertificateInformation!=null && item.CertificateInformation.Count()>0)
                 {
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell"> @Html.ActionLink(@item.TradingName, "ProviderDetails", "RegisterManagement", new { @providerId = item.Id }, new { @class = "govuk-link" })</td>
@@ -37,7 +37,7 @@
                             }
                         </td>
                     </tr>
-                }
+                } *@
                
             }
         }

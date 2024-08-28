@@ -62,16 +62,16 @@ namespace DVSAdmin.BusinessLogic
            .ForMember(dest => dest.CertificateInfoSupSchemeMappings, opt => opt.MapFrom(src => src.CertificateInfoSupSchemeMappings))
             .ForMember(dest => dest.Provider, opt => opt.MapFrom(src => src.Provider));
 
-            CreateMap<CertificateReviewRejectionReasonMappings, CertificateReviewRejectionReasonMappingsDto>();
-            CreateMap<CertificateReviewRejectionReasonMappingsDto, CertificateReviewRejectionReasonMappings>();
-            CreateMap<CertificateReview, CertificateReviewDto>().ForMember(dest => dest.CertificateReviewRejectionReasonMappings,
-            opt => opt.MapFrom(src => src.CertificateReviewRejectionReasonMappings));
-            CreateMap<CertificateReviewDto, CertificateReview>().ForMember(dest => dest.CertificateReviewRejectionReasonMappings,
-            opt => opt.MapFrom(src => src.CertificateReviewRejectionReasonMappings));
+            //CreateMap<CertificateReviewRejectionReasonMappings, CertificateReviewRejectionReasonMappingsDto>();
+            //CreateMap<CertificateReviewRejectionReasonMappingsDto, CertificateReviewRejectionReasonMappings>();
+            //CreateMap<CertificateReview, CertificateReviewDto>().ForMember(dest => dest.CertificateReviewRejectionReasonMappings,
+            //opt => opt.MapFrom(src => src.CertificateReviewRejectionReasonMappings));
+            //CreateMap<CertificateReviewDto, CertificateReview>().ForMember(dest => dest.CertificateReviewRejectionReasonMappings,
+            //opt => opt.MapFrom(src => src.CertificateReviewRejectionReasonMappings));
 
-            CreateMap<Provider, ProviderDto>().ForMember(dest => dest.CertificateInformation, opt => opt.MapFrom(src => src.CertificateInformation))
-            .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftToPublishResolver>()); 
-            CreateMap<ProviderDto, Provider>().ForMember(dest => dest.CertificateInformation, opt => opt.MapFrom(src => src.CertificateInformation));
+            //CreateMap<Provider, ProviderDto>().ForMember(dest => dest.CertificateInformation, opt => opt.MapFrom(src => src.CertificateInformation))
+            //.ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftToPublishResolver>()); 
+            //CreateMap<ProviderDto, Provider>().ForMember(dest => dest.CertificateInformation, opt => opt.MapFrom(src => src.CertificateInformation));
 
 
 

@@ -23,7 +23,7 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId && e.ProviderId ==cetificateReview.ProviderId);
+                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId && e.ProviProviderProfileId ==cetificateReview.ProviProviderProfileId);
 
                 if (existingEntity != null)
                 {
@@ -35,8 +35,8 @@ namespace DVSAdmin.Data.Repositories
                     existingEntity.IsCertificationScopeCorrect = cetificateReview.IsCertificationScopeCorrect;
                     existingEntity.IsServiceSummaryCorrect = cetificateReview.IsServiceSummaryCorrect;
                     existingEntity.IsURLLinkToServiceCorrect = cetificateReview.IsURLLinkToServiceCorrect;
-                    existingEntity.IsIdentityProfilesCorrect = cetificateReview.IsIdentityProfilesCorrect;
-                    existingEntity.IsQualityAssessmentCorrect = cetificateReview.IsQualityAssessmentCorrect;
+                    //existingEntity.IsIdentityProfilesCorrect = cetificateReview.IsIdentityProfilesCorrect;
+                    //existingEntity.IsQualityAssessmentCorrect = cetificateReview.IsQualityAssessmentCorrect;
                     existingEntity.IsServiceProvisionCorrect = cetificateReview.IsServiceProvisionCorrect;
                     existingEntity.IsLocationCorrect = cetificateReview.IsLocationCorrect;
                     existingEntity.IsDateOfIssueCorrect = cetificateReview.IsDateOfIssueCorrect;
@@ -44,7 +44,7 @@ namespace DVSAdmin.Data.Repositories
                     existingEntity.IsAuthenticyVerifiedCorrect = cetificateReview.IsAuthenticyVerifiedCorrect;
                     existingEntity.CommentsForIncorrect = cetificateReview.CommentsForIncorrect;                   
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
-                    existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
+                   // existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
                     existingEntity.ModifiedDate = DateTime.UtcNow;
                     genericResponse.InstanceId = existingEntity.Id;                    
                     await context.SaveChangesAsync();
@@ -75,14 +75,14 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId  && e.ProviderId ==cetificateReview.ProviderId);
+                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId  && e.ProviProviderProfileId ==cetificateReview.ProviProviderProfileId);
 
                 if (existingEntity != null)
                 {
                     existingEntity.InformationMatched = cetificateReview.InformationMatched;
                     existingEntity.Comments = cetificateReview.Comments;
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
-                    existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
+                    //existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
                     existingEntity.ModifiedDate = DateTime.UtcNow;
                     genericResponse.InstanceId = existingEntity.Id;
                     await context.SaveChangesAsync();
@@ -107,15 +107,15 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.CertificateInformationId == cetificateReview.CertificateInformationId  && e.ProviderId ==cetificateReview.ProviderId);
+                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId  && e.ProviProviderProfileId ==cetificateReview.ProviProviderProfileId);
 
                 if (existingEntity != null)
                 {
                     existingEntity.InformationMatched = cetificateReview.InformationMatched;
-                    existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
+                   // existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
                     existingEntity.RejectionComments = cetificateReview.RejectionComments;
-                    existingEntity.CertificateReviewRejectionReasonMappings = cetificateReview.CertificateReviewRejectionReasonMappings;
+                    //existingEntity.CertificateReviewRejectionReasonMappings = cetificateReview.CertificateReviewRejectionReasonMappings;
                     existingEntity.ModifiedDate = DateTime.UtcNow;
                     genericResponse.InstanceId = existingEntity.Id;
                     await context.SaveChangesAsync();
@@ -203,14 +203,14 @@ namespace DVSAdmin.Data.Repositories
 
                 if(reviewEntity != null)                
                 {
-                    var certificateInfoEntity = await context.CertificateInformation.FirstOrDefaultAsync(e => e.Id == reviewEntity.CertificateInformationId);
-                    var providerEntity = await context.Provider.FirstOrDefaultAsync(e => e.Id == reviewEntity.ProviderId);
+                    var certificateInfoEntity = await context.CertificateInformation.FirstOrDefaultAsync(e => e.Id == reviewEntity.ServiceId);
+                    var providerEntity = await context.Provider.FirstOrDefaultAsync(e => e.Id == reviewEntity.ProviProviderProfileId);
 
                     if(certificateInfoEntity != null && providerEntity != null)
                     {
                         //update review table status so that it won't appear in review list again
-                        reviewEntity.CertificateInfoStatus = CertificateInfoStatusEnum.ReadyToPublish;
-                        reviewEntity.ModifiedBy = modifiedBy;
+                        //reviewEntity.CertificateInfoStatus = CertificateInfoStatusEnum.ReadyToPublish;
+                        //reviewEntity.ModifiedBy = modifiedBy;
                         reviewEntity.ModifiedDate = DateTime.UtcNow;
 
                        

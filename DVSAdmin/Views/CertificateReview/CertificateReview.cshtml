@@ -61,7 +61,7 @@
                                 }
                                 else
                                 {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateReview.CertificateInfoStatus)</td>
+                                    @* <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateReview.CertificateInfoStatus)</td> *@
                                 }
                                 <td class="govuk-table__cell">@Model.CertificateInformation.DaysLeftToComplete  days</td>
 
@@ -207,8 +207,8 @@
 
 
 
-                    @if (Model.CertificateInformation.CertificateReview == null || (Model.CertificateInformation.CertificateReview != null &&
-                   Model.CertificateInformation.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview))
+                    @if (Model.CertificateInformation.CertificateReview == null || (Model.CertificateInformation.CertificateReview != null @* &&
+                   Model.CertificateInformation.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview *@))
                    {
                         <div class="govuk-button-group" id="submitvalidation">
                             <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
