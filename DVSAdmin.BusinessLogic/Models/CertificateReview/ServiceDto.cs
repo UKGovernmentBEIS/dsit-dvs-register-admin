@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models.Enums;
+﻿using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -24,7 +25,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public DateTime ConformityIssueDate { get; set; }
         public DateTime ConformityExpiryDate { get; set; }      
         public int CabUserId { get; set; }
-       // public CabUserDto CabUser { get; set; }
+        public CabUserDto CabUser { get; set; }
         public int ServiceNumber { get; set; }
         public int TrustMarkNumber { get; set; }
         public ServiceStatusEnum ServiceStatus { get; set; }

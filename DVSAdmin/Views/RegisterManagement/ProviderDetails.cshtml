@@ -15,7 +15,7 @@
                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_PublicationStatusTableView.cshtml", Model.Provider)
                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ProviderContactView.cshtml", Model.Provider)
 
-                @foreach (var item in Model.Provider.CertificateInformation)
+              @*   @foreach (var item in Model.Provider.CertificateInformation)
                 {
 
                     <div class="govuk-summary-card">
@@ -50,7 +50,7 @@
                             </dl>
                         </div>
                     </div>
-                }
+                } *@
                 @if (!(@Model.Provider.ProviderStatus == DVSAdmin.CommonUtility.Models.Enums.ProviderStatusEnum.Published))
                 {
                     <div class="govuk-button-group">

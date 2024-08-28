@@ -8,7 +8,7 @@
 <div class="govuk-width-container">
     @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { @providerId = @Model.Provider.Id }, new { @class = "govuk-back-link" })          
          
-        @Html.HiddenFor(m => m.Provider.CertificateInformation)
+       @*  @Html.HiddenFor(m => m.Provider.CertificateInformation) *@
         <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
 
@@ -43,14 +43,14 @@
                         </dd>
                     </div>
                 </dl>
-
+@* 
                 @foreach(var item in Model.Provider.CertificateInformation)
                 {
                     <h2 class="govuk-heading-m">Service @item.ServiceNumber: Remote Verify</h2>
                     @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", item)
                   
                     
-                }
+                } *@
 
                 <div class="govuk-button-group">
                     <a href="proceed-publication?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">

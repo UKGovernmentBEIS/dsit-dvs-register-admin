@@ -54,7 +54,7 @@ namespace DVSAdmin.BusinessLogic.Services
             CertificateReview certificateReview = new CertificateReview();
             automapper.Map(cetificateReviewDto, certificateReview);
             GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview);
-            if(genericResponse.Success && cetificateReviewDto.CertificateInfoStatus == CertificateInfoStatusEnum.Approved)
+            if(genericResponse.Success /*&& cetificateReviewDto.CertificateInfoStatus == CertificateInfoStatusEnum.Approved*/)
             {
                 await emailSender.SendCertificateInfoApprovedToCab(certificateInformationDto.CreatedBy, certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
                 await emailSender.SendCertificateInfoApprovedToDSIT(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName);
@@ -93,7 +93,7 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReviewRejection(certificateReview);
 
             
-            if(genericResponse.Success && cetificateReviewDto.CertificateInfoStatus == CertificateInfoStatusEnum.Rejected)
+            if(genericResponse.Success /*&& cetificateReviewDto.CertificateInfoStatus == CertificateInfoStatusEnum.Rejected*/ )
             {
                 string rejectReasons = string.Join("\r", rejectionReasons.Select(x => x.Reason.ToString()).ToArray());
                 await emailSender.SendCertificateInfoRejectedToCab(certificateInformationDto.CreatedBy, certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
@@ -147,8 +147,8 @@ namespace DVSAdmin.BusinessLogic.Services
         {
             ConsentToken consentToken = await consentRepository.GetConsentToken(token, tokenId);
             CertificateReview certificateReview = await certificateReviewRepository.GetCertificateReview(consentToken.CertificateReviewId);
-            CertificateInformationDto certificateInformationDto = await GetCertificateInformation(certificateReview.CertificateInformationId);           
-            return certificateInformationDto;
+           // CertificateInformationDto certificateInformationDto = await GetCertificateInformation(certificateReview.CertificateInformationId);           
+            return new CertificateInformationDto();
 
         }
         public async Task<GenericResponse> UpdateCertificateReviewStatus(string token, string tokenId, CertificateInformationDto certificateInformationDto)
@@ -163,18 +163,18 @@ namespace DVSAdmin.BusinessLogic.Services
                 if (reviewEntity != null)
                 {
                     ProviderStatusEnum providerStatus = ProviderStatusEnum.ActionRequired;
-                    List<CertificateInformation> serviceList = await certificateReviewRepository.GetCertificateInformationListByProvider(reviewEntity.ProviderId);
+                    //List<CertificateInformation> serviceList = await certificateReviewRepository.GetCertificateInformationListByProvider(reviewEntity.ProviderId);
                   
-                    if (serviceList.Any(item => item.CertificateInfoStatus == CertificateInfoStatusEnum.Published))
-                    {
-                        providerStatus = ProviderStatusEnum.PublishedActionRequired;
-                    }                    
-                    genericResponse =  await certificateReviewRepository.UpdateCertificateReviewStatus(consentToken.CertificateReviewId, "DIP", providerStatus);
-                    if (genericResponse.Success)
-                    {
-                        genericResponse.Success = await emailSender.SendAgreementToPublishToDIP(preRegistrationDto?.FullName??string.Empty, preRegistrationDto?.Email??string.Empty) &&
-                       await emailSender.SendAgreementToPublishToDSIT(preRegistrationDto?.URN??string.Empty, certificateInformationDto.ServiceName);
-                    }
+                    //if (serviceList.Any(item => item.CertificateInfoStatus == CertificateInfoStatusEnum.Published))
+                    //{
+                    //    providerStatus = ProviderStatusEnum.PublishedActionRequired;
+                    //}                    
+                    //genericResponse =  await certificateReviewRepository.UpdateCertificateReviewStatus(consentToken.CertificateReviewId, "DIP", providerStatus);
+                    //if (genericResponse.Success)
+                    //{
+                    //    genericResponse.Success = await emailSender.SendAgreementToPublishToDIP(preRegistrationDto?.FullName??string.Empty, preRegistrationDto?.Email??string.Empty) &&
+                    //   await emailSender.SendAgreementToPublishToDSIT(preRegistrationDto?.URN??string.Empty, certificateInformationDto.ServiceName);
+                    //}
                 }
               
             }

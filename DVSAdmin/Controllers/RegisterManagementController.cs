@@ -46,7 +46,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ProviderDetails(int providerId)
         {
             ProviderDto providerDto = await regManagementService.GetProviderDetails(providerId);
-            providerDto.CertificateInformation = AssignServiceNumber(providerDto.CertificateInformation);
+            //providerDto.CertificateInformation = AssignServiceNumber(providerDto.CertificateInformation);
             ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
             providerDetailsViewModel.Provider = providerDto;
             return View(providerDetailsViewModel);
@@ -73,13 +73,13 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> PublishService(int providerId)
         {
            
-            ProviderDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);
-            List<CertificateInformationDto> certificateInformation = AssignServiceNumber(providerDto.CertificateInformation);
+            ProviderDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);           
             ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
             providerDetailsViewModel.Provider = providerDto;
-            providerDetailsViewModel.Provider.CertificateInformation = certificateInformation
-           .Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish).ToList();
-            List<int> ServiceIds = providerDetailsViewModel.Provider.CertificateInformation.Select(item => item.Id).ToList();
+            //providerDetailsViewModel.Provider.CertificateInformation = certificateInformation
+            //.Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish).ToList();
+            List<int> ServiceIds = new();
+          //  List<int> ServiceIds = providerDetailsViewModel.Provider.CertificateInformation.Select(item => item.Id).ToList();
             HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);
               
             return View(providerDetailsViewModel);
@@ -92,7 +92,7 @@ namespace DVSAdmin.Controllers
             //To make sure only the service ids reviewed in previous screen is fetched
             List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();          
             ProviderDto providerDto = await regManagementService.GetProviderDetails(providerId);
-            providerDto.CertificateInformation =  providerDto.CertificateInformation.Where(item => serviceids.Contains(item.Id)).ToList();
+           // providerDto.CertificateInformation =  providerDto.CertificateInformation.Where(item => serviceids.Contains(item.Id)).ToList();
             ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
             providerDetailsViewModel.Provider = providerDto;
             return View(providerDetailsViewModel);
@@ -149,23 +149,11 @@ namespace DVSAdmin.Controllers
             List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
             ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
             providerDetailsViewModel.Provider = providerDto;
-            providerDetailsViewModel.Provider.CertificateInformation = providerDto.CertificateInformation
-           .Where(x => serviceids.Contains(x.Id)).ToList();
+            //providerDetailsViewModel.Provider.CertificateInformation = providerDto.CertificateInformation
+          // .Where(x => serviceids.Contains(x.Id)).ToList();
             HttpContext.Session.Remove("ServiceIdsToPublish");
             return View(providerDetailsViewModel);
         }
 
-        #region Private Methods
-        private List<CertificateInformationDto> AssignServiceNumber(List<CertificateInformationDto> certificateInformationDtos)
-        {
-            List<CertificateInformationDto> certificateInformationDtosFiltered = certificateInformationDtos
-           .Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish
-           || x.CertificateInfoStatus == CertificateInfoStatusEnum.Published).ToList();
-            certificateInformationDtosFiltered.Select((item, index) => new { item, index })
-            .ToList().ForEach(x => x.item.ServiceNumber = x.index + 1);
-            return certificateInformationDtosFiltered;
-        }
-
-        #endregion
     }
 }

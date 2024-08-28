@@ -32,14 +32,14 @@ namespace DVSAdmin.Controllers
         public async Task<ActionResult> CertificateReviews()
         {           
             CertificateReviewListViewModel certificateReviewListViewModel = new CertificateReviewListViewModel();
-            var certificateInfoList = await certificateReviewService.GetCertificateInformationList();
-            certificateReviewListViewModel.CertificateReviewList = certificateInfoList.Where(x => 
-            (x.CertificateInfoStatus == CertificateInfoStatusEnum.Received &&  x.Id !=x?.CertificateReview?.CertificateInformationId)
-            ||  (x.CertificateReview !=null && x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview ) &&x.DaysLeftToComplete>0).ToList();            
+            //var certificateInfoList = await certificateReviewService.GetCertificateInformationList();
+            //certificateReviewListViewModel.CertificateReviewList = certificateInfoList.Where(x => 
+            //(x.CertificateInfoStatus == CertificateInfoStatusEnum.Received &&  x.Id !=x?.CertificateReview?.CertificateInformationId)
+            //||  (x.CertificateReview !=null && x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview ) &&x.DaysLeftToComplete>0).ToList();            
 
-            certificateReviewListViewModel.ArchiveList = certificateInfoList.Where( x=>   
-            (x.CertificateReview !=null && (x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.Approved || x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.Rejected))
-             || x.CertificateInfoStatus == CertificateInfoStatusEnum.Expired ).ToList();
+            //certificateReviewListViewModel.ArchiveList = certificateInfoList.Where( x=>   
+            //(x.CertificateReview !=null && (x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.Approved || x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.Rejected))
+            // || x.CertificateInfoStatus == CertificateInfoStatusEnum.Expired ).ToList();
             return View(certificateReviewListViewModel);
         }
 
@@ -143,7 +143,7 @@ namespace DVSAdmin.Controllers
             else
             {
                 CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReview(reviewId);
-                CertificateInformationDto certificateInformationDto = await certificateReviewService.GetCertificateInformation(certificateReviewDto.CertificateInformationId);
+                CertificateInformationDto certificateInformationDto = await certificateReviewService.GetCertificateInformation(certificateReviewDto.ServiceId);
                 certificateReviewViewModel.CertificateInformation =  MapCertficateInfoDtoToViewModel(certificateInformationDto);
                 certificateReviewViewModel.CertificateReviewId = reviewId;
                 certificateReviewViewModel.Comments = certificateReviewDto.Comments;
@@ -265,13 +265,13 @@ namespace DVSAdmin.Controllers
                     HttpContext?.Session.Set("CertficateRejectionData", certficateRejectionViewModel);
                     CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
                     certificateReviewDto.RejectionComments = certficateRejectionViewModel.Comments;
-                    ICollection<CertificateReviewRejectionReasonMappingsDto> rejectionReasonIdDtos = new List<CertificateReviewRejectionReasonMappingsDto>();
-                    foreach (var item in certficateRejectionViewModel?.SelectedRejectionReasonIds)
-                    {
-                        rejectionReasonIdDtos.Add(new CertificateReviewRejectionReasonMappingsDto { CertificateReviewRejectionReasonId = item });
-                    }
-                    certificateReviewDto.CertificateReviewRejectionReasonMappings =  new List<CertificateReviewRejectionReasonMappingsDto>();
-                    certificateReviewDto.CertificateReviewRejectionReasonMappings = rejectionReasonIdDtos;
+                    //ICollection<CertificateReviewRejectionReasonMappingsDto> rejectionReasonIdDtos = new List<CertificateReviewRejectionReasonMappingsDto>();
+                    //foreach (var item in certficateRejectionViewModel?.SelectedRejectionReasonIds)
+                    //{
+                    //    rejectionReasonIdDtos.Add(new CertificateReviewRejectionReasonMappingsDto { CertificateReviewRejectionReasonId = item });
+                    //}
+                    //certificateReviewDto.CertificateReviewRejectionReasonMappings =  new List<CertificateReviewRejectionReasonMappingsDto>();
+                    //certificateReviewDto.CertificateReviewRejectionReasonMappings = rejectionReasonIdDtos;
                     HttpContext?.Session.Set("CertificateReviewDto", certificateReviewDto);
                     return RedirectToAction("ConfirmRejection"); 
                 }
@@ -307,7 +307,7 @@ namespace DVSAdmin.Controllers
                 CertficateRejectionViewModel certficateRejectionViewModel = HttpContext?.Session.Get<CertficateRejectionViewModel>("CertficateRejectionData")??new CertficateRejectionViewModel();
 
                 CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
-                certificateReviewDto.CertificateInfoStatus = CertificateInfoStatusEnum.Rejected;
+              //  certificateReviewDto.CertificateInfoStatus = CertificateInfoStatusEnum.Rejected;
                 GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewRejection(certificateReviewDto, MapCertficateInfoViewModelToDto(certificateValidationViewModel.CertificateInformation), certficateRejectionViewModel.SelectedReasons);
                 if (genericResponse.Success)
                 {
@@ -381,7 +381,7 @@ namespace DVSAdmin.Controllers
                 CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
                 certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();                             
 
-                certificateReviewDto.CertificateInfoStatus = CertificateInfoStatusEnum.Approved;
+               // certificateReviewDto.CertificateInfoStatus = CertificateInfoStatusEnum.Approved;
                 GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto, MapCertficateInfoViewModelToDto(certificateValidationViewModel.CertificateInformation));
                 if (genericResponse.Success)
                 {                   
@@ -471,9 +471,9 @@ namespace DVSAdmin.Controllers
         private CertificateReviewDto MapViewModelToDto(CertificateValidationViewModel certificateValidationViewModel, int userId, CertificateInfoStatusEnum reviewStatus, CertificateReviewViewModel? certificateReviewViewModel )
         {
             CertificateReviewDto certificateReviewDto = new CertificateReviewDto();
-            certificateReviewDto.PreRegistrationId = certificateValidationViewModel.PreRegistrationId;
-            certificateReviewDto.CertificateInformationId =certificateValidationViewModel.CertificateInformationId;
-            certificateReviewDto.ProviderId = certificateValidationViewModel.CertificateInformation.ProviderId;
+           // certificateReviewDto.PreRegistrationId = certificateValidationViewModel.PreRegistrationId;
+           // certificateReviewDto.CertificateInformationId =certificateValidationViewModel.CertificateInformationId;
+           // certificateReviewDto.ProviderId = certificateValidationViewModel.CertificateInformation.ProviderId;
             certificateReviewDto.IsCabLogoCorrect = Convert.ToBoolean(certificateValidationViewModel.IsCabLogoCorrect);
             certificateReviewDto.IsCabDetailsCorrect = Convert.ToBoolean(certificateValidationViewModel.IsCabDetailsCorrect);
             certificateReviewDto.IsProviderDetailsCorrect = Convert.ToBoolean(certificateValidationViewModel.IsProviderDetailsCorrect);
@@ -482,8 +482,8 @@ namespace DVSAdmin.Controllers
             certificateReviewDto.IsCertificationScopeCorrect = Convert.ToBoolean(certificateValidationViewModel.IsCertificationScopeCorrect);
             certificateReviewDto.IsServiceSummaryCorrect = Convert.ToBoolean(certificateValidationViewModel.IsServiceSummaryCorrect);
             certificateReviewDto.IsURLLinkToServiceCorrect = Convert.ToBoolean(certificateValidationViewModel.IsURLLinkToServiceCorrect);
-            certificateReviewDto.IsIdentityProfilesCorrect = Convert.ToBoolean(certificateValidationViewModel.IsIdentityProfilesCorrect);
-            certificateReviewDto.IsQualityAssessmentCorrect= Convert.ToBoolean(certificateValidationViewModel.IsQualityAssessmentCorrect);
+           // certificateReviewDto.IsIdentityProfilesCorrect = Convert.ToBoolean(certificateValidationViewModel.IsIdentityProfilesCorrect);
+           // certificateReviewDto.IsQualityAssessmentCorrect= Convert.ToBoolean(certificateValidationViewModel.IsQualityAssessmentCorrect);
             certificateReviewDto.IsServiceProvisionCorrect = Convert.ToBoolean(certificateValidationViewModel.IsServiceProvisionCorrect);
             certificateReviewDto.IsLocationCorrect= Convert.ToBoolean(certificateValidationViewModel.IsLocationCorrect);
             certificateReviewDto.IsDateOfIssueCorrect = Convert.ToBoolean(certificateValidationViewModel.IsDateOfIssueCorrect);
@@ -491,11 +491,11 @@ namespace DVSAdmin.Controllers
             certificateReviewDto.IsAuthenticyVerifiedCorrect = Convert.ToBoolean(certificateValidationViewModel.IsAuthenticyVerifiedCorrect); 
             certificateReviewDto.CommentsForIncorrect =  certificateValidationViewModel.CommentsForIncorrect?? string.Empty;        
             certificateReviewDto.VerifiedUser = userId;
-            certificateReviewDto.CertificateInfoStatus = reviewStatus;
+            //certificateReviewDto.CertificateInfoStatus = reviewStatus;
             if(certificateReviewViewModel != null)
             {
                 certificateReviewDto.Comments = certificateReviewViewModel.Comments;
-                certificateReviewDto.InformationMatched = certificateReviewViewModel.InformationMatched;
+                //certificateReviewDto.InformationMatched = certificateReviewViewModel.InformationMatched;
 
             }
             
@@ -520,8 +520,8 @@ namespace DVSAdmin.Controllers
                 certificateValidationViewModel.IsCertificationScopeCorrect = certificateInformationDto.CertificateReview.IsCertificationScopeCorrect;
                 certificateValidationViewModel.IsServiceSummaryCorrect = certificateInformationDto.CertificateReview.IsServiceSummaryCorrect;
                 certificateValidationViewModel.IsURLLinkToServiceCorrect = certificateInformationDto.CertificateReview.IsURLLinkToServiceCorrect;
-                certificateValidationViewModel.IsIdentityProfilesCorrect = certificateInformationDto.CertificateReview.IsIdentityProfilesCorrect;
-                certificateValidationViewModel.IsQualityAssessmentCorrect= certificateInformationDto.CertificateReview.IsQualityAssessmentCorrect;
+               // certificateValidationViewModel.IsIdentityProfilesCorrect = certificateInformationDto.CertificateReview.IsIdentityProfilesCorrect;
+                //certificateValidationViewModel.IsQualityAssessmentCorrect= certificateInformationDto.CertificateReview.IsQualityAssessmentCorrect;
                 certificateValidationViewModel.IsServiceProvisionCorrect =certificateInformationDto.CertificateReview.IsServiceProvisionCorrect;
                 certificateValidationViewModel.IsLocationCorrect= certificateInformationDto.CertificateReview.IsLocationCorrect;
                 certificateValidationViewModel.IsDateOfIssueCorrect = certificateInformationDto.CertificateReview.IsDateOfIssueCorrect;
