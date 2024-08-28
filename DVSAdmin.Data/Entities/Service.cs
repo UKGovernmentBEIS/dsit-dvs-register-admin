@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using DVSAdmin.CommonUtility.Models.Enums;
-using DVSAdmin.Data.Entities;
+﻿using DVSAdmin.CommonUtility.Models;
+using NpgsqlTypes;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-    namespace DVSAdmin.Data.Entities
+namespace DVSAdmin.Data.Entities
 {
     public class Service : BaseEntity
     {
@@ -34,14 +34,14 @@ using System.ComponentModel.DataAnnotations.Schema;
         public decimal FileSizeInKb { get; set; }
         public DateTime ConformityIssueDate { get; set; }
         public DateTime ConformityExpiryDate { get; set; }
-        
-        //[ForeignKey("CabUser")]
-        //public int CabUserId { get; set; }
-        //public CabUser CabUser { get; set; }
+
+        [ForeignKey("CabUser")]
+        public int CabUserId { get; set; }
+        public CabUser CabUser { get; set; }
         public int ServiceNumber { get;set; }
         public int TrustMarkNumber { get; set; }
-        //public ServiceStatusEnum ServiceStatus { get; set; }
-        //public NpgsqlTsVector SearchVector { get; set; }
+        public ServiceStatusEnum ServiceStatus { get; set; }
+        public NpgsqlTsVector SearchVector { get; set; }
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
         public DateTime? PublishedTime { get; set; }
