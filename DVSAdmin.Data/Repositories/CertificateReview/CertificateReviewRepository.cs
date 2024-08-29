@@ -145,9 +145,10 @@ namespace DVSAdmin.Data.Repositories
         public async Task<List<Service>> GetServiceList()
         {
             return await context.Service
-                .Include(s => s.Provider)
-                .OrderBy(s => s.CreatedDate)
-                .ToListAsync();
+            .Include(s => s.Provider)
+            .Include(s => s.CertificateReview)
+            .OrderBy(s => s.CreatedTime)
+            .ToListAsync();
         }
         public async Task<List<CertificateInformation>> GetCertificateInformationListByProvider(int providerId)
         {

@@ -32,5 +32,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
         public DateTime? PublishedTime { get; set; }
+        public CertificateReviewDto CertificateReview { get; set; }
+        public int DaysLeftToComplete { get; set; }
     }
 }

@@ -32,13 +32,12 @@ namespace DVSAdmin.Controllers
         public async Task<ActionResult> CertificateReviews()
         {
             CertificateReviewListViewModel certificateReviewListViewModel = new CertificateReviewListViewModel();
-
             var serviceList = await certificateReviewService.GetServiceList();
-
-            certificateReviewListViewModel.CertificateReviewList = serviceList.ToList();//to do update after DB changes
-
-            certificateReviewListViewModel.ArchiveList = serviceList.ToList();//to do update
-
+            certificateReviewListViewModel.CertificateReviewList =  serviceList.Where(x => x.DaysLeftToComplete >0 &&
+            ((x.ServiceStatus == ServiceStatusEnum.Submitted &&  x.Id !=x?.CertificateReview?.ServiceId) || 
+            (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))).ToList();            
+            certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
+            ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)).ToList();
             return View(certificateReviewListViewModel);
         }
 
