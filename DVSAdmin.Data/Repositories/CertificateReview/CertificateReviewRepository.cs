@@ -147,6 +147,8 @@ namespace DVSAdmin.Data.Repositories
             return await context.Service
             .Include(s => s.Provider)
             .Include(s => s.CertificateReview)
+            .Include(s => s.ServiceRoleMapping)
+            .Include(s => s.CabUser).ThenInclude(s => s.Cab)
             .OrderBy(s => s.CreatedTime)
             .ToListAsync();
         }

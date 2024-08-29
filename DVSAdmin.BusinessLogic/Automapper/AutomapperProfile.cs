@@ -2,6 +2,7 @@
 using DVSAdmin.BusinessLogic.Automapper;
 using DVSAdmin.BusinessLogic.Extensions;
 using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.BusinessLogic
@@ -47,6 +48,18 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<CertificateReviewRejectionReason, CertificateReviewRejectionReasonDto>();
             CreateMap<CertificateReviewRejectionReasonDto, CertificateReviewRejectionReason>();
 
+            CreateMap<QualityLevel, QualityLevelDto>();
+            CreateMap<QualityLevelDto, QualityLevel>();
+
+            CreateMap<ServiceIdentityProfileMapping, ServiceIdentityProfileMappingDto>();
+            CreateMap<ServiceIdentityProfileMappingDto, ServiceIdentityProfileMapping>();
+            CreateMap<ServiceRoleMapping, ServiceRoleMappingDto>();
+            CreateMap<ServiceRoleMappingDto, ServiceRoleMapping>();
+            CreateMap<ServiceSupSchemeMapping, ServiceSupSchemeMappingDto>();
+            CreateMap<ServiceSupSchemeMappingDto, ServiceSupSchemeMapping>();
+            CreateMap<ServiceQualityLevelMapping, ServiceQualityLevelMappingDto>();
+            CreateMap<ServiceQualityLevelMappingDto, ServiceQualityLevelMapping>();
+
 
             //CreateMap<CertificateReviewRejectionReasonMappings, CertificateReviewRejectionReasonMappingsDto>();
             //CreateMap<CertificateReviewRejectionReasonMappingsDto, CertificateReviewRejectionReasonMappings>();
@@ -64,6 +77,10 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<ProviderProfileDto, ProviderProfile>()
             .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services));
 
+            CreateMap<Cab, CabDto>();
+            CreateMap<CabDto, Cab>();
+            CreateMap<CabUser, CabUserDto>();
+            CreateMap<CabUserDto, CabUser>();
 
             CreateMap<Service, ServiceDto>()
             .ForMember(dest => dest.ServiceQualityLevelMapping, opt => opt.MapFrom(src => src.ServiceQualityLevelMapping))
@@ -72,6 +89,7 @@ namespace DVSAdmin.BusinessLogic
             .ForMember(dest => dest.ServiceSupSchemeMapping, opt => opt.MapFrom(src => src.ServiceSupSchemeMapping))
             .ForMember(dest => dest.Provider, opt => opt.MapFrom(src => src.Provider))
             .ForMember(dest => dest.CertificateReview, opt => opt.MapFrom(src => src.CertificateReview))
+            .ForMember(dest => dest.CabUser, opt => opt.MapFrom(src => src.CabUser))
             .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftResolverCertificateReview>());
 
             CreateMap<ServiceDto, Service>()
@@ -80,6 +98,7 @@ namespace DVSAdmin.BusinessLogic
            .ForMember(dest => dest.ServiceIdentityProfileMapping, opt => opt.MapFrom(src => src.ServiceIdentityProfileMapping))
            .ForMember(dest => dest.ServiceSupSchemeMapping, opt => opt.MapFrom(src => src.ServiceSupSchemeMapping))
            .ForMember(dest => dest.CertificateReview, opt => opt.MapFrom(src => src.CertificateReview))
+           .ForMember(dest => dest.CabUser, opt => opt.MapFrom(src => src.CabUser))
            .ForMember(dest => dest.Provider, opt => opt.MapFrom(src => src.Provider));
 
         }

@@ -30,7 +30,7 @@
                 <td class="govuk-table__cell"> @Html.ActionLink(item.ServiceName, "CertificateSubmissionDetails", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
 
                @* to do update *@
-                <td class="govuk-table__cell"> @* @item.SubmittedCAB *@</td>
+                <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
                 <td class="govuk-table__cell">
 
                     @foreach (var role in item.ServiceRoleMapping)
@@ -41,15 +41,15 @@
                 </td>
 
                 <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.Provider.CreatedTime)</td>
-                @if (item.ServiceStatus != null && item.ServiceStatus!= ServiceStatusEnum.Removed)
+                @if (item.CertificateReview != null)
                 {
-                   @*  <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateInfoStatus)</td> *@
-                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.Provider.ModifiedTime)</td>
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateReviewStatus)</td>
+                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CertificateReview.ModifiedDate)</td>
                 }
                 else
                 {
                     <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
-                    <td class="govuk-table__cell"> </td>                  
+                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedTime)</td>
                 }
             </tr>
         }

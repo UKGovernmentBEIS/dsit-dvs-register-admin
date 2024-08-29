@@ -25,8 +25,8 @@
                 <td class="govuk-table__cell"> @item.Provider.TradingName</td>
                 <td class="govuk-table__cell"> @Html.ActionLink(item.ServiceName, "CertificateValidation", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
 
-                @* to do update *@
-                <td class="govuk-table__cell"> @* @item.SubmittedCAB *@</td>
+              
+                <td class="govuk-table__cell"> @item.CabUser.Cab.CabName</td>
                      <td class="govuk-table__cell">
                        @foreach(var role in item.ServiceRoleMapping)
                         {
@@ -35,16 +35,16 @@
                         }
                         </td>
                         <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.Provider.CreatedTime)</td>
-                        @if (@item.ServiceStatus == null)
+                        @if (@item.CertificateReview == null)
                         {
                             <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
                         }
                         else
                         {
-                           @*  <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateInfoStatus)</td> *@
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateReviewStatus)</td>
                         }
-                @* to do update *@
-                        <td class="govuk-table__cell">@* @item.DaysLeftToComplete  *@ days</td>
+              
+                        <td class="govuk-table__cell">@item.DaysLeftToComplete  days</td>
                     </tr>
                 }              
             </tbody>
