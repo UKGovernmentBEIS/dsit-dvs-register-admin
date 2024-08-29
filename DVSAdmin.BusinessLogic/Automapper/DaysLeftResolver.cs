@@ -29,13 +29,13 @@ namespace DVSAdmin.BusinessLogic.Extensions
         }
     }
 
-    public class DaysLeftResolverCertificateReview : IValueResolver<CertificateInformation, CertificateInformationDto, int>
+    public class DaysLeftResolverCertificateReview : IValueResolver<Service, ServiceDto, int>
     {
-        public int Resolve(CertificateInformation source, CertificateInformationDto destination, int daysLeftToComplete, ResolutionContext context)
+        public int Resolve(Service source, ServiceDto destination, int daysLeftToComplete, ResolutionContext context)
         {
-            if (source.CreatedDate.HasValue)
+            if (source.CreatedTime.HasValue)
             {               
-                var daysPassed = (DateTime.Today - source.CreatedDate.Value).Days;               
+                var daysPassed = (DateTime.Today - source.CreatedTime.Value).Days;               
                 var daysLeft = Constants.DaysLeftToCompleteCertificateReview - daysPassed;
                 return Math.Max(0, daysLeft);
             }

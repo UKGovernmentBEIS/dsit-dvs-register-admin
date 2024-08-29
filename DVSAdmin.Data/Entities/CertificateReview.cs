@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DVSAdmin.Data.Entities
 {
-    public class CertificateReview 
+    public class CertificateReview
     {
         public CertificateReview() { }
         [Key]

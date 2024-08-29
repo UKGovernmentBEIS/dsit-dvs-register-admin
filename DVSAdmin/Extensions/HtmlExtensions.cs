@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models.Enums;
+﻿using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using Microsoft.AspNetCore.Html;
 using System.ComponentModel;
 using System.Reflection;
@@ -21,6 +22,7 @@ namespace DVSAdmin.Extensions
                 case CertificateInfoStatusEnum.Received:
                 case CertificateInfoStatusEnum.Published:
                 case ProviderStatusEnum.Published:
+                case ServiceStatusEnum.Submitted:    
                 return "govuk-tag govuk-tag--blue";
 
 
@@ -28,6 +30,7 @@ namespace DVSAdmin.Extensions
                 case ApplicationReviewStatusEnum.ApplicationApproved:                    
                 case URNStatusEnum.Approved:                  
                 case CertificateInfoStatusEnum.Approved:
+                case CertificateReviewEnum.Approved:
                 return "govuk-tag govuk-tag--green";
 
                 case ApplicationReviewStatusEnum.SentBackBySecondReviewer:                   
@@ -38,8 +41,9 @@ namespace DVSAdmin.Extensions
                 case CertificateInfoStatusEnum.Rejected:                  
                 case CertificateInfoStatusEnum.Expired:
                 case CertificateInfoStatusEnum.Removed:
-                case ProviderStatusEnum.RemovedFromRegister:                  
-                 return "govuk-tag govuk-tag--red";
+                case ProviderStatusEnum.RemovedFromRegister:
+                case CertificateReviewEnum.Rejected:
+                return "govuk-tag govuk-tag--red";
 
 
 
@@ -48,6 +52,7 @@ namespace DVSAdmin.Extensions
                 case CertificateInfoStatusEnum.ReadyToPublish:
                 case ProviderStatusEnum.ActionRequired:
                 case ProviderStatusEnum.PublishedActionRequired:
+                case CertificateReviewEnum.InReview:
                     return "govuk-tag govuk-tag--yellow";
 
                 default:

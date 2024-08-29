@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DVSAdmin.Data.Entities
 {
-    public class Service : BaseEntity
+    public class Service
     {
         public Service() { }
 
@@ -20,7 +20,7 @@ namespace DVSAdmin.Data.Entities
         public string WebsiteAddress { get; set; }
         public string CompanyAddress { get; set; }
         public ICollection<ServiceRoleMapping> ServiceRoleMapping { get; set; }
-        public bool HasGPG44 { get; set; }       
+        public bool HasGPG44 { get; set; }
         public ICollection<ServiceQualityLevelMapping>? ServiceQualityLevelMapping { get; set; }
         public bool HasGPG45 { get; set; }
         public ICollection<ServiceIdentityProfileMapping>? ServiceIdentityProfileMapping { get; set; }
@@ -30,7 +30,7 @@ namespace DVSAdmin.Data.Entities
         public string FileName { get; set; }
         public string FileLink { get; set; }
 
-        [Column(TypeName = "decimal(10, 2)")]
+        [Column(TypeName = "decimal(10, 1)")]
         public decimal FileSizeInKb { get; set; }
         public DateTime ConformityIssueDate { get; set; }
         public DateTime ConformityExpiryDate { get; set; }
@@ -45,5 +45,6 @@ namespace DVSAdmin.Data.Entities
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
         public DateTime? PublishedTime { get; set; }
+        public CertificateReview CertificateReview { get; set; }
     }
 }

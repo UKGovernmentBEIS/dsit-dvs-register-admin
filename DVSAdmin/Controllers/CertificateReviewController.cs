@@ -30,18 +30,18 @@ namespace DVSAdmin.Controllers
 
         [HttpGet("certificate-review-list")]
         public async Task<ActionResult> CertificateReviews()
-        {           
+        {
             CertificateReviewListViewModel certificateReviewListViewModel = new CertificateReviewListViewModel();
-            //var certificateInfoList = await certificateReviewService.GetCertificateInformationList();
-            //certificateReviewListViewModel.CertificateReviewList = certificateInfoList.Where(x => 
-            //(x.CertificateInfoStatus == CertificateInfoStatusEnum.Received &&  x.Id !=x?.CertificateReview?.CertificateInformationId)
-            //||  (x.CertificateReview !=null && x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview ) &&x.DaysLeftToComplete>0).ToList();            
-
-            //certificateReviewListViewModel.ArchiveList = certificateInfoList.Where( x=>   
-            //(x.CertificateReview !=null && (x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.Approved || x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.Rejected))
-            // || x.CertificateInfoStatus == CertificateInfoStatusEnum.Expired ).ToList();
+            var serviceList = await certificateReviewService.GetServiceList();
+            certificateReviewListViewModel.CertificateReviewList =  serviceList.Where(x => x.DaysLeftToComplete >0 &&
+            ((x.ServiceStatus == ServiceStatusEnum.Submitted &&  x.Id !=x?.CertificateReview?.ServiceId) || 
+            (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))).ToList();            
+            certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
+            ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)).ToList();
             return View(certificateReviewListViewModel);
         }
+
+
 
 
         [HttpGet("certificate-review-validation")]
