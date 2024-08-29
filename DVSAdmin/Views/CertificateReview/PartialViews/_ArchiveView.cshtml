@@ -10,7 +10,6 @@
             <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Service provider</th>
                 <th scope="col" class="govuk-table__header">Service name</th>
-               
                 <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
                 <th scope="col" class="govuk-table__header">Role type</th>
                 <th scope="col" class="govuk-table__header">Time submitted(UTC)</th>
@@ -29,7 +28,6 @@
 
                 <td class="govuk-table__cell"> @Html.ActionLink(item.ServiceName, "CertificateSubmissionDetails", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
 
-               @* to do update *@
                 <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
                 <td class="govuk-table__cell">
 
@@ -40,16 +38,16 @@
                     }
                 </td>
 
-                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.Provider.CreatedTime)</td>
+                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CertificateReview.CreatedDate)</td>
                 @if (item.CertificateReview != null)
                 {
-                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateReviewStatus)</td>
+                    @*  <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateInfoStatus)</td> *@
                     <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CertificateReview.ModifiedDate)</td>
                 }
                 else
                 {
-                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
-                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedTime)</td>
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateReviewStatus)</td>
+                    <td class="govuk-table__cell"> </td>
                 }
             </tr>
         }
