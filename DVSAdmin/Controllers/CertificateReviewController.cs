@@ -30,18 +30,19 @@ namespace DVSAdmin.Controllers
 
         [HttpGet("certificate-review-list")]
         public async Task<ActionResult> CertificateReviews()
-        {           
+        {
             CertificateReviewListViewModel certificateReviewListViewModel = new CertificateReviewListViewModel();
-            //var certificateInfoList = await certificateReviewService.GetCertificateInformationList();
-            //certificateReviewListViewModel.CertificateReviewList = certificateInfoList.Where(x => 
-            //(x.CertificateInfoStatus == CertificateInfoStatusEnum.Received &&  x.Id !=x?.CertificateReview?.CertificateInformationId)
-            //||  (x.CertificateReview !=null && x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview ) &&x.DaysLeftToComplete>0).ToList();            
 
-            //certificateReviewListViewModel.ArchiveList = certificateInfoList.Where( x=>   
-            //(x.CertificateReview !=null && (x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.Approved || x.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.Rejected))
-            // || x.CertificateInfoStatus == CertificateInfoStatusEnum.Expired ).ToList();
+            var serviceList = await certificateReviewService.GetServiceList();
+
+            certificateReviewListViewModel.CertificateReviewList = serviceList.ToList();//to do update after DB changes
+
+            certificateReviewListViewModel.ArchiveList = serviceList.ToList();//to do update
+
             return View(certificateReviewListViewModel);
         }
+
+
 
 
         [HttpGet("certificate-review-validation")]

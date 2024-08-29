@@ -14,6 +14,7 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<IdentityProfile>> GetIdentityProfiles();
         public Task<List<SupplementaryScheme>> GetSupplementarySchemes();
         public Task<List<CertificateInformation>> GetCertificateInformationList();
+        public Task<List<Service>> GetServiceList();
         public Task<List<CertificateInformation>> GetCertificateInformationListByProvider(int providerId);        
         public Task<List<CertificateReviewRejectionReason>> GetRejectionReasons();
         public Task<CertificateReview> GetCertificateReview(int reviewId);

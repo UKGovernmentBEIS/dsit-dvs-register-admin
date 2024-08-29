@@ -7,8 +7,9 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Service provider</th>
                     <th scope="col" class="govuk-table__header">Service name</th>
-                    <th scope="col" class="govuk-table__header">Service provider</th>
+                   
                     <th scope="col" class="govuk-table__header">Conformity Assessment <br /> Body</th>
                     <th scope="col" class="govuk-table__header">Role type</th>
                     <th scope="col" class="govuk-table__header">Time submitted</th>
@@ -21,26 +22,29 @@
                 @foreach (var item in Model.CertificateReviewList)
                 {
                     <tr class="govuk-table__row">
-                <td class="govuk-table__cell"> @Html.ActionLink(item.ServiceName, "CertificateValidation", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
                 <td class="govuk-table__cell"> @item.Provider.TradingName</td>
-                    <td class="govuk-table__cell"> @item.SubmittedCAB</td>
+                <td class="govuk-table__cell"> @Html.ActionLink(item.ServiceName, "CertificateValidation", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
+
+                @* to do update *@
+                <td class="govuk-table__cell"> @* @item.SubmittedCAB *@</td>
                      <td class="govuk-table__cell">
-                       @foreach(var role in item.CertificateInfoRoleMapping)
+                       @foreach(var role in item.ServiceRoleMapping)
                         {
                                 RoleEnum enumValue = (RoleEnum)role.RoleId;
                                 <div> @Enum.GetName(enumValue) </div>
                         }
                         </td>
-                        <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedDate)</td>
-                        @if (@item.CertificateReview == null)
+                        <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.Provider.CreatedTime)</td>
+                        @if (@item.ServiceStatus == null)
                         {
-                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateInfoStatus)</td>
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
                         }
                         else
                         {
                            @*  <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateInfoStatus)</td> *@
                         }
-                        <td class="govuk-table__cell">@item.DaysLeftToComplete  days</td>
+                @* to do update *@
+                        <td class="govuk-table__cell">@* @item.DaysLeftToComplete  *@ days</td>
                     </tr>
                 }              
             </tbody>

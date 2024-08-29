@@ -4,8 +4,8 @@ namespace DVSAdmin.Models
 {
     public class CertificateReviewListViewModel
     {
-        public List<CertificateInformationDto>? CertificateReviewList { get; set; }
+        public List<ServiceDto>? CertificateReviewList { get; set; }
 
-        public List<CertificateInformationDto>? ArchiveList { get; set; }
+        public List<ServiceDto>? ArchiveList { get; set; }
     }
 }
