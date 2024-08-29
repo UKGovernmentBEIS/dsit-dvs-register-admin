@@ -41,14 +41,10 @@
                 <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CertificateReview.CreatedDate)</td>
                 @if (item.CertificateReview != null)
                 {
-                    @*  <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateInfoStatus)</td> *@
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateReviewStatus)</td>
                     <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CertificateReview.ModifiedDate)</td>
                 }
-                else
-                {
-                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateReviewStatus)</td>
-                    <td class="govuk-table__cell"> </td>
-                }
+                
             </tr>
         }
     </tbody>
