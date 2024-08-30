@@ -31,11 +31,11 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header"> Service name </th>
-                                <th scope="col" class="govuk-table__header">Service Provider</th>
+                                <th scope="col" class="govuk-table__header"> Service Provider </th>
+                                <th scope="col" class="govuk-table__header">Service name</th>
                                 <th scope="col" class="govuk-table__header">Conformity Assessment Body </th>
                                 <th scope="col" class="govuk-table__header">Role type</th>
-                                <th scope="col" class="govuk-table__header">Time submitted</th>
+                                <th scope="col" class="govuk-table__header">Time submitted(UTC)</th>
                                 <th scope="col" class="govuk-table__header">Review status</th>
                                 <th scope="col" class="govuk-table__header">Days left to complete checks</th>
                             </tr>
@@ -43,8 +43,8 @@
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
 
-                                <th scope="row" class="govuk-table__header">@Model.CertificateValidation.CertificateInformation.ServiceName</th>
                                 <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.TradingName</td>
+                                <td class="class=" govuk-table__cell">@Model.CertificateValidation.CertificateInformation.ServiceName</td>
                                 <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.SubmittedCAB</td>
                                 <td class="govuk-table__cell">
                                     @foreach (var role in @Model.CertificateValidation.CertificateInformation.CertificateInfoRoleMapping)
@@ -77,7 +77,7 @@
                     
                 </div>
                 <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-s">Coments</h1>
+                    <h1 class="govuk-heading-s">Comments</h1>
                     <p class="govuk-body">
                         @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateValidation?.CommentsForIncorrect)
                     </p>
@@ -90,7 +90,7 @@
                     </h1>
                     <p class="govuk-body">
                         You should now give details of the reason(s) for rejection to be sent by email
-                        to the CAB. Please select reason(s) from the below list which align with the
+                        to the Conformity Assessment Body(CAB). Please select reason(s) from the below list which align with the
                         rejection criteria shown above. You should also provide specific details and
                         outline any action required in the text box below
                     </p>
@@ -164,7 +164,7 @@
                     <p class="govuk-body">
                         Please use the textbox below to give further details on the reason for
                         rejection and any required amendments for re submission. If you had selected
-                        Other , please specify details below.
+                        'Other' , please specify details below.
                     </p>
 
                     <h1 class="govuk-heading-s"> Give further details on reason(s) selected and any required amendments</h1>
@@ -202,8 +202,9 @@
                     </div>
 
                 </div>
-                 
-               
+
+                <h3 class="govuk-heading-m">Who will receive the decision notification</h3>
+                <hr class="govuk-section-break govuk-section-break--visible">
                 <div class="govuk-grid-column-full">
 
                     <hr class="govuk-section-break govuk-section-break--visible">
