@@ -1,13 +1,13 @@
-﻿using DVSAdmin.Models;
+﻿    using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
     [ValidCognitoToken]
-    public class OfDiaController : Controller
+    public class DigitalIdentityController : Controller
     {
-        [Route("ofdia-landing-page")]
+        [Route("home")]
         public IActionResult LandingPage()
         {          
             return View();
