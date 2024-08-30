@@ -1,4 +1,6 @@
-﻿using DVSAdmin.Data.Entities;
+﻿using DVSAdmin.BusinessLogic.Models.CertificateReview;
+using DVSAdmin.Data.Entities;
+using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -6,8 +8,10 @@ namespace DVSAdmin.BusinessLogic.Models
     {
         public int Id { get; set; }      
         public int ServiceId { get; set; }
-        public Service Service { get; set; }     
+
+        [JsonIgnore]
+        public ServiceDto Service { get; set; }     
         public int QualityLevelId { get; set; }
-        public QualityLevel QualityLevel { get; set; }
+        public QualityLevelDto QualityLevel { get; set; }
     }
 }

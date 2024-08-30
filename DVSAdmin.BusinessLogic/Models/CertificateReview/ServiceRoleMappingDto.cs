@@ -1,5 +1,6 @@
 ﻿using DVSAdmin.Data.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -8,8 +9,10 @@ namespace DVSAdmin.BusinessLogic.Models
         [Key]
         public int Id { get; set; }     
         public int ServiceId { get; set; }
-        public Service Service { get; set; }    
+
+        [JsonIgnore]
+        public ServiceDto Service { get; set; }    
         public int RoleId { get; set; }
-        public Role Role { get; set; }
+        public RoleDto Role { get; set; }
     }
 }

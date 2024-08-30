@@ -37,16 +37,7 @@ namespace DVSAdmin.BusinessLogic.Services
         {
             var certificateInfoList = await certificateReviewRepository.GetCertificateInformationList();
             return automapper.Map<List<CertificateInformationDto>>(certificateInfoList);
-        }
-
-        public async Task<List<ServiceDto>> GetServiceList()
-        {
-            var serviceList = await certificateReviewRepository.GetServiceList();
-            return automapper.Map<List<ServiceDto>>(serviceList);
-        }
-
-
-
+        }       
 
         public async Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto)
         {
@@ -55,7 +46,8 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await certificateReviewRepository.SaveCertificateReview(certificateReview);
             return genericResponse;
 
-        }
+        }      
+
         public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, CertificateInformationDto certificateInformationDto)
         {
             CertificateReview certificateReview = new CertificateReview();
@@ -187,6 +179,58 @@ namespace DVSAdmin.BusinessLogic.Services
             }
             return genericResponse;
         }
+
+        #region New methods
+        public async Task<List<ServiceDto>> GetServiceList()
+        {
+            var serviceList = await certificateReviewRepository.GetServiceList();
+            return automapper.Map<List<ServiceDto>>(serviceList);
+        }
+        public async Task<ServiceDto> GetServiceDetails(int serviceId)
+        {
+            var certificateInfo = await certificateReviewRepository.GetServiceDetails(serviceId);
+            ServiceDto serviceDto = automapper.Map<ServiceDto>(certificateInfo);
+            return serviceDto;
+        }
+
+        public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto)
+        {
+            CertificateReview certificateReview = new CertificateReview();
+            automapper.Map(cetificateReviewDto, certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview);
+            if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Approved)
+            {
+                //TODO:
+
+                //TokenDetails tokenDetails = jwtService.GenerateToken();
+                //string consentLink = configuration["ReviewPortalLink"] +"consent/give-consent?token="+tokenDetails.Token;
+
+                ////Insert token details to db for further reference
+                //ConsentToken consentToken = new ConsentToken();
+                //consentToken.CertificateReviewId = genericResponse.InstanceId;
+                //consentToken.Token = tokenDetails.Token;
+                //consentToken.TokenId = tokenDetails.TokenId;
+                //consentToken.CreatedTime = DateTime.UtcNow;
+                //genericResponse = await consentRepository.SaveConsentToken(consentToken);
+                if (genericResponse.Success)
+                {
+
+                    //if (!string.IsNullOrEmpty(certificateInformationDto.Provider.PreRegistration.SponsorEmail))
+                    //{
+                    //    await emailSender.SendConsentToPublishToDIP(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.SponsorFullName, certificateInformationDto.Provider.PreRegistration.SponsorEmail, consentLink);
+                    //    await emailSender.SendConsentToPublishToAdditionalContact(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.FullName, certificateInformationDto.Provider.PreRegistration.Email);
+                    //}
+                    //else
+                    //{
+                    //    await emailSender.SendConsentToPublishToDIP(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.FullName, certificateInformationDto.Provider.PreRegistration.Email, consentLink);
+                    //}
+                }
+
+            }
+            return genericResponse;
+        }
+
+        #endregion
 
 
     }

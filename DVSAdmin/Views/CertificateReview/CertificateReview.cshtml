@@ -44,26 +44,26 @@
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
 
-                                <th scope="row" class="govuk-table__header">@Model.CertificateInformation.ServiceName</th>
-                                <td class="govuk-table__cell">@Model.CertificateInformation.TradingName</td>
-                                <td class="govuk-table__cell">@Model.CertificateInformation.SubmittedCAB</td>
+                                <th scope="row" class="govuk-table__header">@Model.Service.ServiceName</th>
+                                <td class="govuk-table__cell">@Model.Service.Provider.TradingName</td>
+                                <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
                                 <td class="govuk-table__cell">
-                                    @foreach (var role in @Model.CertificateInformation.CertificateInfoRoleMapping)
+                                    @foreach (var role in @Model.Service.ServiceRoleMapping)
                                     {
                                         RoleEnum enumValue = (RoleEnum)role.RoleId;
                                         <div> @Enum.GetName(enumValue) </div>
                                     }
                                 </td>
-                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateInformation.CreatedDate)</td>
-                                @if (@Model.CertificateInformation.CertificateReview == null)
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.Service.CreatedTime)</td>
+                                @if (@Model.Service.CertificateReview == null)
                                 {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateInfoStatus)</td>
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.ServiceStatus)</td>
                                 }
                                 else
                                 {
-                                    @* <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateReview.CertificateInfoStatus)</td> *@
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.CertificateReview.CertificateReviewStatus)</td>
                                 }
-                                <td class="govuk-table__cell">@Model.CertificateInformation.DaysLeftToComplete  days</td>
+                                <td class="govuk-table__cell">@Model.Service.DaysLeftToComplete  days</td>
 
                             </tr>
                         </tbody>
@@ -128,14 +128,14 @@
                         submitted by the Conformity Assessment Body (CAB)
                     </p>
 
-                    <span class="govuk-caption-xl">@Model.CertificateInformation.FileName</span>
+                    <span class="govuk-caption-xl">@Model.Service.FileName</span>
 
                     <div id="download-certificate-hint" class="govuk-hint">
                         PDF, 19.5 KB, 1 page
                         This file may not be suitable for users of assistive technology.
                     </div>
 
-                    <a href="/certificate-review/download-certificate?key=@Model.CertificateInformation.FileLink&filename=@Model.CertificateInformation.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
+                    <a href="/certificate-review/download-certificate?key=@Model.Service.FileLink&filename=@Model.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
                         Download certificate of conformity
                     </a>
 
@@ -145,7 +145,7 @@
                 <div class="govuk-grid-column-full">
                 <h3 class="govuk-heading-m">Certificate information</h3>
               
-                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateDetailsView.cshtml", Model.CertificateInformation)
+                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateDetailsView.cshtml", Model.Service)
                 </div>
           
                 <div class="govuk-grid-column-two-thirds">
@@ -207,8 +207,8 @@
 
 
 
-                    @if (Model.CertificateInformation.CertificateReview == null || (Model.CertificateInformation.CertificateReview != null @* &&
-                   Model.CertificateInformation.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview *@))
+                    @if (Model.Service.CertificateReview == null || (Model.Service.CertificateReview != null &&
+                   Model.Service.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))
                    {
                         <div class="govuk-button-group" id="submitvalidation">
                             <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
@@ -223,20 +223,7 @@
                         </div>
 
                     }
-                    else
-                    {
-                        <div class="govuk-button-group" id="submitvalidation">
-                            <button type="submit" disabled aria-disabled="true" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
-                                Approve submission
-                            </button>
-                            <button type="submit" disabled aria-disabled="true"  class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
-                                Reject submission
-                            </button>
-                            <button type="submit" disabled aria-disabled="true" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
-                                Save as draft
-                            </button>
-                        </div>
-                    }
+                    
 
                     <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>

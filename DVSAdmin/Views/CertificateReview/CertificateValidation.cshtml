@@ -17,9 +17,8 @@
         <div class="govuk-grid-row">
                 @using (Html.BeginForm("SaveCertificateValidation", "CertificateReview", FormMethod.Post))
                 {
-                    @Html.AntiForgeryToken()
-                    @Html.HiddenFor(m => m.PreRegistrationId)
-                    @Html.HiddenFor(m => m.CertificateInformationId)
+                    @Html.AntiForgeryToken()                   
+                    @Html.HiddenFor(m => m.ServiceId)
 
                 <div class="govuk-grid-column-full">
                     <h1 class="govuk-heading-xl">Certificate review</h1>
@@ -44,26 +43,26 @@
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
 
-                                <th scope="row" class="govuk-table__header">@Model.CertificateInformation.ServiceName</th>
-                                <td class="govuk-table__cell">@Model.CertificateInformation.TradingName</td>
-                                <td class="govuk-table__cell">@Model.CertificateInformation.SubmittedCAB</td>
+                                <th scope="row" class="govuk-table__header">@Model.Service.ServiceName</th>
+                                <td class="govuk-table__cell">@Model.Service.Provider.TradingName</td>
+                                <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
                                 <td class="govuk-table__cell">
-                                    @foreach (var role in @Model.CertificateInformation.CertificateInfoRoleMapping)
+                                    @foreach (var role in @Model.Service.ServiceRoleMapping)
                                     {
                                         RoleEnum enumValue = (RoleEnum)role.RoleId;
                                         <div> @Enum.GetName(enumValue) </div>
                                     }
                                 </td>
-                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateInformation.CreatedDate)</td>
-                                @if (@Model.CertificateInformation.CertificateReview == null)
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.Service.CreatedTime)</td>
+                                @if (@Model.Service.CertificateReview == null)
                                 {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateInfoStatus)</td>
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.ServiceStatus)</td>
                                 }
                                 else
                                 {
-                                  @*   <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInformation.CertificateReview.CertificateInfoStatus)</td> *@
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.CertificateReview.CertificateReviewStatus)</td>
                                 } 
-                                <td class="govuk-table__cell">@Model.CertificateInformation.DaysLeftToComplete  days</td>
+                                <td class="govuk-table__cell">@Model.Service.DaysLeftToComplete  days</td>
 
                             </tr>
                         </tbody>
@@ -123,14 +122,14 @@
                         submitted by the Conformity Assessment Body (CAB)
                     </p>
 
-                    <span class="govuk-caption-xl">@Model.CertificateInformation.FileName</span>
+                    <span class="govuk-caption-xl">@Model.Service.FileName</span>
 
                     <div id="download-certificate-hint" class="govuk-hint">
-                        PDF, 19.5 KB, 1 page
+                        PDF, @Model.Service.FileSizeInKb KB, 1 page
                         This file may not be suitable for users of assistive technology.
                     </div>
 
-                    <a href="/certificate-review/download-certificate?key=@Model.CertificateInformation.FileLink&filename=@Model.CertificateInformation.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
+                    <a href="/certificate-review/download-certificate?key=@Model.Service.FileLink&filename=@Model.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
                      
                         Download certificate of conformity
                     </a>
@@ -337,13 +336,13 @@
 
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                    {
-                       PropertyName = "IsIdentityProfilesCorrect",
-                       Value = Model.IsIdentityProfilesCorrect,
-                       HasError = Html.ViewData.ModelState.ContainsKey("IsIdentityProfilesCorrect") && Html.ViewData.ModelState["IsIdentityProfilesCorrect"].Errors.Count > 0,
-                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsIdentityProfilesCorrect") && Html.ViewData.ModelState["IsIdentityProfilesCorrect"].Errors.Count > 0 ?
-                        Html.ViewData.ModelState["IsIdentityProfilesCorrect"].Errors[0].ErrorMessage : string.Empty,
-                       Label1 = "Correct",
-                       Label2 = "Incorrect"
+                        PropertyName = "IsGPG45Correct",
+                        Value = Model.IsGPG45Correct,
+                        HasError = Html.ViewData.ModelState.ContainsKey("IsGPG45Correct") && Html.ViewData.ModelState["IsGPG45Correct"].Errors.Count > 0,
+                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsGPG45Correct") && Html.ViewData.ModelState["IsGPG45Correct"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsGPG45Correct"].Errors[0].ErrorMessage : string.Empty,
+                        Label1 = "Correct",
+                        Label2 = "Incorrect"
                    })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -358,13 +357,13 @@
 
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                    {
-                       PropertyName = "IsQualityAssessmentCorrect",
-                       Value = Model.IsQualityAssessmentCorrect,
-                       HasError = Html.ViewData.ModelState.ContainsKey("IsQualityAssessmentCorrect") && Html.ViewData.ModelState["IsQualityAssessmentCorrect"].Errors.Count > 0,
-                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsQualityAssessmentCorrect") && Html.ViewData.ModelState["IsQualityAssessmentCorrect"].Errors.Count > 0 ?
-                       Html.ViewData.ModelState["IsQualityAssessmentCorrect"].Errors[0].ErrorMessage : string.Empty,
-                       Label1 = "Correct",
-                       Label2 = "Incorrect"
+                        PropertyName = "IsGPG44Correct",
+                        Value = Model.IsGPG44Correct,
+                        HasError = Html.ViewData.ModelState.ContainsKey("IsGPG44Correct") && Html.ViewData.ModelState["IsGPG44Correct"].Errors.Count > 0,
+                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsGPG44Correct") && Html.ViewData.ModelState["IsGPG44Correct"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["IsGPG44Correct"].Errors[0].ErrorMessage : string.Empty,
+                        Label1 = "Correct",
+                        Label2 = "Incorrect"
                    })
 
                     <hr class="govuk-section-break govuk-section-break--s">
@@ -515,9 +514,8 @@
 
 
                 <div class="govuk-grid-column-full">
-
-                    @if (Model.CertificateInformation.CertificateReview == null || (Model.CertificateInformation.CertificateReview != null/* &&
-                        Model.CertificateInformation.CertificateReview.CertificateInfoStatus == CertificateInfoStatusEnum.InReview*/))
+                    @if (Model.Service.CertificateReview == null || (Model.Service.CertificateReview != null &&
+                   Model.Service.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))
                     {
                         <div class="govuk-button-group">
                             <button type="submit"  class="govuk-button" data-module="govuk-button" name="saveReview" value="continue">
@@ -528,16 +526,7 @@
                             </button>
                         </div>
                     }
-                  else{
-                        <div class="govuk-button-group">
-                            <button type="submit" disabled aria-disabled="true"  class="govuk-button" data-module="govuk-button" name="saveReview" value="continue">
-                                Continue
-                            </button>
-                            <button type="submit" disabled aria-disabled="true"  class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
-                                Save as draft
-                            </button>
-                        </div>
-                    }
+                
                     <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">

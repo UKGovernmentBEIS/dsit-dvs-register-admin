@@ -35,14 +35,14 @@ namespace DVSAdmin.Data.Entities
         public bool IsDateOfExpiryCorrect { get; set; }
         public bool IsAuthenticyVerifiedCorrect { get; set; }
         public string? Comments { get; set; }
-        public bool InformationMatched { get; set; }
+        public bool? InformationMatched { get; set; }
         public string CommentsForIncorrect { get; set; }
         public string? RejectionComments { get; set; }
         [ForeignKey("User")]
         public int VerifiedUser { get; set; }
 
-        public DateTime CreatedDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
         public CertificateReviewEnum CertificateReviewStatus { get; set; }
         public ICollection<CertificateReviewRejectionReasonMapping>? CertificateReviewRejectionReasonMapping { get; set; }
 

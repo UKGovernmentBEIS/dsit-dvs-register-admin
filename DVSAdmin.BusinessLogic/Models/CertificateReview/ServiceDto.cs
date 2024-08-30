@@ -1,5 +1,6 @@
 ﻿using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
+using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -10,13 +11,13 @@ namespace DVSAdmin.BusinessLogic.Models
         public ProviderProfileDto Provider { get; set; }
         public string ServiceName { get; set; }
         public string WebsiteAddress { get; set; }
-        public string CompanyAddress { get; set; }
+        public string CompanyAddress { get; set; }    
         public ICollection<ServiceRoleMappingDto> ServiceRoleMapping { get; set; }
-        public bool HasGPG44 { get; set; }
+        public bool HasGPG44 { get; set; }     
         public ICollection<ServiceQualityLevelMappingDto>? ServiceQualityLevelMapping { get; set; }
-        public bool HasGPG45 { get; set; }
+        public bool HasGPG45 { get; set; }    
         public ICollection<ServiceIdentityProfileMappingDto>? ServiceIdentityProfileMapping { get; set; }
-        public bool HasSupplementarySchemes { get; set; }
+        public bool HasSupplementarySchemes { get; set; }   
         public ICollection<ServiceSupSchemeMappingDto>? ServiceSupSchemeMapping { get; set; }
 
         public string FileName { get; set; }
@@ -31,7 +32,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public ServiceStatusEnum ServiceStatus { get; set; }
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
-        public DateTime? PublishedTime { get; set; }
+        public DateTime? PublishedTime { get; set; }   
         public CertificateReviewDto CertificateReview { get; set; }
         public int DaysLeftToComplete { get; set; }
     }
