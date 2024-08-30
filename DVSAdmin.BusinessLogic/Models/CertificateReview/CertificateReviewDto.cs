@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models.Enums;
+﻿using DVSAdmin.BusinessLogic.Models.CertificateReview;
+using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -37,6 +38,6 @@ namespace DVSAdmin.BusinessLogic.Models
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public CertificateReviewEnum CertificateReviewStatus { get; set; }
-        public ICollection<CertificateReviewRejectionReasonMapping>? CertificateReviewRejectionReasonMapping { get; set; }
+        public List<CertificateReviewRejectionReasonMappingDto>? CertificateReviewRejectionReasonMapping { get; set; }
     }
 }

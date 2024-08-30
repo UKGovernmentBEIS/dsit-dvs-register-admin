@@ -62,8 +62,8 @@ namespace DVSAdmin.BusinessLogic
 
 
 
-            CreateMap<CertificateReviewRejectionReasonMappings, CertificateReviewRejectionReasonMappingDto>();
-            CreateMap<CertificateReviewRejectionReasonMappingDto, CertificateReviewRejectionReasonMappings>();
+            CreateMap<CertificateReviewRejectionReasonMapping, CertificateReviewRejectionReasonMappingDto>();
+            CreateMap<CertificateReviewRejectionReasonMappingDto, CertificateReviewRejectionReasonMapping>();
             CreateMap<CertificateReview, CertificateReviewDto>().ForMember(dest => dest.CertificateReviewRejectionReasonMapping,
             opt => opt.MapFrom(src => src.CertificateReviewRejectionReasonMapping));
             CreateMap<CertificateReviewDto, CertificateReview>().ForMember(dest => dest.CertificateReviewRejectionReasonMapping,

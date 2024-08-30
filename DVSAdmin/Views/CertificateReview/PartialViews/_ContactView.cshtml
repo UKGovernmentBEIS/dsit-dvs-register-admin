@@ -1,4 +1,5 @@
-﻿@model CertificateInformationViewModel
+﻿@model ServiceDto
+@using DVSAdmin.BusinessLogic.Models
 
 <h3 class="govuk-heading-m">Contact information</h3>
 <dl class="govuk-summary-list">
@@ -7,7 +8,7 @@
             Public contact email
         </dt>
         <dd class="govuk-summary-list__value">
-            @Model.PublicContactEmail
+            @Model.Provider.PublicContactEmail
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -15,7 +16,7 @@
             Telephone number
         </dt>
         <dd class="govuk-summary-list__value">
-            @Model.TelephoneNumber
+            @Model.Provider.PrimaryContactTelephoneNumber
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -23,7 +24,7 @@
             Website address
         </dt>
         <dd class="govuk-summary-list__value">
-            @Model.WebsiteAddress
+            @Model.Provider.ProviderWebsiteAddress
         </dd>
     </div>
 </dl>

@@ -43,26 +43,26 @@
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
 
-                                <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.TradingName</td>
-                                <td class="class=" govuk-table__cell">@Model.CertificateValidation.CertificateInformation.ServiceName</td>
-                                <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.SubmittedCAB</td>
+                                <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.Provider.TradingName</td>
+                                <td class="class=" govuk-table__cell">@Model.CertificateValidation?.Service?.ServiceName</td>
+                                <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.CabUser.Cab.CabName</td>
                                 <td class="govuk-table__cell">
-                                    @foreach (var role in @Model.CertificateValidation.CertificateInformation.CertificateInfoRoleMapping)
+                                    @foreach (var role in @Model.CertificateValidation.Service.ServiceRoleMapping)
                                     {
                                         RoleEnum enumValue = (RoleEnum)role.RoleId;
                                         <div> @Enum.GetName(enumValue) </div>
                                     }
                                 </td>
-                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateValidation.CertificateInformation.CreatedDate)</td>
-                                @if (@Model.CertificateValidation.CertificateInformation.CertificateReview == null)
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateValidation.Service.CreatedTime)</td>
+                                @if (@Model.CertificateValidation.Service.CertificateReview == null)
                                 {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.CertificateInformation.CertificateInfoStatus)</td>
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.Service.ServiceStatus)</td>
                                 }
                                 else
                                 {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.CertificateInformation.CertificateReview.CertificateReviewStatus)</td>
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.Service.CertificateReview.CertificateReviewStatus)</td>
                                 }
-                                <td class="govuk-table__cell">@Model.CertificateValidation.CertificateInformation.DaysLeftToComplete  days</td>
+                                <td class="govuk-table__cell">@Model.CertificateValidation.Service.DaysLeftToComplete  days</td>
 
                             </tr>
                         </tbody>
@@ -205,7 +205,7 @@
 
                 <h3 class="govuk-heading-m">Who will receive the decision notification</h3>
                 <hr class="govuk-section-break govuk-section-break--visible">
-                <div class="govuk-grid-column-full">
+            @*     <div class="govuk-grid-column-full"> *@
 
                     <hr class="govuk-section-break govuk-section-break--visible">
                     <dl class="govuk-summary-list">
@@ -215,7 +215,7 @@
                                 CAB
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateValidation.CertificateInformation.CreatedBy
+                                @Model.CertificateValidation.Service.CabUser.CabEmail
                             </dd>
                         </div>
 
@@ -229,7 +229,7 @@
                             Cancel
                         </button>
                     </div>                
-                </div>
+                @* </div> *@
 
                 @Html.Hidden("RejectionReasons", JsonConvert.SerializeObject(Model.RejectionReasons))
                 }

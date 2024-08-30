@@ -112,10 +112,10 @@ namespace DVSAdmin.Data.Repositories
                 if (existingEntity != null)
                 {
                     existingEntity.InformationMatched = cetificateReview.InformationMatched;
-                   // existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
+                    existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
                     existingEntity.RejectionComments = cetificateReview.RejectionComments;
-                    //existingEntity.CertificateReviewRejectionReasonMappings = cetificateReview.CertificateReviewRejectionReasonMappings;
+                    existingEntity.CertificateReviewRejectionReasonMapping = cetificateReview.CertificateReviewRejectionReasonMapping;
                     existingEntity.ModifiedDate = DateTime.UtcNow;
                     genericResponse.InstanceId = existingEntity.Id;
                     await context.SaveChangesAsync();

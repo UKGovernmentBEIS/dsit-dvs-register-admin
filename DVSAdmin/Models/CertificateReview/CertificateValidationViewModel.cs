@@ -1,17 +1,12 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace DVSAdmin.Models
 {
     public class CertificateValidationViewModel
-    {
-        public int PreRegistrationId { get; set; }
-        public int CertificateInformationId { get; set; }
+    {     
 
         public int ServiceId { get; set; }
-        public CertificateInformationViewModel? CertificateInformation { get; set; }
-
         public ServiceDto? Service { get; set; }
 
         [Required(ErrorMessage = "Select correct if the certificate contains valid logos and certificate number")]
