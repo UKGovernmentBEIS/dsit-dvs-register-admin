@@ -1,4 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models.Enums;
+using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -25,7 +26,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public int CabUserId { get; set; }
         public ProviderStatusEnum ProviderStatus { get; set; }
 
-       // [JsonIgnore]
+        [JsonIgnore]
         public ICollection<ServiceDto>? Services { get; set; }  
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }

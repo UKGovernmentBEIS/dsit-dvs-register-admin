@@ -35,8 +35,8 @@ namespace DVSAdmin.Data.Repositories
                     existingEntity.IsCertificationScopeCorrect = cetificateReview.IsCertificationScopeCorrect;
                     existingEntity.IsServiceSummaryCorrect = cetificateReview.IsServiceSummaryCorrect;
                     existingEntity.IsURLLinkToServiceCorrect = cetificateReview.IsURLLinkToServiceCorrect;
-                    //existingEntity.IsIdentityProfilesCorrect = cetificateReview.IsIdentityProfilesCorrect;
-                    //existingEntity.IsQualityAssessmentCorrect = cetificateReview.IsQualityAssessmentCorrect;
+                    existingEntity.IsGPG44Correct = cetificateReview.IsGPG44Correct;
+                    existingEntity.IsGPG45Correct = cetificateReview.IsGPG45Correct;
                     existingEntity.IsServiceProvisionCorrect = cetificateReview.IsServiceProvisionCorrect;
                     existingEntity.IsLocationCorrect = cetificateReview.IsLocationCorrect;
                     existingEntity.IsDateOfIssueCorrect = cetificateReview.IsDateOfIssueCorrect;
@@ -44,7 +44,7 @@ namespace DVSAdmin.Data.Repositories
                     existingEntity.IsAuthenticyVerifiedCorrect = cetificateReview.IsAuthenticyVerifiedCorrect;
                     existingEntity.CommentsForIncorrect = cetificateReview.CommentsForIncorrect;                   
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
-                   // existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
+                    existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
                     existingEntity.ModifiedDate = DateTime.UtcNow;
                     genericResponse.InstanceId = existingEntity.Id;                    
                     await context.SaveChangesAsync();
@@ -82,7 +82,7 @@ namespace DVSAdmin.Data.Repositories
                     existingEntity.InformationMatched = cetificateReview.InformationMatched;
                     existingEntity.Comments = cetificateReview.Comments;
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
-                    //existingEntity.CertificateInfoStatus = cetificateReview.CertificateInfoStatus;
+                    existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
                     existingEntity.ModifiedDate = DateTime.UtcNow;
                     genericResponse.InstanceId = existingEntity.Id;
                     await context.SaveChangesAsync();
@@ -141,17 +141,7 @@ namespace DVSAdmin.Data.Repositories
             .Include(p => p.CertificateInfoSupSchemeMappings)
             .Include(p => p.CertificateReview).Include(p => p.Provider).OrderBy(c => c.CreatedDate).ToListAsync();
         }
-
-        public async Task<List<Service>> GetServiceList()
-        {
-            return await context.Service
-            .Include(s => s.Provider)
-            .Include(s => s.CertificateReview)
-            .Include(s => s.ServiceRoleMapping)
-            .Include(s => s.CabUser).ThenInclude(s => s.Cab)
-            .OrderBy(s => s.CreatedTime)
-            .ToListAsync();
-        }
+      
         public async Task<List<CertificateInformation>> GetCertificateInformationListByProvider(int providerId)
         {
             return await context.CertificateInformation.Where(p => p.ProviderId == providerId && 
@@ -247,5 +237,54 @@ namespace DVSAdmin.Data.Repositories
             }
             return genericResponse;
         }
+
+        #region New Methods
+        public async Task<List<Service>> GetServiceList()
+        {
+            return await context.Service
+            .Include(s => s.Provider)
+            .Include(s => s.CertificateReview)
+            .Include(s => s.ServiceRoleMapping)
+            .Include(s => s.CabUser).ThenInclude(s => s.Cab)
+            .OrderBy(s => s.CreatedTime)
+            .ToListAsync();
+        }
+
+        public async Task<Service> GetServiceDetails(int serviceId)
+        {
+
+            var baseQuery = context.Service
+            .Where(p => p.Id == serviceId)
+            .Include(p => p.Provider)
+            .Include(p => p.CertificateReview)
+            .Include(p => p.CabUser).ThenInclude(cu => cu.Cab)
+            .Include(p => p.ServiceRoleMapping)
+            .ThenInclude(s => s.Role);
+
+
+
+            IQueryable<Service> queryWithOptionalIncludes = baseQuery;
+            if (await baseQuery.AnyAsync(p => p.ServiceQualityLevelMapping != null && p.ServiceQualityLevelMapping.Any()))
+            {
+                queryWithOptionalIncludes = queryWithOptionalIncludes.Include(p => p.ServiceQualityLevelMapping)
+                    .ThenInclude(sq => sq.QualityLevel);
+            }
+
+            if (await baseQuery.AnyAsync(p => p.ServiceSupSchemeMapping != null && p.ServiceSupSchemeMapping.Any()))
+            {
+                queryWithOptionalIncludes = queryWithOptionalIncludes.Include(p => p.ServiceSupSchemeMapping)
+                    .ThenInclude(ssm => ssm.SupplementaryScheme);
+            }
+            if (await baseQuery.AnyAsync(p => p.ServiceIdentityProfileMapping != null && p.ServiceIdentityProfileMapping.Any()))
+            {
+                queryWithOptionalIncludes = queryWithOptionalIncludes.Include(p => p.ServiceIdentityProfileMapping)
+                    .ThenInclude(ssm => ssm.IdentityProfile);
+            }
+            var service = await queryWithOptionalIncludes.FirstOrDefaultAsync() ?? new Service();
+
+
+            return service;
+        }
+        #endregion
     }
 }

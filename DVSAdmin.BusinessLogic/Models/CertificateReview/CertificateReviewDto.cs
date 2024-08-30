@@ -1,6 +1,7 @@
 ﻿using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -8,9 +9,11 @@ namespace DVSAdmin.BusinessLogic.Models
     {
         public int Id { get; set; }     
         public int ServiceId { get; set; }
-        public Service Service { get; set; }
+
+        [JsonIgnore]
+        public ServiceDto Service { get; set; }
         public int ProviProviderProfileId { get; set; }
-        public ProviderProfile ProviderProfile { get; set; }
+        public ProviderProfileDto ProviderProfile { get; set; }
         public bool IsCabLogoCorrect { get; set; }
         public bool IsCabDetailsCorrect { get; set; }
         public bool IsProviderDetailsCorrect { get; set; }
@@ -27,7 +30,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public bool IsDateOfExpiryCorrect { get; set; }
         public bool IsAuthenticyVerifiedCorrect { get; set; }
         public string? Comments { get; set; }
-        public bool InformationMatched { get; set; }
+        public bool? InformationMatched { get; set; }
         public string CommentsForIncorrect { get; set; }
         public string? RejectionComments { get; set; }      
         public int VerifiedUser { get; set; }
