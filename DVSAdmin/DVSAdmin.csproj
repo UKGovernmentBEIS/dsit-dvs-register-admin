@@ -11,6 +11,10 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
+    <Content Remove="Views\Consent\PublishServiceConsent.cshtml" />
+    <Content Remove="Views\Consent\PublishServiceConsentSuccess.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.400" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.7" />
@@ -34,7 +38,9 @@
     <None Remove="Extensions\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Views\Consent\PublishServiceConsent.cshtml" />
     <None Include="Views\Consent\Consent.cshtml" />
+    <None Include="Views\Consent\PublishServiceConsentSuccess.cshtml" />
     <None Include="Views\Consent\ConsentSuccess.cshtml" />
     <None Include="Views\PartialViews\_ArchiveView.cshtml" />
     <None Include="Views\PartialViews\_PrimaryChecksView.cshtml" />

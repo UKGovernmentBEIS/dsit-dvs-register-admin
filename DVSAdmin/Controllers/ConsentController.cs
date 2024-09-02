@@ -102,6 +102,86 @@ namespace DVSAdmin.Controllers
             return View();
         }
 
+        [HttpGet("publish-service-give-consent")]
+        public async Task<ActionResult> PublishServiceConsent(string token)
+        {
+            ConsentViewModel consentViewModel = new ConsentViewModel();
+            if (!string.IsNullOrEmpty(token))
+            {
+                consentViewModel.token = token;
+                TokenDetails tokenDetails = await jwtService.ValidateToken(token);
+                if (tokenDetails != null && tokenDetails.IsAuthorised)
+                {
+                    CertificateInformationDto certificateInformationDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
+                    if (certificateInformationDto != null && certificateInformationDto.CertificateInfoStatus == CommonUtility.Models.Enums.CertificateInfoStatusEnum.ReadyToPublish)
+                    {
+                        return RedirectToAction(Constants.ErrorPath);
+                    }
+                    consentViewModel.CertificateInformation = certificateInformationDto;
+                }
+                else
+                {
+                    return RedirectToAction(Constants.ErrorPath);
+                }
+            }
+            else
+            {
+                return RedirectToAction(Constants.ErrorPath);
+            }
+
+
+            return View(consentViewModel);
+        }
+
+        [HttpPost("publish-service-give-consent")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> PublishServiceGiveConsent(ConsentViewModel consentViewModel)
+        {
+            if (!string.IsNullOrEmpty(consentViewModel.token))
+            {
+                TokenDetails tokenDetails = await jwtService.ValidateToken(consentViewModel.token);
+
+                if (tokenDetails != null && tokenDetails.IsAuthorised)
+                {
+                    CertificateInformationDto certificateInformationDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
+                    if (ModelState.IsValid)
+                    {
+                        GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewStatus(tokenDetails.Token, tokenDetails.TokenId, certificateInformationDto);
+                        if (genericResponse.Success)
+                        {
+                            return RedirectToAction("PublishServiceConsentSuccess");
+                        }
+                        else
+                        {
+                            return RedirectToAction(Constants.ErrorPath);
+                        }
+                    }
+                    else
+                    {
+
+                        consentViewModel.CertificateInformation = certificateInformationDto;
+                        return View("PublishServiceConsent", consentViewModel);
+                    }
+                }
+                else
+                {
+                    await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId);
+                    return RedirectToAction(Constants.ErrorPath);
+                }
+            }
+            else
+            {
+                return RedirectToAction(Constants.ErrorPath);
+            }
+
+        }
+
+        [HttpGet("publish-service-consent-success")]
+        public ActionResult PublishServiceConsentSuccess()
+        {
+            return View();
+        }
+
 
         #region private methods
 
