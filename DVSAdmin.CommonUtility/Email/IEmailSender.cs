@@ -15,9 +15,9 @@
 
         //Certificate review
 
-        public Task<bool> SendCertificateInfoApprovedToCab(string recipientName, string URN, string serviceName, string emailAddress);
-        public Task<bool> SendCertificateInfoApprovedToDSIT(string URN, string serviceName);
-        public Task<bool> SendCertificateInfoRejectedToCab(string recipientName, string URN, string serviceName, string emailAddress);
+        public Task<bool> SendCertificateInfoApprovedToCab(string recipientName, string companyName, string serviceName, string emailAddress);
+        public Task<bool> SendCertificateInfoApprovedToDSIT(string companyName, string serviceName);
+        public Task<bool> SendCertificateInfoRejectedToCab(string recipientName, string companyName, string serviceName, string rejectionCategory, string rejectionComments, string emailAddress);
         public Task<bool> SendCertificateInfoRejectedToDSIT(string URN, string serviceName, string rejectionCategory, string rejectionComments);
 
         //Consent - closing loop

@@ -222,7 +222,9 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-        public async Task<bool> SendCertificateInfoApprovedToCab(string recipientName, string URN, string serviceName, string emailAddress)
+        #region Certificate Review
+
+        public async Task<bool> SendCertificateInfoApprovedToCab(string recipientName, string companyName, string serviceName, string emailAddress)
         {
             var template = govUkNotifyConfig.CertificateInfoApprovedToCabTemplate;
 
@@ -230,7 +232,7 @@ namespace DVSAdmin.CommonUtility.Email
             {
                 { template.RecipientName,  recipientName},
                 { template.ServiceName,  serviceName},
-                { template.URN,  URN}
+                { template.CompanyName,  companyName}
             
             };
             var emailModel = new GovUkNotifyEmailModel
@@ -242,14 +244,14 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-        public async Task<bool> SendCertificateInfoApprovedToDSIT(string URN, string serviceName)
+        public async Task<bool> SendCertificateInfoApprovedToDSIT(string companyName, string serviceName)
         {
             var template = govUkNotifyConfig.CertificateInfoApprovedToDSIT;
 
             var personalisation = new Dictionary<string, dynamic>
             {               
                 { template.ServiceName,  serviceName},
-                { template.URN,  URN}
+                { template.CompanyName,  companyName}
 
             };
             var emailModel = new GovUkNotifyEmailModel
@@ -261,7 +263,7 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-        public async Task<bool> SendCertificateInfoRejectedToCab(string recipientName, string URN, string serviceName, string emailAddress)
+        public async Task<bool> SendCertificateInfoRejectedToCab(string recipientName, string companyName, string serviceName, string rejectionCategory, string rejectionComments, string emailAddress)
         {
             var template = govUkNotifyConfig.CertificateInfoRejectedToCabTemplate;
 
@@ -269,7 +271,9 @@ namespace DVSAdmin.CommonUtility.Email
             {
                 { template.RecipientName,  recipientName},
                 { template.ServiceName,  serviceName},
-                { template.URN,  URN}
+                { template.CompanyName,  companyName},
+                { template.RejectionCategory,  rejectionCategory},
+                { template.RejectionComments,  rejectionComments}
 
             };
             var emailModel = new GovUkNotifyEmailModel
@@ -281,14 +285,14 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-        public async Task<bool> SendCertificateInfoRejectedToDSIT(string URN, string serviceName, string rejectionCategory, string rejectionComments)
+        public async Task<bool> SendCertificateInfoRejectedToDSIT(string companyName, string serviceName, string rejectionCategory, string rejectionComments)
         {
             var template = govUkNotifyConfig.CertificateInfoRejectedToDSITTemplate;
 
             var personalisation = new Dictionary<string, dynamic>
             {             
                 { template.ServiceName,  serviceName},
-                { template.URN,  URN},
+                { template.CompanyName,  companyName},
                 { template.RejectionCategory,  rejectionCategory},
                 { template.RejectionComments,  rejectionComments},
 
@@ -303,6 +307,7 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
+        #endregion
         public async Task<bool> SendConsentToPublishToDIP(string URN, string serviceName, string recipientName, string emailAddress, string consentLink)
         {
             var template = govUkNotifyConfig.DIPConsentToPublishTemplate;
