@@ -7,8 +7,6 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -40,62 +38,10 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await certificateReviewRepository.SaveCertificateReview(certificateReview);
             return genericResponse;
 
-        }      
+        }     
 
-        public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, CertificateInformationDto certificateInformationDto)
-        {
-            CertificateReview certificateReview = new CertificateReview();
-            automapper.Map(cetificateReviewDto, certificateReview);
-            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview);
-            if(genericResponse.Success /*&& cetificateReviewDto.CertificateInfoStatus == CertificateInfoStatusEnum.Approved*/)
-            {
-                await emailSender.SendCertificateInfoApprovedToCab(certificateInformationDto.CreatedBy, certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
-                await emailSender.SendCertificateInfoApprovedToDSIT(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName);
-                TokenDetails tokenDetails = jwtService.GenerateToken();
-                string consentLink = configuration["ReviewPortalLink"] +"consent/give-consent?token="+tokenDetails.Token;
-
-                //Insert token details to db for further reference
-                ConsentToken consentToken = new ConsentToken();
-                consentToken.CertificateReviewId = genericResponse.InstanceId;
-                consentToken.Token = tokenDetails.Token;
-                consentToken.TokenId = tokenDetails.TokenId;
-                consentToken.CreatedTime = DateTime.UtcNow;
-                genericResponse = await consentRepository.SaveConsentToken(consentToken);
-                if (genericResponse.Success)
-                {                    
-                   //if there is additional contact sent consent link to sponsor email and notification email to additional contact
-                    if (!string.IsNullOrEmpty(certificateInformationDto.Provider.PreRegistration.SponsorEmail))
-                    {
-                        await emailSender.SendConsentToPublishToDIP(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.SponsorFullName, certificateInformationDto.Provider.PreRegistration.SponsorEmail, consentLink);
-                        await emailSender.SendConsentToPublishToAdditionalContact(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.FullName, certificateInformationDto.Provider.PreRegistration.Email);
-                    }
-                    else
-                    {
-                        await emailSender.SendConsentToPublishToDIP(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.FullName, certificateInformationDto.Provider.PreRegistration.Email,consentLink);
-                    }
-                }
-
-            }
-            return genericResponse;
-        }
-
-        public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, CertificateInformationDto certificateInformationDto, List<CertificateReviewRejectionReasonDto> rejectionReasons)
-        {
-            CertificateReview certificateReview = new CertificateReview();
-            automapper.Map(cetificateReviewDto, certificateReview);
-            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReviewRejection(certificateReview);
-
-            
-            if(genericResponse.Success /*&& cetificateReviewDto.CertificateInfoStatus == CertificateInfoStatusEnum.Rejected*/ )
-            {
-                string rejectReasons = string.Join("\r", rejectionReasons.Select(x => x.Reason.ToString()).ToArray());
-                await emailSender.SendCertificateInfoRejectedToCab(certificateInformationDto.CreatedBy, certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
-                await emailSender.SendCertificateInfoRejectedToDSIT(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, rejectReasons, certificateReview.RejectionComments);
-
-            }
-           
-            return genericResponse;
-        }
+      
+      
 
         public async Task<CertificateInformationDto> GetCertificateInformation(int certificateInfoId)
         {
@@ -209,16 +155,11 @@ namespace DVSAdmin.BusinessLogic.Services
                 //genericResponse = await consentRepository.SaveConsentToken(consentToken);
                 if (genericResponse.Success)
                 {
+                    await emailSender.SendCertificateInfoApprovedToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, serviceDto.CabUser.CabEmail);
+                    await emailSender.SendCertificateInfoApprovedToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName);
 
-                    //if (!string.IsNullOrEmpty(certificateInformationDto.Provider.PreRegistration.SponsorEmail))
-                    //{
-                    //    await emailSender.SendConsentToPublishToDIP(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.SponsorFullName, certificateInformationDto.Provider.PreRegistration.SponsorEmail, consentLink);
-                    //    await emailSender.SendConsentToPublishToAdditionalContact(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.FullName, certificateInformationDto.Provider.PreRegistration.Email);
-                    //}
-                    //else
-                    //{
-                    //    await emailSender.SendConsentToPublishToDIP(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.Provider.PreRegistration.FullName, certificateInformationDto.Provider.PreRegistration.Email, consentLink);
-                    //}
+                    //To Do : consent email
+
                 }
 
             }
@@ -232,12 +173,12 @@ namespace DVSAdmin.BusinessLogic.Services
             automapper.Map(cetificateReviewDto, certificateReview);
             GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReviewRejection(certificateReview);
 
-            //TO DO : send email
+       
             if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Rejected )
             {
-                //string rejectReasons = string.Join("\r", rejectionReasons.Select(x => x.Reason.ToString()).ToArray());
-                //await emailSender.SendCertificateInfoRejectedToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
-                //await emailSender.SendCertificateInfoRejectedToDSIT(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, rejectReasons, certificateReview.RejectionComments);
+                string rejectReasons = string.Join("\r", rejectionReasons.Select(m => m.Reason));
+                await emailSender.SendCertificateInfoRejectedToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, rejectReasons, cetificateReviewDto.RejectionComments, serviceDto.CabUser.CabEmail);
+                await emailSender.SendCertificateInfoRejectedToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName, rejectReasons, certificateReview.RejectionComments);
 
             }
 
