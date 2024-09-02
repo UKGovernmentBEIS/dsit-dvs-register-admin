@@ -3,7 +3,13 @@
 @using DVSAdmin.Extensions;
 @model DVSAdmin.Models.CertificateReviewListViewModel;
 
-<h2 class="govuk-heading-l">Certificate submissions</h2>
+<h2 class="govuk-heading-l">Review a provider certificate</h2>
+<p class="govuk-body">
+    <a class="govuk-link" href="~/">Guidance on this section</a>
+    <span class="govuk-hint">
+        In this section, you will need to review the certificates submitted by the Conformity Assessment Bodies (CABs). Start the review from top to bottom, as the applications that need more urgent action will appear at the top. Once completed, they will appear in the Archive tab.
+    </span>
+</p>
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
@@ -13,7 +19,7 @@
                     <th scope="col" class="govuk-table__header">Role type</th>
                     <th scope="col" class="govuk-table__header">Time submitted</th>
                     <th scope="col" class="govuk-table__header">Review status</th>
-                    <th scope="col" class="govuk-table__header">Days left to <br />complete checks</th>
+                    <th scope="col" class="govuk-table__header">Days left to <br />complete review</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
