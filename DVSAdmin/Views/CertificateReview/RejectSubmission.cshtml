@@ -12,22 +12,25 @@
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
 
-            <h1 class="govuk-heading-xl">Reject submission</h1>
-            <p class="govuk-body">
-                You are about to reject the following submission:
-            </p>
-            @if (ViewData.ModelState.ErrorCount >0)
-            {
-                ViewData["Title"] = "Error: " + ViewData["Title"];
-                @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
-            }
+            <div class="govuk-grid-column-full">
 
-            @using (Html.BeginForm("SaveRejectSubmission", "CertificateReview", FormMethod.Post))
+                @if (ViewData.ModelState.ErrorCount > 0)
                 {
-                string checkboxid = string.Empty;
-                @Html.AntiForgeryToken()
+                    ViewData["Title"] = "Error: " + ViewData["Title"];
+                    @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                }
+            </div>
+
+                @using (Html.BeginForm("SaveRejectSubmission", "CertificateReview", FormMethod.Post))
+                {
+                    string checkboxid = string.Empty;
+                    @Html.AntiForgeryToken()
 
                 <div class="govuk-grid-column-full">
+                    <h1 class="govuk-heading-xl">Reject submission</h1>
+                    <p class="govuk-body">
+                        You are about to reject the following submission:
+                    </p>
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
@@ -44,7 +47,7 @@
                             <tr class="govuk-table__row">
 
                                 <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.Provider.TradingName</td>
-                                <td class="class=" govuk-table__cell">@Model.CertificateValidation?.Service?.ServiceName</td>
+                                <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.ServiceName</td>
                                 <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.CabUser.Cab.CabName</td>
                                 <td class="govuk-table__cell">
                                     @foreach (var role in @Model.CertificateValidation.Service.ServiceRoleMapping)
@@ -68,26 +71,25 @@
                         </tbody>
                     </table>
 
-                    <h1 class="govuk-heading-m">What was rejected</h1>
+                    <h2 class="govuk-heading-l">What was rejected</h2>
 
                     <hr class="govuk-section-break govuk-section-break--visible">
 
                     @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml", Model)
 
-                    
                 </div>
                 <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-s">Comments</h1>
+                    <h3 class="govuk-heading-m">Comments</h3>
                     <p class="govuk-body">
                         @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateValidation?.CommentsForIncorrect)
                     </p>
                     <p class="govuk-body">
                         @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateReview?.Comments)
                     </p>
-                    <h1 class="govuk-heading-l">
+                    <h2 class="govuk-heading-l">
                         Rejection information to be sent to the
                         Conformity Assessment Body
-                    </h1>
+                    </h2>
                     <p class="govuk-body">
                         You should now give details of the reason(s) for rejection to be sent by email
                         to the Conformity Assessment Body(CAB). Please select reason(s) from the below list which align with the
@@ -99,16 +101,16 @@
                 </div>
 
 
-                    @if (Html.ViewData.ModelState.ContainsKey("SelectedRejectionReasonIds") && Html.ViewData.ModelState["SelectedRejectionReasonIds"].Errors.Count > 0)
-                    {
+                @if (Html.ViewData.ModelState.ContainsKey("SelectedRejectionReasonIds") && Html.ViewData.ModelState["SelectedRejectionReasonIds"].Errors.Count > 0)
+                {
 
                     <div class="govuk-grid-column-full">
                         <div class="govuk-form-group govuk-form-group--error">
                             <fieldset class="govuk-fieldset">
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                                    <h1 class="govuk-fieldset__heading">
+                                    <h3 class="govuk-fieldset__heading">
                                         Select reason(s) for rejection to be sent to the CAB
-                                    </h1>
+                                    </h3>
                                 </legend>
                                 <p id="selectedrejectionreasonids-error" class="govuk-error-message">
                                     <span class="govuk-visually-hidden">Error:</span> @Html.ValidationMessageFor(m => m.SelectedRejectionReasonIds, "", new { @class = "govuk-error-message" })
@@ -118,7 +120,7 @@
                                     {
                                         <div class="govuk-checkboxes__item">
                                             <input class="govuk-checkboxes__input" type="checkbox" name="SelectedRejectionReasonIds" value="@reason.Id" aria-describedby="selectedrejectionreasonids-error" id="@("selectedrejectionreasonids"+checkboxid)"
-                                            @(Model.SelectedRejectionReasonIds.Contains(reason.Id) ? "checked" : "") />
+                                                   @(Model.SelectedRejectionReasonIds.Contains(reason.Id) ? "checked" : "") />
                                             <label class="govuk-label govuk-checkboxes__label" for="@("selectedrejectionreasonids"+checkboxid)">@reason.Reason</label>
                                         </div>
                                         checkboxid = (reason.Id + 1).ToString();
@@ -127,27 +129,27 @@
 
                             </fieldset>
                         </div>
-                        </div>
-                    }
-                    else
-                    {
+                    </div>
+                }
+                else
+                {
                     <div class="govuk-grid-column-three-quarters">
                         <div class="govuk-form-group">
                             <fieldset class="govuk-fieldset">
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                                    <h1 class="govuk-fieldset__heading">
+                                    <h3 class="govuk-fieldset__heading">
                                         Select the reason(s)
-                                    </h1>
+                                    </h3>
                                 </legend>
 
 
                                 <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                                    
+
                                     @foreach (var reason in Model.RejectionReasons)
-                                    {                                        
+                                    {
                                         <div class="govuk-checkboxes__item">
                                             <input class="govuk-checkboxes__input" type="checkbox" name="SelectedRejectionReasonIds" value="@reason.Id" id="@("selectedrejectionreasonids"+checkboxid)"
-                                            @(Model.SelectedRejectionReasonIds.Contains(reason.Id) ? "checked" : "") />
+                                                   @(Model.SelectedRejectionReasonIds.Contains(reason.Id) ? "checked" : "") />
                                             <label class="govuk-label govuk-checkboxes__label" for="@("selectedrejectionreasonids"+checkboxid)">@reason.Reason</label>
                                         </div>
                                         checkboxid = (reason.Id + 1).ToString();
@@ -157,8 +159,8 @@
 
                             </fieldset>
                         </div>
-                        </div>
-                    }
+                    </div>
+                }
 
                 <div class="govuk-grid-column-two-thirds">
                     <p class="govuk-body">
@@ -167,7 +169,7 @@
                         'Other' , please specify details below.
                     </p>
 
-                    <h1 class="govuk-heading-s"> Give further details on reason(s) selected and any required amendments</h1>
+                    <h3 class="govuk-heading-s"> Give further details on reason(s) selected and any required amendments</h3>
                     <div id="comments-hint" class="govuk-hint">
                         For example: ‘UKDIATF logo is missing from the certificate. Please add
                         UKDIATF logo to the certificate.
@@ -175,7 +177,7 @@
 
                     @if (Html.ViewData.ModelState.ContainsKey("Comments") && Html.ViewData.ModelState["Comments"].Errors.Count > 0)
                     {
-                        <div class="govuk-form-group govuk-form-group--error">                         
+                        <div class="govuk-form-group govuk-form-group--error">
                             <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
                             <p id="comments-error" class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comments)
@@ -185,7 +187,7 @@
                     }
                     else
                     {
-                        <div class="govuk-form-group">                        
+                        <div class="govuk-form-group">
 
                             @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5" })
                         </div>
@@ -201,11 +203,7 @@
                         </strong>
                     </div>
 
-                </div>
-
-                <h3 class="govuk-heading-m">Who will receive the decision notification</h3>
-                <hr class="govuk-section-break govuk-section-break--visible">
-            @*     <div class="govuk-grid-column-full"> *@
+                    <h3 class="govuk-heading-m">Who will receive the decision notification</h3>
 
                     <hr class="govuk-section-break govuk-section-break--visible">
                     <dl class="govuk-summary-list">
@@ -218,8 +216,6 @@
                                 @Model.CertificateValidation.Service.CabUser.CabEmail
                             </dd>
                         </div>
-
-
                     </dl>
                     <div class="govuk-button-group">
                         <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="proceed">
@@ -228,13 +224,15 @@
                         <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
                             Cancel
                         </button>
-                    </div>                
-                @* </div> *@
+                    </div>
+                </div>
+
+
 
                 @Html.Hidden("RejectionReasons", JsonConvert.SerializeObject(Model.RejectionReasons))
-                }
+            }
 
-        </div>
-    </main>
-</div>
+            </div>
+        </main>
+    </div>
 
