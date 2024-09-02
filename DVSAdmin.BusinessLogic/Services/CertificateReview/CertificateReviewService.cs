@@ -31,13 +31,7 @@ namespace DVSAdmin.BusinessLogic.Services
             this.jwtService = jwtService;
             this.configuration = configuration;
         }
-
-
-        public async Task<List<CertificateInformationDto>> GetCertificateInformationList()
-        {
-            var certificateInfoList = await certificateReviewRepository.GetCertificateInformationList();
-            return automapper.Map<List<CertificateInformationDto>>(certificateInfoList);
-        }       
+           
 
         public async Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto)
         {
@@ -161,7 +155,8 @@ namespace DVSAdmin.BusinessLogic.Services
                 var reviewEntity = await certificateReviewRepository.GetCertificateReview(consentToken.CertificateReviewId);
                 if (reviewEntity != null)
                 {
-                    ProviderStatusEnum providerStatus = ProviderStatusEnum.ActionRequired;
+                    //TO DO: in register management
+                    //ProviderStatusEnum providerStatus = ProviderStatusEnum.ActionRequired;
                     //List<CertificateInformation> serviceList = await certificateReviewRepository.GetCertificateInformationListByProvider(reviewEntity.ProviderId);
                   
                     //if (serviceList.Any(item => item.CertificateInfoStatus == CertificateInfoStatusEnum.Published))
@@ -227,6 +222,25 @@ namespace DVSAdmin.BusinessLogic.Services
                 }
 
             }
+            return genericResponse;
+        }
+
+
+        public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons)
+        {
+            CertificateReview certificateReview = new CertificateReview();
+            automapper.Map(cetificateReviewDto, certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReviewRejection(certificateReview);
+
+            //TO DO : send email
+            if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Rejected )
+            {
+                //string rejectReasons = string.Join("\r", rejectionReasons.Select(x => x.Reason.ToString()).ToArray());
+                //await emailSender.SendCertificateInfoRejectedToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, certificateInformationDto.CreatedBy);
+                //await emailSender.SendCertificateInfoRejectedToDSIT(certificateInformationDto.Provider.PreRegistration.URN, certificateInformationDto.ServiceName, rejectReasons, certificateReview.RejectionComments);
+
+            }
+
             return genericResponse;
         }
 

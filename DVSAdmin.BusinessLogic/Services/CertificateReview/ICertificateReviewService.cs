@@ -9,8 +9,7 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, CertificateInformationDto certificateInformationDto);
         public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, CertificateInformationDto certificateInformationDto, 
         List<CertificateReviewRejectionReasonDto> rejectionReasons);
-        public Task<CertificateInformationDto> GetCertificateInformation(int certificateInfoId);
-        public Task<List<CertificateInformationDto>> GetCertificateInformationList();        
+        public Task<CertificateInformationDto> GetCertificateInformation(int certificateInfoId);      
         public  Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons();
         public  Task<CertificateReviewDto> GetCertificateReview(int reviewId);
         public Task<CertificateInformationDto> GetProviderAndCertificateDetailsByToken(string token, string tokenId);
@@ -19,6 +18,7 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<List<ServiceDto>> GetServiceList();
         public Task<ServiceDto> GetServiceDetails(int serviceId);
         public Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto);
+        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons);
         #endregion
     }
 }

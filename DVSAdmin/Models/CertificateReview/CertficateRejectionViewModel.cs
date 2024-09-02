@@ -18,6 +18,6 @@ namespace DVSAdmin.Models
         public List<int>? SelectedRejectionReasonIds { get; set; }
         public List<CertificateReviewRejectionReasonDto>? SelectedReasons { get; set; }
 
-        public string ? CabUserEmail { get; set; }
+      
     }
 }
