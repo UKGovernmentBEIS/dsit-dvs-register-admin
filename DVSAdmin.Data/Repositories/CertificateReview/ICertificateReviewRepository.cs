@@ -21,6 +21,7 @@ namespace DVSAdmin.Data.Repositories
         #region New path
         public Task<List<Service>> GetServiceList();
         public Task<Service> GetServiceDetails(int serviceId);
+        public Task<GenericResponse> UpdateServiceStatus(int serviceId, ServiceStatusEnum serviceStatus);
         #endregion
     }
 }

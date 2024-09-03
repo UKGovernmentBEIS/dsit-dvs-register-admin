@@ -40,8 +40,8 @@ namespace DVSAdmin.Middleware
                 logger.LogError($"Stacktrace: {ex.StackTrace}");
                 if (ex.InnerException != null)
                 {
-                    Console.WriteLine("Inner Exception");
-                    Console.WriteLine(String.Concat(ex.InnerException.StackTrace, ex.InnerException.Message));
+                    Console.Write("Inner Exception");
+                    Console.Write(String.Concat(ex.InnerException.StackTrace, ex.InnerException.Message));
                 }
                 // Redirect to error page 
                 httpContext.Response.Redirect(Constants.ErrorPath);

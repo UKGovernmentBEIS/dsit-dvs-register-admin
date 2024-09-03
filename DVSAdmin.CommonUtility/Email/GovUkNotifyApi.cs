@@ -24,13 +24,32 @@ namespace DVSAdmin.CommonUtility.Email
         {
             try
             {
-                await client.SendEmailAsync(
-                    emailModel.EmailAddress,
+                if(emailModel.EmailList != null && emailModel.EmailList.Any()) 
+                { 
+                    foreach(var email in emailModel.EmailList)
+                    {
+                    await client.SendEmailAsync(
+                    email,
                     emailModel.TemplateId,
                     emailModel.Personalisation,
                     emailModel.Reference,
                     emailModel.EmailReplyToId);
+                              
+                    }
                     return true;
+                }
+                else
+                {
+                   await client.SendEmailAsync(
+                   emailModel.EmailAddress,
+                   emailModel.TemplateId,
+                   emailModel.Personalisation,
+                   emailModel.Reference,
+                   emailModel.EmailReplyToId);
+                   return true;
+
+                }
+               
             }
             catch (NotifyClientException e)
             {
@@ -307,6 +326,42 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
+        public async Task<bool> SendProceedApplicationConsentToDIP(string companyName, string serviceName, string companyNumber, string companyAddress, string publicContactEmail, 
+            string publicPhoneNumber, string consentLink, List<string> emailAddress)
+        {
+            var template = govUkNotifyConfig.ProceedApplicationConsentToDIPTemplate;
+
+            try
+            {
+                var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.CompanyName,  companyName},
+                { template.CompanyNumber,  companyNumber},
+                { template.CompanyAddress,  companyAddress},
+                { template.PublicContactEmail,  publicContactEmail},
+                { template.PublicPhoneNumber ,  publicPhoneNumber},
+                { template.ConsentLink ,  consentLink }
+
+
+             };
+                var emailModel = new GovUkNotifyEmailModel
+                {
+                    EmailList =  emailAddress,
+                    TemplateId = template.Id,
+                    Personalisation = personalisation
+                };
+                return await SendEmail(emailModel);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+          
+            return false;
+        }
+
         #endregion
         public async Task<bool> SendConsentToPublishToDIP(string URN, string serviceName, string recipientName, string emailAddress, string consentLink)
         {
@@ -434,5 +489,7 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+
+       
     }
 }

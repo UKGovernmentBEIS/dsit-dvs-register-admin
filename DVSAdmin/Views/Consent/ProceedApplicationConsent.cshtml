@@ -8,7 +8,7 @@
     ViewData["HidePublishStatus"] = true;// setting variable to hide status field in partial view
 
 }
-@using (Html.BeginForm("`PublishServiceGiveConsent", "Consent", FormMethod.Post))
+@using (Html.BeginForm("ProceedApplicationGiveConsent", "Consent", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.token)
@@ -41,7 +41,7 @@
                                 Telephone number
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.Provider.TelephoneNumber
+                                @Model.CertificateInformation.Provider.ProviderTelephoneNumber
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -49,7 +49,7 @@
                                 Website address
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.Provider.WebsiteAddress
+                                @Model.CertificateInformation.Provider.ProviderWebsiteAddress
                             </dd>
                         </div>
                     </dl>
@@ -59,16 +59,7 @@
                     <h2 class="govuk-heading-m">@Model.CertificateInformation.ServiceName </h2>
                    
                     @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.CertificateInformation)
-                    <h2 class="govuk-heading-l">Certificate of conformity</h2>
-                    <span class="govuk-caption-xl">@Model.CertificateInformation.FileName</span>
-                    <div id="download-certificate-hint" class="govuk-hint">
-                        PDF, 19.5 KB, 1 page
-                        This file may not be suitable for users of assistive technology.
-                    </div>
-
-                    <a href="#" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                        Download certificate of conformity
-                    </a>
+                   
 
                     <hr class="govuk-section-break govuk-section-break--m">              
 
