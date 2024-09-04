@@ -13,9 +13,9 @@
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
 
-            <h1 class="govuk-heading-xl">Certificate review</h1>
+            <h1 class="govuk-heading-xl">Part 2 of 2: Information match </h1>
 
-            @if (ViewData.ModelState.ErrorCount >0)
+            @if (ViewData.ModelState.ErrorCount > 0)
             {
                 ViewData["Title"] = "Error: " + ViewData["Title"];
                 @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
@@ -32,8 +32,8 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header"> Service name </th>
                                 <th scope="col" class="govuk-table__header">Service Provider</th>
+                                <th scope="col" class="govuk-table__header"> Service name </th>
                                 <th scope="col" class="govuk-table__header">Conformity Assessment Body </th>
                                 <th scope="col" class="govuk-table__header">Role type</th>
                                 <th scope="col" class="govuk-table__header">Time submitted</th>
@@ -44,8 +44,8 @@
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
 
-                                <th scope="row" class="govuk-table__header">@Model.Service.ServiceName</th>
                                 <td class="govuk-table__cell">@Model.Service.Provider.TradingName</td>
+                                <td class="govuk-table__header">@Model.Service.ServiceName</td>
                                 <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
                                 <td class="govuk-table__cell">
                                     @foreach (var role in @Model.Service.ServiceRoleMapping)
@@ -74,10 +74,7 @@
                 <div class="govuk-grid-column-two-thirds">
                     <h2 class="govuk-heading-l">Information match</h2>
                     <p class="govuk-body">
-                        In this section, you will need to review the service provider s certificate
-                        against the submitted information below to check that the information
-                        matches. If you approve this submission, the information below will be
-                        publicly available.
+                        In this section, you will need to review the service provider's certificate submitted by the Conformity Assessment Body (CAB) against the submitted information below to check that the information matches. It is important that all information matches as it will be publicly available.
                     </p>
 
 
@@ -92,31 +89,19 @@
 
                             <ol class="govuk-list govuk-list--number">
                                 <li>
-                                    Make sure that you have the service provider s certificate of
-                                    conformity open. You can download the file again using the
-                                    Download certificate button below.
+                                    Make sure that you have the service provider’s certificate of conformity open. You can download the file again using the ‘Download certificate of conformity’ button below.
                                 </li>
                                 <li>
-                                    Once you have the certificate open, compare the certification
-                                    information below.
+                                    Once you have the certificate open, compare the certification information below.
                                 </li>
                                 <li>
-                                    After you have verified that all items match, scroll down to the
-                                    bottom of the page and click the ‘Yes, it matches the information on
-                                    the certificate option. If the items do not match, click the No, it
-                                    does not match.
+                                    After you have verified that all items match, scroll down to the bottom of the page and click the ‘Yes, it matches the information on the certificate’ option. If the items do not match, click the ‘No, it does not match’ option. You must enter comments or notes in the text area at the bottom of the page.
                                 </li>
                                 <li>
-                                    If you need to pause your review or wish to complete it at a later time,
-                                    you can save your progress by clicking the Save as draft button
-                                    located at the bottom of the page. Additionally, if you have any
-                                    comments or notes regarding the verification, you can type them in
-                                    the free text area also at the bottom of the page.
+                                    If you wish to submit your review at it at a later time, you can select the ‘Save as draft’ button located at the bottom of the page. You must have completed all sections before saving.
                                 </li>
                                 <li>
-                                    . Once you have verified all items, scroll down to the bottom of the
-                                    page and select Approve submission or Reject submission to
-                                    proceed with the process.
+                                    Once you have verified all items, scroll down to the bottom of the page and select ‘Approve submission or ‘Reject submission’ to proceed with the process. To proceed with approval, the submission must have passed all certificate validation and information match checks.
                                 </li>
                             </ol>
                         </div>
@@ -124,8 +109,7 @@
 
                     <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
                     <p class="govuk-body">
-                        Download the certificate of conformity to compare against the details
-                        submitted by the Conformity Assessment Body (CAB)
+                        Download the certificate of conformity provided by the CAB to compare against the details submitted by the CAB.
                     </p>
 
                     <span class="govuk-caption-xl">@Model.Service.FileName</span>
@@ -143,19 +127,18 @@
 
                 </div>
                 <div class="govuk-grid-column-full">
-                <h3 class="govuk-heading-m">Certificate information</h3>
-              
+                    <h3 class="govuk-heading-m">Certification information</h3>
+
                     @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateDetailsView.cshtml", Model.Service)
                 </div>
-          
+
                 <div class="govuk-grid-column-two-thirds">
                     <h3 class="govuk-heading-m">Information match</h3>
 
                     <p class="govuk-body">
-                        The information above matches the service provider's certificate of
-                        conformity.
+                        The information above matches the service provider's certificate of conformity.
                     </p>
-                  
+
 
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                    {
@@ -179,11 +162,14 @@
                                 </label>
 
                             </h3>
-                            <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
+                            <div id="comments-hint" class="govuk-hint">
+                                If you had marked any item as ‘Incorrect’, you should provide further details. If all sections are marked ‘Correct’, please provide a note to confirm below.
+                            </div>
+                            <p class="govuk-body"></p>
                             <p id="comments-error" class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comments)
                             </p>
-                            @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea govuk-textarea--error", @id = "comments", @name = "comment", @rows = "5" })
+                            @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea govuk-textarea--error", @id = "comments", @name = "comment", @rows = "5", aria_describedby = "comments-hint comments-error" })
                         </div>
 
                     }
@@ -195,8 +181,12 @@
                                     Comments
                                 </label>
                             </h3>
+                            <div id="comments-hint" class="govuk-hint">
+                                If you had marked any item as ‘Incorrect’, you should provide further details. If all sections are marked ‘Correct’, please provide a note to confirm below.
+                            </div>
 
-                            @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5" })
+                            @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5",
+                           aria_describedby = "comments-hint" })
                         </div>
 
                     }
@@ -208,8 +198,8 @@
 
 
                     @if (Model.Service.CertificateReview == null || (Model.Service.CertificateReview != null &&
-                   Model.Service.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))
-                   {
+                 Model.Service.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))
+                    {
                         <div class="govuk-button-group" id="submitvalidation">
                             <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
                                 Approve submission
@@ -223,14 +213,13 @@
                         </div>
 
                     }
-                    
+
 
                     <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">
                             <span class="govuk-visually-hidden">Warning</span>
-                            To proceed with approval, this submission must have passed all
-                            certificate validation and information match checks.
+                            To proceed with approval, this submission must have passed all certificate validation and information match checks.
                         </strong>
                     </div>
                 </div>
