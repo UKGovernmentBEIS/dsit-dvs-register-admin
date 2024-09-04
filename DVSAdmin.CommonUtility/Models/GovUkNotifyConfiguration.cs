@@ -30,6 +30,7 @@ namespace DVSAdmin.CommonUtility.Models
         public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }
         public ServicePublishedCABTemplate ServicePublishedCABTemplate { get; set; }
         public ServicePublishedDSITTemplate ServicePublishedDSITTemplate { get;set; }
+        public ProceedApplicationConsentToDIPTemplate ProceedApplicationConsentToDIPTemplate { get; set; }
 
     }
 }
