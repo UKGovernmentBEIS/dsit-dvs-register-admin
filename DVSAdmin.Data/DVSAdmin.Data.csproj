@@ -25,4 +25,8 @@
     <ProjectReference Include="..\DVSAdmin.CommonUtility\DVSAdmin.CommonUtility.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\NewFolder\" />
+  </ItemGroup>
+
 </Project>

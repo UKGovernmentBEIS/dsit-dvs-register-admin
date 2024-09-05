@@ -12,6 +12,8 @@ using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.Data.Repositories.RegisterManagement;
 using Amazon.S3;
 using Amazon;
+using DVSAdmin.BusinessLogic.Services.PublicInterestCheck;
+using DVSAdmin.Data.Repositories.PublicInterestCheck;
 
 namespace DVSAdmin
 {
@@ -92,6 +94,8 @@ namespace DVSAdmin
             services.AddScoped<IConsentRepository, ConsentRepository>();
             services.AddScoped<IRegManagementService, RegManagementService>();
             services.AddScoped<IRegManagementRepository, RegManagementRepository>();
+            services.AddScoped<IPublicInterestCheckService, PublicInterestService>();
+            services.AddScoped<IPublicInterestCheckRepository, PublicInterestCheckRepository>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {
