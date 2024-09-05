@@ -35,7 +35,8 @@ namespace DVSAdmin.Controllers
             ((x.ServiceStatus == ServiceStatusEnum.Submitted &&  x.Id !=x?.CertificateReview?.ServiceId) || 
             (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))).ToList();            
             certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
-            ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)).ToList();
+            ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) 
+            || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)).OrderBy(x=>x.ModifiedTime).ToList();
             return View(certificateReviewListViewModel);
         }
 
