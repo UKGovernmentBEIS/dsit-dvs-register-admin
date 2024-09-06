@@ -24,7 +24,7 @@
         {
             @foreach (var item in Model.ActionRequiredList)
             {
-                @if(item.CertificateInformation!=null && item.CertificateInformation.Count()>0)
+                @* @if(item.CertificateInformation!=null && item.CertificateInformation.Count()>0)
                 {
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell"> @Html.ActionLink(@item.TradingName, "ProviderDetails", "RegisterManagement", new { @providerId = item.Id }, new { @class = "govuk-link" })</td>
@@ -42,7 +42,7 @@
                         </td>
                         <td class="govuk-table__cell">@item.DaysLeftToComplete Days</td>
                     </tr>
-                }
+                } *@
                 
             }
         }

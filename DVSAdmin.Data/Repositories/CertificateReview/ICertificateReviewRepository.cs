@@ -18,5 +18,10 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<CertificateReviewRejectionReason>> GetRejectionReasons();
         public Task<CertificateReview> GetCertificateReview(int reviewId);
         public Task<GenericResponse> UpdateCertificateReviewStatus(int certificateReviewId, string modifiedBy, ProviderStatusEnum providerStatus);
+        #region New path
+        public Task<List<Service>> GetServiceList();
+        public Task<Service> GetServiceDetails(int serviceId);
+        public Task<GenericResponse> UpdateServiceStatus(int serviceId, ServiceStatusEnum serviceStatus);
+        #endregion
     }
 }

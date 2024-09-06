@@ -5,8 +5,8 @@ namespace DVSAdmin.Models
 {
     public class CertificateReviewViewModel
     {
-        public int CertificateReviewId { get; set; }     
-        public CertificateInformationViewModel? CertificateInformation { get; set; }
+        public int CertificateReviewId { get; set; }
+        public ServiceDto? Service { get; set; }      
 
         [Required(ErrorMessage = "Enter a comment")]
         public string? Comments { get; set; }

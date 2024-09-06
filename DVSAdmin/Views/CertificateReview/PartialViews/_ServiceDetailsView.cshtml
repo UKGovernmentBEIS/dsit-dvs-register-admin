@@ -1,6 +1,7 @@
 ﻿@using DVSAdmin.CommonUtility.Models.Enums;
 @using DVSAdmin.Extensions;
-@model CertificateInformationViewModel
+@using DVSAdmin.BusinessLogic.Models;
+@model ServiceDto
 <div class="govuk-grid-column-full">
     <table class="govuk-table">
         <thead class="govuk-table__head">
@@ -17,25 +18,25 @@
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
 
-                <th scope="row" class="govuk-table__header">@Model.ServiceName</th>
-                <td class="govuk-table__cell">@Model.TradingName</td>
-                <td class="govuk-table__cell">@Model.SubmittedCAB</td>
+                <td class="govuk-table__cell">@Model.ServiceName</td>
+                <td class="govuk-table__cell">@Model.Provider.TradingName</td>
+                <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
                 <td class="govuk-table__cell">
-                    @foreach (var role in @Model.CertificateInfoRoleMapping)
+                    @foreach (var role in @Model.ServiceRoleMapping)
                     {
                         RoleEnum enumValue = (RoleEnum)role.RoleId;
                         <div> @Enum.GetName(enumValue) </div>
                     }
                 </td>
-                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CreatedDate)</td>
+                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CreatedTime)</td>
                 @if (Model.CertificateReview !=null)
                 {
-                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateReview.CertificateInfoStatus)</td>
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateReview.CertificateReviewStatus)</td>
                     <td class="govuk-table__cell">@Model.CertificateReview.ModifiedDate</td>
                 }
                 else
                 {
-                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateInfoStatus)</td>
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.ServiceStatus)</td>
                     <td class="govuk-table__cell"></td>
                 }
                 

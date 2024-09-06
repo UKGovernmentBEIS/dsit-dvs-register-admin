@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Office for Digital Identities and Attributes review portal - GOV.UK";
+    ViewData["Title"] = "Digital Identity Register Portal";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -9,28 +9,28 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl govuk-!-margin-top-8">Office for Digital Identities and Attributes Review Portal</h1>
+                <h1 class="govuk-heading-xl govuk-!-margin-top-8">Digital Identity Register Portal</h1>
             </div>
         </div>
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-third">
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                <p class="govuk-body">@Html.ActionLink("Pre-registration review", "PreRegistrationReview", "PreRegistrationReview", null, new { @class = "govuk-link govuk-!-font-weight-bold" })</p>
+                <p class="govuk-body">@Html.ActionLink("Review a provider certificate", "CertificateReviews", "CertificateReview", null, new { @class = "govuk-link govuk-!-font-weight-bold" })</p>
                 <p class="govuk-body">
-                    Conduct a due diligence check on digital identity and attribute service providers and assess their suitability to join the register of trusted digital identity and attribute service providers.
+                    Start the process by reviewing the certificate and information submitted about the services of digital identity and attribute service providers.
                 </p>
             </div>
             <div class="govuk-grid-column-one-third">
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                <p class="govuk-body">@Html.ActionLink("Certificate review", "CertificateReviews", "CertificateReview", null, new { @class = "govuk-link govuk-!-font-weight-bold" })</p>
+                <p class="govuk-body">@Html.ActionLink("Conduct a public interest check", "", "", null, new { @class = "govuk-link govuk-!-font-weight-bold" })</p>
                 <p class="govuk-body">
-                    Review the certification information of digital identity and attribute service providers. These are the final checks before publishing.
+                    Conduct a primary and secondary check on the company information of digital identity and attribute service providers. These are the final checks before publishing.
                 </p>
             </div>
             <div class="govuk-grid-column-one-third">
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                <p class="govuk-body">@Html.ActionLink("Register management", "RegisterManagement", "RegisterManagement", null, new { @class = "govuk-link govuk-!-font-weight-bold" })</p>
+                <p class="govuk-body">@Html.ActionLink("Manage a provider record on the register", "RegisterManagement", "RegisterManagement", null, new { @class = "govuk-link govuk-!-font-weight-bold" })</p>
                 <p class="govuk-body">
                     Publish, update, or remove the information of digital identity and attribute service providers on the public register.
                 </p>

@@ -17,8 +17,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public ProviderStatusEnum ProviderStatus { get; set; }
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
-        public DateTime? PublishedTime { get; set; }
-        public List<CertificateInformationDto> CertificateInformation { get; set; }
+        public DateTime? PublishedTime { get; set; }     
 
         public int DaysLeftToComplete { get; set; } 
     }

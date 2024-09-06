@@ -1,5 +1,6 @@
-﻿@model CertificateInformationViewModel;
+﻿@model ServiceDto;
 @using DVSAdmin.Extensions;
+@using DVSAdmin.BusinessLogic.Models;
 
 
     
@@ -10,7 +11,7 @@
                 Registered name
             </dt>
             <dd class="govuk-summary-list__value">
-            @Model.RegisteredName
+            @Model.Provider.RegisteredName
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -18,7 +19,7 @@
                 Trading name(s)
             </dt>
             <dd class="govuk-summary-list__value">
-            @Model.TradingName
+            @Model.Provider.TradingName
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -26,7 +27,7 @@
                 Company address details
             </dt>
             <dd class="govuk-summary-list__value">
-            @HtmlExtensions.ToStringWithLineBreaks(Model.Address)
+            @HtmlExtensions.ToStringWithLineBreaks(Model.CompanyAddress)
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -44,9 +45,9 @@
                 against
             </dt>
             <dd class="govuk-summary-list__value">
-                @foreach (var item in Model?.Roles)
+                @foreach (var item in Model?.ServiceRoleMapping)
                 {
-                    <div>@item.RoleName</div>
+                    <div>@item.Role.RoleName</div>
                 }
             </dd>
 
@@ -58,25 +59,25 @@
                 Identity profiles
             </dt>
             <dd class="govuk-summary-list__value">
-                @foreach (var item in Model?.IdentityProfiles)
+                @foreach (var item in Model?.ServiceIdentityProfileMapping)
                 {
-                    <div>@item.IdentityProfileName</div>
+                    <div>@item.IdentityProfile.IdentityProfileName</div>
                 }
             </dd>
 
         </div>
 
 
-        @if (Model?.SupplementarySchemes != null)
+        @if (Model?.ServiceIdentityProfileMapping != null)
         {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     Supplementary schemes
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @foreach (var item in Model?.SupplementarySchemes)
+                    @foreach (var item in Model?.ServiceSupSchemeMapping)
                     {
-                        <div>@item.SchemeName</div>
+                        <div>@item.SupplementaryScheme.SchemeName</div>
                     }
                 </dd>
 

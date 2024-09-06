@@ -3,6 +3,7 @@ using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +22,11 @@ namespace DVSAdmin.Controllers
             this.certificateReviewService = certificateReviewService;
             this.consentService = consentService;
         }
-       
+
+
+        #region Closing the loop
+        //To do : rename as - publish service consent during register management
+
         [HttpGet("give-consent")]
         public  async Task<ActionResult> Consent(string token)
         {
@@ -32,12 +37,12 @@ namespace DVSAdmin.Controllers
                 TokenDetails tokenDetails = await jwtService.ValidateToken(token);
                 if (tokenDetails!= null && tokenDetails.IsAuthorised)
                 {
-                    CertificateInformationDto certificateInformationDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
-                    if(certificateInformationDto!= null && certificateInformationDto.CertificateInfoStatus == CommonUtility.Models.Enums.CertificateInfoStatusEnum.ReadyToPublish)
+                    ServiceDto ServiceDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
+                    if(ServiceDto!= null && ServiceDto.ServiceStatus == ServiceStatusEnum.Received)
                     {
                         return RedirectToAction(Constants.ErrorPath);
                     }
-                    consentViewModel.CertificateInformation = certificateInformationDto;
+                    consentViewModel.CertificateInformation = ServiceDto;
                 }
                 else
                 {
@@ -63,10 +68,10 @@ namespace DVSAdmin.Controllers
                
                 if(tokenDetails!= null && tokenDetails.IsAuthorised)
                 {
-                    CertificateInformationDto certificateInformationDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
+                    ServiceDto ServiceDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
                     if (ModelState.IsValid)
                     {
-                        GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewStatus(tokenDetails.Token, tokenDetails.TokenId, certificateInformationDto);
+                        GenericResponse genericResponse = new(); //TO DO : update during register management changes
                         if (genericResponse.Success)
                         {
                             return RedirectToAction("ConsentSuccess");
@@ -79,7 +84,7 @@ namespace DVSAdmin.Controllers
                     else
                     {
                        
-                        consentViewModel.CertificateInformation = certificateInformationDto;
+                        consentViewModel.CertificateInformation = ServiceDto;
                         return View("Consent", consentViewModel);
                     }
                 }
@@ -101,21 +106,97 @@ namespace DVSAdmin.Controllers
         {
             return View();
         }
+        #endregion
 
+        #region Opening Loop
 
-        #region private methods
-
-        private async Task<bool> ValidateToken(string token)
+        [HttpGet("proceed-application-consent")]
+        public async Task<ActionResult> ProceedApplicationConsent(string token)
         {
-            bool isValid = false;
-            TokenDetails tokenDetails = await jwtService.ValidateToken(token);
-            if (tokenDetails!= null && tokenDetails.IsAuthorised)
+            ConsentViewModel consentViewModel = new();
+            if (!string.IsNullOrEmpty(token))
             {
-                isValid = true;
+                consentViewModel.token = token;
+                TokenDetails tokenDetails = await jwtService.ValidateToken(token);
+                if (tokenDetails != null && tokenDetails.IsAuthorised)
+                {
+                    ServiceDto ServiceDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
+                    if (ServiceDto != null && (ServiceDto.ServiceStatus == ServiceStatusEnum.Received ||ServiceDto.CertificateReview.CertificateReviewStatus != CertificateReviewEnum.Approved))
+                    {
+                        return RedirectToAction("ProceedApplicationConsentError");
+                    }
+                    consentViewModel.CertificateInformation = ServiceDto;
+                }
+                else
+                {
+                    return RedirectToAction("ProceedApplicationConsentError");
+                }
             }
-            return isValid;
+            else
+            {
+                return RedirectToAction("ProceedApplicationConsentError");
+            }
+
+
+            return View(consentViewModel);
+        }
+
+        [HttpPost("proceed-application-consent")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ProceedApplicationGiveConsent(ConsentViewModel consentViewModel)
+        {
+            if (!string.IsNullOrEmpty(consentViewModel.token))
+            {
+                TokenDetails tokenDetails = await jwtService.ValidateToken(consentViewModel.token);
+
+                if (tokenDetails != null && tokenDetails.IsAuthorised)
+                {
+                    ServiceDto serviceDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
+                    if (ModelState.IsValid)
+                    {
+                        GenericResponse genericResponse = await certificateReviewService.UpdateServiceStatus(serviceDto.Id);
+                        if (genericResponse.Success)
+                        {
+                            return RedirectToAction("ProceedApplicationConsentSuccess");
+                        }
+                        else
+                        {
+                            return RedirectToAction("ProceedApplicationConsentError");
+                        }
+                    }
+                    else
+                    {
+
+                        consentViewModel.CertificateInformation = serviceDto;
+                        return View("ProceedApplicationConsent", consentViewModel);
+                    }
+                }
+                else
+                {
+                    await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId);
+                    return RedirectToAction("ProceedApplicationConsentError");
+                }
+            }
+            else
+            {
+                return RedirectToAction("ProceedApplicationConsentError");
+            }
 
         }
+
+        [HttpGet("proceed-application-consent-success")]
+        public ActionResult ProceedApplicationConsentSuccess()
+        {
+            return View();
+        }
+
+        [HttpGet("proceed-application-consent-error")]
+        public ActionResult ProceedApplicationConsentError()
+        {
+            return View();
+        }
         #endregion
+
+
     }
 }
