@@ -1,6 +1,4 @@
 ﻿using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.CommonUtility.Models.Enums;
-using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
 {

@@ -142,26 +142,13 @@ namespace DVSAdmin.Data.Repositories
             .Include(p => p.CertificateReview).Include(p => p.Provider).OrderBy(c => c.CreatedDate).ToListAsync();
         }
       
-        public async Task<List<CertificateInformation>> GetCertificateInformationListByProvider(int providerId)
+        public async Task<List<Service>> GetServiceListByProvider(int providerId)
         {
-            return await context.CertificateInformation.Where(p => p.ProviderId == providerId && 
-            (p.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish || p.CertificateInfoStatus == CertificateInfoStatusEnum.Published))
-            .ToListAsync()??new List<CertificateInformation>();
+            return await context.Service.Where(p => p.ProviderProfileId == providerId && 
+            (p.ServiceStatus == ServiceStatusEnum.ReadyToPublish || p.ServiceStatus == ServiceStatusEnum.Published))
+            .ToListAsync()??new List<Service>();
         }
-
-        public async Task<CertificateInformation> GetCertificateInformation(int certificateInfoId)
-        {
-            CertificateInformation certificateInformation = new CertificateInformation();
-            certificateInformation = await context.CertificateInformation
-            .Include(p => p.CertificateInfoIdentityProfileMapping)
-            .Include(p => p.CertificateInfoRoleMapping)
-            .Include(p => p.CertificateInfoSupSchemeMappings)
-            .Include(p=>p.CertificateReview)
-            .Include(p => p.Provider)
-             .Include(p => p.Provider.PreRegistration)
-            .Where(p => p.Id == certificateInfoId).FirstOrDefaultAsync()?? new CertificateInformation();
-            return certificateInformation;
-        }
+    
 
         public async Task<CertificateReview> GetCertificateReview(int reviewId)
         {

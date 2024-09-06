@@ -39,35 +39,10 @@ namespace DVSAdmin.BusinessLogic.Services
             return genericResponse;
 
         }     
-
       
       
 
-        public async Task<CertificateInformationDto> GetCertificateInformation(int certificateInfoId)
-        {
-            var certificateInfo = await certificateReviewRepository.GetCertificateInformation(certificateInfoId);
-
-            CertificateInformationDto certificateInformationDto = automapper.Map<CertificateInformationDto>(certificateInfo);
-            var roles = await certificateReviewRepository.GetRoles();
-            List<RoleDto> roleDtos = automapper.Map<List<RoleDto>>(roles);
-
-            var roleIds = certificateInformationDto.CertificateInfoRoleMapping.Select(mapping => mapping.RoleId);
-            certificateInformationDto.Roles = roleDtos.Where(x => roleIds.Contains(x.Id)).ToList();
-
-            var identityProfiles = await certificateReviewRepository.GetIdentityProfiles();
-            List<IdentityProfileDto> identityProfileDtos = automapper.Map<List<IdentityProfileDto>>(identityProfiles);
-            var identityProfileids = certificateInformationDto.CertificateInfoIdentityProfileMapping.Select(mapping => mapping.IdentityProfileId);
-            certificateInformationDto.IdentityProfiles = identityProfileDtos.Where(x => identityProfileids.Contains(x.Id)).ToList();
-
-            var schemes = await certificateReviewRepository.GetSupplementarySchemes();
-            List<SupplementarySchemeDto> supplementarySchemeDtos = automapper.Map<List<SupplementarySchemeDto>>(schemes);
-            var schemeids = certificateInformationDto.CertificateInfoSupSchemeMappings?.Select(x => x.SupplementarySchemeId);
-            if (schemeids!=null && schemeids.Count() > 0)
-                certificateInformationDto.SupplementarySchemes = supplementarySchemeDtos.Where(x => schemeids.Contains(x.Id)).ToList();
-
-
-            return certificateInformationDto;
-        }
+  
 
         public async Task<CertificateReviewDto> GetCertificateReview(int reviewId)
         {
