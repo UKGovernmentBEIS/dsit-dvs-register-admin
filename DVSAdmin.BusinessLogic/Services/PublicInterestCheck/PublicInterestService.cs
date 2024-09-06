@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.BusinessLogic.Services.PublicInterestCheck
 {
@@ -35,10 +36,10 @@ namespace DVSAdmin.BusinessLogic.Services.PublicInterestCheck
             this.jwtService = jwtService;
             this.configuration = configuration;
         }
-        public async Task<List<PublicInterestCheckDto>> GetPICheckList()
+        public async Task<List<Service>> GetPICheckList()
         {
             var publicinterestchecks = await publicInterestCheckRepository.GetPICheckList();
-            return automapper.Map<List<PublicInterestCheckDto>>(publicinterestchecks);
+            return automapper.Map<List<Service>>(publicinterestchecks);
         }
     }
 }
