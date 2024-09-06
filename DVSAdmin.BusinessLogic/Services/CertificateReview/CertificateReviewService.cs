@@ -38,11 +38,7 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await certificateReviewRepository.SaveCertificateReview(certificateReview);
             return genericResponse;
 
-        }     
-      
-      
-
-  
+        }    
 
         public async Task<CertificateReviewDto> GetCertificateReview(int reviewId)
         {
