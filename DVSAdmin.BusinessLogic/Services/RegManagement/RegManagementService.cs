@@ -29,29 +29,28 @@ namespace DVSAdmin.BusinessLogic.Services
             return automapper.Map<List<ProviderProfileDto>>(providers);
         }
 
-        public async Task<ProviderProfileDto> GetProviderDetails(int providerId)
+        public async Task<ProviderProfileDto> GetProviderDetails(int providerProfileId)
         {
-            var provider = await regManagementRepository.GetProviderDetails(providerId);
+            var provider = await regManagementRepository.GetProviderDetails(providerProfileId);
             ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);
             return providerDto;
         }
 
-        public async Task<ProviderProfileDto> GetProviderWithServiceDeatils(int providerId)
+        public async Task<ProviderProfileDto> GetProviderWithServiceDeatils(int providerProfileId)
         {
-            var provider = await regManagementRepository.GetProviderWithServiceDetails(providerId);
+            var provider = await regManagementRepository.GetProviderWithServiceDetails(providerProfileId);
             ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);           
             return providerDto;
         }
 
-        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId)
+        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerProfileId)
         {
-            GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerId,ServiceStatusEnum.Published);
+            GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerProfileId, ServiceStatusEnum.Published);
             ProviderStatusEnum providerStatus = ProviderStatusEnum.Published;
-            ProviderProfile provider = await regManagementRepository.GetProviderDetails(providerId);
-            ProviderStatusEnum currentStatus = provider.ProviderStatus;// keep current status for log
-            List<Service> serviceList = await certificateReviewRepository.GetServiceListByProvider(providerId);
-            //PreRegistration preRegistration = provider.PreRegistration;
-            string verifiedCab = provider.CabUser.CabEmail;
+            ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
+            ProviderStatusEnum currentStatus = providerProfile.ProviderStatus;// keep current status for log
+            List<Service> serviceList = await certificateReviewRepository.GetServiceListByProvider(providerProfileId);        
+            string verifiedCab = providerProfile.CabUser.CabEmail;
             string services = string.Join("\r", serviceList.Where(item => serviceIds.Contains(item.Id)).Select(x => x.ServiceName.ToString()).ToArray())??string.Empty;
             //If no service is currently published AND one service status = Ready to publish:
             //Then provider status = Action required            
@@ -74,15 +73,15 @@ namespace DVSAdmin.BusinessLogic.Services
                 providerStatus = ProviderStatusEnum.PublishedActionRequired;
             }
 
-            genericResponse = await regManagementRepository.UpdateProviderStatus(providerId,  providerStatus);
+            genericResponse = await regManagementRepository.UpdateProviderStatus(providerProfileId,  providerStatus);
          
             if(genericResponse.Success)
             {
                 //insert provider log
                 RegisterPublishLog registerPublishLog = new RegisterPublishLog();
-                registerPublishLog.ProviderId = providerId;
+                registerPublishLog.ProviderProfileId = providerProfileId;
                 registerPublishLog.CreatedTime = DateTime.UtcNow;
-                registerPublishLog.ProviderName = provider.TradingName;
+                registerPublishLog.ProviderName = providerProfile.TradingName;
                 registerPublishLog.Services = services;
                 if (currentStatus == ProviderStatusEnum.ActionRequired) //Action required will be the status just before publishing provider for first time - which is updated through consent
                 {
@@ -92,13 +91,13 @@ namespace DVSAdmin.BusinessLogic.Services
                 {
                     registerPublishLog.Description = serviceIds.Count +  " new services included";
                 }
-                // await regManagementRepository.SavePublishRegisterLog(registerPublishLog);  To DO after creating new table
+                 await regManagementRepository.SavePublishRegisterLog(registerPublishLog);  
 
-                //TO Do : emails
-                //await emailSender.SendServicePublishedToDIP(provider.PrimaryContactFullName, services, provider.PrimaryContactEmail);
-                //await emailSender.SendServicePublishedToDIP(provider.SecondaryContactFullName, services, provider.SecondaryContactEmail);
-                //await emailSender.SendServicePublishedToCAB(verifiedCab, services, verifiedCab);
-                //await emailSender.SendServicePublishedToDSIT(preRegistration?.URN??string.Empty, services);
+              
+                await emailSender.SendServicePublishedToDIP(providerProfile.PrimaryContactFullName, services, providerProfile.RegisteredName, providerProfile.PrimaryContactEmail);
+                await emailSender.SendServicePublishedToDIP(providerProfile.SecondaryContactFullName, services, providerProfile.RegisteredName, providerProfile.SecondaryContactEmail);               
+                await emailSender.SendServicePublishedToCAB(verifiedCab, services, providerProfile.RegisteredName, verifiedCab);
+                await emailSender.SendServicePublishedToDSIT(providerProfile.RegisteredName, services);
             }
 
             return genericResponse;
