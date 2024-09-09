@@ -9,13 +9,13 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("Unpublished")]
         Unpublished = 1,
         [Description("Action required")]
-        ActionRequired = 2,
-        [Description("Removed from register")]
-        RemovedFromRegister = 3,
+        ActionRequired = 2,       
         [Description("Published")]
-        Published = 4,
+        Published = 3,
         [Description("Published - action required")]
-        PublishedActionRequired = 5
-       
+        PublishedActionRequired = 4,
+        [Description("Removed from register")]
+        RemovedFromRegister = 5
+
     }
 }

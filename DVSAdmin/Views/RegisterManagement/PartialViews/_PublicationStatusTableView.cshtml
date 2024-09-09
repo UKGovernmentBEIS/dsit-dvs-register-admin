@@ -1,4 +1,4 @@
-﻿@model DVSAdmin.BusinessLogic.Models.ProviderDto
+﻿@model DVSAdmin.BusinessLogic.Models.ProviderProfileDto
 @using DVSAdmin.Extensions;
 <table class="govuk-table">
     <thead class="govuk-table__head">
@@ -16,17 +16,17 @@
                     @HtmlExtensions.ToStyledStrongTag(Model.ProviderStatus)  
             </td>
             <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.ModifiedTime)</td>
-           @*  <td class="govuk-table__cell">@Model.CertificateInformation[0]?.SubmittedCAB</td>
+            <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
             <td class="govuk-table__cell">
 
-                @foreach (var item in @Model.CertificateInformation)
+                @foreach (var item in @Model.Services)
                 {
                     <div class="govuk-!-margin-bottom-1">
                         @item.ServiceName
                     </div>                  
                 }               
               
-            </td> *@
+            </td>
         </tr>
     </tbody>
 

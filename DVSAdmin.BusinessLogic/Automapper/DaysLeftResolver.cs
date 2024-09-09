@@ -47,9 +47,9 @@ namespace DVSAdmin.BusinessLogic.Extensions
         }
     }
 
-    public class DaysLeftToPublishResolver : IValueResolver<Provider, ProviderDto, int>
+    public class DaysLeftToPublishResolver : IValueResolver<ProviderProfile, ProviderProfileDto, int>
     {
-        public int Resolve(Provider source, ProviderDto destination, int daysLeftToComplete, ResolutionContext context)
+        public int Resolve(ProviderProfile source, ProviderProfileDto destination, int daysLeftToComplete, ResolutionContext context)
         {
             if (source.ModifiedTime.HasValue)
             {                

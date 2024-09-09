@@ -10,9 +10,13 @@ namespace DVSAdmin.CommonUtility.Models
         Submitted = 1,
         [Description("Received")] // Status when provider consents to proceed application, opening loop
         Received = 2,
+        [Description("Action Required")] // Status when provider consents to proceed application, opening loop
+        ActionRequired = 3,
+        [Description("Ready to publish")]
+        ReadyToPublish = 4,
         [Description("Published")]
-        Published = 3,
+        Published = 5,
         [Description("Removed")]
-        Removed = 4
+        Removed = 6
     }
 }

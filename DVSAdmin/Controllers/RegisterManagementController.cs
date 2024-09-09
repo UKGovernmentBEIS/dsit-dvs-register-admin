@@ -1,13 +1,11 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Services;
-using DVSAdmin.Models;
-using Microsoft.AspNetCore.Mvc;
+using DVSAdmin.CommonUtility;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
-using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.CommonUtility;
-using DVSAdmin.Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
@@ -19,17 +17,17 @@ namespace DVSAdmin.Controllers
     //Any change in the controller routes to be verified
     //with button or ahref actions in .cshtml
     public class RegisterManagementController : Controller
-    {
-        private readonly ILogger<RegisterManagementController> logger;
+    {       
         private readonly IRegManagementService regManagementService;
         private readonly ICertificateReviewService certificateReviewService;
+        private readonly IBucketService bucketService;
 
-        public RegisterManagementController(ILogger<RegisterManagementController> logger, IRegManagementService regManagementService,
-           ICertificateReviewService certificateReviewService)
+        public RegisterManagementController(IRegManagementService regManagementService, ICertificateReviewService certificateReviewService, IBucketService bucketService)
         {
-            this.logger = logger;
+           
             this.regManagementService = regManagementService;
             this.certificateReviewService = certificateReviewService;
+            this.bucketService = bucketService;
         }
 
         [HttpGet("register-management-list")]
@@ -45,44 +43,26 @@ namespace DVSAdmin.Controllers
         [HttpGet("provider-details")]
         public async Task<IActionResult> ProviderDetails(int providerId)
         {
-            ProviderDto providerDto = await regManagementService.GetProviderDetails(providerId);
-            //providerDto.CertificateInformation = AssignServiceNumber(providerDto.CertificateInformation);
-            ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
-            providerDetailsViewModel.Provider = providerDto;
-            return View(providerDetailsViewModel);
+            ProviderProfileDto providerDto = await regManagementService.GetProviderDetails(providerId);
+            return View(providerDto);
         }
 
         [HttpGet("service-details")]
-        public async Task<IActionResult> ServiceDetails(int serviceId, int serviceNumber)
+        public async Task<IActionResult> ServiceDetails(int serviceId)
         {
-            CertificateInformationDto certificateInformation = await certificateReviewService.GetCertificateInformation(serviceId);
-            ServiceDetailsViewModel serviceDetailsViewModel = new ServiceDetailsViewModel();
-            serviceDetailsViewModel.CertificateInformation = certificateInformation;
-            serviceDetailsViewModel.ServiceNumber = serviceNumber;
-            return View(serviceDetailsViewModel);
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);
+            return View(serviceDto);
         }
 
-        /// <summary>
-        /// This method is used to show 2 pages
-        /// for viewing services and review before publish
-        /// </summary>
-        /// <param name="providerId"></param>
-        /// <param name="isReview"></param>
-        /// <returns></returns>
+        
         [HttpGet("publish-service")]
         public async Task<IActionResult> PublishService(int providerId)
-        {
-           
-            ProviderDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);           
-            ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
-            providerDetailsViewModel.Provider = providerDto;
-            //providerDetailsViewModel.Provider.CertificateInformation = certificateInformation
-            //.Where(x => x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish).ToList();
-            List<int> ServiceIds = new();
-          //  List<int> ServiceIds = providerDetailsViewModel.Provider.CertificateInformation.Select(item => item.Id).ToList();
-            HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);
-              
-            return View(providerDetailsViewModel);
+        {           
+            ProviderProfileDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);
+            providerDto.Services= providerDto.Services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish).ToList();
+            List<int> ServiceIds = providerDto.Services.Select(item => item.Id).ToList();
+            HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);              
+            return View(providerDto);
         }
 
 
@@ -90,24 +70,21 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ProceedPublication(int providerId)
         {
             //To make sure only the service ids reviewed in previous screen is fetched
-            List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();          
-            ProviderDto providerDto = await regManagementService.GetProviderDetails(providerId);
-           // providerDto.CertificateInformation =  providerDto.CertificateInformation.Where(item => serviceids.Contains(item.Id)).ToList();
-            ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
-            providerDetailsViewModel.Provider = providerDto;
-            return View(providerDetailsViewModel);
+            List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
+            ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
+            providerProfileDto.Services =  providerProfileDto.Services.Where(item => serviceids.Contains(item.Id)).ToList();          
+            return View(providerProfileDto);
         }
 
         [HttpGet("about-to-publish")]
         public ActionResult AboutToPublish(int providerId)
-        {         
-           ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
-           providerDetailsViewModel.Provider= new ProviderDto { Id = providerId }; 
-           return View(providerDetailsViewModel);
+        {
+         ProviderProfileDto providerProfileDto = new ProviderProfileDto { Id = providerId }; 
+         return View(providerProfileDto);
         }
 
         [HttpPost("about-to-publish")]
-        public async Task<IActionResult> Publish(ProviderDetailsViewModel providerDetailsViewModel, string action)
+        public async Task<IActionResult> Publish(ProviderProfileDto providerDetailsViewModel, string action)
         {
             if(action == "publish")
             {
@@ -115,10 +92,10 @@ namespace DVSAdmin.Controllers
                 List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
                 if (serviceids != null && serviceids.Any())
                 {
-                    GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Provider.Id, email);
+                    GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id);
                     if (genericResponse.Success)
                     {
-                        return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Provider.Id });
+                        return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Id });
 
                     }
                     else
@@ -133,7 +110,7 @@ namespace DVSAdmin.Controllers
             }
             else if(action == "cancel")
             {
-                return RedirectToAction("ProceedPublication", new { providerId = providerDetailsViewModel.Provider.Id });
+                return RedirectToAction("ProceedPublication", new { providerId = providerDetailsViewModel.Id });
             }
             else
             {
@@ -145,14 +122,38 @@ namespace DVSAdmin.Controllers
         [HttpGet("provider-published")]
         public async Task<IActionResult> ProviderPublished(int providerId)
         {
-            ProviderDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);          
+            ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
             List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
-            ProviderDetailsViewModel providerDetailsViewModel = new ProviderDetailsViewModel();
-            providerDetailsViewModel.Provider = providerDto;
-            //providerDetailsViewModel.Provider.CertificateInformation = providerDto.CertificateInformation
-          // .Where(x => serviceids.Contains(x.Id)).ToList();
+            providerProfileDto.Services = providerProfileDto.Services.Where(x => serviceids.Contains(x.Id)).ToList();
             HttpContext.Session.Remove("ServiceIdsToPublish");
-            return View(providerDetailsViewModel);
+            return View(providerProfileDto);
+        }
+
+
+        /// <summary>
+        /// Download from s3
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+
+        [HttpGet("download-certificate")]
+        public async Task<IActionResult> DownloadCertificate(string key, string filename)
+        {
+            try
+            {
+                byte[]? fileContent = await bucketService.DownloadFileAsync(key);
+
+                if (fileContent == null || fileContent.Length == 0)
+                {
+                    return RedirectToAction(Constants.ErrorPath);
+                }
+                string contentType = "application/octet-stream";
+                return File(fileContent, contentType, filename);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction(Constants.ErrorPath);
+            }
         }
 
     }
