@@ -100,6 +100,9 @@ namespace DVSAdmin.BusinessLogic
            .ForMember(dest => dest.CabUser, opt => opt.MapFrom(src => src.CabUser))
            .ForMember(dest => dest.Provider, opt => opt.MapFrom(src => src.Provider));
 
+            CreateMap<PublicInterestCheck, PublicInterestCheckDto>();
+            CreateMap<PublicInterestCheckDto, PublicInterestCheck>();
+
         }
     }
 }
