@@ -1,0 +1,50 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.Extensions;
+@model DVSAdmin.Models.PublicInterestCheckViewModel;
+@using DVSAdmin.CommonUtility.Models.Enums
+
+<div class="govuk-tabs__panel" id="primary-check">
+    <h2 class="govuk-heading-l">Primary check overview</h2>
+
+
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Service Provider </th>
+                <th scope="col" class="govuk-table__header">Service Name</th>
+                <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
+                <th scope="col" class="govuk-table__header">Time Submitted(UTC)</th>
+                <th scope="col" class="govuk-table__header">Review Status</th>
+                <th scope="col" class="govuk-table__header">Days left to <br />complete<br />review</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+
+
+            <tr class="govuk-table__row">
+
+                <td class="govuk-table__cell">NNC</td>
+                <td class="govuk-table__cell">Financial Service</td>
+                @{
+                    string timeString = "3:45 PM";
+                    string dateString = "2023-02-05";
+                    DateTime dateTime = DateTime.Parse($"{dateString} {timeString}");
+                }
+                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(dateTime) </td>
+                @if (true)
+                {
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(ApplicationReviewStatusEnum.Received)</td>
+                }
+                else
+                {
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(ApplicationReviewStatusEnum.InPrimaryReview)</td>
+                }
+                <td class="govuk-table__cell">10 days</td>
+
+            </tr>
+
+
+        </tbody>
+    </table>
+
+</div>
