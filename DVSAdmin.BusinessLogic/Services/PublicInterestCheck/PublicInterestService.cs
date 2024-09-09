@@ -36,10 +36,10 @@ namespace DVSAdmin.BusinessLogic.Services.PublicInterestCheck
             this.jwtService = jwtService;
             this.configuration = configuration;
         }
-        public async Task<List<Service>> GetPICheckList()
+        public async Task<List<ServiceDto>> GetPICheckList()
         {
             var publicinterestchecks = await publicInterestCheckRepository.GetPICheckList();
-            return automapper.Map<List<Service>>(publicinterestchecks);
+            return automapper.Map<List<ServiceDto>>(publicinterestchecks);
         }
     }
 }

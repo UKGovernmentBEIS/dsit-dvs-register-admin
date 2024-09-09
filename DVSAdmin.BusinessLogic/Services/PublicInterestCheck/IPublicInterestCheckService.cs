@@ -8,7 +8,7 @@ namespace DVSAdmin.BusinessLogic.Services
     public interface IPublicInterestCheckService
     {
       
-        public Task<List<Service>> GetPICheckList();
+        public Task<List<ServiceDto>> GetPICheckList();
         
     }
 }

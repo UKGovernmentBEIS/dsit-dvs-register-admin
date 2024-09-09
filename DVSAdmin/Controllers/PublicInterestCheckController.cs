@@ -9,7 +9,7 @@ namespace DVSAdmin.Controllers
 {
 
     [Route("public-interest-check")]
-    [ValidCognitoToken]
+    //[ValidCognitoToken]
     public class PublicInterestCheckController : Controller
     {
         private readonly ILogger<PublicInterestCheckController> logger;
