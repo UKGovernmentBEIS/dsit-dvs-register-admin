@@ -1,4 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -32,6 +33,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public DateTime? ModifiedTime { get; set; }
         public DateTime? PublishedTime { get; set; }   
         public CertificateReviewDto CertificateReview { get; set; }
+        public PublicInterestCheckDto PublicInterestCheck { get; set; }
         public int DaysLeftToComplete { get; set; }
     }
 }
