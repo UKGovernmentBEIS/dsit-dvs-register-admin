@@ -29,7 +29,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         {
             return await context.ProviderProfile.Include(p => p.Services).Include(x => x.CabUser).ThenInclude(x => x.Cab)
             .Where(p=>p.Id == providerId && (p.ProviderStatus == ProviderStatusEnum.Published ||
-            p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired)).FirstOrDefaultAsync() ?? new ProviderProfile();
+            p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired || p.ProviderStatus == ProviderStatusEnum.ActionRequired)).FirstOrDefaultAsync() ?? new ProviderProfile();
             
         }
 
@@ -42,7 +42,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             .Include(p => p.Services).ThenInclude(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
             .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
             .Where(p => p.Id == providerId &&( p.ProviderStatus == ProviderStatusEnum.Published ||
-            p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired) ).FirstOrDefaultAsync() ?? new ProviderProfile();
+            p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired || p.ProviderStatus == ProviderStatusEnum.ActionRequired)).FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
         public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, ServiceStatusEnum serviceStatus)
