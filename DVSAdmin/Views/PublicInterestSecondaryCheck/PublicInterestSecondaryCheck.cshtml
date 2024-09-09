@@ -1,0 +1,332 @@
+﻿@{
+    ViewData["Title"] = "Application review";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    <a href="#" class="govuk-back-link">Back</a>
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">Application review</h1>
+                <form action="#" method="post">
+                    <input type="hidden" name="PreRegistrationId" value="12345" />
+                    <input type="hidden" name="PrimaryCheckUserId" value="67890" />
+                    <input type="hidden" name="SecondaryCheckUserId" value="54321" />
+
+                    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">Service Provider</th>
+                                <th scope="col" class="govuk-table__header">Service Name</th>
+                                <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
+                                <th scope="col" class="govuk-table__header">Time Submitted (UTC)</th>
+                                <th scope="col" class="govuk-table__header">Review Status</th>
+                                <th scope="col" class="govuk-table__header">Days left to<br />complete review</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell"><a href="#" class="govuk-link">Northrow Limited</a></td>
+                                <td class="govuk-table__cell">Remote Verify</td>
+                                <td class="govuk-table__cell">NQA</td>
+                                <td class="govuk-table__cell">01 September 2024</td>
+                                <td class="govuk-table__cell"><strong>Primary check passed</strong></td>
+                                <td class="govuk-table__cell">1 day</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <details class="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                Instructions for completing the application review
+                            </span>
+                        </summary>
+                        <ol class="govuk-list govuk-list--number">
+
+                            <li>
+                                As the second reviewer, you will be conducting the secondary checks. This is part of the 2i check, which enhances security by ensuring that the decision-making process does not depend on a single individual.
+
+                            </li>
+                            <li>
+                                The application below was reviewed by a first reviewer, who is another member of DSIT. Review the application thoroughly, paying close attention to the decision on each section and the comments made by the first reviewer.
+
+                            </li>
+                            <li>
+                                If you agree with the first reviewer's decision, you can proceed by selecting the button that corresponds to the first reviewer’s decision.
+
+                            </li>
+                            <li>  If you disagree with the first reviewer’s decision, you may need to request for further clarification and send the application back for another review.
+                            </li>
+                            </ol>
+                    </details>
+
+                    <h2 class="govuk-heading-l">Application details</h2>
+                    <h3 class="govuk-heading-m">Provider contact details</h3>
+
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Full name of primary contact</dt>
+                            <dd class="govuk-summary-list__value">John Doe</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Job title of primary contact</dt>
+                            <dd class="govuk-summary-list__value">CEO</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Email address of primary contact</dt>
+                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Telephone number of primary contact</dt>
+                            <dd class="govuk-summary-list__value">+1234567890</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Full name of secondary contact</dt>
+                            <dd class="govuk-summary-list__value">John Doe</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Job title of secondary contact</dt>
+                            <dd class="govuk-summary-list__value">CEO</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Email address of secondary contact</dt>
+                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Telephone number of secondary contact</dt>
+                            <dd class="govuk-summary-list__value">+1234567890</dd>
+                        </div>
+                    </dl>
+
+                    <h3 class="govuk-heading-m">Company overview</h3>
+
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Registered name</dt>
+                            <dd class="govuk-summary-list__value">John Doe</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Trading name</dt>
+                            <dd class="govuk-summary-list__value">CEO</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Companies House or charity registration number</dt>
+                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Dun & Bradstreet or D-U-N-S number</dt>
+                            <dd class="govuk-summary-list__value">+1234567890</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Public contact email</dt>
+                            <dd class="govuk-summary-list__value">John Doe</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Telephone number</dt>
+                            <dd class="govuk-summary-list__value">CEO</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Website address</dt>
+                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                        </div>
+                    </dl>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h2 class="govuk-heading-l">Approval checklist</h2>
+                    <h3 class="govuk-heading-m">Companies House or charity information</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Primary check status</dt>
+                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                        </div>
+                    </dl>
+                    <p class="govuk-body"><a href="#" class="govuk-link">Link to Companies House or charity website</a></p>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>Legal status</li>
+                        <li>If accounts are up to date</li>
+                        <li>Existing certifications</li>
+                        <li>Previous or outstanding administrations</li>
+                        <li>Address checks</li>
+                    </ul>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">Directorships</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Primary check status</dt>
+                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                        </div>
+                    </dl>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>Validity</li>
+                        <li>Sanctioned directors</li>
+                        <li>Persons of interest</li>
+                        <li>Previous or outstanding administrations</li>
+                    </ul>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">Directors and relationships</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Primary check status</dt>
+                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                        </div>
+                    </dl>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>Directors and Partners relationships to organisations on sanction list</li>
+                    </ul>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">Trading as address checks (if applicable)</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Primary check status</dt>
+                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                        </div>
+                    </dl>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">Sanctions list checks</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Primary check status</dt>
+                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                        </div>
+                    </dl>
+                    <p class="govuk-body"><a href="#" class="govuk-link">OFSI Check</a></p>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">UNFC check (if applicable)</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Primary check status</dt>
+                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                        </div>
+                    </dl>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">EC check (if applicable)</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Primary check status</dt>
+                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                        </div>
+                    </dl>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">TARIC check (if applicable)</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Primary check status</dt>
+                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                        </div>
+                    </dl>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">Banned political affiliations</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Primary check status</dt>
+                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                        </div>
+                    </dl>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>Money Laundering and Terrorism Funding</li>
+                        <li>Funding that can pose risks</li>
+                        <li>Existing certifications</li>
+                        <li>ICO – check historical breach and fine information</li>
+                    </ul>
+
+                    <h3 class="govuk-heading-m">Service provider’s website</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Primary check status</dt>
+                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                        </div>
+                    </dl>
+                    <p class="govuk-body"><a href="#" class="govuk-link">Link to service provider’s webpage</a></p>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>Authenticity</li>
+                        <li>SSL certificate</li>
+                    </ul>
+
+                    <h3 class="govuk-heading-m">Primary check reviewer comments</h3>
+                    <p class="govuk-body govuk-summary-list__key">Maria Smith</p>
+                    <p class="govuk-body">10:24 am; 1 Feb 2024h</p>
+                    <p class="govuk-body">All checks passed.</p>
+
+                    
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <div class="govuk-form-group">
+                        <h3 class="govuk-label-wrapper">
+                            <label class="govuk-label govuk-label--s" for="comments">
+                                Comment required
+                            </label>
+                        </h3>
+                        <div id="more-detail-hint" class="govuk-hint">
+                            Please add additional details to support your decision.
+                        </div>
+                        <textarea class="govuk-textarea" id="more-detail" name="moreDetail" rows="5" aria-describedby="more-detail-hint"></textarea>
+                    </div>
+
+
+             
+                   @*  @if (applicationReviewStatus == "PrimaryCheckFailed"){ *@
+                    
+                        <div class="govuk-button-group">
+                            <button type="submit" class="govuk-button" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="approve">
+                                Approve application
+                            </button>
+                           @*  <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
+                                Reject application
+                            </button> *@
+                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="sentback">
+                            Send back to primary check for another review
+                        </button>
+                        </div>
+                       
+                    
+  @*         } else if (applicationReviewStatus == "PrimaryCheckPassed") 
+                  {
+                        <div class="govuk-button-group">
+                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
+                                Approve application
+                            </button>
+                            <button type="submit" class="govuk-button govuk-button--warning" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="reject">
+                                Reject application
+                            </button>
+                        </div>
+                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="sentback">
+                            Send back to primary check for another review
+                        </button>
+                    }
+                    else 
+                    {
+                        <div class="govuk-button-group">
+                            <button type="submit" class="govuk-button" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="approve">
+                                Approve application
+                            </button>
+                            <button type="submit" class="govuk-button govuk-button--warning" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="reject">
+                                Reject application
+                            </button>
+                        </div>
+                        <button type="submit" class="govuk-button govuk-button--secondary" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="sentback">
+                            Send back to primary check for another review
+                        </button>
+                    }  
+                    } *@
+                </form>
+            </div>
+        </div>
+    </main>
+</div>

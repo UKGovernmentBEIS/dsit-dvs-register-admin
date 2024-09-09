@@ -11,6 +11,9 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
+    <Content Remove="Views\SecondaryCheck\PublicInterestSecondaryCheck.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.400" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.7" />
@@ -51,6 +54,7 @@
     <None Include="Views\SecondaryCheck\ConfirmIssueURN.cshtml" />
     <None Include="Views\SecondaryCheck\ConfirmSecondaryCheckReject.cshtml" />
     <None Include="Views\SecondaryCheck\ConfirmSentBackForPrimaryCheck.cshtml" />
+    <None Include="Views\PublicInterestSecondaryCheck\PublicInterestSecondaryCheck.cshtml" />
     <None Include="Views\SecondaryCheck\SecondaryCheckReview.cshtml" />
     <None Include="Views\SecondaryCheck\SentBackConfirmation.cshtml" />
   </ItemGroup>
