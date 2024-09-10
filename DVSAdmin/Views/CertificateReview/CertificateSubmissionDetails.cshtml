@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Submission details - GOV.UK";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+    ViewData["HidePublishStatus"] = true;// setting variable to hide status field in partial view
 }
 
 <div class="govuk-width-container">
@@ -21,7 +22,7 @@
                 </p>
                 <p class="govuk-body">
                     <span class="govuk-hint">
-                        PDF, 19.5 KB, 1 page
+                        PDF, @Model?.CertificateValidation?.Service?.FileSizeInKb KB, 1 page
                     </span>
                 </p>
                 <p class="govuk-body">
@@ -36,7 +37,9 @@
 
                 <h2 class="govuk-heading-l">Submitted information</h2>
 
-                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateDetailsView.cshtml", Model?.CertificateValidation?.Service)
+          
+
+                @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model?.CertificateValidation?.Service)
 
                 @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ContactView.cshtml", Model?.CertificateValidation?.Service)
 
