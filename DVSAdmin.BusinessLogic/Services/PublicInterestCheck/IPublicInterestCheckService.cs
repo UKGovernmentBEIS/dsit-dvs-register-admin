@@ -1,7 +1,6 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
-using DVSAdmin.Data.Entities;
+using DVSAdmin.CommonUtility.Models;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -9,6 +8,8 @@ namespace DVSAdmin.BusinessLogic.Services
     {
       
         public Task<List<ServiceDto>> GetPICheckList();
-        
+        public Task<ServiceDto> GetServiceDetails(int serviceId);
+        public Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheckDto publicInterestCheckDto, ReviewTypeEnum reviewType);
+
     }
 }

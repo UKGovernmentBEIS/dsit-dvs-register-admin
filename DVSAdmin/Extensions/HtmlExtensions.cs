@@ -25,7 +25,7 @@ namespace DVSAdmin.Extensions
                 case ServiceStatusEnum.Submitted:
                 case ServiceStatusEnum.Published:
                 case ServiceStatusEnum.Received:
-                    return "govuk-tag govuk-tag--blue";
+                return "govuk-tag govuk-tag--blue";
 
 
                 case ApplicationReviewStatusEnum.PrimaryCheckPassed:                        
@@ -33,6 +33,7 @@ namespace DVSAdmin.Extensions
                 case URNStatusEnum.Approved:                  
                 case CertificateInfoStatusEnum.Approved:
                 case CertificateReviewEnum.Approved:
+                case PublicInterestCheckEnum.PrimaryCheckPassed:
                 return "govuk-tag govuk-tag--green";
 
                 case ApplicationReviewStatusEnum.SentBackBySecondReviewer:                   
@@ -45,6 +46,7 @@ namespace DVSAdmin.Extensions
                 case CertificateInfoStatusEnum.Removed:
                 case ProviderStatusEnum.RemovedFromRegister:
                 case CertificateReviewEnum.Rejected:
+                case PublicInterestCheckEnum.PublicInterestCheckFailed:
                 return "govuk-tag govuk-tag--red";
 
 
@@ -56,6 +58,8 @@ namespace DVSAdmin.Extensions
                 case ProviderStatusEnum.PublishedActionRequired:
                 case ServiceStatusEnum.ReadyToPublish:
                 case CertificateReviewEnum.InReview:
+                case PublicInterestCheckEnum.InPrimaryReview:
+                case PublicInterestCheckEnum.PrimaryCheckSkipped:
                     return "govuk-tag govuk-tag--yellow";
 
                 default:
