@@ -1,24 +1,50 @@
 ﻿@model TextBoxViewModel
 
+@{
+    string hintId = @Model.PropertyName.ToLower() + "-hint";
+    string errorId = @Model.PropertyName.ToLower() + "-error";
+}
+
 <div class="govuk-form-group @(Model.HasError ? "govuk-form-group--error" : "")">
     <label class="govuk-label govuk-label--s" for="@Model.PropertyName.ToLower()">
         @Model.Label
     </label>
-    @if (Model.HasError)
+
+    @if (!string.IsNullOrEmpty(Model.Hint))
     {
-    <p id="@(Model.PropertyName.ToLower())-error" class="govuk-error-message">
-        <span class="govuk-visually-hidden">Error:</span> @Model.ErrorMessage
-    </p>
+        <div id="@hintId" class="govuk-hint">
+            @Model.Hint
+        </div>
+
+        @if (Model.HasError)
+        {
+            <p id="@errorId" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span> @Model.ErrorMessage
+            </p>
+        }
+
+        @Html.TextBox(Model.PropertyName, Model.Value,
+        new
+        {
+            @id = Model.PropertyName.ToLower(),
+            @class = Model.HasError ? Model.Class + " govuk-input--error" : Model.Class,
+            @aria_describedby = Model.HasError ? hintId + " " + errorId : hintId
+        })
     }
-
-
-    @if (string.IsNullOrEmpty(Model.Hint))
+    else
     {
-    <div id="event-name-hint" class="govuk-hint">
-        @Model.Hint
-    </div>
+        @if (Model.HasError)
+        {
+            <p id="@errorId" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span> @Model.ErrorMessage
+            </p>
+        }
+        @Html.TextBox(Model.PropertyName, Model.Value,
+        new
+        {
+            @id = Model.PropertyName.ToLower(),
+            @class = Model.HasError ? Model.Class + " govuk-input--error" : Model.Class
+        })
     }
-
-    @Html.TextBox(Model.PropertyName, Model.Value, new { @id = Model.PropertyName.ToLower(), @class = Model.HasError ? Model.Class + " govuk-input--error" : Model.Class })
 
 </div>
