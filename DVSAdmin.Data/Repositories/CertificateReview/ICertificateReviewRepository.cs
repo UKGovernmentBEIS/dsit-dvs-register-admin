@@ -11,12 +11,11 @@ namespace DVSAdmin.Data.Repositories
         public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReview cetificateReview);        
         public Task<List<Role>> GetRoles();
         public Task<List<IdentityProfile>> GetIdentityProfiles();
-        public Task<List<SupplementaryScheme>> GetSupplementarySchemes();
-        public Task<List<CertificateInformation>> GetCertificateInformationList();
+        public Task<List<SupplementaryScheme>> GetSupplementarySchemes();      
         public Task<List<Service>> GetServiceListByProvider(int providerId);        
         public Task<List<CertificateReviewRejectionReason>> GetRejectionReasons();
         public Task<CertificateReview> GetCertificateReview(int reviewId);
-        public Task<GenericResponse> UpdateCertificateReviewStatus(int certificateReviewId, string modifiedBy, ProviderStatusEnum providerStatus);
+        
         #region New path
         public Task<List<Service>> GetServiceList();
         public Task<Service> GetServiceDetails(int serviceId);

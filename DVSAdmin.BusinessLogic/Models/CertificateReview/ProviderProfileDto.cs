@@ -13,6 +13,9 @@ namespace DVSAdmin.BusinessLogic.Models
         public bool HasRegistrationNumber { get; set; }
         public string? CompanyRegistrationNumber { get; set; }
         public string? DUNSNumber { get; set; }
+        public bool HasParentCompany {  get; set; }
+        public bool ParentCompanyRegisteredName { get; set; }
+        public bool ParentCompanyLocation { get; set; }
         public string PrimaryContactFullName { get; set; }
         public string PrimaryContactJobTitle { get; set; }
         public string PrimaryContactEmail { get; set; }

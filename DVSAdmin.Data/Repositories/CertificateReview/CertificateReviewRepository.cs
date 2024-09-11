@@ -134,13 +134,7 @@ namespace DVSAdmin.Data.Repositories
             return genericResponse;
         }
 
-        public async Task<List<CertificateInformation>> GetCertificateInformationList()
-        {
-            return await context.CertificateInformation.Include(p=>p.CertificateInfoRoleMapping)
-            .Include(p => p.CertificateInfoIdentityProfileMapping)
-            .Include(p => p.CertificateInfoSupSchemeMappings)
-            .Include(p => p.CertificateReview).Include(p => p.Provider).OrderBy(c => c.CreatedDate).ToListAsync();
-        }
+       
       
         public async Task<List<Service>> GetServiceListByProvider(int providerId)
         {
@@ -179,51 +173,7 @@ namespace DVSAdmin.Data.Repositories
         }
 
 
-        public async Task<GenericResponse> UpdateCertificateReviewStatus(int certificateReviewId, string modifiedBy, ProviderStatusEnum providerStatus)
-        {
-            GenericResponse genericResponse = new GenericResponse();
-            using var transaction = context.Database.BeginTransaction();
-            try
-            {
-                var reviewEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.Id == certificateReviewId);
-
-
-                if(reviewEntity != null)                
-                {
-                    var certificateInfoEntity = await context.CertificateInformation.FirstOrDefaultAsync(e => e.Id == reviewEntity.ServiceId);
-                    var providerEntity = await context.Provider.FirstOrDefaultAsync(e => e.Id == reviewEntity.ProviProviderProfileId);
-
-                    if(certificateInfoEntity != null && providerEntity != null)
-                    {
-                        //update review table status so that it won't appear in review list again
-                        //reviewEntity.CertificateInfoStatus = CertificateInfoStatusEnum.ReadyToPublish;
-                        //reviewEntity.ModifiedBy = modifiedBy;
-                        reviewEntity.ModifiedDate = DateTime.UtcNow;
-
-                       
-                        certificateInfoEntity.CertificateInfoStatus = CertificateInfoStatusEnum.ReadyToPublish;
-                        certificateInfoEntity.ModifiedBy = modifiedBy;
-                        certificateInfoEntity.ModifiedDate = DateTime.UtcNow;
-
-
-                        providerEntity.ProviderStatus = providerStatus;
-                        providerEntity.ModifiedTime = DateTime.UtcNow;
-
-                        await context.SaveChangesAsync();
-                        transaction.Commit();
-                        genericResponse.Success = true;
-                    }
-                } 
-            }
-            catch (Exception ex)
-            {
-                genericResponse.EmailSent = false;
-                genericResponse.Success = false;
-                transaction.Rollback();
-                logger.LogError(ex.Message);
-            }
-            return genericResponse;
-        }
+       
 
         #region New Methods
         public async Task<List<Service>> GetServiceList()
