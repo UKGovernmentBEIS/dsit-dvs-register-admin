@@ -1,4 +1,6 @@
 ﻿using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Data.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
@@ -11,6 +13,9 @@ namespace DVSAdmin.BusinessLogic.Models
         public bool HasRegistrationNumber { get; set; }
         public string? CompanyRegistrationNumber { get; set; }
         public string? DUNSNumber { get; set; }
+        public bool HasParentCompany {  get; set; }
+        public string? ParentCompanyRegisteredName { get; set; }
+        public string? ParentCompanyLocation { get; set; }
         public string PrimaryContactFullName { get; set; }
         public string PrimaryContactJobTitle { get; set; }
         public string PrimaryContactEmail { get; set; }
@@ -23,13 +28,15 @@ namespace DVSAdmin.BusinessLogic.Models
         public string ProviderTelephoneNumber { get; set; }
         public string ProviderWebsiteAddress { get; set; }
         public int CompanyId { get; set; }
-        public int CabUserId { get; set; }
+        public int CabUserId { get; set; }       
+        public CabUserDto CabUser { get; set; }
         public ProviderStatusEnum ProviderStatus { get; set; }
 
         [JsonIgnore]
-        public ICollection<ServiceDto>? Services { get; set; }  
+        public List<ServiceDto>? Services { get; set; }  
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
         public DateTime? PublishedTime { get; set; }
+        public int DaysLeftToComplete { get; set; }
     }
 }

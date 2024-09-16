@@ -1,19 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Data.Common;
-using DVSAdmin.CommonUtility;
-using DVSAdmin.Data;
-using DVSAdmin.Middleware;
+﻿using Amazon;
+using Amazon.S3;
 using DVSAdmin.BusinessLogic;
 using DVSAdmin.BusinessLogic.Services;
-using DVSAdmin.Data.Repositories;
+using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Email;
-using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.JWT;
+using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.Data;
+using DVSAdmin.Data.Repositories;
 using DVSAdmin.Data.Repositories.RegisterManagement;
-using Amazon.S3;
-using Amazon;
-using DVSAdmin.BusinessLogic.Services.PublicInterestCheck;
-using DVSAdmin.Data.Repositories.PublicInterestCheck;
+using DVSAdmin.Middleware;
+using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
 
 namespace DVSAdmin
 {

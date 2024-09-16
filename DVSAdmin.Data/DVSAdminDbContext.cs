@@ -21,16 +21,10 @@ namespace DVSAdmin.Data
         public DbSet<Provider> Provider { get; set; }
         public DbSet<ConsentToken> ConsentToken { get; set; }
         public DbSet<RegisterPublishLog> RegisterPublishLog { get; set; }
+        public DbSet<PublicInterestCheck> PublicInterestCheck { get; set; }
 
 
-        //******To do : To be removed **********
 
-        public DbSet<CertificateInformation> CertificateInformation { get; set; }
-        public DbSet<CertificateInfoRoleMapping> CertificateInfoRoleMapping { get; set; }
-        public DbSet<CertificateInfoIdentityProfileMapping> CertificateInfoIdentityProfileMapping { get; set; }
-
-        public DbSet<CertificateInfoSupSchemeMapping> CertificateInfoSupSchemeMappings { get; set; }
-        //*********************//
 
         #region new path
         public DbSet<Cab> Cab { get; set; }

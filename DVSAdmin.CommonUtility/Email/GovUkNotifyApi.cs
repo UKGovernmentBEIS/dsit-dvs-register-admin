@@ -438,13 +438,15 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-        public async Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName, string emailAddress)
+        #region Register Management
+        public async Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName,string companyName, string emailAddress)
         {
             var template = govUkNotifyConfig.ServicePublishedDIPTemplate;
             var personalisation = new Dictionary<string, dynamic>
             {
                 { template.ServiceName,  serviceName},
-                { template.RecipientName,  recipientName}
+                { template.RecipientName,  recipientName},
+                { template.CompanyName,  companyName}
              };
             var emailModel = new GovUkNotifyEmailModel
             {
@@ -455,13 +457,14 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-        public async Task<bool> SendServicePublishedToCAB(string recipientName, string serviceName, string emailAddress)
+        public async Task<bool> SendServicePublishedToCAB(string recipientName, string serviceName, string companyName, string emailAddress)
         {
             var template = govUkNotifyConfig.ServicePublishedCABTemplate;
             var personalisation = new Dictionary<string, dynamic>
             {
                 { template.ServiceName,  serviceName},
-                { template.RecipientName,  recipientName}
+                { template.RecipientName,  recipientName},
+                { template.CompanyName,  companyName}
              };
             var emailModel = new GovUkNotifyEmailModel
             {
@@ -472,13 +475,13 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-        public async Task<bool> SendServicePublishedToDSIT(string URN, string serviceName)
+        public async Task<bool> SendServicePublishedToDSIT(string companyName, string serviceName)
         {
             var template = govUkNotifyConfig.ServicePublishedDSITTemplate;
             var personalisation = new Dictionary<string, dynamic>
             {
                 { template.ServiceName,  serviceName},
-                { template.URN,  URN}
+                { template.CompanyName,  companyName}
 
              };
             var emailModel = new GovUkNotifyEmailModel
@@ -490,6 +493,6 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-       
+        #endregion
     }
 }

@@ -1,5 +1,7 @@
 ﻿@using DVSAdmin.Extensions;
-@using DVSAdmin.BusinessLogic.Models
+@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models;
+
 
 @{
     bool hidePublishStatus = ViewData["HidePublishStatus"] as bool? ?? false;
@@ -63,17 +65,53 @@
             }
         </dd>
     </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            Identity profiles
-        </dt>
-        <dd class="govuk-summary-list__value">
-            @foreach (var item in Model.ServiceIdentityProfileMapping)
-            {
-                <div>@item.IdentityProfile.IdentityProfileName</div>
-            }
-        </dd>
-    </div>
+
+
+    @if (Model.HasGPG44 && Model.ServiceQualityLevelMapping!=null)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                GPG44 quality of authenticator
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @foreach (var item in Model.ServiceQualityLevelMapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                {
+                    <div>@item.QualityLevel.Level</div>
+                }
+            </dd>
+        </div>
+
+
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                GPG44 level of protection
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @foreach (var item in Model.ServiceQualityLevelMapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                {
+                    <div>@item.QualityLevel.Level</div>
+                }
+            </dd>
+        </div>
+    }
+
+    @if (Model.HasGPG45 && Model.ServiceIdentityProfileMapping!=null)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                GPG45 identity profiles
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @foreach (var item in Model.ServiceIdentityProfileMapping)
+                {
+                    <div>@item.IdentityProfile.IdentityProfileName</div>
+                }
+            </dd>
+        </div>
+
+    }
+    
 
     @if (Model.HasSupplementarySchemes && Model.ServiceSupSchemeMapping!=null)
     {

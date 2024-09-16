@@ -28,8 +28,8 @@
         public Task<bool> SendAgreementToPublishToDSIT(string URN, string serviceName);
 
         //reg - management
-        public Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName,string emailAddress);
-        public Task<bool> SendServicePublishedToCAB(string recipientName, string serviceName, string emailAddress);
-        public Task<bool> SendServicePublishedToDSIT(string URN, string serviceName);
+        public Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName, string companyName, string emailAddress);
+        public Task<bool> SendServicePublishedToCAB(string recipientName, string serviceName, string companyName, string emailAddress);
+        public Task<bool> SendServicePublishedToDSIT(string companyName, string serviceName);
     }
 }

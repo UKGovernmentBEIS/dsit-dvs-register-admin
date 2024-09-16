@@ -5,8 +5,7 @@ namespace DVSAdmin.BusinessLogic.Services
 {
     public interface ICertificateReviewService
     {
-        public Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto);     
-        public Task<CertificateInformationDto> GetCertificateInformation(int certificateInfoId);      
+        public Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto);
         public  Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons();
         public  Task<CertificateReviewDto> GetCertificateReview(int reviewId);       
         public Task<GenericResponse> UpdateCertificateReviewStatus(string token, string tokenId, CertificateInformationDto certificateInformationDto);

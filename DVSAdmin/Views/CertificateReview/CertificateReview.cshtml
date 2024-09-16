@@ -6,6 +6,7 @@
 @{
     ViewData["Title"] = "Certificate Validation";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+    ViewData["HidePublishStatus"] = true;// setting variable to hide status field in partial view
 }
 
 <div class="govuk-width-container">
@@ -115,7 +116,7 @@
                     <span class="govuk-caption-xl">@Model.Service.FileName</span>
 
                     <div id="download-certificate-hint" class="govuk-hint">
-                        PDF, 19.5 KB, 1 page
+                        PDF, @Model.Service.FileSizeInKb KB, 1 page
                         This file may not be suitable for users of assistive technology.
                     </div>
 
@@ -128,8 +129,9 @@
                 </div>
                 <div class="govuk-grid-column-full">
                     <h3 class="govuk-heading-m">Certification information</h3>
+             
 
-                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateDetailsView.cshtml", Model.Service)
+                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
                 </div>
 
                 <div class="govuk-grid-column-two-thirds">
