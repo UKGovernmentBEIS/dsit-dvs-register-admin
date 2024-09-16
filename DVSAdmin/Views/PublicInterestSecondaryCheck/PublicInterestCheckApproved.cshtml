@@ -1,0 +1,66 @@
+﻿
+@{
+    ViewData["Title"] = "You have approved this Application";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "PublicInterestCheckConfirmApproval", "PublicInterestCheck", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">
+                    You have approved this Application
+                </h1>
+                <p class="govuk-body">
+                    You have successfully approved public interest checks to the following application:
+                </p>
+                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header"> Service Provider</th>
+                            <th scope="col" class="govuk-table__header">Service Name</th>
+                            <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
+                            <th scope="col" class="govuk-table__header">Time Submitted(UTC)</th>
+                            <th scope="col" class="govuk-table__header">Review Status</th>
+                            <th scope="col" class="govuk-table__header">Date of decision</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"><a href="#" class="govuk-link">Northrow Limited</a></td>
+                            <td class="govuk-table__cell">Remote Verify</td>
+                            <td class="govuk-table__cell">NQA</td>
+                            <td class="govuk-table__cell">01 September 2024</td>
+                            <td class="govuk-table__cell"><strong>Primary check passed</strong></td>
+                            <td class="govuk-table__cell">02 September 2024</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-body">
+                    The Digital Identity Register Portal inbox will receive an email notification within 20 minutes.
+                </p>
+
+                <p class="govuk-body">
+                    The provider will receive an email asking for their agreement to publish the service on the register.
+                </p>
+
+                @using (Html.BeginForm("PublicInterestCheck", "PublicInterestCheck", FormMethod.Get))
+                {
+                    <button type="submit" class="govuk-button" data-module="govuk-button">
+                        Go back to public interest check
+                    </button>
+                }
+            </div>
+        </div>
+    </main>
+</div>
+
+
+
+
