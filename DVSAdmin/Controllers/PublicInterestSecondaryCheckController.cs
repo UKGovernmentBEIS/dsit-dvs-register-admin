@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace DVSAdmin.Controllers
 {
-    //[ValidCognitoToken]
+    [ValidCognitoToken]
     [Route("public-interest-secondary-check")]
     public class PublicInterestSecondaryCheckController : Controller
     {
@@ -64,51 +64,8 @@ namespace DVSAdmin.Controllers
         [HttpPost("save-secondary-check-review")]
         public async Task<IActionResult> SaveSecondaryCheckReview(PublicInterestSecondaryCheckViewModel publicInterestSecondaryCheckViewModel, string saveReview)
         {
+            //to do implementation
             return View(publicInterestSecondaryCheckViewModel);
-            //ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(publicInterestPrimaryCheckViewModel.ServiceId);
-            //publicInterestPrimaryCheckViewModel.Service = serviceDto;
-            //PublicInterestCheckEnum reviewStatus = GetApplicationStatus(publicInterestPrimaryCheckViewModel, saveReview);
-            //// To handle back ward navigation between screens and cancel
-            //HttpContext?.Session.Set("PrimaryCheckData", publicInterestPrimaryCheckViewModel);
-            //AddModelErrorForInvalidActions(publicInterestPrimaryCheckViewModel, saveReview);
-
-            //if (ModelState.IsValid)
-            //{
-
-            //    publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus = reviewStatus;
-            //    publicInterestPrimaryCheckViewModel.PrimaryCheckComment = InputSanitizeExtensions.CleanseInput(publicInterestPrimaryCheckViewModel.PrimaryCheckComment ?? string.Empty);
-            //    PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckViewModel);
-            //    if (reviewStatus == PublicInterestCheckEnum.InPrimaryReview)
-            //    {
-            //        GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck);
-            //        if (genericResponse.Success)
-            //        {
-            //            return RedirectToAction("PrimaryCheckReview", new { serviceId = publicInterestPrimaryCheckViewModel.Service.Id });
-            //        }
-            //        else
-            //        {
-            //            return RedirectToAction("HandleException", "Error");
-            //        }
-
-            //    }
-            //    else if (reviewStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
-            //    {
-            //        return RedirectToAction("ConfirmPrimaryCheckPass", "PrimaryCheck");
-            //    }
-            //    else if (reviewStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
-            //    {
-            //        return RedirectToAction("ConfirmPrimaryCheckFail", "PrimaryCheck");
-            //    }
-            //    else
-            //    {
-            //        return RedirectToAction("HandleException", "Error");
-            //    }
-            //}
-            //else
-            //{
-            //    HttpContext?.Session.Remove("PrimaryCheckData");
-            //    return View("PrimaryCheckReview", publicInterestPrimaryCheckViewModel);
-            //}
 
         }
 
