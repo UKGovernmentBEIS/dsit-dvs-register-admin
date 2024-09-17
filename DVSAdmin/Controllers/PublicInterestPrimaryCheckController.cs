@@ -24,6 +24,7 @@ namespace DVSAdmin.Controllers
             this.userService = userService;
         }
 
+        #region Review screen
         /// <summary>
         /// Review screen with approve/reject sections
         /// </summary>
@@ -87,7 +88,6 @@ namespace DVSAdmin.Controllers
 
             if (ModelState.IsValid)
             {
-
                 publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus = reviewStatus;
                 publicInterestPrimaryCheckViewModel.PrimaryCheckComment = InputSanitizeExtensions.CleanseInput(publicInterestPrimaryCheckViewModel.PrimaryCheckComment??string.Empty);
                 PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckViewModel);
@@ -106,11 +106,11 @@ namespace DVSAdmin.Controllers
                 }
                 else if (reviewStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
                 {
-                    return RedirectToAction("ConfirmPrimaryCheckPass", "PrimaryCheck");
+                    return RedirectToAction("ConfirmPrimaryCheckPass", "PublicInterestPrimaryCheck");
                 }
                 else if (reviewStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
                 {
-                    return RedirectToAction("ConfirmPrimaryCheckFail", "PrimaryCheck");
+                    return RedirectToAction("ConfirmPrimaryCheckFail", "PublicInterestPrimaryCheck");
                 }
                 else
                 {
@@ -125,7 +125,82 @@ namespace DVSAdmin.Controllers
 
         }
 
+        #endregion
 
+        #region Pass primary check
+        /// <summary>
+        /// Intermediate page to save approval
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("primary-check-approval")]
+        public IActionResult ConfirmPrimaryCheckPass()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Save When Pass Primary check clicked in ConfirmPrimaryCheckPass page
+        /// </summary>        
+        /// <param name="saveReview"></param>
+        /// <returns></returns>
+        [HttpPost("save-primary-check-passed")]
+        public async Task<IActionResult> SavePrimaryCheckPassed(string saveReview)
+        {
+
+            PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckView = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
+            if (publicInterestPrimaryCheckView != null)
+            {
+
+                if (saveReview == "save")
+                {
+                    if (publicInterestPrimaryCheckView != null && publicInterestPrimaryCheckView.ServiceId > 0)
+                    {
+                        PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
+                        publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckPassed;
+                        GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck);
+                        if (genericResponse.Success)
+                        {
+                            return RedirectToAction("PrimaryCheckPassedConfirmation", "PublicInterestPrimaryCheck");
+                        }
+                        else
+                        {
+                            HttpContext.Session.Remove("PrimaryCheckData");
+                            return RedirectToAction("HandleException", "Error");
+                        }
+                    }
+                    else
+                    {
+                        HttpContext.Session.Remove("PrimaryCheckData");
+                        return RedirectToAction("HandleException", "Error");
+                    }
+                }
+                else if (saveReview == "cancel") // on cancel click go back to previous page with curent data
+                {
+                    return RedirectToAction("PrimaryCheckReview", "PublicInterestPrimaryCheck");
+                }
+                else
+                {
+                    HttpContext.Session.Remove("PrimaryCheckData");
+                    return RedirectToAction("HandleException", "Error");
+                }
+            }
+            else
+            {
+                HttpContext.Session.Remove("PrimaryCheckData");
+                return RedirectToAction("HandleException", "Error");
+            }
+
+        }
+
+
+        [HttpGet("primary-check-approval-confirmation")]
+        public IActionResult PrimaryCheckPassedConfirmation()
+        {
+            PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckView = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
+            HttpContext.Session.Remove("PrimaryCheckData");
+            return View(publicInterestPrimaryCheckView.Service);
+        }
+        #endregion
 
         #region Private Methods
 

@@ -3,9 +3,8 @@ using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
-using Microsoft.AspNetCore.Mvc;
 using DVSRegister.Extensions;
-using DVSAdmin.Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
@@ -39,24 +38,22 @@ namespace DVSAdmin.Controllers
                 var publicinterestchecks = await publicInterestCheckService.GetPICheckList();
 
                 publicInterestCheckViewModel.PrimaryChecksList = publicinterestchecks.Where(x => x.DaysLeftToComplete > 0).
-                Where(x => (x.ServiceStatus == ServiceStatusEnum.Received && x.Id != x?.CertificateReview?.ServiceId) ||
-                (x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview
-                || x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed
-                || x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed
+                Where(x => (x.ServiceStatus == ServiceStatusEnum.Received && x.Id != x?.PublicInterestCheck?.ServiceId) ||
+                (x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview               
                 || x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer
                  && x.PublicInterestCheck.SecondaryCheckUserId != userDto.Id)).ToList();
 
                 publicInterestCheckViewModel.SecondaryChecksList = publicinterestchecks
-                .Where(x => x.CertificateReview != null && x.DaysLeftToComplete > 0
-                && (x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
+                .Where(x => x.PublicInterestCheck !=null    && x.DaysLeftToComplete>0
+                &&(x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
                 x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
                 && x.PublicInterestCheck.PrimaryCheckUserId != userDto.Id).ToList();
 
 
                 publicInterestCheckViewModel.ArchiveList = publicinterestchecks
-                .Where(x => x.CertificateReview != null &&
-                (x.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
-                 x.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)).ToList();
+                .Where(x => x.PublicInterestCheck != null &&
+                (x.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckFailed ||
+                 x.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed)).ToList();
 
                 return View(publicInterestCheckViewModel);
             }

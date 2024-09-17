@@ -7,7 +7,7 @@
 
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "PrimaryCheck", "PublicInterestCheck", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "PrimaryCheckReview", "PublicInterestPrimaryCheck", null, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -23,7 +23,7 @@
                 <p class="govuk-body">
                     Once you confirm that the applicant has passed the primary check, an email notification of your decision will be sent to the Office for Digital Identity Register Portal inbox. This application will then become available to another member of DSIT for the secondary check.
                 </p>
-                @using (Html.BeginForm("SavePrimaryCheckPassed", "PublicInterestCheck", FormMethod.Post))
+                @using (Html.BeginForm("SavePrimaryCheckPassed", "PublicInterestPrimaryCheck", FormMethod.Post))
                 {
                     <div class="govuk-button-group">
 
