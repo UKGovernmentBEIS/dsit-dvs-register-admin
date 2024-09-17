@@ -8,7 +8,7 @@ namespace DVSAdmin.BusinessLogic.Models
     {
         public int Id { get; set; }     
         public int ServiceId { get; set; }
-        public ServiceDto PreRegistration { get; set; }   
+        public ServiceDto? Service { get; set; }   
         public int ProviderProfileId { get; set; }
         public ProviderProfileDto Provider { get; set; }
         public bool IsCompanyHouseNumberApproved { get; set; }
