@@ -24,19 +24,19 @@
 
             <tr class="govuk-table__row">
 
-                <td class="govuk-table__cell">@item.Provider.TradingName</td>
+                <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "PrimaryCheckReview", "PublicInterestPrimaryCheck", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>               
                 <td class="govuk-table__cell">@item.ServiceName</td>
                     <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
-                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedTime) </td>
+                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.ModifiedTime) </td>
                     @if (item.PublicInterestCheck == null)
                 {
                         <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
                 }
                 else
                 {
-                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(PublicInterestCheckEnum.InPrimaryReview)</td>
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.PublicInterestCheck.PublicInterestCheckStatus)</td>
                 }
-                    <td class="govuk-table__cell">@item.Provider.DaysLeftToComplete days</td>
+                    <td class="govuk-table__cell">@item.DaysLeftToCompletePICheck days</td>
 
             </tr>
 

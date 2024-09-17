@@ -18,6 +18,7 @@ namespace DVSAdmin.Data.Entities
         public ProviderProfile Provider { get; set; }
         public string ServiceName { get; set; }     
         public string CompanyAddress { get; set; }
+        public string WebSiteAddress { get; set; }
         public ICollection<ServiceRoleMapping> ServiceRoleMapping { get; set; }
         public bool HasGPG44 { get; set; }
         public ICollection<ServiceQualityLevelMapping>? ServiceQualityLevelMapping { get; set; }

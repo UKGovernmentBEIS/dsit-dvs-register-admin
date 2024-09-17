@@ -17,8 +17,10 @@ namespace DVSAdmin.Data.Repositories
             this.logger=logger;
         }
         public async Task<List<Service>> GetPICheckList()
-        {           
-            List<Service> piCheckList = await context.Service.Include(p => p.Provider).Include(p => p.PublicInterestCheck).Where(x => x.ServiceStatus == ServiceStatusEnum.Received).ToListAsync();      
+        {
+            List<Service> piCheckList = await context.Service.Include(p => p.Provider)
+            .Include(p => p.PublicInterestCheck).Include(p => p.CabUser).ThenInclude(p => p.Cab).
+             Where(x => x.ServiceStatus == ServiceStatusEnum.Received).ToListAsync();
             return piCheckList;
         }
 

@@ -10,8 +10,7 @@ namespace DVSAdmin.Models
        
         public int ServiceId { get; set; }
         public int ProviderProfileId { get; set; }
-
-        [JsonIgnore]
+       
         public ServiceDto? Service { get; set; }
 
         [Required(ErrorMessage = "Select approve if the provider meets Companies House or charity information number criteria")]
