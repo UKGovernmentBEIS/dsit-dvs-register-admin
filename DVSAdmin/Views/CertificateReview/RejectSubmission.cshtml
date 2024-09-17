@@ -34,11 +34,11 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header"> Service Provider </th>
+                                <th scope="col" class="govuk-table__header"> Service provider </th>
                                 <th scope="col" class="govuk-table__header">Service name</th>
                                 <th scope="col" class="govuk-table__header">Conformity Assessment Body </th>
                                 <th scope="col" class="govuk-table__header">Role type</th>
-                                <th scope="col" class="govuk-table__header">Time submitted(UTC)</th>
+                                <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
                                 <th scope="col" class="govuk-table__header">Review status</th>
                                 <th scope="col" class="govuk-table__header">Days left to complete checks</th>
                             </tr>
@@ -91,10 +91,10 @@
                         Conformity Assessment Body
                     </h2>
                     <p class="govuk-body">
-                        You should now give details of the reason(s) for rejection to be sent by email
-                        to the Conformity Assessment Body(CAB). Please select reason(s) from the below list which align with the
+                        You should now give details of the reasons for rejection to be sent by email
+                        to the Conformity Assessment Body (CAB). Please select reasons from the below list which align with the
                         rejection criteria shown above. You should also provide specific details and
-                        outline any action required in the text box below
+                        outline any action required in the text box below.
                     </p>
 
 
@@ -109,7 +109,7 @@
                             <fieldset class="govuk-fieldset">
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                                     <h3 class="govuk-fieldset__heading">
-                                        Select reason(s) for rejection to be sent to the CAB
+                                        Select reasons for rejection to be sent to the CAB
                                     </h3>
                                 </legend>
                                 <p id="selectedrejectionreasonids-error" class="govuk-error-message">
@@ -138,7 +138,7 @@
                             <fieldset class="govuk-fieldset">
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                                     <h3 class="govuk-fieldset__heading">
-                                        Select the reason(s)
+                                        Select the reasons
                                     </h3>
                                 </legend>
 
@@ -165,14 +165,14 @@
                 <div class="govuk-grid-column-two-thirds">
                     <p class="govuk-body">
                         Please use the textbox below to give further details on the reason for
-                        rejection and any required amendments for re submission. If you had selected
-                        'Other' , please specify details below.
+                        rejection and any required amendments for resubmission. If you had selected
+                        'Other', please specify details below.
                     </p>
 
-                    <h3 class="govuk-heading-s"> Give further details on reason(s) selected and any required amendments</h3>
+                    <h3 class="govuk-heading-s"> Give further details on reasons selected and any required amendments</h3>
                     <div id="comments-hint" class="govuk-hint">
-                        For example: ‘UKDIATF logo is missing from the certificate. Please add
-                        UKDIATF logo to the certificate.
+                        For example: 'UKDIATF logo is missing from the certificate. Please add
+                        UKDIATF logo to the certificate.'
                     </div>
 
                     @if (Html.ViewData.ModelState.ContainsKey("Comments") && Html.ViewData.ModelState["Comments"].Errors.Count > 0)
@@ -199,7 +199,7 @@
                         <strong class="govuk-warning-text__text">
                             <span class="govuk-visually-hidden">Warning</span>
                             The details provided above will also be included in the email sent to
-                            the CAB.
+                            the CAB
                         </strong>
                     </div>
 

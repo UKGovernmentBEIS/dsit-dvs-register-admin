@@ -25,7 +25,7 @@
                             <th scope="col" class="govuk-table__header">Service name</th>
                             <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
                             <th scope="col" class="govuk-table__header">Role type</th>
-                            <th scope="col" class="govuk-table__header">Time submitted(UTC)</th>
+                            <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
                             <th scope="col" class="govuk-table__header">Review status</th>
                             <th scope="col" class="govuk-table__header">Days left to complete checks</th>
                         </tr>
@@ -34,7 +34,7 @@
                         <tr class="govuk-table__row">
 
                             <td class="govuk-table__cell">@Model.CertificateValidation.Service.Provider.TradingName</td>
-                            <th scope="row" class="govuk-table__header">@Model.CertificateValidation.Service.ServiceName</th>
+                            <td class="govuk-table__cell">@Model.CertificateValidation.Service.ServiceName</th>
                             <td class="govuk-table__cell">@Model.CertificateValidation.Service.CabUser.Cab.CabName</td>
                             <td class="govuk-table__cell">
                                 @foreach (var role in @Model.CertificateValidation.Service.ServiceRoleMapping)
@@ -59,7 +59,7 @@
                 </table>
                 <h2 class="govuk-heading-l">What will happen once you approve</h2>
                 <p class="govuk-body">
-                    The Conformity Assessment Body(CAB) and DSIT will receive a confirmation of this decision.
+                    The Conformity Assessment Body (CAB) and DSIT will receive a confirmation of this decision.
                 </p>
                 <h3 class="govuk-heading-m">Who will receive the decision notification</h3>
 
@@ -76,7 +76,7 @@
                 </dl>
 
                 <p class="govuk-body">
-                    The provider will also receive an email asking for agreement to proceed with their application to the register of digital identity and attribute services. If the provider agrees to proceed, DSIT will receive an email notification. The application will progress to the public inteerest check.
+                    The provider will also receive an email asking for agreement to proceed with their application to the register of digital identity and attribute services. If the provider agrees to proceed, DSIT will receive an email notification. The application will progress to the public interest check.
                 </p>
 
                 <h3 class="govuk-heading-m">Who will receive the email requesting to proceed with the application</h3>
