@@ -69,16 +69,18 @@ namespace DVSAdmin.CommonUtility.Email
                 return false;
             }
         }
-      
 
-        public async Task<bool> SendPrimaryCheckPassConfirmationToOfDia(string URN, string expirationDate)
+
+        #region PI Check
+        public async Task<bool> SendPrimaryCheckPassConfirmationToDSIT(string companyName, string serviceName, string expirationDate)
         {
-            var template = govUkNotifyConfig.PassPrimaryCheckTemplate;          
+            var template = govUkNotifyConfig.PassPIPrimaryCheckTemplate;          
 
             var personalisation = new Dictionary<string, dynamic>
             {
                 { template.ExpirationDate, expirationDate  },
-                { template.URN,  URN},
+                { template.CompanyName,  companyName},
+                { template.ServiceName,  serviceName},
                 { template.LoginLink, govUkNotifyConfig.LoginLink }
             };
             var emailModel = new GovUkNotifyEmailModel
@@ -89,6 +91,7 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+        #endregion
 
         public async Task<bool> SendPrimaryCheckFailConfirmationToOfDia(string URN, string expirationDate)
         {

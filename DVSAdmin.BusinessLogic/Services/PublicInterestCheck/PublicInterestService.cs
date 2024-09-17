@@ -54,14 +54,14 @@ namespace DVSAdmin.BusinessLogic.Services
 
             if (genericResponse.Success)
             {
-                DateTime expirationdate = Convert.ToDateTime(service.ModifiedTime).AddDays(Constants.DaysLeftToComplete);
+                DateTime expirationdate = Convert.ToDateTime(service.ModifiedTime).AddDays(Constants.DaysLeftToCompletePICheck);
                 string expirationDate = Helper.GetLocalDateTime(expirationdate, "d MMM yyyy h:mm tt");
                 if (reviewType == ReviewTypeEnum.PrimaryCheck)
                 {
                     if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
                     {
-                        //TODo :send email
-                       // await emailSender.SendPrimaryCheckPassConfirmationToOfDia(service.Provider.RegisteredName,expirationDate);
+
+                        await emailSender.SendPrimaryCheckPassConfirmationToDSIT(service.Provider.RegisteredName, service.ServiceName, expirationDate);
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
                     {

@@ -10,7 +10,7 @@ namespace DVSAdmin.CommonUtility.Models
         public string LoginLink { get; set; }
         public string PreRegLink { get; set; }
 
-        public PassPrimaryCheckTemplate PassPrimaryCheckTemplate { get;set; }
+        public PassPrimaryCheckTemplate PassPIPrimaryCheckTemplate { get;set; }
         public FailPrimaryCheckTemplate FailPrimaryCheckTemplate { get; set; }
         public PrimaryCheckRoundTwoTemplate PrimaryCheckRoundTwoTemplate { get; set;}
         public ApplicationRejectedTemplate ApplicationRejectedTemplate { get; set; }
