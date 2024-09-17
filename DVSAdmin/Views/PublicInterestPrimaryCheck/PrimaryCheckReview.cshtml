@@ -15,7 +15,7 @@
             <div class="govuk-grid-column-full">
                 @using (Html.BeginForm("SavePrimaryCheckReview", "PublicInterestPrimaryCheck", FormMethod.Post))
                 {
-                    @if (ViewData.ModelState.ErrorCount >0)
+                    @if (ViewData.ModelState.ErrorCount > 0)
                     {
                         ViewData["Title"] = "Error: " + ViewData["Title"];
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
@@ -30,8 +30,8 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header"> Service Provider </th>
-                                <th scope="col" class="govuk-table__header"> Service Name </th>
+                                <th scope="col" class="govuk-table__header"> Service provider </th>
+                                <th scope="col" class="govuk-table__header"> Service name </th>
                                 <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
                                 <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
                                 <th scope="col" class="govuk-table__header">Review status</th>
@@ -204,7 +204,7 @@
                                     registration number
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                   NA
+                                    NA
                                 </dd>
                             </div>
                             <div class="govuk-summary-list__row">
@@ -232,7 +232,7 @@
                             </div>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
-                                    ParentCompanyLocation
+                                    Location of parent company
                                 </dt>
                                 <dd class="govuk-summary-list__value">
                                     @Model.Service.Provider.ParentCompanyLocation
@@ -241,7 +241,7 @@
 
                         }
 
-                       
+
 
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -254,7 +254,7 @@
 
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Telephone number
+                                Public telephone number
                             </dt>
                             <dd class="govuk-summary-list__value">
                                 @Model.Service.Provider.ProviderTelephoneNumber
@@ -284,7 +284,7 @@
 
                         <h3 class="govuk-heading-s">Companies House or charity information or D U-N-S number</h3>
                         <p class="govuk-body">
-                            <a href="#" class="govuk-link">Link to Companies House or charity website</a>.
+                            <a href="https://www.gov.uk/government/organisations/companies-house" class="govuk-link" rel="noreferrer noopener" target="_blank">Link to Companies House</a>.
                         </p>
                         <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                             <li>
@@ -322,7 +322,6 @@
                         @* --------------Directorships Approval ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
                         <h3 class="govuk-heading-m">Directorships</h3>
-                        <p class="govuk-body"><a href="#" class="govuk-link">Link to Directorships website</a></p>
 
                         <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                             <li>
@@ -358,7 +357,7 @@
 
                         <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                             <li>
-                                Directors and Partners relationships to organisations on sanction list
+                                Directors and partners' relationships to organisations on sanction list
                             </li>
 
                         </ul>
@@ -375,7 +374,7 @@
                        })
                         @* --------------Trading Address checks ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">Trading as address checks (if applicable)</h3>
+                        <h3 class="govuk-heading-m">Trading as address checks, if applicable</h3>
 
 
                         @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
@@ -393,7 +392,7 @@
                         @* --------------sanction list checks ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
                         <h3 class="govuk-heading-m">Sanctions list checks</h3>
-                        <p class="govuk-body"><a href="#" class="govuk-link">OFSI Check</a></p>
+                        <p class="govuk-body"><a href="https://sanctionssearchapp.ofsi.hmtreasury.gov.uk/" class="govuk-link" rel="noreferrer noopener" target="_blank">OFSI Check</a></p>
 
 
 
@@ -411,7 +410,7 @@
 
                         @* --------------UNFC checks ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">UNFC check (if applicable)</h3>
+                        <h3 class="govuk-heading-m">UNFC check, if applicable</h3>
 
 
                         @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
@@ -427,7 +426,7 @@
 
                         @* --------------EC checks ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">EC check (if applicable)</h3>
+                        <h3 class="govuk-heading-m">EC check, if applicable</h3>
 
                         @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                        {
@@ -443,7 +442,7 @@
 
                         @* --------------TARIC checks ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">TARIC check (if applicable)</h3>
+                        <h3 class="govuk-heading-m">TARIC check, if applicable</h3>
 
                         @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                        {
@@ -459,7 +458,7 @@
 
                         @* --------------Banned Political affiliation ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">Banned Political affiliations</h3>
+                        <h3 class="govuk-heading-m">Banned political affiliations</h3>
 
 
                         <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
@@ -494,8 +493,8 @@
 
                         @* --------------Providers webpage ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">Service provider s website</h3>
-                        <p class="govuk-body"><a href="@Model.Service.Provider.ProviderWebsiteAddress" class="govuk-link" target="_blank">Link to Providers webpage</a></p>
+                        <h3 class="govuk-heading-m">Service provider's website</h3>
+                        <p class="govuk-body"><a href="@Model.Service.Provider.ProviderWebsiteAddress" class="govuk-link" target="_blank">Link to service provider's website</a></p>
 
                         <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                             <li>
@@ -527,21 +526,20 @@
                         @*    ---------Comments and Save ------- *@
 
 
-                        <div id="primarycheckcomment-hint" class="govuk-hint">
-                            If you had marked any item as Reject , you should provide further details. If all
-                            sections are marked Approve , please provide a note to confirm below
-                        </div>
-
 
                         @if (Html.ViewData.ModelState.ContainsKey("PrimaryCheckComment") && Html.ViewData.ModelState["PrimaryCheckComment"].Errors.Count > 0)
                         {
                             <div class="govuk-form-group govuk-form-group--error">
                                 <h3 class="govuk-label-wrapper">
                                     <label class="govuk-label govuk-label--s" for="primarycheckcomment">
-                                        Comment required
+                                        Add a comment
                                     </label>
-
                                 </h3>
+
+                                <div id="primarycheckcomment-hint" class="govuk-hint">
+                                    If you had marked any item as Reject, you should provide further details. If all
+                                    sections are marked Approve, please provide a note to confirm below
+                                </div>
 
                                 <p id="primarycheckcomment-error" class="govuk-error-message">
                                     <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.PrimaryCheckComment)
@@ -555,9 +553,14 @@
                             <div class="govuk-form-group">
                                 <h3 class="govuk-label-wrapper">
                                     <label class="govuk-label govuk-label--s" for="primarycheckcomment">
-                                        Comment required
+                                        Add a comment
                                     </label>
                                 </h3>
+
+                                <div id="primarycheckcomment-hint" class="govuk-hint">
+                                    If you had marked any item as Reject, you should provide further details. If all
+                                    sections are marked Approve, please provide a note to confirm below
+                                </div>
 
                                 @Html.TextAreaFor(model => model.PrimaryCheckComment, new { @class = "govuk-textarea", @id = "primarycheckcomment", @name = "primarycheckcomment-name", @rows = "5", @aria_describedby = "primarycheckcomment-hint" })
                             </div>
@@ -573,8 +576,8 @@
                     </p>
 
 
-                    @if ((Model.PublicInterestCheck!=null &&  Model.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview ||
-                   Model.PublicInterestCheckStatus ==  PublicInterestCheckEnum.SentBackBySecondReviewer) || Model.Service.ServiceStatus == ServiceStatusEnum.Received)
+                    @if ((Model.PublicInterestCheck != null && Model.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview ||
+                  Model.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer) || Model.Service.ServiceStatus == ServiceStatusEnum.Received)
 
                     {
                         <div id="submitvalidation" class="govuk-button-group">
