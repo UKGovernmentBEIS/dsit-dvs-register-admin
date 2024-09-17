@@ -1,18 +1,25 @@
-﻿
+﻿@model DVSAdmin.Models.PublicInterestSecondaryCheckViewModel;
+@using Newtonsoft.Json
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
 @{
-    ViewData["Title"] = "Primary check request successful";
+    ViewData["Title"] = "You have rejected this application";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
 <div class="govuk-width-container">
-
+   
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">
-                    Primary check request successful
+                    You have rejected this <br /> application
                 </h1>
+                <p class="govuk-body">
+                    You have chosen to reject the following application:
+                </p>
                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
@@ -35,22 +42,20 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="govuk-grid-column-two-thirds">
 
-                    <p class="govuk-body">
-                       The Digital Identity Register Portal user will receive an email notification of the application status change within 20 minutes.
-                    </p>
+                <p class="govuk-body">
+                    An email notification of this status update will be sent to the  Digital Identity Register Portal general email inbox within the next 20 minutes.
+                </p>
 
-                    @using (Html.BeginForm("SecondaryCheckReview", "PublicInterestSecondaryCheck", FormMethod.Get))
-                    {
-                        <button type="submit" class="govuk-button" data-module="govuk-button">
-                            Go back to public interest check
-                        </button>
-                    }
-                </div>
+                @using (Html.BeginForm("SecondaryCheckReview", "PublicInterestSecondaryCheck", FormMethod.Get))
+                {
+                    <button type="submit" class="govuk-button" data-module="govuk-button" >
+                        Go back to public interest check
+                    </button>
+                }
+
             </div>
         </div>
     </main>
 </div>
-
 
