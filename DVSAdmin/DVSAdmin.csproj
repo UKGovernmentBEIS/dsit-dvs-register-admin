@@ -11,6 +11,11 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
+    <Content Remove="Views\PublicInterestSecondaryCheck\PublicInterestAboutToReject.cshtml" />
+    <Content Remove="Views\PublicInterestSecondaryCheck\PublicInterestApplicationRejectionConfirmation.cshtml" />
+    <Content Remove="Views\PublicInterestSecondaryCheck\PublicInterestConfirmSecondaryCheckReject.cshtml" />
+    <Content Remove="Views\PublicInterestSecondaryCheck\PublicInterestConfirmSentBackForPrimaryCheck.cshtml" />
+    <Content Remove="Views\PublicInterestSecondaryCheck\PublicInterestSentBackConfirmation.cshtml" />
     <Content Remove="Views\SecondaryCheck\PublicInterestSecondaryCheck.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +52,11 @@
     <None Include="Views\PrimaryCheck\PrimaryCheckFailedConfirmation.cshtml" />
     <None Include="Views\PrimaryCheck\PrimaryCheckPassedConfirmation.cshtml" />
     <None Include="Views\PrimaryCheck\PrimaryCheckReview.cshtml" />
+    <None Include="Views\PublicInterestSecondaryCheck\PublicInterestAboutToReject.cshtml" />
+    <None Include="Views\PublicInterestSecondaryCheck\PublicInterestApplicationRejectionConfirmation.cshtml" />
+    <None Include="Views\PublicInterestSecondaryCheck\PublicInterestConfirmSecondaryCheckReject.cshtml" />
+    <None Include="Views\PublicInterestSecondaryCheck\PublicInterestConfirmSentBackForPrimaryCheck.cshtml" />
+    <None Include="Views\PublicInterestSecondaryCheck\PublicInterestSentBackConfirmation.cshtml" />
     <None Include="Views\SecondaryCheck\AboutToIssueURN.cshtml" />
     <None Include="Views\SecondaryCheck\AboutToReject.cshtml" />
     <None Include="Views\SecondaryCheck\ApplicationApprovalConfirmation.cshtml" />

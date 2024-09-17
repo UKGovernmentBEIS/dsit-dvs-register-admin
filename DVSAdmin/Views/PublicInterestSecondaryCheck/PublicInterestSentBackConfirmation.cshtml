@@ -1,4 +1,6 @@
-﻿
+﻿@model DVSAdmin.Models.PublicInterestSecondaryCheckViewModel;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
 @{
     ViewData["Title"] = "Primary check request successful";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -35,19 +37,23 @@
                         </tr>
                     </tbody>
                 </table>
+
+
                 <div class="govuk-grid-column-two-thirds">
+                   
+                    <div id="applicationSponsor-hint" class="govuk-hint">
+                        The Digital Identity Register Portal user will receive an email notification of the
+                        application status change within 20 minutes.
+                    </div>
 
-                    <p class="govuk-body">
-                       The Digital Identity Register Portal user will receive an email notification of the application status change within 20 minutes.
-                    </p>
-
-                    @using (Html.BeginForm("SecondaryCheckReview", "PublicInterestSecondaryCheck", FormMethod.Get))
+                    @using (Html.BeginForm("PreRegistrationReview", "PreRegistrationReview", FormMethod.Get))
                     {
-                        <button type="submit" class="govuk-button" data-module="govuk-button">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" >
                             Go back to public interest check
                         </button>
                     }
                 </div>
+
             </div>
         </div>
     </main>
