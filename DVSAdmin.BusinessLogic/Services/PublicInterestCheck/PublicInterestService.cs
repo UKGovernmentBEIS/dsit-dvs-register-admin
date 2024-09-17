@@ -65,7 +65,7 @@ namespace DVSAdmin.BusinessLogic.Services
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
                     {
-                        //await emailSender.SendPrimaryCheckFailConfirmationToOfDia(preRegistration.URN??string.Empty, expirationDate);
+                       await emailSender.SendPrimaryCheckFailConfirmationToDSIT(service.Provider.RegisteredName, service.ServiceName, expirationDate);
                     }
 
                 }

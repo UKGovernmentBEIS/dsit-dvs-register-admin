@@ -4,7 +4,7 @@
     {       
         //PI Check
         public Task<bool> SendPrimaryCheckPassConfirmationToDSIT(string companyName, string serviceName,string expirationDate);
-        public Task<bool> SendPrimaryCheckFailConfirmationToOfDia(string URN, string expirationDate);
+        public Task<bool> SendPrimaryCheckFailConfirmationToDSIT(string companyName, string serviceName, string expirationDate);
         public Task<bool> SendPrimaryCheckRoundTwoConfirmationToOfDia(string URN, string expirationDate);
         public Task<bool> SendPrimaryApplicationRejectedConfirmationToOfDia(string URN);
         public Task<bool> SendURNIssuedConfirmationToOfDia(string URN);

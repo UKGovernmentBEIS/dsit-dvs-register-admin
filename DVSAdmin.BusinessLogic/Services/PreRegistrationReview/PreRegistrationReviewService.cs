@@ -79,7 +79,8 @@ namespace DVSAdmin.BusinessLogic.Services
                     }
                     else if (preRegistrationReviewDto.ApplicationReviewStatus == ApplicationReviewStatusEnum.PrimaryCheckFailed)
                     {
-                        await emailSender.SendPrimaryCheckFailConfirmationToOfDia(preRegistration.URN??string.Empty, expirationDate);
+                        //ToDo : PreRegistrationReviewService will be deleted 
+                        // await emailSender.SendPrimaryCheckFailConfirmationToOfDia(preRegistration.URN??string.Empty, expirationDate);
                     }
 
                 }
