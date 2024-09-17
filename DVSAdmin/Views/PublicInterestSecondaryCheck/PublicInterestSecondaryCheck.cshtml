@@ -1,18 +1,27 @@
-﻿@{
+﻿@model DVSAdmin.Models.PublicInterestSecondaryCheckViewModel;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using Newtonsoft.Json
+@{
     ViewData["Title"] = "Application review";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
 <div class="govuk-width-container">
-    <a href="#" class="govuk-back-link">Back</a>
+    @Html.ActionLink("Back", "PublicInterestCheck", "PublicInterestCheck", null, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">Application review</h1>
-                <form action="#" method="post">
-                    <input type="hidden" name="PreRegistrationId" value="12345" />
-                    <input type="hidden" name="PrimaryCheckUserId" value="67890" />
-                    <input type="hidden" name="SecondaryCheckUserId" value="54321" />
+                @using (Html.BeginForm("SaveSecondaryCheckReview", "PublicInterestSecondaryCheck", FormMethod.Post))
+                {
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                    }
+                    @Html.HiddenFor(m => m.PrimaryCheckUserId)
+                    @Html.HiddenFor(m => m.SecondaryCheckUserId)
 
                     <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
 
@@ -29,12 +38,19 @@
                         </thead>
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell"><a href="#" class="govuk-link">Northrow Limited</a></td>
-                                <td class="govuk-table__cell">Remote Verify</td>
-                                <td class="govuk-table__cell">NQA</td>
-                                <td class="govuk-table__cell">01 September 2024</td>
-                                <td class="govuk-table__cell"><strong>Primary check passed</strong></td>
-                                <td class="govuk-table__cell">1 day</td>
+                                <td class="govuk-table__cell">@Model.Service.Provider.TradingName</td>
+                                <td class="govuk-table__cell">@Model.Service.ServiceName</td>
+                                <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(@Model.Service.CreatedTime) </td>
+                                @if (@Model.Service.PublicInterestCheck == null)
+                                {
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(@Model.Service.ServiceStatus)</td>
+                                }
+                                else
+                                {
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(PublicInterestCheckEnum.InPrimaryReview)</td>
+                                }
+                                <td class="govuk-table__cell">@Model.Service.Provider.DaysLeftToComplete days</td>
                             </tr>
                         </tbody>
                     </table>
@@ -70,35 +86,35 @@
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Full name of primary contact</dt>
-                            <dd class="govuk-summary-list__value">John Doe</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.PrimaryContactFullName</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Job title of primary contact</dt>
-                            <dd class="govuk-summary-list__value">CEO</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.PrimaryContactJobTitle</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Email address of primary contact</dt>
-                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.PrimaryContactEmail</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Telephone number of primary contact</dt>
-                            <dd class="govuk-summary-list__value">+1234567890</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.PrimaryContactTelephoneNumber</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Full name of secondary contact</dt>
-                            <dd class="govuk-summary-list__value">John Doe</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.SecondaryContactFullName</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Job title of secondary contact</dt>
-                            <dd class="govuk-summary-list__value">CEO</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.SecondaryContactJobTitle</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Email address of secondary contact</dt>
-                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.SecondaryContactEmail</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Telephone number of secondary contact</dt>
-                            <dd class="govuk-summary-list__value">+1234567890</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.SecondaryContactTelephoneNumber</dd>
                         </div>
                     </dl>
 
@@ -107,31 +123,31 @@
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Registered name</dt>
-                            <dd class="govuk-summary-list__value">John Doe</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.RegisteredName</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Trading name</dt>
-                            <dd class="govuk-summary-list__value">CEO</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.TradingName</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Companies House or charity registration number</dt>
-                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.CompanyRegistrationNumber</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Dun & Bradstreet or D-U-N-S number</dt>
-                            <dd class="govuk-summary-list__value">+1234567890</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.DUNSNumber</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Public contact email</dt>
-                            <dd class="govuk-summary-list__value">John Doe</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.PublicContactEmail</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Telephone number</dt>
-                            <dd class="govuk-summary-list__value">CEO</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.ProviderTelephoneNumber</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Website address</dt>
-                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                            <dd class="govuk-summary-list__value">@Model.Service.Provider.ProviderWebsiteAddress</dd>
                         </div>
                     </dl>
 
@@ -140,8 +156,12 @@
                     <h3 class="govuk-heading-m">Companies House or charity information</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Primary check status</dt>
-                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.Service.Provider.ProviderStatus)
+                            </dd>
                         </div>
                     </dl>
                     <p class="govuk-body"><a href="#" class="govuk-link">Link to Companies House or charity website</a></p>
@@ -158,8 +178,12 @@
                     <h3 class="govuk-heading-m">Directorships</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Primary check status</dt>
-                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.IsDirectorshipsApproved)
+                            </dd>
                         </div>
                     </dl>
 
@@ -174,8 +198,12 @@
                     <h3 class="govuk-heading-m">Directors and relationships</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Primary check status</dt>
-                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.IsDirectorshipsAndRelationApproved)
+                            </dd>
                         </div>
                     </dl>
 
@@ -187,8 +215,12 @@
                     <h3 class="govuk-heading-m">Trading as address checks (if applicable)</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Primary check status</dt>
-                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.IsTradingAddressApproved)
+                            </dd>
                         </div>
                     </dl>
 
@@ -196,8 +228,12 @@
                     <h3 class="govuk-heading-m">Sanctions list checks</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Primary check status</dt>
-                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.IsSanctionListApproved)
+                            </dd>
                         </div>
                     </dl>
                     <p class="govuk-body"><a href="#" class="govuk-link">OFSI Check</a></p>
@@ -206,8 +242,12 @@
                     <h3 class="govuk-heading-m">UNFC check (if applicable)</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Primary check status</dt>
-                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.IsUNFCApproved)
+                            </dd>
                         </div>
                     </dl>
 
@@ -215,8 +255,12 @@
                     <h3 class="govuk-heading-m">EC check (if applicable)</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Primary check status</dt>
-                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.IsECCheckApproved)
+                            </dd>
                         </div>
                     </dl>
 
@@ -224,8 +268,12 @@
                     <h3 class="govuk-heading-m">TARIC check (if applicable)</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Primary check status</dt>
-                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.IsTARICApproved)
+                            </dd>
                         </div>
                     </dl>
 
@@ -233,8 +281,12 @@
                     <h3 class="govuk-heading-m">Banned political affiliations</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Primary check status</dt>
-                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.IsBannedPoliticalApproved)
+                            </dd>
                         </div>
                     </dl>
 
@@ -248,8 +300,12 @@
                     <h3 class="govuk-heading-m">Service provider’s website</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Primary check status</dt>
-                            <dd class="govuk-summary-list__value"><strong>Approved</strong></dd>
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.IsProvidersWebpageApproved)
+                            </dd>
                         </div>
                     </dl>
                     <p class="govuk-body"><a href="#" class="govuk-link">Link to service provider’s webpage</a></p>
@@ -262,26 +318,43 @@
                     <h3 class="govuk-heading-m">Primary check reviewer comments</h3>
                     <p class="govuk-body govuk-summary-list__key">Maria Smith</p>
                     <p class="govuk-body">10:24 am; 1 Feb 2024h</p>
-                    <p class="govuk-body">All checks passed.</p>
+                    <p class="govuk-body">@Model.PrimaryCheckComment</p>
 
-                    
 
-                    <hr class="govuk-section-break govuk-section-break--l">
-                    <div class="govuk-form-group">
-                        <h3 class="govuk-label-wrapper">
-                            <label class="govuk-label govuk-label--s" for="comments">
-                                Comment required
-                            </label>
-                        </h3>
-                        <div id="more-detail-hint" class="govuk-hint">
-                            Please add additional details to support your decision.
+                    @if (Html.ViewData.ModelState.ContainsKey("Comment") && Html.ViewData.ModelState["Comment"].Errors.Count > 0)
+                    {
+                        <hr class="govuk-section-break govuk-section-break--l">
+                        <div class="govuk-form-group">
+                            <h3 class="govuk-label-wrapper">
+                                <label class="govuk-label govuk-label--s" for="comments">
+                                    Comment required
+                                </label>
+                            </h3>
+                            <div id="more-detail-hint" class="govuk-hint">
+                                Please add additional details to support your decision.
+                            </div>
+                            <p class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.SecondaryCheckComment)
+                            </p>
+                            @Html.TextAreaFor(model => model.SecondaryCheckComment, new { @class = "govuk-textarea govuk-textarea--error", @id = "comment", @name = "comment-name", @rows = "5" })
                         </div>
-                        <textarea class="govuk-textarea" id="more-detail" name="moreDetail" rows="5" aria-describedby="more-detail-hint"></textarea>
-                    </div>
+                    }
+                    else
+                    {
+                        <div class="govuk-form-group">
+                            <h3 class="govuk-label-wrapper">
+                                <label class="govuk-label govuk-label--s" for="comment">
+                                    Comments
+                                </label>
+                            </h3>
 
+                            @Html.TextAreaFor(model => model.SecondaryCheckComment, new { @class = "govuk-textarea", @id = "comment", @name = "comment-name", @rows = "5" })
+                        </div>
+
+                    }
 
              
-                   @*  @if (applicationReviewStatus == "PrimaryCheckFailed"){ *@
+                    @if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed){
                     
                         <div class="govuk-button-group">
                             <button type="submit" class="govuk-button" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="approve">
@@ -294,10 +367,10 @@
                             Send back to primary check for another review
                         </button>
                         </div>
-                       
-                    
-  @*         } else if (applicationReviewStatus == "PrimaryCheckPassed") 
-                  {
+                         }
+
+                    else if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
+                    {
                         <div class="govuk-button-group">
                             <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
                                 Approve application
@@ -324,8 +397,8 @@
                             Send back to primary check for another review
                         </button>
                     }  
-                    } *@
-                </form>
+                    }
+                }
             </div>
         </div>
     </main>

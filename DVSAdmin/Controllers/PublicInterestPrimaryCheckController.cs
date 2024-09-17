@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
-    [ValidCognitoToken]
+    //[ValidCognitoToken]
     [Route("public-interest-primary-check")]
     public class PublicInterestPrimaryCheckController : Controller
     {

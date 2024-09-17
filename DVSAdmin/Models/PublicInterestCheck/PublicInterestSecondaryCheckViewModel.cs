@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace DVSAdmin.Models
 {
-    public class PublicInterestPrimaryCheckViewModel
+    public class PublicInterestSecondaryCheckViewModel
     {        
        
         public int ServiceId { get; set; }
