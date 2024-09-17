@@ -1,4 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models.Consent;
+using DVSAdmin.CommonUtility.Models.PublicInterestCheck;
 
 namespace DVSAdmin.CommonUtility.Models
 {
@@ -10,8 +11,8 @@ namespace DVSAdmin.CommonUtility.Models
         public string LoginLink { get; set; }
         public string PreRegLink { get; set; }
 
-        public PassPrimaryCheckTemplate PassPrimaryCheckTemplate { get;set; }
-        public FailPrimaryCheckTemplate FailPrimaryCheckTemplate { get; set; }
+        public PassPIPrimaryCheckTemplate PassPIPrimaryCheckTemplate { get;set; }
+        public FailPIPrimaryCheckTemplate FailPIPrimaryCheckTemplate { get; set; }
         public PrimaryCheckRoundTwoTemplate PrimaryCheckRoundTwoTemplate { get; set;}
         public ApplicationRejectedTemplate ApplicationRejectedTemplate { get; set; }
         public IssueURNConfirmationTemplate IssueURNConfirmationTemplate { get; set; }

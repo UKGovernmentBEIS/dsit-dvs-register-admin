@@ -47,6 +47,7 @@ namespace DVSAdmin.Extensions
                 case ProviderStatusEnum.RemovedFromRegister:
                 case CertificateReviewEnum.Rejected:
                 case PublicInterestCheckEnum.PublicInterestCheckFailed:
+                case PublicInterestCheckEnum.PrimaryCheckFailed:
                 return "govuk-tag govuk-tag--red";
 
 
