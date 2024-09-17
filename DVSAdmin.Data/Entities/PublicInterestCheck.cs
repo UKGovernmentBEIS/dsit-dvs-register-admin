@@ -13,7 +13,7 @@ namespace DVSAdmin.Data.Entities
 
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
-        public Service PreRegistration { get; set; }
+        public Service Service { get; set; }
 
         [ForeignKey("ProviderProfile")]
         public int ProviderProfileId { get; set; }

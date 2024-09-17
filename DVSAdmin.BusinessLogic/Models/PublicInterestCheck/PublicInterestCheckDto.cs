@@ -1,6 +1,6 @@
 ﻿using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -8,6 +8,8 @@ namespace DVSAdmin.BusinessLogic.Models
     {
         public int Id { get; set; }     
         public int ServiceId { get; set; }
+
+        [JsonIgnore]
         public ServiceDto? Service { get; set; }   
         public int ProviderProfileId { get; set; }
         public ProviderProfileDto Provider { get; set; }

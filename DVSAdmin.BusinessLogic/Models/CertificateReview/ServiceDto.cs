@@ -9,7 +9,8 @@ namespace DVSAdmin.BusinessLogic.Models
         public int ProviderProfileId { get; set; }
         public ProviderProfileDto Provider { get; set; }
         public string ServiceName { get; set; }  
-        public string CompanyAddress { get; set; }    
+        public string CompanyAddress { get; set; }
+        public string WebSiteAddress { get; set; }
         public ICollection<ServiceRoleMappingDto> ServiceRoleMapping { get; set; }
         public bool HasGPG44 { get; set; }     
         public ICollection<ServiceQualityLevelMappingDto>? ServiceQualityLevelMapping { get; set; }
@@ -34,5 +35,6 @@ namespace DVSAdmin.BusinessLogic.Models
         public CertificateReviewDto CertificateReview { get; set; }
         public PublicInterestCheckDto PublicInterestCheck { get; set; }
         public int DaysLeftToComplete { get; set; }
+        public int DaysLeftToCompletePICheck { get; set; }
     }
 }

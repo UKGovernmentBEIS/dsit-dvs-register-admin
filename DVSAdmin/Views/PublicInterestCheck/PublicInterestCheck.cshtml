@@ -41,18 +41,13 @@
                     </li>
 
                 </ul>
-
-                <div class="govuk-tabs__panel" id="primary-check">
-                    @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/PublicInterestPrimaryCheckView.cshtml", Model)
-                </div>
-
-                <div class="govuk-tabs__panel" id="secondary-check">
-                    @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/PublicInterestSecondaryCheckView.cshtml", Model)
-                </div>
-
-                <div class="govuk-tabs__panel" id="archive">
+              
+                    @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/PublicInterestPrimaryCheckView.cshtml", Model)          
+              
+                    @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/PublicInterestSecondaryCheckView.cshtml", Model)  
+               
                     @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/ArchiveView.cshtml", Model)
-                </div>
+               
 
             </div>
         </div>

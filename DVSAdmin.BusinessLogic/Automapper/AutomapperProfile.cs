@@ -89,7 +89,8 @@ namespace DVSAdmin.BusinessLogic
             .ForMember(dest => dest.Provider, opt => opt.MapFrom(src => src.Provider))
             .ForMember(dest => dest.CertificateReview, opt => opt.MapFrom(src => src.CertificateReview))
             .ForMember(dest => dest.CabUser, opt => opt.MapFrom(src => src.CabUser))
-            .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftResolverCertificateReview>());
+            .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftResolverCertificateReview>())
+            .ForMember(dest => dest.DaysLeftToCompletePICheck, opt => opt.MapFrom<DaysLeftResolverPICheck>());
 
             CreateMap<ServiceDto, Service>()
            .ForMember(dest => dest.ServiceQualityLevelMapping, opt => opt.MapFrom(src => src.ServiceQualityLevelMapping))

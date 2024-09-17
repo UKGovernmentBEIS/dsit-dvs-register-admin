@@ -3,7 +3,7 @@
 @model DVSAdmin.Models.PublicInterestCheckViewModel;
 @using DVSAdmin.CommonUtility.Models.Enums
 
-<div class="govuk-tabs__panel" id="archive-check">
+<div class="govuk-tabs__panel" id="archive">
     <h2 class="govuk-heading-l">Archive check overview</h2>
 
 
@@ -15,29 +15,19 @@
                 <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
                 <th scope="col" class="govuk-table__header">Time Submitted(UTC)</th>
                 <th scope="col" class="govuk-table__header">Review Status</th>
-                <th scope="col" class="govuk-table__header">Days left to <br />complete<br />review</th>
+                <th scope="col" class="govuk-table__header">Date of decision (UTC)</th>
             </tr>
         </thead>
         <tbody class="govuk-table__body">
             @foreach (var item in Model.ArchiveList)
             {
-
                 <tr class="govuk-table__row">
-
                     <td class="govuk-table__cell">@item.Provider.TradingName</td>
                     <td class="govuk-table__cell">@item.ServiceName</td>
                     <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
-                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedTime) </td>
-                    @if (item.PublicInterestCheck == null)
-                    {
-                        <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
-                    }
-                    else
-                    {
-                        <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(PublicInterestCheckEnum.InPrimaryReview)</td>
-                    }
-                    <td class="govuk-table__cell">@item.Provider.DaysLeftToComplete days</td>
-
+                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.ModifiedTime) </td>
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.PublicInterestCheck.PublicInterestCheckStatus)</td>
+                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.PublicInterestCheck.SecondaryCheckTime, "dd MMMM yyyy")</td>
                 </tr>
             }
 
