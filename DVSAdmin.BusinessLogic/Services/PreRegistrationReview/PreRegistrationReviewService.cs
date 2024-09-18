@@ -99,12 +99,10 @@ namespace DVSAdmin.BusinessLogic.Services
                             PreRegistrationId = preRegistrationReviewDto.PreRegistrationId,
                             ModifiedDate = DateTime.UtcNow
                         };
-                        genericResponse = await preRegistrationReviewRepository.UpdateURNStatus(uniqueReferenceNumber);
-                        await emailSender.SendPrimaryApplicationRejectedConfirmationToOfDia(preRegistration.URN??string.Empty);
-                        await emailSender.SendApplicationRejectedToDIASP(preRegistration.FullName, preRegistration.Email);
+                        genericResponse = await preRegistrationReviewRepository.UpdateURNStatus(uniqueReferenceNumber);                       
                         if (!string.IsNullOrEmpty(preRegistration.SponsorEmail))
                         {
-                            await emailSender.SendApplicationRejectedToDIASP(preRegistration.SponsorFullName??string.Empty, preRegistration.SponsorEmail);
+                           
                         }
                     }
                     else if (preRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationApproved)

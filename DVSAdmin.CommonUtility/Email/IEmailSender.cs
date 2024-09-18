@@ -1,17 +1,23 @@
 ﻿namespace DVSAdmin.CommonUtility.Email
 {
     public interface IEmailSender
-    {       
+    {
+
+        public Task<bool> SendAccountCreatedConfirmation(string recipientName, string emailAddress);
+        public Task<bool> SendFailedLoginAttempt(string timestamp, string emailAddress);
         //PI Check
         public Task<bool> SendPrimaryCheckPassConfirmationToDSIT(string companyName, string serviceName,string expirationDate);
         public Task<bool> SendPrimaryCheckFailConfirmationToDSIT(string companyName, string serviceName, string expirationDate);
         public Task<bool> SendPrimaryCheckRoundTwoConfirmationToDSIT(string companyName, string serviceName, string expirationDate);
-        public Task<bool> SendPrimaryApplicationRejectedConfirmationToOfDia(string URN);
-        public Task<bool> SendURNIssuedConfirmationToOfDia(string URN);
-        public Task<bool> SendAccountCreatedConfirmation(string recipientName, string emailAddress);
-        public Task<bool> SendFailedLoginAttempt(string timestamp, string emailAddress);       
-        public Task<bool> SendApplicationRejectedToDIASP(string recipientName, string emailAddress);
+        public Task<bool> SendApplicationRejectedToDIP(string recipientName, string emailAddress);
+        public Task<bool> SendApplicationRejectedConfirmationToDSIT(string companyName, string serviceName);
+
+        //To Do
         public Task<bool> SendApplicationApprovedToDIASP(string recipientName, string URN, string expiryDate, string emailAddress);
+        public Task<bool> SendURNIssuedConfirmationToOfDia(string URN);
+       
+      
+      
 
         //Certificate review
 

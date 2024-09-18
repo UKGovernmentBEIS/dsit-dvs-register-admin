@@ -102,10 +102,9 @@ namespace DVSAdmin.BusinessLogic.Services
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckFailed)
                     {
-                        //TODo
-                        // await emailSender.SendPrimaryApplicationRejectedConfirmationToOfDia(preRegistration.URN??string.Empty);
-                        //await emailSender.SendApplicationRejectedToDIASP(preRegistration.FullName, preRegistration.Email);
-                        //await emailSender.SendApplicationRejectedToDIASP(preRegistration.SponsorFullName??string.Empty, preRegistration.SponsorEmail);
+                        await emailSender.SendApplicationRejectedToDIP(service.Provider.PrimaryContactFullName, service.Provider.PrimaryContactEmail);
+                        await emailSender.SendApplicationRejectedToDIP(service.Provider.SecondaryContactFullName, service.Provider.SecondaryContactEmail);
+                        await emailSender.SendApplicationRejectedConfirmationToDSIT(service.Provider.RegisteredName, service.ServiceName);
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed)
                     {
