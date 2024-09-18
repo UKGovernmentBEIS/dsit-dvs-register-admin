@@ -3,6 +3,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static Amazon.S3.Util.S3EventNotification;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -119,13 +120,16 @@ namespace DVSAdmin.Data.Repositories
                     }
 
                     await context.SaveChangesAsync();
+                    genericResponse.InstanceId = existingEntity.Id;
 
                 }
                 else
                 {
+                  
                     publicInterestCheck.PrimaryCheckTime = DateTime.UtcNow;
-                    await context.PublicInterestCheck.AddAsync(publicInterestCheck);
+                    var entity = await context.PublicInterestCheck.AddAsync(publicInterestCheck);                 
                     await context.SaveChangesAsync();
+                    genericResponse.InstanceId = entity.Entity.Id;
                 }
                 transaction.Commit();
                 genericResponse.Success = true;
@@ -136,6 +140,29 @@ namespace DVSAdmin.Data.Repositories
                 genericResponse.Success = false;
                 transaction.Rollback();
                 logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
+        public async Task<GenericResponse> SavePICheckLog(PICheckLogs pICheck)
+        {
+            GenericResponse genericResponse = new();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+               
+                await context.PICheckLogs.AddAsync(pICheck);
+                await context.SaveChangesAsync();
+                transaction.Commit();
+                genericResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError($"Failed to log to PI check logs: {ex}");              
+
             }
             return genericResponse;
         }

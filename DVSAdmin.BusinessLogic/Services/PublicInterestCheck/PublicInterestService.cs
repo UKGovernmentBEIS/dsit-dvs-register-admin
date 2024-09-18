@@ -57,16 +57,34 @@ namespace DVSAdmin.BusinessLogic.Services
             PublicInterestCheck publicInterestCheck = new();
             automapper.Map(publicInterestCheckDto, publicInterestCheck);
             GenericResponse genericResponse = await publicInterestCheckRepository.SavePublicInterestCheck(publicInterestCheck, reviewType);
-
+           
             if (genericResponse.Success)
             {
+                PICheckLogs pICheckLog = new();
+                pICheckLog.PublicInterestCheckId = genericResponse.InstanceId;
+                pICheckLog.LogTime = DateTime.UtcNow;
+                if (reviewType == ReviewTypeEnum.PrimaryCheck)
+                {
+                    pICheckLog.ReviewType = ReviewTypeEnum.PrimaryCheck;
+                    pICheckLog.Comment = publicInterestCheckDto.PrimaryCheckComment;
+                    pICheckLog.UserId = publicInterestCheckDto.PrimaryCheckUserId;
+                }
+                else
+                {
+                    pICheckLog.ReviewType = ReviewTypeEnum.SecondaryCheck;
+                    pICheckLog.Comment = publicInterestCheckDto.SecondaryCheckComment;
+                    pICheckLog.UserId = Convert.ToInt32(publicInterestCheckDto.SecondaryCheckUserId);
+                }
+
+                await publicInterestCheckRepository.SavePICheckLog(pICheckLog);
+
+
                 DateTime expirationdate = Convert.ToDateTime(service.ModifiedTime).AddDays(Constants.DaysLeftToCompletePICheck);
                 string expirationDate = Helper.GetLocalDateTime(expirationdate, "d MMM yyyy h:mm tt");
                 if (reviewType == ReviewTypeEnum.PrimaryCheck)
                 {
                     if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
                     {
-
                         await emailSender.SendPrimaryCheckPassConfirmationToDSIT(service.Provider.RegisteredName, service.ServiceName, expirationDate);
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
