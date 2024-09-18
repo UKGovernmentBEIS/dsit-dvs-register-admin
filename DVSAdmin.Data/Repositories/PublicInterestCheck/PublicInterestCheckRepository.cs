@@ -166,5 +166,44 @@ namespace DVSAdmin.Data.Repositories
             }
             return genericResponse;
         }
+
+
+        public async Task<List<Service>> GetServiceList(int providerId)
+        {
+            return await context.Service .Where(s => s.ProviderProfileId == providerId).ToListAsync();
+        }
+
+
+        public async Task<GenericResponse> UpdateServiceAndProviderStatus(int serviceId,  ProviderStatusEnum providerStatus)
+        {
+            GenericResponse genericResponse = new GenericResponse();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+
+                var serviceEntity = await context.Service.FirstOrDefaultAsync(e => e.Id == serviceId);
+                var providerEntity = await context.ProviderProfile.FirstOrDefaultAsync(e => e.Id == serviceEntity.ProviderProfileId);
+
+                if (serviceEntity != null && providerEntity != null)
+                {
+                    //update review table status so that it won't appear in review list again
+                    serviceEntity.ServiceStatus = ServiceStatusEnum.ReadyToPublish;
+                    serviceEntity.ModifiedTime = DateTime.UtcNow;   
+                    providerEntity.ProviderStatus = providerStatus;
+                    providerEntity.ModifiedTime = DateTime.UtcNow;
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
     }
 }

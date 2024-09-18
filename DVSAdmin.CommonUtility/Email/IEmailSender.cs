@@ -22,8 +22,9 @@
         public Task<bool> SendProceedApplicationConsentToDIP(string companyName, string serviceName, string companyNumber, string companyAddress, string publicContactEmail, string publicPhoneNumber, string consentLink, List<string> emailAddress);
 
         //Consent - closing loop
-        public Task<bool> SendConsentToPublishToDIP(string URN, string serviceName, string recipientName, string emailAddress, string consentLink);
-        public Task<bool> SendConsentToPublishToAdditionalContact(string URN, string serviceName, string recipientName, string emailAddress);
+        public Task<bool> SendConsentToPublishToDIP(string companyName, string serviceName, string recipientName, string consentLink, string emailAddress);
+
+
         public Task<bool> SendAgreementToPublishToDIP(string recipientName, string emailAddress);
         public Task<bool> SendAgreementToPublishToDSIT(string URN, string serviceName);
 

@@ -111,6 +111,26 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+
+        public async Task<bool> SendConsentToPublishToDIP(string companyName, string serviceName,   string recipientName, string consentLink, string emailAddress)
+        {
+            var template = govUkNotifyConfig.DIPConsentToPublishTemplate;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.CompanyName,  companyName},
+                { template.RecipientName,  recipientName},
+                { template.ConsentLink,  consentLink}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
         #endregion
 
 
@@ -369,44 +389,9 @@ namespace DVSAdmin.CommonUtility.Email
         }
 
         #endregion
-        public async Task<bool> SendConsentToPublishToDIP(string URN, string serviceName, string recipientName, string emailAddress, string consentLink)
-        {
-            var template = govUkNotifyConfig.DIPConsentToPublishTemplate;
+    
 
-            var personalisation = new Dictionary<string, dynamic>
-            {
-                { template.ServiceName,  serviceName},
-                { template.URN,  URN},
-                { template.RecipientName,  recipientName},
-                { template.ConsentLink,  consentLink}
-             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
-        }
-
-        public async Task<bool> SendConsentToPublishToAdditionalContact(string URN, string serviceName, string recipientName, string emailAddress)
-        {
-            var template = govUkNotifyConfig.AdditionalContactConsentTemplate;
-
-            var personalisation = new Dictionary<string, dynamic>
-            {
-                { template.ServiceName,  serviceName},
-                { template.URN,  URN},
-                { template.RecipientName,  recipientName}
-             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
-        }
+   
 
         public async Task<bool> SendAgreementToPublishToDIP(string recipientName, string emailAddress)
         {
