@@ -31,11 +31,11 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">Service provider</th>
                                 <th scope="col" class="govuk-table__header"> Service name </th>
-                                <th scope="col" class="govuk-table__header">Service Provider</th>
                                 <th scope="col" class="govuk-table__header">Conformity Assessment Body </th>
                                 <th scope="col" class="govuk-table__header">Role type</th>
-                                <th scope="col" class="govuk-table__header">Time submitted</th>
+                                <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
                                 <th scope="col" class="govuk-table__header">Review status</th>
                                 <th scope="col" class="govuk-table__header">Days left to complete checks</th>
                             </tr>
@@ -43,8 +43,8 @@
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
 
-                                <td class="govuk-table__header">@Model.Service.ServiceName</td>
                                 <td class="govuk-table__cell">@Model.Service.Provider.TradingName</td>
+                                <td class="govuk-table__cell">@Model.Service.ServiceName</td>
                                 <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
                                 <td class="govuk-table__cell">
                                     @foreach (var role in @Model.Service.ServiceRoleMapping)
@@ -185,7 +185,7 @@
                             Registered name of the service provider
                         </li>
                         <li>
-                            Trading name of the service provider (if applicable)
+                            Trading name of the service provider, if applicable
                         </li>
                         <li>
                             Address of the service provider
@@ -212,7 +212,7 @@
                     @* --------------Name of service ----------------- *@
                     <h4 class="govuk-heading-s">Name of service</h4>
                     <p class="govuk-body">
-                        The certificate contains a statement of conformity that includes the name of the service.
+                        The certificate contains a statement of conformity which includes the name of the service.
                     </p>
 
 
@@ -288,7 +288,7 @@
                     @* --------------URL link to service----------------- *@
                     <h4 class="govuk-heading-s">URL link to service</h4>
                     <p class="govuk-body">
-                        The certificate contains a statement of conformity that includes a URL link to a website providing access to the service. This URL link may be slightly different from the company website address.
+                        The certificate contains a statement of conformity which includes a URL link to a website providing access to the service. This URL link may be slightly different from the company website address.
                     </p>
 
 
@@ -348,7 +348,7 @@
 
                     <h4 class="govuk-heading-s">Methods of service provision</h4>
                     <p class="govuk-body">
-                        The certificate includes methods of service provision (for example online, person-to-person, physical sites).
+                        The certificate includes methods of service provision, for example online, person-to-person, physical sites.
                     </p>
 
 
@@ -408,7 +408,7 @@
 
                     <h4 class="govuk-heading-s">Date of expiry</h4>
                     <p class="govuk-body">
-                        The certificate includes a valid date of expiry. The expiry date should not be more than 2 years after the date of issue.
+                        The certificate includes a valid date of expiry. The expiry date should not be more than 2 years and 60 days after the date of issue.
                     </p>
 
 
@@ -453,7 +453,7 @@
                         <div class="govuk-form-group govuk-form-group--error">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="commentsforincorrect">
-                                    Comments
+                                    Add a comment
                                 </label>
 
                             </h3>
@@ -472,7 +472,7 @@
                         <div class="govuk-form-group">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="commentsforincorrect">
-                                    Comments
+                                    Add a comment
                                 </label>
                             </h3>
                             <div id="comments-hint" class="govuk-hint">
@@ -507,7 +507,7 @@
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">
                             <span class="govuk-visually-hidden">Warning</span>
-                            To continue to the next step, you must complete all sections.
+                            To continue to the next step, you must complete all sections
                         </strong>
                     </div>
                 </div>

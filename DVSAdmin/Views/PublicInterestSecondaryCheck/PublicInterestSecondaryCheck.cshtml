@@ -28,11 +28,11 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">Service Provider</th>
-                                <th scope="col" class="govuk-table__header">Service Name</th>
+                                <th scope="col" class="govuk-table__header">Service provider</th>
+                                <th scope="col" class="govuk-table__header">Service name</th>
                                 <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
-                                <th scope="col" class="govuk-table__header">Time Submitted (UTC)</th>
-                                <th scope="col" class="govuk-table__header">Review Status</th>
+                                <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
+                                <th scope="col" class="govuk-table__header">Review status</th>
                                 <th scope="col" class="govuk-table__header">Days left to<br />complete review</th>
                             </tr>
                         </thead>
@@ -75,9 +75,10 @@
                                 If you agree with the first reviewer's decision, you can proceed by selecting the button that corresponds to the first reviewer’s decision.
 
                             </li>
-                            <li>  If you disagree with the first reviewer’s decision, you may need to request for further clarification and send the application back for another review.
+                            <li>
+                                If you disagree with the first reviewer’s decision, you may need to request further clarification and send the application back for another review.
                             </li>
-                            </ol>
+                        </ol>
                     </details>
 
                     <h2 class="govuk-heading-l">Application details</h2>
@@ -142,7 +143,7 @@
                             <dd class="govuk-summary-list__value">@Model.Service.Provider.PublicContactEmail</dd>
                         </div>
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Telephone number</dt>
+                            <dt class="govuk-summary-list__key">Public telephone number</dt>
                             <dd class="govuk-summary-list__value">@Model.Service.Provider.ProviderTelephoneNumber</dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -164,7 +165,7 @@
                             </dd>
                         </div>
                     </dl>
-                    <p class="govuk-body"><a href="#" class="govuk-link">Link to Companies House or charity website</a></p>
+                    <p class="govuk-body"><a href="https://www.gov.uk/government/organisations/companies-house" class="govuk-link" rel="noreferrer noopener" target="_blank">Link to Companies House</a></p>
 
                     <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                         <li>Legal status</li>
@@ -208,11 +209,11 @@
                     </dl>
 
                     <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
-                        <li>Directors and Partners relationships to organisations on sanction list</li>
+                        <li>Directors and partners' relationships to organisations on sanction list</li>
                     </ul>
 
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h3 class="govuk-heading-m">Trading as address checks (if applicable)</h3>
+                    <h3 class="govuk-heading-m">Trading as address checks, if applicable</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -236,10 +237,10 @@
                             </dd>
                         </div>
                     </dl>
-                    <p class="govuk-body"><a href="#" class="govuk-link">OFSI Check</a></p>
+                    <p class="govuk-body"><a href="https://sanctionssearchapp.ofsi.hmtreasury.gov.uk/" class="govuk-link" rel="noreferrer noopener" target="_blank">OFSI Check</a></p>
 
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h3 class="govuk-heading-m">UNFC check (if applicable)</h3>
+                    <h3 class="govuk-heading-m">UNFC check, if applicable</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -252,7 +253,7 @@
                     </dl>
 
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h3 class="govuk-heading-m">EC check (if applicable)</h3>
+                    <h3 class="govuk-heading-m">EC check, if applicable</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -265,7 +266,7 @@
                     </dl>
 
                     <hr class="govuk-section-break govuk-section-break--l">
-                    <h3 class="govuk-heading-m">TARIC check (if applicable)</h3>
+                    <h3 class="govuk-heading-m">TARIC check, if applicable</h3>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -308,7 +309,7 @@
                             </dd>
                         </div>
                     </dl>
-                    <p class="govuk-body"><a href="#" class="govuk-link">Link to service provider’s webpage</a></p>
+                    <p class="govuk-body"><a href="{URL}" class="govuk-link">Link to service provider’s website</a></p>
 
                     <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                         <li>Authenticity</li>
@@ -327,11 +328,11 @@
                         <div class="govuk-form-group">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="comments">
-                                    Comment required
+                                    Add a comment
                                 </label>
                             </h3>
                             <div id="more-detail-hint" class="govuk-hint">
-                                Please add additional details to support your decision.
+                                Please add additional details to support your decision
                             </div>
                             <p class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.SecondaryCheckComment)
@@ -344,27 +345,31 @@
                         <div class="govuk-form-group">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="comment">
-                                    Comments
+                                    Add a comment
                                 </label>
                             </h3>
+                            <div id="more-detail-hint" class="govuk-hint">
+                                Please add additional details to support your decision
+                            </div>
 
                             @Html.TextAreaFor(model => model.SecondaryCheckComment, new { @class = "govuk-textarea", @id = "comment", @name = "comment-name", @rows = "5" })
                         </div>
 
                     }
 
-             
-                    @if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed){
-                    
+
+                    @if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
+                    {
+
                         <div class="govuk-button-group">
                             <button type="submit" class="govuk-button" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="approve">
                                 Approve application
                             </button>
-                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="sentback">
-                            Send back to primary check for another review
-                        </button>
+                            <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="sentback">
+                                Send back to primary check for another review
+                            </button>
                         </div>
-                         }
+                    }
 
                     else if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
                     {
@@ -380,7 +385,7 @@
                             Send back to primary check for another review
                         </button>
                     }
-                    else 
+                    else
                     {
                         <div class="govuk-button-group">
                             <button type="submit" class="govuk-button" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="approve">
@@ -393,8 +398,8 @@
                         <button type="submit" class="govuk-button govuk-button--secondary" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="sentback">
                             Send back to primary check for another review
                         </button>
-                    }  
                     }
+                }
                 }
             </div>
         </div>
