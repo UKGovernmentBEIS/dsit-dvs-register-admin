@@ -11,7 +11,7 @@
 
     @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
-        @using (Html.BeginForm("ProceedSecondaryCheckRejection", "PublicInterestSecondaryCheck", FormMethod.Post))
+        @using (Html.BeginForm("ProceedSecondaryCheckReject", "PublicInterestSecondaryCheck", FormMethod.Post))
         {
             @if (ViewData.ModelState.ErrorCount >0)
             {
@@ -27,7 +27,8 @@
                     You are about to reject the following application:
                 </p>
                
-                 @Html.HiddenFor(m=>m.PreRegistrationId)
+                 @Html.HiddenFor(m=>m.ServiceId)
+                 @Html.HiddenFor(m => m.ProviderProfileId)
                  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
@@ -42,12 +43,13 @@
                     </thead>
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
-                                <td class="govuk-table__cell"><a href="#" class="govuk-link">Example Services</a></td>
-                                <td class="govuk-table__cell">Example 2</td>
-                                <td class="govuk-table__cell">NQA</td>
-                                <td class="govuk-table__cell">11:30; 01 Feb 2024</td>
-                                <td class="govuk-table__cell"><strong>Primary check passed</strong></td>
-                                <td class="govuk-table__cell">1 day</td>
+                                
+                                <td class="govuk-table__cell">@Model?.Service?.Provider.RegisteredName</td>
+                                <td class="govuk-table__cell">@Model.Service.ServiceName</td>
+                                <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
+                                <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.Service.ModifiedTime)</td>
+                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.PublicInterestCheck.PublicInterestCheckStatus)</td>
+                                <td class="govuk-table__cell">@Model.Service.DaysLeftToCompletePICheck  days</td>
                         </tr>
                     </tbody>
                 </table>              
@@ -65,16 +67,16 @@
                             Select a reason for rejection to be sent to the applicant.
                         </div>
 
-                        @* @Html.ValidationMessageFor(m => m.RejectionReason, "", new { @class = "govuk-error-message" }) *@
+                        @Html.ValidationMessageFor(m => m.RejectionReason, "", new { @class = "govuk-error-message" })
                         <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
                             <div class="govuk-radios__item">
-                                   @*  @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.DiligenceCheck, new { @id = "rejectionreason", @class = "govuk-radios__input" }) *@
+                                    @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.DiligenceCheck, new { @id = "rejectionreason", @class = "govuk-radios__input" }) 
                                     <label class="govuk-label govuk-radios__label" for="rejectionreason">
                                     Failed due diligence check
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
-@*                                     @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.IncorrectInfo, new { @id = "rejectionreason-2", @class = "govuk-radios__input" }) *@
+                                    @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.IncorrectInfo, new { @id = "rejectionreason-2", @class = "govuk-radios__input" }) 
                                     <label class="govuk-label govuk-radios__label" for="rejectionreason-2">
                                     Submitted incorrect information
                                 </label>
@@ -100,8 +102,7 @@
 
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                name.lastname@email.com
-                               @*  @Model.PreRegistration.SponsorEmail *@
+                              @Model.Service.Provider.PrimaryContactEmail
                             </dd>
                         </div>
                     </dl>
@@ -113,8 +114,7 @@
 
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                name.lastname@email.com
-                               @*  @Model.PreRegistration.Email *@
+                                @Model.Service.Provider.SecondaryContactEmail
                             </dd>
                         </div>
                     </dl>

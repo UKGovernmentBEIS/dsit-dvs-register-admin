@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "PublicInterestApproveSecondaryCheck", "PublicInterestCheck", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "ProceedSecondaryCheckApproval", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -25,7 +25,7 @@
                     </strong>
                 </div>
 
-                @using (Html.BeginForm("ProceedApprovePublicInterestCheck", "PublicInterestCheck", FormMethod.Post))
+                @using (Html.BeginForm("SaveSecondaryCheckApproval", "PublicInterestSecondaryCheck", FormMethod.Post))
                 {
                     <div class="govuk-button-group">
                         <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">

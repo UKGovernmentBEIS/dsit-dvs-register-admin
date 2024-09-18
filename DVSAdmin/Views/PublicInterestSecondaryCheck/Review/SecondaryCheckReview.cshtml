@@ -22,6 +22,7 @@
                     }
                     @Html.HiddenFor(m => m.PrimaryCheckUserId)
                     @Html.HiddenFor(m => m.SecondaryCheckUserId)
+                    @Html.HiddenFor(m => m.ServiceId)
 
                     <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
 
@@ -130,14 +131,36 @@
                             <dt class="govuk-summary-list__key">Trading name</dt>
                             <dd class="govuk-summary-list__value">@Model.Service.Provider.TradingName</dd>
                         </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Companies House or charity registration number</dt>
-                            <dd class="govuk-summary-list__value">@Model.Service.Provider.CompanyRegistrationNumber</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Dun & Bradstreet or D-U-N-S number</dt>
-                            <dd class="govuk-summary-list__value">@Model.Service.Provider.DUNSNumber</dd>
-                        </div>
+                        @if (Model.Service.Provider.HasRegistrationNumber)
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Companies House or charity registration number</dt>
+                                <dd class="govuk-summary-list__value">@Model.Service.Provider.CompanyRegistrationNumber</dd>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Companies House or charity registration number</dt>
+                                <dd class="govuk-summary-list__value">NA</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Dun & Bradstreet or D-U-N-S number</dt>
+                                <dd class="govuk-summary-list__value">@Model.Service.Provider.DUNSNumber</dd>
+                            </div>
+                        }
+                        @if (Model.Service.Provider.HasParentCompany)
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Registered name of parent company</dt>
+                                <dd class="govuk-summary-list__value">@Model.Service.Provider.ParentCompanyRegisteredName</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Location of parent company</dt>
+                                <dd class="govuk-summary-list__value">@Model.Service.Provider.ParentCompanyLocation</dd>
+                            </div>
+
+                        }
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Public contact email</dt>
                             <dd class="govuk-summary-list__value">@Model.Service.Provider.PublicContactEmail</dd>
@@ -358,49 +381,33 @@
                     }
 
 
-                    @if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
-                    {
 
+                    @if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
+                    {
                         <div class="govuk-button-group">
-                            <button type="submit" class="govuk-button" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="approve">
+                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
                                 Approve application
                             </button>
                             <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="sentback">
                                 Send back to primary check for another review
                             </button>
                         </div>
-                    }
 
-                    else if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
+                    }
+                    else if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
                     {
                         <div class="govuk-button-group">
-                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
-                                Approve application
-                            </button>
-                            <button type="submit" class="govuk-button govuk-button--warning" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="reject">
+                            <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
                                 Reject application
                             </button>
-                        </div>
-                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="sentback">
-                            Send back to primary check for another review
-                        </button>
-                    }
-                    else
-                    {
-                        <div class="govuk-button-group">
-                            <button type="submit" class="govuk-button" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="approve">
-                                Approve application
-                            </button>
-                            <button type="submit" class="govuk-button govuk-button--warning" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="reject">
-                                Reject application
+                            <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="sentback">
+                                Send back to primary check for another review
                             </button>
                         </div>
-                        <button type="submit" class="govuk-button govuk-button--secondary" disabled aria-disabled="true" data-module="govuk-button" name="saveReview" value="sentback">
-                            Send back to primary check for another review
-                        </button>
+
                     }
                 }
-                }
+                
             </div>
         </div>
     </main>

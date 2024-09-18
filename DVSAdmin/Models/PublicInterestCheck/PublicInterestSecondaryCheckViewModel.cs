@@ -10,8 +10,7 @@ namespace DVSAdmin.Models
        
         public int ServiceId { get; set; }
         public int ProviderProfileId { get; set; }
-
-        [JsonIgnore]
+      
         public ServiceDto? Service { get; set; }
 
         public bool? IsCompanyHouseNumberApproved { get; set; }
@@ -41,8 +40,8 @@ namespace DVSAdmin.Models
         public string? SubmitValidation { get; set; }
         public int? PrimaryCheckUserId { get; set; }
         public int? SecondaryCheckUserId { get; set; }
-
-        [JsonIgnore]
+        public RejectionReasonEnum? RejectionReason { get; set; }
+ 
         public PublicInterestCheckDto? PublicInterestCheck { get; set; }
     }
 }

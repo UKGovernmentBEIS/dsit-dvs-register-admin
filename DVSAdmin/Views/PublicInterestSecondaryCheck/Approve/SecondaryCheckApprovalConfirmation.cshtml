@@ -1,4 +1,6 @@
-﻿
+﻿@model DVSAdmin.BusinessLogic.Models.ServiceDto;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
 @{
     ViewData["Title"] = "You have approved this application";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -30,12 +32,12 @@
                     </thead>
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell"><a href="#" class="govuk-link">Northrow Limited</a></td>
-                            <td class="govuk-table__cell">Remote Verify</td>
-                            <td class="govuk-table__cell">NQA</td>
-                            <td class="govuk-table__cell">01 September 2024</td>
-                            <td class="govuk-table__cell"><strong>Primary check passed</strong></td>
-                            <td class="govuk-table__cell">02 September 2024</td>
+                            <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
+                            <td class="govuk-table__cell">@Model.ServiceName</td>
+                            <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
+                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.CreatedTime)</td>
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(PublicInterestCheckEnum.PublicInterestCheckPassed)</td>
+                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.PublicInterestCheck.SecondaryCheckTime, "h:mm tt; d MMM yyyy")</td>
                         </tr>
                     </tbody>
                 </table>
