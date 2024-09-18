@@ -23,8 +23,8 @@ namespace DVSAdmin.BusinessLogic.Models
         public bool IsTARICApproved { get; set; }
         public bool IsBannedPoliticalApproved { get; set; }
         public bool IsProvidersWebpageApproved { get; set; }
-        public PublicInterestCheckEnum PublicInterestCheckStatus { get; set; }
-        public RejectionReasonEnum? RejectionReason { get; set; }
+        public PublicInterestCheckEnum PublicInterestCheckStatus { get; set; }      
+        public string? RejectionReasons { get; set; }
         public string? PrimaryCheckComment { get; set; }
         public string? SecondaryCheckComment { get; set; }      
         public int PrimaryCheckUserId { get; set; }

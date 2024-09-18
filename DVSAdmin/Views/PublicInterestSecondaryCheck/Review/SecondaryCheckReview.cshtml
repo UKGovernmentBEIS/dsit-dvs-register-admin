@@ -42,16 +42,16 @@
                                 <td class="govuk-table__cell">@Model.Service.Provider.TradingName</td>
                                 <td class="govuk-table__cell">@Model.Service.ServiceName</td>
                                 <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
-                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(@Model.Service.CreatedTime) </td>
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(@Model.Service.ModifiedTime) </td>
                                 @if (@Model.Service.PublicInterestCheck == null)
                                 {
                                     <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(@Model.Service.ServiceStatus)</td>
                                 }
                                 else
                                 {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(PublicInterestCheckEnum.InPrimaryReview)</td>
+                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(@Model.Service.PublicInterestCheck.PublicInterestCheckStatus)</td>
                                 }
-                                <td class="govuk-table__cell">@Model.Service.Provider.DaysLeftToComplete days</td>
+                                <td class="govuk-table__cell">@Model.Service.DaysLeftToCompletePICheck days</td>
                             </tr>
                         </tbody>
                     </table>
@@ -340,9 +340,9 @@
                     </ul>
 
                     <h3 class="govuk-heading-m">Primary check reviewer comments</h3>
-                    <p class="govuk-body govuk-summary-list__key">Maria Smith</p>
-                    <p class="govuk-body">10:24 am; 1 Feb 2024h</p>
-                    <p class="govuk-body">@Model.PrimaryCheckComment</p>
+                    <p class="govuk-body govuk-summary-list__key">@Model.Service.PublicInterestCheck.PrimaryCheckUser.UserName</p>
+                    <p class="govuk-body"> @DateTimeExtensions.FormatDateTime(@Model.Service.PublicInterestCheck.PrimaryCheckTime, "h:mm tt; d MMM yyyy")</p>
+                    <p class="govuk-body">  @HtmlExtensions.ToStringWithLineBreaks(@Model?.PrimaryCheckComment??string.Empty)</p>
 
 
                     @if (Html.ViewData.ModelState.ContainsKey("Comment") && Html.ViewData.ModelState["Comment"].Errors.Count > 0)
@@ -382,7 +382,7 @@
 
 
 
-                    @if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
+                    @if (Model.Service.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
                     {
                         <div class="govuk-button-group">
                             <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
@@ -394,7 +394,7 @@
                         </div>
 
                     }
-                    else if (Model.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
+                    else if (Model.Service.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
                     {
                         <div class="govuk-button-group">
                             <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">

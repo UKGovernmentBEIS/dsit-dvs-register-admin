@@ -115,6 +115,7 @@ namespace DVSAdmin.Data.Repositories
                         existingEntity.RejectionReason = publicInterestCheck.RejectionReason;
                         existingEntity.SecondaryCheckUserId = publicInterestCheck.SecondaryCheckUserId;
                         existingEntity.SecondaryCheckTime = DateTime.UtcNow;
+                        existingEntity.RejectionReasons = publicInterestCheck.RejectionReasons;
                     }
 
                     await context.SaveChangesAsync();

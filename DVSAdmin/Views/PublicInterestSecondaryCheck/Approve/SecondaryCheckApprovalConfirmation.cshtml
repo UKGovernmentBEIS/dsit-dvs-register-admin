@@ -35,9 +35,9 @@
                             <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
                             <td class="govuk-table__cell">@Model.ServiceName</td>
                             <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
-                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.CreatedTime)</td>
+                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.ModifiedTime)</td>
                             <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(PublicInterestCheckEnum.PublicInterestCheckPassed)</td>
-                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.PublicInterestCheck.SecondaryCheckTime, "h:mm tt; d MMM yyyy")</td>
+                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(DateTime.Now, "h:mm tt; d MMM yyyy")</td>
                         </tr>
                     </tbody>
                 </table>

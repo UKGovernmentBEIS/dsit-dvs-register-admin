@@ -7,6 +7,11 @@
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
+@{
+  
+    int index = 0;
+}
+
 <div class="govuk-width-container">
 
     @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
@@ -58,32 +63,62 @@
             </div>
 
             <div class="govuk-grid-column-two-thirds">
-                <div class="govuk-form-group">
-                    <fieldset class="govuk-fieldset" aria-describedby="applicationName-hint">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                            Select reason for rejection
-                        </legend>
-                        <div id="applicationSponsor-hint" class="govuk-hint">
-                            Select a reason for rejection to be sent to the applicant.
-                        </div>
 
-                        @Html.ValidationMessageFor(m => m.RejectionReason, "", new { @class = "govuk-error-message" })
-                        <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
-                            <div class="govuk-radios__item">
-                                    @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.DiligenceCheck, new { @id = "rejectionreason", @class = "govuk-radios__input" }) 
-                                    <label class="govuk-label govuk-radios__label" for="rejectionreason">
-                                    Failed due diligence check
-                                </label>
-                            </div>
-                            <div class="govuk-radios__item">
-                                    @Html.RadioButtonFor(m => m.RejectionReason, RejectionReasonEnum.IncorrectInfo, new { @id = "rejectionreason-2", @class = "govuk-radios__input" }) 
-                                    <label class="govuk-label govuk-radios__label" for="rejectionreason-2">
-                                    Submitted incorrect information
-                                </label>
-                            </div>
+
+                    @if (Html.ViewData?.ModelState.ContainsKey("SelectedReasonIds") == true && Html.ViewData.ModelState["SelectedReasonIds"].Errors.Count > 0)
+                    {
+                        <div class="govuk-form-group govuk-form-group--error">
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                    Select reason for rejection
+                                </legend>
+                                <div id="selectedreasonids-hint" class="govuk-hint">
+                                    Select a reason for rejection to be sent to the applicant
+                                </div>
+                                <p id="selectedreasonids-error" class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">Error:</span>
+                                    @Html.ValidationMessageFor(m => m.SelectedReasonIds, "", new { @class = "govuk-error-message" })
+                                </p>
+                                <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                                    @foreach (var role in Model.AvailableReasons)
+                                    {
+                                        var idSuffix = index > 0 ? $"_{index}" : string.Empty; // added to make the first checkbox id as selectedreasonids so that error summary ahref refers first item
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedReasonIds" value="@role.Id" id="selectedreasonids@(idSuffix)" aria-describedby="selectedreasonids-error"
+                                            @(Model.SelectedReasonIds.Contains(role.Id) ? "checked" : "") />
+                                            <label class="govuk-label govuk-checkboxes__label" for="selectedreasonids@(idSuffix)">@role.RejectionReasonName</label>
+                                        </div>
+                                        index++;
+                                    }
+                                </div>
+
+                            </fieldset>
                         </div>
-                    </fieldset>
-                </div>
+                    }
+                    else
+                    {
+                        <div class="govuk-form-group">
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                    Select reason for rejection
+                                </legend>
+                                <div id="selectedreasonids-hint" class="govuk-hint">
+                                    Select a reason for rejection to be sent to the applicant
+                                </div>
+
+                                <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                                    @foreach (var role in Model.AvailableReasons)
+                                    {
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedReasonIds" value="@role.Id" id="selectedreasonids_@role.Id" aria-describedby="selectedreasonids-hint"
+                                            @(Model.SelectedReasonIds.Contains(role.Id) ? "checked" : "") />
+                                            <label class="govuk-label govuk-checkboxes__label" for="selectedreasonids_@role.Id">@role.RejectionReasonName</label>
+                                        </div>
+                                    }
+                                </div>
+                            </fieldset>
+                        </div>
+                    }
 
                    
                 <h2 class="govuk-heading-m">Who will receive the application decision notification</h2>
