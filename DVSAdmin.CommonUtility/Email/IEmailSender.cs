@@ -5,7 +5,7 @@
         //PI Check
         public Task<bool> SendPrimaryCheckPassConfirmationToDSIT(string companyName, string serviceName,string expirationDate);
         public Task<bool> SendPrimaryCheckFailConfirmationToDSIT(string companyName, string serviceName, string expirationDate);
-        public Task<bool> SendPrimaryCheckRoundTwoConfirmationToOfDia(string URN, string expirationDate);
+        public Task<bool> SendPrimaryCheckRoundTwoConfirmationToDSIT(string companyName, string serviceName, string expirationDate);
         public Task<bool> SendPrimaryApplicationRejectedConfirmationToOfDia(string URN);
         public Task<bool> SendURNIssuedConfirmationToOfDia(string URN);
         public Task<bool> SendAccountCreatedConfirmation(string recipientName, string emailAddress);
@@ -23,9 +23,7 @@
 
         //Consent - closing loop
         public Task<bool> SendConsentToPublishToDIP(string companyName, string serviceName, string recipientName, string consentLink, string emailAddress);
-
-
-        public Task<bool> SendAgreementToPublishToDIP(string recipientName, string emailAddress);
+        public Task<bool> SendAgreementToPublishToDIP(string companyName, string serviceName, string recipientName, string emailAddress);
         public Task<bool> SendAgreementToPublishToDSIT(string URN, string serviceName);
 
         //reg - management

@@ -13,7 +13,7 @@ namespace DVSAdmin.CommonUtility.Models
 
         public PassPIPrimaryCheckTemplate PassPIPrimaryCheckTemplate { get;set; }
         public FailPIPrimaryCheckTemplate FailPIPrimaryCheckTemplate { get; set; }
-        public PrimaryCheckRoundTwoTemplate PrimaryCheckRoundTwoTemplate { get; set;}
+        public PICheckRoundTwoTemplate PICheckRoundTwoTemplate { get; set;}
         public ApplicationRejectedTemplate ApplicationRejectedTemplate { get; set; }
         public IssueURNConfirmationTemplate IssueURNConfirmationTemplate { get; set; }
         public AccountCreatedTemplate AccountCreatedTemplate { get; set; }
@@ -25,7 +25,7 @@ namespace DVSAdmin.CommonUtility.Models
         public CertificateInfoRejectedToCabTemplate CertificateInfoRejectedToCabTemplate { get; set; }
         public CertificateInfoRejectedToDSITTemplate CertificateInfoRejectedToDSITTemplate { get; set; }
         public DIPConsentToPublishTemplate DIPConsentToPublishTemplate { get; set; }
-        public AdditionalContactConsentTemplate AdditionalContactConsentTemplate { get; set; }
+      
         public AgreementToPublishTemplate AgreementToPublishTemplate { get; set; }
         public AgreementToPublishToDSITTemplate AgreementToPublishToDSITTemplate { get; set; }
         public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }

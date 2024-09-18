@@ -89,7 +89,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
                     if (preRegistrationReviewDto.ApplicationReviewStatus == ApplicationReviewStatusEnum.SentBackBySecondReviewer)
                     {
-                        await emailSender.SendPrimaryCheckRoundTwoConfirmationToOfDia(preRegistration.URN??string.Empty, expirationDate);
+                       
                     }
                     else if (preRegistrationReview.ApplicationReviewStatus == ApplicationReviewStatusEnum.ApplicationRejected)
                     {

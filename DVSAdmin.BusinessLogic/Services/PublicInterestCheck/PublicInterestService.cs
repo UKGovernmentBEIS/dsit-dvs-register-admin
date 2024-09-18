@@ -97,9 +97,8 @@ namespace DVSAdmin.BusinessLogic.Services
                 {
 
                     if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)
-                    {
-                        //TODo
-                       // await emailSender.SendPrimaryCheckRoundTwoConfirmationToOfDia(preRegistration.URN??string.Empty, expirationDate);
+                    {                        
+                      await emailSender.SendPrimaryCheckRoundTwoConfirmationToDSIT(service.Provider.RegisteredName, service.ServiceName, expirationDate);
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckFailed)
                     {
@@ -123,8 +122,7 @@ namespace DVSAdmin.BusinessLogic.Services
                         consentToken.CreatedTime = DateTime.UtcNow;
                         genericResponse = await consentRepository.SaveConsentToken(consentToken);
 ;
-                        //TODo
-                        // await emailSender.SendURNIssuedConfirmationToOfDia(preRegistration.URN??string.Empty); //email to ofdia                       
+                        //TODo                          
                         //await emailSender.SendApplicationApprovedToDIASP(preRegistration.FullName, preRegistration.URN??string.Empty, //email to provider
                         //await emailSender.SendApplicationApprovedToDIASP(preRegistration.SponsorFullName??string.Empty, preRegistration.URN??string.Empty,
 
@@ -164,9 +162,13 @@ namespace DVSAdmin.BusinessLogic.Services
                 genericResponse =  await publicInterestCheckRepository.UpdateServiceAndProviderStatus(serviceDto.Id, providerStatus);
                 if (genericResponse.Success)
                 {
+                 
+                    genericResponse.Success = await emailSender.SendAgreementToPublishToDIP(serviceDto.Provider.RegisteredName, serviceDto.ServiceName,
+                    serviceDto.Provider.PrimaryContactFullName, serviceDto.Provider.PrimaryContactEmail);
+                    genericResponse.Success = await emailSender.SendAgreementToPublishToDIP(serviceDto.Provider.RegisteredName, serviceDto.ServiceName,
+                    serviceDto.Provider.SecondaryContactFullName, serviceDto.Provider.SecondaryContactEmail);
                     //ToDo:
-                   // genericResponse.Success = await emailSender.SendAgreementToPublishToDIP(preRegistrationDto?.FullName??string.Empty, preRegistrationDto?.Email??string.Empty) &&
-                   //await emailSender.SendAgreementToPublishToDSIT(preRegistrationDto?.URN??string.Empty, certificateInformationDto.ServiceName);
+                    //await emailSender.SendAgreementToPublishToDSIT(preRegistrationDto?.URN??string.Empty, certificateInformationDto.ServiceName);
                 }
 
             }
