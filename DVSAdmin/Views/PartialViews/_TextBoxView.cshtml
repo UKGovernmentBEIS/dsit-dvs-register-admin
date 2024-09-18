@@ -3,6 +3,19 @@
 @{
     string hintId = @Model.PropertyName.ToLower() + "-hint";
     string errorId = @Model.PropertyName.ToLower() + "-error";
+    string ariaDescribedbyValue = "";
+    if (Model.HasError && !string.IsNullOrEmpty(Model.Hint))
+    {
+        ariaDescribedbyValue = hintId + " " + errorId;
+    }
+    else if (Model.HasError)
+    {
+        ariaDescribedbyValue = errorId;
+    }
+    else if (!string.IsNullOrEmpty(Model.Hint))
+    {
+        ariaDescribedbyValue = hintId;
+    }
 }
 
 <div class="govuk-form-group @(Model.HasError ? "govuk-form-group--error" : "")">
@@ -10,36 +23,35 @@
         @Model.Label
     </label>
 
+
     @if (!string.IsNullOrEmpty(Model.Hint))
     {
         <div id="@hintId" class="govuk-hint">
             @Model.Hint
         </div>
+    }
 
-        @if (Model.HasError)
-        {
-            <p id="@errorId" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> @Model.ErrorMessage
-            </p>
-        }
+    @if (Model.HasError)
+    {
+        <p id="@errorId" class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> @Model.ErrorMessage
+        </p>
+    }
 
+    @if (Model.HasError || !string.IsNullOrEmpty(Model.Hint))
+    {
         @Html.TextBox(Model.PropertyName, Model.Value,
         new
         {
             @id = Model.PropertyName.ToLower(),
             @class = Model.HasError ? Model.Class + " govuk-input--error" : Model.Class,
-            @aria_describedby = Model.HasError ? hintId + " " + errorId : hintId
+            @aria_describedby = @ariaDescribedbyValue
         })
     }
+
     else
     {
-        @if (Model.HasError)
-        {
-            <p id="@errorId" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> @Model.ErrorMessage
-            </p>
-        }
-        @Html.TextBox(Model.PropertyName, Model.Value,
+        @Html.TextBox(Model.PropertyName,Model.Value,
         new
         {
             @id = Model.PropertyName.ToLower(),
