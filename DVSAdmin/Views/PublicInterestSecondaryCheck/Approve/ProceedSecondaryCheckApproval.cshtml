@@ -1,11 +1,13 @@
-﻿@{
+﻿@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@model DVSAdmin.BusinessLogic.Models.ServiceDto
+@{
     ViewData["Title"] = "Approve public interest check";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
 <div class="govuk-width-container">
-    <a href="#" class="govuk-back-link">Back</a>
-    @Html.ActionLink("Back", "PublicInterestSecondaryCheck", "PublicInterestCheck", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -13,7 +15,7 @@
                 <p class="govuk-body">
                     You are about to confirm that the following application has passed all required checks:
                 </p>
-                <form action="#" method="post">
+             
                     <input type="hidden" name="PublicInterestCheckId" value="12345" />
                     <input type="hidden" name="PrimaryCheckUserId" value="67890" />
                     <input type="hidden" name="SecondaryCheckUserId" value="54321" />
@@ -33,12 +35,13 @@
                         </thead>
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell"><a href="#" class="govuk-link">Northrow Limited</a></td>
-                                <td class="govuk-table__cell">Remote Verify</td>
-                                <td class="govuk-table__cell">NQA</td>
-                                <td class="govuk-table__cell">01 September 2024</td>
-                                <td class="govuk-table__cell"><strong>Primary check passed</strong></td>
-                                <td class="govuk-table__cell">1 day</td>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
+                                <td class="govuk-table__cell">@Model.ServiceName</td>
+                                <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
+                                <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.CreatedTime)</td>
+                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.PublicInterestCheck.PublicInterestCheckStatus)</td>
+                                <td class="govuk-table__cell">@Model.DaysLeftToCompletePICheck  days</td>
                             </tr>
                         </tbody>
                     </table>
@@ -52,11 +55,11 @@
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Email address of primary contact</dt>
-                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                            <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactEmail</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Email address of secondary contact</dt>
-                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                            <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactEmail</dd>
                         </div>
                     </dl>
 
@@ -68,70 +71,101 @@
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Public contact email</dt>
-                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                            <dd class="govuk-summary-list__value">@Model.Provider.PublicContactEmail</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Public telephone number</dt>
-                            <dd class="govuk-summary-list__value">+1234567890</dd>
+                              <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactTelephoneNumber</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Website address</dt>
-                            <dd class="govuk-summary-list__value">johndoe@example.com</dd>
+                            <dd class="govuk-summary-list__value">@Model.Provider.ProviderWebsiteAddress</dd>
                         </div>
+                        </dl>
+                    <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Service details: Online identity assurance </dt>
-                            <dd class="govuk-summary-list__value"></dd>
+                            <dd class="govuk-summary-list__value">@Model.Provider.RegisteredName</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Registered name</dt>
-                            <dd class="govuk-summary-list__value">John Doe</dd>
+                            <dd class="govuk-summary-list__value">@Model.Provider.TradingName</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Trading names</dt>
-                            <dd class="govuk-summary-list__value">CEO</dd>
+                            <dd class="govuk-summary-list__value">@Model.Provider.TradingName</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Company address details</dt>
-                            <dd class="govuk-summary-list__value">14, Henry St, London</dd>
+                            <dd class="govuk-summary-list__value">   @HtmlExtensions.ToStringWithLineBreaks(Model.CompanyAddress)</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Name of service</dt>
-                            <dd class="govuk-summary-list__value">John Doe</dd>
+                            <dd class="govuk-summary-list__value">@Model.ServiceName</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Roles certified against</dt>
-                            <dd class="govuk-summary-list__value">Service provider</dd>
+                            <dd class="govuk-summary-list__value">
+                                @foreach (var item in Model.ServiceRoleMapping)
+                                {
+                                    <div>@item.Role.RoleName</div>
+                                }
+                            </dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Identity Profiles</dt>
-                            <dd class="govuk-summary-list__value">XYZ</dd>
+                            <dd class="govuk-summary-list__value">
+                                @if (Model.ServiceIdentityProfileMapping!=null)
+                                {
+                                    @foreach (var item in Model.ServiceIdentityProfileMapping)
+                                    {
+                                        <div>@item.IdentityProfile.IdentityProfileName</div>
+                                    }
+                                }
+                               
+                            </dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Supplementary schemes</dt>
-                            <dd class="govuk-summary-list__value">XYZ</dd>
+                            <dd class="govuk-summary-list__value">
+
+                                @if(Model.ServiceSupSchemeMapping!=null)
+                                {
+                                    @foreach (var item in Model.ServiceSupSchemeMapping)
+                                    {
+                                        <div>@item.SupplementaryScheme.SchemeName</div>
+                                    }
+                                }
+                               
+                            </dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Certificate of conformity</dt>
-                            <dd class="govuk-summary-list__value">Certificate-123.pdf</dd>
+                            <dd class="govuk-summary-list__value">@Model.FileName</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Date of issue</dt>
-                            <dd class="govuk-summary-list__value">22 June 2024</dd>
+                            <dd class="govuk-summary-list__value">  @DateTimeExtensions.FormatDateTime(@Model.ConformityIssueDate, "dd MMMM yyyy")</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Date of expiry</dt>
-                            <dd class="govuk-summary-list__value">22 June 2025</dd>
+                            <dd class="govuk-summary-list__value">  @DateTimeExtensions.FormatDateTime(@Model.ConformityExpiryDate, "dd MMMM yyyy")</dd>
                         </div>
                     </dl>
-                    <div class="govuk-button-group">
-                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="approve">
-                            Proceed with approval
-                        </button>
-                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="sentback">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
+                    @using (Html.BeginForm("ProceedSecondaryCheckApproval", "PublicInterestSecondaryCheck", FormMethod.Post))
+                    {
+
+                        <div class="govuk-button-group">
+
+                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
+                                Proceed with Approval
+                            </button>
+                            <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
+                                Cancel
+                            </button>
+                        </div>
+                    }
+               
             </div>
         </div>
     </main>

@@ -44,6 +44,12 @@ namespace DVSAdmin.BusinessLogic.Services
             return automapper.Map<ServiceDto>(service);
         }
 
+        public async Task<ServiceDto> GetServiceDetailsWithMappings(int serviceId)
+        {
+            var certificateInfo = await publicInterestCheckRepository.GetServiceDetailsWithMappings(serviceId);
+            ServiceDto serviceDto = automapper.Map<ServiceDto>(certificateInfo);
+            return serviceDto;
+        }
         public async Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheckDto publicInterestCheckDto, ReviewTypeEnum reviewType)
         {
             Service service = await publicInterestCheckRepository.GetServiceDetails(publicInterestCheckDto.ServiceId);

@@ -40,6 +40,44 @@ namespace DVSAdmin.Data.Repositories
 
         }
 
+
+
+        public async Task<Service> GetServiceDetailsWithMappings(int serviceId)
+        {
+
+            var baseQuery = context.Service
+            .Where(p => p.Id == serviceId)
+            .Include(p => p.Provider)
+            .Include(p => p.PublicInterestCheck)
+            .Include(p => p.CabUser).ThenInclude(cu => cu.Cab)
+            .Include(p => p.ServiceRoleMapping)
+            .ThenInclude(s => s.Role);
+
+
+
+            IQueryable<Service> queryWithOptionalIncludes = baseQuery;
+            if (await baseQuery.AnyAsync(p => p.ServiceQualityLevelMapping != null && p.ServiceQualityLevelMapping.Any()))
+            {
+                queryWithOptionalIncludes = queryWithOptionalIncludes.Include(p => p.ServiceQualityLevelMapping)
+                    .ThenInclude(sq => sq.QualityLevel);
+            }
+
+            if (await baseQuery.AnyAsync(p => p.ServiceSupSchemeMapping != null && p.ServiceSupSchemeMapping.Any()))
+            {
+                queryWithOptionalIncludes = queryWithOptionalIncludes.Include(p => p.ServiceSupSchemeMapping)
+                    .ThenInclude(ssm => ssm.SupplementaryScheme);
+            }
+            if (await baseQuery.AnyAsync(p => p.ServiceIdentityProfileMapping != null && p.ServiceIdentityProfileMapping.Any()))
+            {
+                queryWithOptionalIncludes = queryWithOptionalIncludes.Include(p => p.ServiceIdentityProfileMapping)
+                    .ThenInclude(ssm => ssm.IdentityProfile);
+            }
+            var service = await queryWithOptionalIncludes.FirstOrDefaultAsync() ?? new Service();
+
+
+            return service;
+        }
+
         public async Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheck publicInterestCheck, ReviewTypeEnum reviewType)
         {
             GenericResponse genericResponse = new ();

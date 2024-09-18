@@ -28,12 +28,12 @@
                     </thead>
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell"><a href="#" class="govuk-link">Example Services</a></td>
-                            <td class="govuk-table__cell">Example 2</td>
-                            <td class="govuk-table__cell">NQA</td>
-                            <td class="govuk-table__cell">11:30; 01 Feb 2024</td>
-                            <td class="govuk-table__cell"><strong>Primary check passed</strong></td>
-                            <td class="govuk-table__cell">1 day</td>
+                            <td class="govuk-table__cell">@Model?.Service?.Provider.RegisteredName</td>
+                            <td class="govuk-table__cell">@Model?.Service?.ServiceName</td>
+                            <td class="govuk-table__cell">@Model?.Service?.CabUser.Cab.CabName</td>
+                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.Service.CreatedTime)</td>
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.PublicInterestCheck.PublicInterestCheckStatus)</td>
+                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.Service.PublicInterestCheck.SecondaryCheckTime, "h:mm tt; d MMM yyyy")</td>
                         </tr>
                     </tbody>
                 </table>              

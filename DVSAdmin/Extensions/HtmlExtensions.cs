@@ -34,6 +34,7 @@ namespace DVSAdmin.Extensions
                 case CertificateInfoStatusEnum.Approved:
                 case CertificateReviewEnum.Approved:
                 case PublicInterestCheckEnum.PrimaryCheckPassed:
+                case PublicInterestCheckEnum.PublicInterestCheckPassed:
                 return "govuk-tag govuk-tag--green";
 
                 case ApplicationReviewStatusEnum.SentBackBySecondReviewer:                   
@@ -48,6 +49,7 @@ namespace DVSAdmin.Extensions
                 case CertificateReviewEnum.Rejected:
                 case PublicInterestCheckEnum.PublicInterestCheckFailed:
                 case PublicInterestCheckEnum.PrimaryCheckFailed:
+                case PublicInterestCheckEnum.SentBackBySecondReviewer:
                 return "govuk-tag govuk-tag--red";
 
 
