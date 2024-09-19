@@ -11,9 +11,6 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
-    <Content Remove="Views\SecondaryCheck\PublicInterestSecondaryCheck.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.400" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.7" />
@@ -39,24 +36,7 @@
   <ItemGroup>
     <None Include="Views\Consent\Consent.cshtml" />
     <None Include="Views\Consent\ConsentSuccess.cshtml" />
-    <None Include="Views\PartialViews\_ArchiveView.cshtml" />
-    <None Include="Views\PartialViews\_PrimaryChecksView.cshtml" />
-    <None Include="Views\PartialViews\_SecondaryChecksView.cshtml" />
-    <None Include="Views\PrimaryCheck\ConfirmPrimaryCheckFail.cshtml" />
-    <None Include="Views\PrimaryCheck\ConfirmPrimaryCheckPass.cshtml" />
-    <None Include="Views\PrimaryCheck\PrimaryCheckFailedConfirmation.cshtml" />
-    <None Include="Views\PrimaryCheck\PrimaryCheckPassedConfirmation.cshtml" />
-    <None Include="Views\PrimaryCheck\PrimaryCheckReview.cshtml" />
-    <None Include="Views\SecondaryCheck\AboutToIssueURN.cshtml" />
-    <None Include="Views\SecondaryCheck\AboutToReject.cshtml" />
-    <None Include="Views\SecondaryCheck\ApplicationApprovalConfirmation.cshtml" />
-    <None Include="Views\SecondaryCheck\ApplicationRejectionConfirmation.cshtml" />
-    <None Include="Views\SecondaryCheck\ConfirmIssueURN.cshtml" />
-    <None Include="Views\SecondaryCheck\ConfirmSecondaryCheckReject.cshtml" />
-    <None Include="Views\SecondaryCheck\ConfirmSentBackForPrimaryCheck.cshtml" />
     <None Include="Views\PublicInterestSecondaryCheck\Review\SecondaryCheckReview.cshtml" />
-    <None Include="Views\SecondaryCheck\SecondaryCheckReview.cshtml" />
-    <None Include="Views\SecondaryCheck\SentBackConfirmation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <RuntimeHostConfigurationOption Include="System.Drawing.EnableUnixSupport" Value="true" />

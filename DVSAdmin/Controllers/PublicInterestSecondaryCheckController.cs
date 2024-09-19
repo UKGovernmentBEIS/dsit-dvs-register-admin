@@ -300,7 +300,7 @@ namespace DVSAdmin.Controllers
 
 
         [HttpPost("save-sent-back")]
-        public async Task<IActionResult> SaveSentBackForPrimaryCheck(SecondaryCheckViewModel secondaryCheckViewModelFormData, string saveReview)
+        public async Task<IActionResult> SaveSentBackForPrimaryCheck(string saveReview)
         {
             PublicInterestSecondaryCheckViewModel secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
 
