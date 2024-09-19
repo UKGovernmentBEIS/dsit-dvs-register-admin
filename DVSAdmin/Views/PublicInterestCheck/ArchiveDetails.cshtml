@@ -1,0 +1,320 @@
+﻿@model DVSAdmin.BusinessLogic.Models.ServiceDto;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "Application review";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "PublicInterestCheck", "PublicInterestCheck", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">Application review</h1>
+               
+                   
+                    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">Service provider</th>
+                                <th scope="col" class="govuk-table__header">Service name</th>
+                                <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
+                                <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
+                                <th scope="col" class="govuk-table__header">Review status</th>
+                                <th scope="col" class="govuk-table__header">Time of application <br /> decision</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@Model.Provider.TradingName</td>
+                                <td class="govuk-table__cell">@Model.ServiceName</td>
+                                <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
+                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(@Model.ModifiedTime) </td>
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(@Model.PublicInterestCheck.PublicInterestCheckStatus)</td>
+                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(@Model.PublicInterestCheck.SecondaryCheckTime) </td>                          
+                               
+                             
+                            </tr>
+                        </tbody>
+                    </table>
+
+                
+
+                    <h2 class="govuk-heading-l">Application details</h2>
+                    <h3 class="govuk-heading-m">Provider contact details</h3>
+
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Full name of primary contact</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactFullName</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Job title of primary contact</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactJobTitle</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Email address of primary contact</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactEmail</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Telephone number of primary contact</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactTelephoneNumber</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Full name of secondary contact</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactFullName</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Job title of secondary contact</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactJobTitle</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Email address of secondary contact</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactEmail</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Telephone number of secondary contact</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactTelephoneNumber</dd>
+                        </div>
+                    </dl>
+
+                    <h3 class="govuk-heading-m">Company overview</h3>
+
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Registered name</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.RegisteredName</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Trading name</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.TradingName</dd>
+                        </div>
+                        @if (Model.Provider.HasRegistrationNumber)
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Companies House or charity registration number</dt>
+                                <dd class="govuk-summary-list__value">@Model.Provider.CompanyRegistrationNumber</dd>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Companies House or charity registration number</dt>
+                                <dd class="govuk-summary-list__value">NA</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Dun & Bradstreet or D-U-N-S number</dt>
+                                <dd class="govuk-summary-list__value">@Model.Provider.DUNSNumber</dd>
+                            </div>
+                        }
+                        @if (Model.Provider.HasParentCompany)
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Registered name of parent company</dt>
+                                <dd class="govuk-summary-list__value">@Model.Provider.ParentCompanyRegisteredName</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Location of parent company</dt>
+                                <dd class="govuk-summary-list__value">@Model.Provider.ParentCompanyLocation</dd>
+                            </div>
+
+                        }
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Public contact email</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.PublicContactEmail</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Public telephone number</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.ProviderTelephoneNumber</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Website address</dt>
+                            <dd class="govuk-summary-list__value">@Model.Provider.ProviderWebsiteAddress</dd>
+                        </div>
+                    </dl>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h2 class="govuk-heading-l">Approval checklist</h2>
+                    <h3 class="govuk-heading-m">Companies House or charity information</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.Provider.ProviderStatus)
+                            </dd>
+                        </div>
+                    </dl>
+                    <p class="govuk-body"><a href="https://www.gov.uk/government/organisations/companies-house" class="govuk-link" rel="noreferrer noopener" target="_blank">Link to Companies House</a></p>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>Legal status</li>
+                        <li>If accounts are up to date</li>
+                        <li>Existing certifications</li>
+                        <li>Previous or outstanding administrations</li>
+                        <li>Address checks</li>
+                    </ul>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">Directorships</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @HtmlExtensions.ToStyledStrongTag(@Model.PublicInterestCheck.IsDirectorshipsApproved)
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>Validity</li>
+                        <li>Sanctioned directors</li>
+                        <li>Persons of interest</li>
+                        <li>Previous or outstanding administrations</li>
+                    </ul>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">Directors and relationships</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                            @HtmlExtensions.ToStyledStrongTag(@Model.PublicInterestCheck.IsDirectorshipsAndRelationApproved)
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>Directors and partners' relationships to organisations on sanction list</li>
+                    </ul>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">Trading as address checks, if applicable</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                            @HtmlExtensions.ToStyledStrongTag(@Model.PublicInterestCheck.IsTradingAddressApproved)
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">Sanctions list checks</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                            @HtmlExtensions.ToStyledStrongTag(@Model.PublicInterestCheck.IsSanctionListApproved)
+                            </dd>
+                        </div>
+                    </dl>
+                    <p class="govuk-body"><a href="https://sanctionssearchapp.ofsi.hmtreasury.gov.uk/" class="govuk-link" rel="noreferrer noopener" target="_blank">OFSI Check</a></p>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">UNFC check, if applicable</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                            @HtmlExtensions.ToStyledStrongTag(@Model.PublicInterestCheck.IsUNFCApproved)
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">EC check, if applicable</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                            @HtmlExtensions.ToStyledStrongTag(@Model.PublicInterestCheck.IsECCheckApproved)
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">TARIC check, if applicable</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                            @HtmlExtensions.ToStyledStrongTag(@Model.PublicInterestCheck.IsTARICApproved)
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <hr class="govuk-section-break govuk-section-break--l">
+                    <h3 class="govuk-heading-m">Banned political affiliations</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                            @HtmlExtensions.ToStyledStrongTag(@Model.PublicInterestCheck.IsBannedPoliticalApproved)
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>Money Laundering and Terrorism Funding</li>
+                        <li>Funding that can pose risks</li>
+                        <li>Existing certifications</li>
+                        <li>ICO – check historical breach and fine information</li>
+                    </ul>
+
+                    <h3 class="govuk-heading-m">Service provider’s website</h3>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                            @HtmlExtensions.ToStyledStrongTag(@Model.PublicInterestCheck.IsProvidersWebpageApproved)
+                            </dd>
+                        </div>
+                    </dl>
+                     <p class="govuk-body"><a href="@Model.Provider.ProviderWebsiteAddress" class="govuk-link" rel="noreferrer noopener" target="_blank">Link to service provider’s website</a></p>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>Authenticity</li>
+                        <li>SSL certificate</li>
+                    </ul>
+
+                    <h3 class="govuk-heading-m">Primary check reviewer comments</h3>
+                    <p class="govuk-body govuk-summary-list__key">@Model.PublicInterestCheck.PrimaryCheckUser.UserName</p>
+                    <p class="govuk-body"> @DateTimeExtensions.FormatDateTime(@Model.PublicInterestCheck.PrimaryCheckTime, "h:mm tt; d MMM yyyy")</p>
+                      <p class="govuk-body">  @HtmlExtensions.ToStringWithLineBreaks(@Model?.PublicInterestCheck.PrimaryCheckComment??string.Empty)</p>
+
+
+                <h3 class="govuk-heading-m">Secondary check reviewer comments</h3>
+                <p class="govuk-body govuk-summary-list__key">@Model.PublicInterestCheck.PrimaryCheckUser.UserName</p>
+                <p class="govuk-body"> @DateTimeExtensions.FormatDateTime(@Model.PublicInterestCheck.PrimaryCheckTime, "h:mm tt; d MMM yyyy")</p>
+                <p class="govuk-body">  @HtmlExtensions.ToStringWithLineBreaks(@Model?.PublicInterestCheck.PrimaryCheckComment??string.Empty)</p>
+
+
+
+            </div>
+        </div>
+    </main>
+</div>

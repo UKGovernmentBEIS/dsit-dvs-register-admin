@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.Data.Repositories;
-using Microsoft.Extensions.Logging;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -9,14 +8,12 @@ namespace DVSAdmin.BusinessLogic.Services
     {
         private readonly IUserRepository userRepository;
         private readonly IMapper automapper;
-        private readonly ILogger<PreRegistrationReviewService> logger;
+        
 
-        public UserService(IUserRepository userRepository, IMapper automapper,
-          ILogger<PreRegistrationReviewService> logger)
+        public UserService(IUserRepository userRepository, IMapper automapper )
         {
             this.userRepository = userRepository;
-            this.automapper = automapper;
-            this.logger = logger;
+            this.automapper = automapper;          
         }
         public async Task<UserDto> GetUser(string email)
         {

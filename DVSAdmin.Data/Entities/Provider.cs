@@ -9,10 +9,7 @@ namespace DVSAdmin.Data.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
-        [ForeignKey("PreRegistration")]
-        public int PreRegistrationId { get; set; }
-        public PreRegistration PreRegistration { get; set; }
+ 
         public string RegisteredName { get; set; }
         public string TradingName { get; set; }
         public string PublicContactEmail { get; set; }

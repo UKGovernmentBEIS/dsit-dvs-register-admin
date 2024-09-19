@@ -1,7 +1,7 @@
 ﻿@model DVSAdmin.Models.PublicInterestCheckViewModel;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @{
-    ViewData["Title"] = "PublicInterestCheck";
+    ViewData["Title"] = "Public interest check";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -9,7 +9,7 @@
     @Html.ActionLink("Back", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
-            <h1 class="govuk-heading-xl">Public Interest Check</h1>
+            <h1 class="govuk-heading-xl">Public interest check</h1>
 
             <details class="govuk-details">
                 <summary class="govuk-details__summary">
@@ -18,7 +18,7 @@
                     </span>
                 </summary>
                 <div class="govuk-details__text">
-                    In this section, you will be conducting the primary and secondary checks. This is part of the 2i check, which enhances security by ensuring that the decision-making process does not depend on a single individual.Users acting as first revieweres will be able to complete the first step of the review, but will be blocked from completing the checks as second reviewer.
+                    In this section, you will be conducting the primary and secondary checks. This is part of the 2i check, which enhances security by ensuring that the decision-making process does not depend on a single individual. Users acting as first reviewers will be able to complete the first step of the review, but will be blocked from completing the checks as second reviewer.
                 </div>
             </details>
 
@@ -26,12 +26,12 @@
                 <ul class="govuk-tabs__list">
                     <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                         <a class="govuk-tabs__tab" href="#primary-check">
-                            Primary Check
+                            Primary check
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
                         <a class="govuk-tabs__tab" href="#secondary-check">
-                            Secondary Check
+                            Secondary check
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">

@@ -14,20 +14,21 @@ namespace DVSAdmin.Controllers
     {
         private readonly IJwtService jwtService;
         private readonly ICertificateReviewService certificateReviewService;
+        private readonly IPublicInterestCheckService publicInterestCheckService;
         private readonly IConsentService consentService;
 
-        public ConsentController(IJwtService jwtService, ICertificateReviewService certificateReviewService, IConsentService consentService)
+        public ConsentController(IJwtService jwtService, ICertificateReviewService certificateReviewService, IConsentService consentService, IPublicInterestCheckService publicInterestCheckService)
         {
             this.jwtService = jwtService;
             this.certificateReviewService = certificateReviewService;
             this.consentService = consentService;
+            this.publicInterestCheckService=publicInterestCheckService;
         }
 
 
-        #region Closing the loop
-        //To do : rename as - publish service consent during register management
+        #region Closing the loop        
 
-        [HttpGet("give-consent")]
+        [HttpGet("publish-service-give-consent")]
         public  async Task<ActionResult> Consent(string token)
         {
             ConsentViewModel consentViewModel = new ConsentViewModel();
@@ -37,12 +38,12 @@ namespace DVSAdmin.Controllers
                 TokenDetails tokenDetails = await jwtService.ValidateToken(token);
                 if (tokenDetails!= null && tokenDetails.IsAuthorised)
                 {
-                    ServiceDto ServiceDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
-                    if(ServiceDto!= null && ServiceDto.ServiceStatus == ServiceStatusEnum.Received)
+                    ServiceDto ServiceDto = await publicInterestCheckService.GetProviderAndCertificateDetailsByConsentToken(tokenDetails.Token, tokenDetails.TokenId);
+                    if(ServiceDto!= null && ServiceDto.ServiceStatus == ServiceStatusEnum.ReadyToPublish)
                     {
                         return RedirectToAction(Constants.ErrorPath);
                     }
-                    consentViewModel.CertificateInformation = ServiceDto;
+                    consentViewModel.Service = ServiceDto;
                 }
                 else
                 {
@@ -58,7 +59,7 @@ namespace DVSAdmin.Controllers
             return View(consentViewModel);
         }
 
-        [HttpPost("give-consent")]
+        [HttpPost("publish-service-give-consent")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> GiveConsent(ConsentViewModel consentViewModel)
         {
@@ -68,10 +69,10 @@ namespace DVSAdmin.Controllers
                
                 if(tokenDetails!= null && tokenDetails.IsAuthorised)
                 {
-                    ServiceDto ServiceDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
+                    ServiceDto ServiceDto = await publicInterestCheckService.GetProviderAndCertificateDetailsByConsentToken(tokenDetails.Token, tokenDetails.TokenId);
                     if (ModelState.IsValid)
                     {
-                        GenericResponse genericResponse = new(); //TO DO : update during register management changes
+                        GenericResponse genericResponse = await publicInterestCheckService.UpdateServiceAndProviderStatus(tokenDetails.Token, tokenDetails.TokenId, ServiceDto);
                         if (genericResponse.Success)
                         {
                             return RedirectToAction("ConsentSuccess");
@@ -84,7 +85,7 @@ namespace DVSAdmin.Controllers
                     else
                     {
                        
-                        consentViewModel.CertificateInformation = ServiceDto;
+                        consentViewModel.Service = ServiceDto;
                         return View("Consent", consentViewModel);
                     }
                 }
@@ -125,7 +126,7 @@ namespace DVSAdmin.Controllers
                     {
                         return RedirectToAction("ProceedApplicationConsentError");
                     }
-                    consentViewModel.CertificateInformation = ServiceDto;
+                    consentViewModel.Service = ServiceDto;
                 }
                 else
                 {
@@ -167,7 +168,7 @@ namespace DVSAdmin.Controllers
                     else
                     {
 
-                        consentViewModel.CertificateInformation = serviceDto;
+                        consentViewModel.Service = serviceDto;
                         return View("ProceedApplicationConsent", consentViewModel);
                     }
                 }

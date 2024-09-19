@@ -7,23 +7,23 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "PrimaryCheck", "PublicInterestCheck", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "PrimaryCheckReview", "PublicInterestPrimaryCheck", null, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl">
-                    You are about to confirm this application has failed the primary check
+                    You are about to confirm that this application has failed the primary check
                 </h1>
                 <p class="govuk-body">
                     You are about to confirm that this application has failed the primary check. If you have made a mistake, you can go back to the application review screen to make changes.
                 </p>
 
-                <h2 class="govuk-heading-m">What will happen once you confirm the application has failed the primary check</h2>
+                <h2 class="govuk-heading-m">What will happen once you confirm that the application has failed the primary check</h2>
 
                 <p class="govuk-body">
-                    Once you confirm that the applicant has failed the primary check, an email notification of your decision will be sent to the Office for Digital Identity Register Portal inbox. Another member of the DSIT team must then complete the secondary check.
+                    Once you confirm that the application has failed the primary check, an email notification of your decision will be sent to the Digital Identity Register Portal inbox. Another member of the DSIT team must then complete the secondary check.
                 </p>
-                @using (Html.BeginForm("SavePrimaryCheckFailed", "PublicInterestCheck", FormMethod.Post))
+                @using (Html.BeginForm("SavePrimaryCheckFailed", "PublicInterestPrimaryCheck", FormMethod.Post))
                 {
                     <div class="govuk-button-group">
 

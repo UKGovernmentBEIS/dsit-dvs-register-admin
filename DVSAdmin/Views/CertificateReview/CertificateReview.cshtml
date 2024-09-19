@@ -33,11 +33,11 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">Service Provider</th>
+                                <th scope="col" class="govuk-table__header">Service provider</th>
                                 <th scope="col" class="govuk-table__header"> Service name </th>
                                 <th scope="col" class="govuk-table__header">Conformity Assessment Body </th>
                                 <th scope="col" class="govuk-table__header">Role type</th>
-                                <th scope="col" class="govuk-table__header">Time submitted</th>
+                                <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
                                 <th scope="col" class="govuk-table__header">Review status</th>
                                 <th scope="col" class="govuk-table__header">Days left to complete checks</th>
                             </tr>
@@ -99,10 +99,10 @@
                                     After you have verified that all items match, scroll down to the bottom of the page and click the ‘Yes, it matches the information on the certificate’ option. If the items do not match, click the ‘No, it does not match’ option. You must enter comments or notes in the text area at the bottom of the page.
                                 </li>
                                 <li>
-                                    If you wish to submit your review at it at a later time, you can select the ‘Save as draft’ button located at the bottom of the page. You must have completed all sections before saving.
+                                    If you wish to submit your review at a later time, you can select the ‘Save as draft’ button located at the bottom of the page. You must have completed all sections before saving.
                                 </li>
                                 <li>
-                                    Once you have verified all items, scroll down to the bottom of the page and select ‘Approve submission or ‘Reject submission’ to proceed with the process. To proceed with approval, the submission must have passed all certificate validation and information match checks.
+                                    Once you have verified all items, scroll down to the bottom of the page and select ‘Approve submission' or ‘Reject submission’ to proceed with the process. To proceed with approval, the submission must have passed all certificate validation and information match checks.
                                 </li>
                             </ol>
                         </div>
@@ -160,12 +160,12 @@
                         <div class="govuk-form-group govuk-form-group--error">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="comments">
-                                    Comments
+                                    Add a comment
                                 </label>
 
                             </h3>
                             <div id="comments-hint" class="govuk-hint">
-                                If you had marked any item as ‘Incorrect’, you should provide further details. If all sections are marked ‘Correct’, please provide a note to confirm below.
+                                If you had selected ‘No, it does not match’, you should provide further details. If all the information matches the certificate, please provide a note to confirm below.
                             </div>
                             <p class="govuk-body"></p>
                             <p id="comments-error" class="govuk-error-message">
@@ -180,11 +180,11 @@
                         <div class="govuk-form-group">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="comments">
-                                    Comments
+                                    Add a comment
                                 </label>
                             </h3>
                             <div id="comments-hint" class="govuk-hint">
-                                If you had marked any item as ‘Incorrect’, you should provide further details. If all sections are marked ‘Correct’, please provide a note to confirm below.
+                                If you had selected ‘No, it does not match’, you should provide further details. If all the information matches the certificate, please provide a note to confirm below.
                             </div>
 
                             @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5",
@@ -221,7 +221,7 @@
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">
                             <span class="govuk-visually-hidden">Warning</span>
-                            To proceed with approval, this submission must have passed all certificate validation and information match checks.
+                            To proceed with approval, this submission must have passed all certificate validation and information match checks
                         </strong>
                     </div>
                 </div>

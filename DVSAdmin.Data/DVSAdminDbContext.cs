@@ -8,18 +8,13 @@ namespace DVSAdmin.Data
         public DVSAdminDbContext(DbContextOptions<DVSAdminDbContext> options) : base(options)
         {
         }
-        public DbSet<PreRegistration> PreRegistration { get; set; }
-        public DbSet<Country> Country { get; set; }
-        public DbSet<PreRegistrationCountryMapping> PreRegistrationCountryMapping { get; set; }
-        public DbSet<User> User { get; set; }
-        public DbSet<PreRegistrationReview> PreRegistrationReview { get; set; }
-        public DbSet<UniqueReferenceNumber> UniqueReferenceNumber { get; set; }
+    
+        public DbSet<User> User { get; set; }       
         public DbSet<CertificateReviewRejectionReason> CertificateReviewRejectionReason { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<IdentityProfile> IdentityProfile { get; set; }
         public DbSet<SupplementaryScheme> SupplementaryScheme { get; set; }
-        public DbSet<Provider> Provider { get; set; }
-        public DbSet<ConsentToken> ConsentToken { get; set; }
+        public DbSet<Provider> Provider { get; set; }      
         public DbSet<RegisterPublishLog> RegisterPublishLog { get; set; }
         public DbSet<PublicInterestCheck> PublicInterestCheck { get; set; }
 
@@ -39,6 +34,9 @@ namespace DVSAdmin.Data
         public DbSet<CertificateReview> CertificateReview { get; set; }
         public DbSet<CertificateReviewRejectionReasonMapping> CertificateReviewRejectionReasonMapping { get; set; }
         public DbSet<ProceedApplicationConsentToken> ProceedApplicationConsentToken { get; set; }
+
+        public DbSet<PICheckLogs> PICheckLogs { get; set; }
+        public DbSet<ProceedPublishConsentToken> ProceedPublishConsentToken { get;set; }
 
         #endregion
     }

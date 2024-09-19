@@ -9,7 +9,7 @@ namespace DVSAdmin.Models
         public CertificateValidationViewModel? CertificateValidation { get; set; }
         public CertificateReviewViewModel? CertificateReview { get; set; }          
 
-        [Required(ErrorMessage = "Give further details on reason(s) selected and any required amendments")]
+        [Required(ErrorMessage = "Give further details on reasons selected and any required amendments")]
         public string? Comments { get; set; }
 
         public List<CertificateReviewRejectionReasonDto>? RejectionReasons { get; set; }
