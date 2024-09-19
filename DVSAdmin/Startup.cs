@@ -10,6 +10,7 @@ using DVSAdmin.Data;
 using DVSAdmin.Data.Repositories;
 using DVSAdmin.Data.Repositories.RegisterManagement;
 using DVSAdmin.Middleware;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
 
@@ -33,6 +34,8 @@ namespace DVSAdmin
             string connectionString = string.Format(configuration.GetValue<string>("DB_CONNECTIONSTRING"));
             services.AddDbContext<DVSAdminDbContext>(opt =>
                 opt.UseNpgsql(connectionString));
+            // This allows encrypted cookies to be understood across multiple web server instances
+            services.AddDataProtection().PersistKeysToDbContext<DVSAdminDbContext>();
             ConfigureSession(services);
             ConfigureDvsRegisterServices(services);
             ConfigureAutomapperServices(services);
@@ -48,7 +51,7 @@ namespace DVSAdmin
             services.AddHttpContextAccessor();
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30); // ToDo:Adjust the timeout
+                options.IdleTimeout = TimeSpan.FromMinutes(360);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
