@@ -1,9 +1,10 @@
 ﻿using DVSAdmin.Data.Entities;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DVSAdmin.Data
 {
-    public class DVSAdminDbContext : DbContext
+    public class DVSAdminDbContext : DbContext, IDataProtectionKeyContext
     {
         public DVSAdminDbContext(DbContextOptions<DVSAdminDbContext> options) : base(options)
         {
@@ -17,11 +18,6 @@ namespace DVSAdmin.Data
         public DbSet<Provider> Provider { get; set; }      
         public DbSet<RegisterPublishLog> RegisterPublishLog { get; set; }
         public DbSet<PublicInterestCheck> PublicInterestCheck { get; set; }
-
-
-
-
-        #region new path
         public DbSet<Cab> Cab { get; set; }
         public DbSet<CabUser> CabUser { get; set; }
         public DbSet<ProviderProfile> ProviderProfile { get; set; }
@@ -37,7 +33,8 @@ namespace DVSAdmin.Data
 
         public DbSet<PICheckLogs> PICheckLogs { get; set; }
         public DbSet<ProceedPublishConsentToken> ProceedPublishConsentToken { get;set; }
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
-        #endregion
+       
     }
 }
