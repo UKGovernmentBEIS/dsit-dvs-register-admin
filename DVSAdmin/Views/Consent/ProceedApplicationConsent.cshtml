@@ -33,7 +33,7 @@
                                 Public contact email
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.Provider.PublicContactEmail
+                                @Model.Service.Provider.PublicContactEmail
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -41,7 +41,7 @@
                                 Telephone number
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.Provider.ProviderTelephoneNumber
+                                @Model.Service.Provider.ProviderTelephoneNumber
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -49,16 +49,16 @@
                                 Website address
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.Provider.ProviderWebsiteAddress
+                                @Model.Service.Provider.ProviderWebsiteAddress
                             </dd>
                         </div>
                     </dl>
 
 
 
-                    <h2 class="govuk-heading-m">@Model.CertificateInformation.ServiceName </h2>
+                    <h2 class="govuk-heading-m">@Model.Service.ServiceName </h2>
                    
-                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.CertificateInformation)
+                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
                    
 
                     <hr class="govuk-section-break govuk-section-break--m">              

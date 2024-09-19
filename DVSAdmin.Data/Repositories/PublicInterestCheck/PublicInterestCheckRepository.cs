@@ -3,6 +3,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static Amazon.S3.Util.S3EventNotification;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -115,19 +116,85 @@ namespace DVSAdmin.Data.Repositories
                         existingEntity.RejectionReason = publicInterestCheck.RejectionReason;
                         existingEntity.SecondaryCheckUserId = publicInterestCheck.SecondaryCheckUserId;
                         existingEntity.SecondaryCheckTime = DateTime.UtcNow;
+                        existingEntity.RejectionReasons = publicInterestCheck.RejectionReasons;
                     }
 
                     await context.SaveChangesAsync();
+                    genericResponse.InstanceId = existingEntity.Id;
 
                 }
                 else
                 {
+                  
                     publicInterestCheck.PrimaryCheckTime = DateTime.UtcNow;
-                    await context.PublicInterestCheck.AddAsync(publicInterestCheck);
+                    var entity = await context.PublicInterestCheck.AddAsync(publicInterestCheck);                 
                     await context.SaveChangesAsync();
+                    genericResponse.InstanceId = entity.Entity.Id;
                 }
                 transaction.Commit();
                 genericResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
+        public async Task<GenericResponse> SavePICheckLog(PICheckLogs pICheck)
+        {
+            GenericResponse genericResponse = new();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+               
+                await context.PICheckLogs.AddAsync(pICheck);
+                await context.SaveChangesAsync();
+                transaction.Commit();
+                genericResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError($"Failed to log to PI check logs: {ex}");              
+
+            }
+            return genericResponse;
+        }
+
+
+        public async Task<List<Service>> GetServiceList(int providerId)
+        {
+            return await context.Service .Where(s => s.ProviderProfileId == providerId).ToListAsync();
+        }
+
+
+        public async Task<GenericResponse> UpdateServiceAndProviderStatus(int serviceId,  ProviderStatusEnum providerStatus)
+        {
+            GenericResponse genericResponse = new GenericResponse();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+
+                var serviceEntity = await context.Service.FirstOrDefaultAsync(e => e.Id == serviceId);
+                var providerEntity = await context.ProviderProfile.FirstOrDefaultAsync(e => e.Id == serviceEntity.ProviderProfileId);
+
+                if (serviceEntity != null && providerEntity != null)
+                {
+                    //update review table status so that it won't appear in review list again
+                    serviceEntity.ServiceStatus = ServiceStatusEnum.ReadyToPublish;
+                    serviceEntity.ModifiedTime = DateTime.UtcNow;   
+                    providerEntity.ProviderStatus = providerStatus;
+                    providerEntity.ModifiedTime = DateTime.UtcNow;
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
             }
             catch (Exception ex)
             {

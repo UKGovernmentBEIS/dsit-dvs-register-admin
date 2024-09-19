@@ -18,8 +18,7 @@ namespace DVSAdmin.Data
         public DbSet<Role> Role { get; set; }
         public DbSet<IdentityProfile> IdentityProfile { get; set; }
         public DbSet<SupplementaryScheme> SupplementaryScheme { get; set; }
-        public DbSet<Provider> Provider { get; set; }
-        public DbSet<ConsentToken> ConsentToken { get; set; }
+        public DbSet<Provider> Provider { get; set; }      
         public DbSet<RegisterPublishLog> RegisterPublishLog { get; set; }
         public DbSet<PublicInterestCheck> PublicInterestCheck { get; set; }
 
@@ -39,6 +38,9 @@ namespace DVSAdmin.Data
         public DbSet<CertificateReview> CertificateReview { get; set; }
         public DbSet<CertificateReviewRejectionReasonMapping> CertificateReviewRejectionReasonMapping { get; set; }
         public DbSet<ProceedApplicationConsentToken> ProceedApplicationConsentToken { get; set; }
+
+        public DbSet<PICheckLogs> PICheckLogs { get; set; }
+        public DbSet<ProceedPublishConsentToken> ProceedPublishConsentToken { get;set; }
 
         #endregion
     }

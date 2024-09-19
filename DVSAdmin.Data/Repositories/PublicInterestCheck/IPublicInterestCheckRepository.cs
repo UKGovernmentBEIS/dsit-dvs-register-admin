@@ -10,5 +10,8 @@ namespace DVSAdmin.Data.Repositories
         public Task<Service> GetServiceDetails(int serviceId);
         public Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheck publicInterestCheck, ReviewTypeEnum reviewType);
         public  Task<Service> GetServiceDetailsWithMappings(int serviceId);
+        public Task<GenericResponse> SavePICheckLog(PICheckLogs pICheck);
+        public Task<List<Service>> GetServiceList(int providerId);
+        public Task<GenericResponse> UpdateServiceAndProviderStatus(int serviceId, ProviderStatusEnum providerStatus);
     }
 }

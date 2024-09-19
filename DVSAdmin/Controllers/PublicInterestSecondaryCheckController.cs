@@ -94,7 +94,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                return View("SecondaryCheckReview", secondaryCheckViewModelData);
+                return View("Review/SecondaryCheckReview", secondaryCheckViewModelData);
             }
 
         }
@@ -179,6 +179,16 @@ namespace DVSAdmin.Controllers
         public IActionResult ProceedSecondaryCheckReject()
         {
             PublicInterestSecondaryCheckViewModel publicInterestSecondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
+            if(publicInterestSecondaryCheckViewModel?.SelectedReasons != null && publicInterestSecondaryCheckViewModel?.SelectedReasons.Count>0)
+            {
+                publicInterestSecondaryCheckViewModel.SelectedReasonIds = publicInterestSecondaryCheckViewModel?.SelectedReasons?.Select(c => c.Id).ToList();
+            }
+            else
+            {
+                publicInterestSecondaryCheckViewModel.SelectedReasonIds = new List<int>();
+            }
+                   
+
             return View("Reject/ProceedSecondaryCheckReject", publicInterestSecondaryCheckViewModel);
         }
 
@@ -187,15 +197,16 @@ namespace DVSAdmin.Controllers
         {
 
             PublicInterestSecondaryCheckViewModel secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
-            secondaryCheckViewModel.RejectionReason = publicInterestSecondaryCheckViewModel.RejectionReason;
-
+            secondaryCheckViewModel.SelectedReasonIds =  secondaryCheckViewModel.SelectedReasonIds??new List<int>();
+           
             if (saveReview == "reject")
             {
                 secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.PublicInterestCheckFailed;
                 AddModelStateErrorIfRejectionReasonNull(publicInterestSecondaryCheckViewModel);
 
                 if (ModelState.IsValid)
-                {
+                {                    
+                    secondaryCheckViewModel.SelectedReasons = publicInterestSecondaryCheckViewModel.AvailableReasons.Where(c => publicInterestSecondaryCheckViewModel.SelectedReasonIds.Contains(c.Id)).ToList();
                     HttpContext?.Session.Set("SecondaryCheckData", secondaryCheckViewModel);
                     return RedirectToAction("ConfirmSecondaryCheckReject", "PublicInterestSecondaryCheck");
                 }
@@ -384,7 +395,10 @@ namespace DVSAdmin.Controllers
             publicInterestCheckDto.ServiceId =secondaryCheckViewModel.ServiceId;
             publicInterestCheckDto.ProviderProfileId = secondaryCheckViewModel.ProviderProfileId;
             publicInterestCheckDto.PublicInterestCheckStatus = secondaryCheckViewModel.PublicInterestCheckStatus;
-            publicInterestCheckDto.RejectionReason = secondaryCheckViewModel.RejectionReason;
+            if(secondaryCheckViewModel.SelectedReasons!=null)
+            {
+                publicInterestCheckDto.RejectionReasons = string.Join('~', secondaryCheckViewModel.SelectedReasons.Select(r => r.RejectionReasonName));
+            }          
             publicInterestCheckDto.SecondaryCheckUserId = secondaryCheckViewModel.SecondaryCheckUserId;
             publicInterestCheckDto.SecondaryCheckComment = secondaryCheckViewModel.SecondaryCheckComment;
             return publicInterestCheckDto;
@@ -406,8 +420,8 @@ namespace DVSAdmin.Controllers
 
         private void AddModelStateErrorIfRejectionReasonNull(PublicInterestSecondaryCheckViewModel secondaryCheckViewModel)
         {
-            if (secondaryCheckViewModel.RejectionReason == null || secondaryCheckViewModel.RejectionReason == 0)
-                ModelState.AddModelError("RejectionReason", "Select a reason for rejection");
+            if (secondaryCheckViewModel.SelectedReasonIds == null || secondaryCheckViewModel.SelectedReasonIds.Count == 0)
+                ModelState.AddModelError("SelectedReasonIds", "Select a reason for rejection");
         }
         #endregion
     }

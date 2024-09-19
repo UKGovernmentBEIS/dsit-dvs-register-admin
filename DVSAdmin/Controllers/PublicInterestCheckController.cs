@@ -63,5 +63,15 @@ namespace DVSAdmin.Controllers
             }
 
         }
+
+
+       
+        [HttpGet("archive-details")]
+        public async Task<IActionResult> ArchiveDetails(int serviceId)
+        {
+            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
+            return View(serviceDto);
+
+        }
     }
 }

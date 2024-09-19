@@ -13,19 +13,21 @@ namespace DVSAdmin.CommonUtility.Models
 
         public PassPIPrimaryCheckTemplate PassPIPrimaryCheckTemplate { get;set; }
         public FailPIPrimaryCheckTemplate FailPIPrimaryCheckTemplate { get; set; }
-        public PrimaryCheckRoundTwoTemplate PrimaryCheckRoundTwoTemplate { get; set;}
-        public ApplicationRejectedTemplate ApplicationRejectedTemplate { get; set; }
+        public PICheckRoundTwoTemplate PICheckRoundTwoTemplate { get; set;}
+        public PICheckApplicationRejectedDIPTemplate PICheckApplicationRejectedDIPTemplate { get; set; }
+        public PICheckApplicationRejectedDISTTemplate PICheckApplicationRejectedDISTTemplate { get; set; }
+
         public IssueURNConfirmationTemplate IssueURNConfirmationTemplate { get; set; }
         public AccountCreatedTemplate AccountCreatedTemplate { get; set; }
         public FailedLoginAttemptTemplate FailedLoginAttemptTemplate { get; set; } 
-        public ApplicationRejectedConfirmationTemplate ApplicationRejectedConfirmationTemplate { get; set; }
+     
         public ApplicationApprovedConfirmationTemplate ApplicationApprovedConfirmationTemplate { get; set; }
         public CertificateInfoApprovedToCabTemplate CertificateInfoApprovedToCabTemplate { get; set; }
         public CertificateInfoApprovedToDSIT CertificateInfoApprovedToDSIT { get; set; }
         public CertificateInfoRejectedToCabTemplate CertificateInfoRejectedToCabTemplate { get; set; }
         public CertificateInfoRejectedToDSITTemplate CertificateInfoRejectedToDSITTemplate { get; set; }
         public DIPConsentToPublishTemplate DIPConsentToPublishTemplate { get; set; }
-        public AdditionalContactConsentTemplate AdditionalContactConsentTemplate { get; set; }
+      
         public AgreementToPublishTemplate AgreementToPublishTemplate { get; set; }
         public AgreementToPublishToDSITTemplate AgreementToPublishToDSITTemplate { get; set; }
         public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }
