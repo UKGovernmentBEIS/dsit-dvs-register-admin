@@ -16,9 +16,7 @@ namespace DVSAdmin.Extensions
             
             switch (value)
             {
-                case ApplicationReviewStatusEnum.Received:                   
-                case URNStatusEnum.Created:                   
-                case URNStatusEnum.ValidatedByCAB:                  
+                case ApplicationReviewStatusEnum.Received:      
                 case CertificateInfoStatusEnum.Received:
                 case CertificateInfoStatusEnum.Published:
                 case ProviderStatusEnum.Published:
@@ -29,8 +27,7 @@ namespace DVSAdmin.Extensions
 
 
                 case ApplicationReviewStatusEnum.PrimaryCheckPassed:                        
-                case ApplicationReviewStatusEnum.ApplicationApproved:                    
-                case URNStatusEnum.Approved:                  
+                case ApplicationReviewStatusEnum.ApplicationApproved:
                 case CertificateInfoStatusEnum.Approved:
                 case CertificateReviewEnum.Approved:
                 case PublicInterestCheckEnum.PrimaryCheckPassed:
@@ -39,9 +36,8 @@ namespace DVSAdmin.Extensions
 
                 case ApplicationReviewStatusEnum.SentBackBySecondReviewer:                   
                 case ApplicationReviewStatusEnum.PrimaryCheckFailed:                   
-                case ApplicationReviewStatusEnum.ApplicationRejected:  
-                case URNStatusEnum.Expired:                   
-                case URNStatusEnum.Rejected:                    
+                case ApplicationReviewStatusEnum.ApplicationRejected: 
+                              
                 case CertificateInfoStatusEnum.Rejected:                  
                 case CertificateInfoStatusEnum.Expired:
                 case CertificateInfoStatusEnum.Removed:

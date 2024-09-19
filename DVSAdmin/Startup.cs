@@ -73,9 +73,7 @@ namespace DVSAdmin
 
         public void ConfigureDvsRegisterServices(IServiceCollection services)
         {
-            services.AddScoped<IPreRegistrationReviewRepository, PreRegistrationReviewRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IPreRegistrationReviewService, PreRegistrationReviewService>();
+            services.AddScoped<IUserRepository, UserRepository>();           
             services.AddScoped<ISignUpService, SignUpService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped(opt =>
