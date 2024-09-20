@@ -6,7 +6,7 @@ namespace DVSAdmin.CommonUtility
     {
         public static string GenerateQRCode(string secretKey, string email)
         {
-            string qrCodeDataString = $"otpauth://totp/cognito-client:{email}?secret={secretKey}&issuer=OfDIA-Platform";
+            string qrCodeDataString = $"otpauth://totp/cognito-client:{email}?secret={secretKey}&issuer=DSIT-Platform";
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeDataString, QRCodeGenerator.ECCLevel.Q);
