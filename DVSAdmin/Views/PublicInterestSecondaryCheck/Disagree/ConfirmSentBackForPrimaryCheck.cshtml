@@ -18,11 +18,11 @@
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Service Provider</th>
-                            <th scope="col" class="govuk-table__header">Service Name</th>
+                            <th scope="col" class="govuk-table__header">Service provider</th>
+                            <th scope="col" class="govuk-table__header">Service name</th>
                             <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
-                            <th scope="col" class="govuk-table__header">Time Submitted(UTC)</th>
-                            <th scope="col" class="govuk-table__header">Review Status</th>
+                            <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
+                            <th scope="col" class="govuk-table__header">Review status</th>
                             <th scope="col" class="govuk-table__header">Days left to complete review</th>
                         </tr>
                     </thead>
@@ -45,11 +45,11 @@
                     What will happen once you send back to primary
                     check for another review
                 </h2>
-                <div id="applicationSponsor-hint" class="govuk-hint">
+                <p class="govuk-body">
                     Once you send back to primary check for another review, the responsible
                     reviewer for the primary check will receive a notification to conduct a check
                     again. You will receive a notification once the primary check is completed.
-                </div>
+                </p>
 
                 @using (Html.BeginForm("SaveSentBackForPrimaryCheck", "PublicInterestSecondaryCheck", FormMethod.Post))
                 {
