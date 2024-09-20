@@ -14,8 +14,7 @@ namespace DVSAdmin.Data
         public DbSet<CertificateReviewRejectionReason> CertificateReviewRejectionReason { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<IdentityProfile> IdentityProfile { get; set; }
-        public DbSet<SupplementaryScheme> SupplementaryScheme { get; set; }
-        public DbSet<Provider> Provider { get; set; }      
+        public DbSet<SupplementaryScheme> SupplementaryScheme { get; set; }      
         public DbSet<RegisterPublishLog> RegisterPublishLog { get; set; }
         public DbSet<PublicInterestCheck> PublicInterestCheck { get; set; }
         public DbSet<Cab> Cab { get; set; }
