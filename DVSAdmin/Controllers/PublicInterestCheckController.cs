@@ -40,8 +40,8 @@ namespace DVSAdmin.Controllers
                 publicInterestCheckViewModel.PrimaryChecksList = publicinterestchecks.Where(x => x.DaysLeftToComplete > 0).
                 Where(x => (x.ServiceStatus == ServiceStatusEnum.Received && x.Id != x?.PublicInterestCheck?.ServiceId) ||
                 (x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview               
-                || x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer
-                 && x.PublicInterestCheck.SecondaryCheckUserId != userDto.Id)).ToList();
+                || x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)
+                 && x.PublicInterestCheck.SecondaryCheckUserId != userDto.Id).ToList();
 
                 publicInterestCheckViewModel.SecondaryChecksList = publicinterestchecks
                 .Where(x => x.PublicInterestCheck !=null    && x.DaysLeftToComplete>0
