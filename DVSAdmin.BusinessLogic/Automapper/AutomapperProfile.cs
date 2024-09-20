@@ -19,13 +19,7 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<IdentityProfile, IdentityProfileDto>();
             CreateMap<IdentityProfileDto, IdentityProfile>();
             CreateMap<SupplementaryScheme, SupplementarySchemeDto>();
-            CreateMap<SupplementarySchemeDto, SupplementaryScheme>();
-            CreateMap<CertificateInfoIdentityProfileMapping, CertificateInfoIdentityProfileMappingDto>();
-            CreateMap<CertificateInfoIdentityProfileMappingDto, CertificateInfoIdentityProfileMapping>();
-            CreateMap<CertificateInfoRoleMapping, CertificateInfoRoleMappingDto>();
-            CreateMap<CertificateInfoRoleMappingDto, CertificateInfoRoleMapping>();
-            CreateMap<CertificateInfoSupSchemeMapping, CertificateInfoSupSchemeMappingDto>();
-            CreateMap<CertificateInfoSupSchemeMappingDto, CertificateInfoSupSchemeMapping>();
+            CreateMap<SupplementarySchemeDto, SupplementaryScheme>();         
             CreateMap<CertificateReviewRejectionReason, CertificateReviewRejectionReasonDto>();
             CreateMap<CertificateReviewRejectionReasonDto, CertificateReviewRejectionReason>();
 

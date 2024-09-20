@@ -16,12 +16,13 @@ namespace DVSAdmin.CommonUtility.Models
         public PICheckRoundTwoTemplate PICheckRoundTwoTemplate { get; set;}
         public PICheckApplicationRejectedDIPTemplate PICheckApplicationRejectedDIPTemplate { get; set; }
         public PICheckApplicationRejectedDISTTemplate PICheckApplicationRejectedDISTTemplate { get; set; }
+        public PICheckApplicationApprovedDISTTemplate PICheckApplicationApprovedDISTTemplate { get; set; }
 
-        public IssueURNConfirmationTemplate IssueURNConfirmationTemplate { get; set; }
+      
         public AccountCreatedTemplate AccountCreatedTemplate { get; set; }
         public FailedLoginAttemptTemplate FailedLoginAttemptTemplate { get; set; } 
      
-        public ApplicationApprovedConfirmationTemplate ApplicationApprovedConfirmationTemplate { get; set; }
+      
         public CertificateInfoApprovedToCabTemplate CertificateInfoApprovedToCabTemplate { get; set; }
         public CertificateInfoApprovedToDSIT CertificateInfoApprovedToDSIT { get; set; }
         public CertificateInfoRejectedToCabTemplate CertificateInfoRejectedToCabTemplate { get; set; }

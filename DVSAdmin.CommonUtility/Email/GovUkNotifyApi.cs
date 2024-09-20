@@ -206,21 +206,14 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-        #endregion
-
-
-
-        //TO Do application approved
-
-        public async Task<bool> SendURNIssuedConfirmationToOfDia(string URN)
+        public async Task<bool> SendApplicationApprovedToDSIT(string companyName, string serviceName)
         {
-            var template = govUkNotifyConfig.IssueURNConfirmationTemplate;
+            var template = govUkNotifyConfig.PICheckApplicationApprovedDISTTemplate;
 
             var personalisation = new Dictionary<string, dynamic>
             {
-
-                { template.URN,  URN},
-                { template.LoginLink, govUkNotifyConfig.LoginLink }
+                { template.CompanyName,  companyName},
+                { template.ServiceName,  serviceName}
             };
             var emailModel = new GovUkNotifyEmailModel
             {
@@ -230,25 +223,8 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
-        public async Task<bool> SendApplicationApprovedToDIASP(string recipientName, string URN, string expiryDate, string emailAddress)
-        {
-            var template = govUkNotifyConfig.ApplicationApprovedConfirmationTemplate;
 
-            var personalisation = new Dictionary<string, dynamic>
-            {
-                { template.RecipientName,  recipientName},
-                { template.ExpiryDate,  expiryDate},
-                { template.URN,  URN},
-                { template.PreRegLink,  govUkNotifyConfig.PreRegLink},
-            };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
-        }
+        #endregion
 
         #region Certificate Review
 
@@ -419,18 +395,14 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
-        #endregion
 
-
-
-
-        public async Task<bool> SendAgreementToPublishToDSIT(string URN, string serviceName)
+        public async Task<bool> SendAgreementToPublishToDSIT(string companyName, string serviceName)
         {
             var template = govUkNotifyConfig.AgreementToPublishToDSITTemplate;
 
             var personalisation = new Dictionary<string, dynamic>
             {
-                { template.URN,  URN},
+                { template.CompanyName,  companyName},
                 { template.ServiceName,  serviceName}
              };
             var emailModel = new GovUkNotifyEmailModel
@@ -441,6 +413,8 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+        #endregion
+
 
         #region Register Management
         public async Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName,string companyName, string emailAddress)

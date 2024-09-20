@@ -1,6 +1,6 @@
-﻿namespace DVSAdmin.CommonUtility.Models.Consent
+﻿namespace DVSAdmin.CommonUtility.Models.PublicInterestCheck
 {
-    public  class AgreementToPublishToDSITTemplate
+    public class PICheckApplicationApprovedDISTTemplate
     {
         public string Id { get; set; }
         public string CompanyName { get; set; }
