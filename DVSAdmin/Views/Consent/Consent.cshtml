@@ -25,7 +25,7 @@
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
                     <h1 class="govuk-heading-xl">You are about to agree to publish your service on the register</h1>
-                    <p class="govuk-body">To consent to publish your service on the register, please click the Give consent to publish’ button below.</p>
+                    <p class="govuk-body">To agree to publish your service on the register, please select ‘I agree to publish these details on the register’ and then select ‘Confirm’ to continue.</p>
                     <h2 class="govuk-heading-m">Basic information</h2>
                     <dl class="govuk-summary-list govuk-!-margin-bottom-8">
                         <div class="govuk-summary-list__row">
@@ -38,7 +38,7 @@
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Telephone number
+                                Public telephone number
                             </dt>
                             <dd class="govuk-summary-list__value">
                                 @Model.Service.Provider.ProviderTelephoneNumber
@@ -79,7 +79,7 @@
                             Confirm
                         </button>
                     </div>
-                    <p class="govuk-body">Once you consent to publication it may take up to 24 hours for your service to appear on the register.</p>
+                    <p class="govuk-body">Once you agree for the details to be published, it may take up to 5 working days for your service to appear on the register.</p>
                 </div>
             </div>
         </main>

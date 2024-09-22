@@ -7,6 +7,7 @@
         public string Value { get; set; }
         public string ErrorMessage { get; set; }
         public string Hint { get; set; }
+        public bool hasShowPassword { get; set; }
         public bool HasError { get; set; }
         public string Class { get; set; }
     }

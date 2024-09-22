@@ -120,16 +120,15 @@ namespace DVSAdmin.BusinessLogic.Services
                         consentToken.TokenId = tokenDetails.TokenId;
                         consentToken.CreatedTime = DateTime.UtcNow;
                         genericResponse = await consentRepository.SaveConsentToken(consentToken);
-;
-                        //TODo                          
-                        //await emailSender.SendApplicationApprovedToDIASP(preRegistration.FullName, preRegistration.URN??string.Empty, //email to provider
-                        //await emailSender.SendApplicationApprovedToDIASP(preRegistration.SponsorFullName??string.Empty, preRegistration.URN??string.Empty,
 
+
+                        await emailSender.SendApplicationApprovedToDSIT(service.Provider.RegisteredName, service.ServiceName);
 
                         await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
-                       service.Provider.PrimaryContactFullName,consentLink, service.Provider.PrimaryContactEmail);
-                       await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
-                      service.Provider.SecondaryContactFullName, consentLink, service.Provider.SecondaryContactEmail);
+                        service.Provider.PrimaryContactFullName,consentLink, service.Provider.PrimaryContactEmail);
+
+                        await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
+                        service.Provider.SecondaryContactFullName, consentLink, service.Provider.SecondaryContactEmail);
 
 
                     }
@@ -165,9 +164,8 @@ namespace DVSAdmin.BusinessLogic.Services
                     genericResponse.Success = await emailSender.SendAgreementToPublishToDIP(serviceDto.Provider.RegisteredName, serviceDto.ServiceName,
                     serviceDto.Provider.PrimaryContactFullName, serviceDto.Provider.PrimaryContactEmail);
                     genericResponse.Success = await emailSender.SendAgreementToPublishToDIP(serviceDto.Provider.RegisteredName, serviceDto.ServiceName,
-                    serviceDto.Provider.SecondaryContactFullName, serviceDto.Provider.SecondaryContactEmail);
-                    //ToDo:
-                    //await emailSender.SendAgreementToPublishToDSIT(preRegistrationDto?.URN??string.Empty, certificateInformationDto.ServiceName);
+                    serviceDto.Provider.SecondaryContactFullName, serviceDto.Provider.SecondaryContactEmail);                   
+                    await emailSender.SendAgreementToPublishToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName);
                 }
 
             }

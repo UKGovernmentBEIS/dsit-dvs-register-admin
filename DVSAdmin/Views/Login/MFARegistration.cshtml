@@ -1,6 +1,6 @@
 ﻿@model MFARegistrationViewModel
 @{
-    ViewData["Title"] = "MFA Confirmation Check";
+    ViewData["Title"] = "Multi-factor authentication required";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string qrCodeImageBase64 = DVSAdmin.CommonUtility.Helper.GenerateQRCode(Model.SecretToken, Model.Email);
 

@@ -11,14 +11,7 @@
         public Task<bool> SendPrimaryCheckRoundTwoConfirmationToDSIT(string companyName, string serviceName, string expirationDate);
         public Task<bool> SendApplicationRejectedToDIP(string recipientName, string emailAddress);
         public Task<bool> SendApplicationRejectedConfirmationToDSIT(string companyName, string serviceName);
-
-        //To Do
-        public Task<bool> SendApplicationApprovedToDIASP(string recipientName, string URN, string expiryDate, string emailAddress);
-        public Task<bool> SendURNIssuedConfirmationToOfDia(string URN);
-       
-      
-      
-
+        public Task<bool> SendApplicationApprovedToDSIT(string companyName, string serviceName);      
         //Certificate review
 
         public Task<bool> SendCertificateInfoApprovedToCab(string recipientName, string companyName, string serviceName, string emailAddress);
@@ -30,7 +23,7 @@
         //Consent - closing loop
         public Task<bool> SendConsentToPublishToDIP(string companyName, string serviceName, string recipientName, string consentLink, string emailAddress);
         public Task<bool> SendAgreementToPublishToDIP(string companyName, string serviceName, string recipientName, string emailAddress);
-        public Task<bool> SendAgreementToPublishToDSIT(string URN, string serviceName);
+        public Task<bool> SendAgreementToPublishToDSIT(string companyName, string serviceName);
 
         //reg - management
         public Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName, string companyName, string emailAddress);
