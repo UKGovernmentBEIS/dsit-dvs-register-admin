@@ -5,6 +5,11 @@
     {
         <fieldset class="govuk-fieldset" aria-describedby="@(Model.PropertyName.ToLower())-error">
 
+            @if (!string.IsNullOrEmpty(Model.Legend))
+            {
+                <legend class="govuk-visually-hidden">@Model.Legend</legend>
+            }
+
             @if (!string.IsNullOrEmpty(Model.FieldSet))
             {
                 @switch (Model.Heading)
@@ -61,6 +66,12 @@
     else
     {
         <fieldset class="govuk-fieldset">
+            @if (!string.IsNullOrEmpty(Model.Legend))
+            {
+                <legend class="govuk-visually-hidden">@Model.Legend</legend>
+            }
+
+
             @if (!string.IsNullOrEmpty(Model.FieldSet))
             {
 
