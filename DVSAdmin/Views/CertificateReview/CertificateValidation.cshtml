@@ -21,13 +21,13 @@
                 @Html.HiddenFor(m => m.ServiceId)
 
                 <div class="govuk-grid-column-full">
-                    <h1 class="govuk-heading-xl">Part 1 of 2: Certificate Validation</h1>
 
                     @if (ViewData.ModelState.ErrorCount > 0)
                     {
                         ViewData["Title"] = "Error: " + ViewData["Title"];
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
+                    <h1 class="govuk-heading-xl">Part 1 of 2: Certificate Validation</h1>
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
