@@ -5,9 +5,9 @@
     {
         <fieldset class="govuk-fieldset" aria-describedby="@(Model.PropertyName.ToLower())-error">
 
-            @if (!string.IsNullOrEmpty(Model.Legend) && string.IsNullOrEmpty(Model.FieldSet))
+            @if (!string.IsNullOrEmpty(Model.Legend))
             {
-                <legned class="govuk-visually-hidden">@Model.FieldSet</legned>
+                <legend class="govuk-visually-hidden">@Model.Legend</legend>
             }
 
             @if (!string.IsNullOrEmpty(Model.FieldSet))
@@ -66,9 +66,9 @@
     else
     {
         <fieldset class="govuk-fieldset">
-            @if (!string.IsNullOrEmpty(Model.Legend) && string.IsNullOrEmpty(Model.FieldSet))
+            @if (!string.IsNullOrEmpty(Model.Legend))
             {
-                <legned class="govuk-visually-hidden">@Model.FieldSet</legned>
+                <legend class="govuk-visually-hidden">@Model.Legend</legend>
             }
 
 
