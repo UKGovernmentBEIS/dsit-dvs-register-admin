@@ -16,9 +16,7 @@
                     You are about to confirm that the following application has passed all required checks:
                 </p>
              
-                    <input type="hidden" name="PublicInterestCheckId" value="12345" />
-                    <input type="hidden" name="PrimaryCheckUserId" value="67890" />
-                    <input type="hidden" name="SecondaryCheckUserId" value="54321" />
+                 
 
                     <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
 
@@ -36,7 +34,7 @@
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
+                                <td class="govuk-table__cell">@Model.Provider.TradingName</td>
                                 <td class="govuk-table__cell">@Model.ServiceName</td>
                                 <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
                                 <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.ModifiedTime)</td>
