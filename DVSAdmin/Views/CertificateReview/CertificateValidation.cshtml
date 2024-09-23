@@ -21,13 +21,13 @@
                 @Html.HiddenFor(m => m.ServiceId)
 
                 <div class="govuk-grid-column-full">
-                    <h1 class="govuk-heading-xl">Part 1 of 2: Certificate Validation</h1>
 
                     @if (ViewData.ModelState.ErrorCount > 0)
                     {
                         ViewData["Title"] = "Error: " + ViewData["Title"];
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
+                    <h1 class="govuk-heading-xl">Part 1 of 2: Certificate Validation</h1>
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
@@ -125,7 +125,7 @@
 
                     <h3 class="govuk-heading-m">General</h3>
                     @* --------------Logos and certificate number ----------------- *@
-                    <h4 class="govuk-heading-s">Logos and certificate number</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Logos and certificate number</h4>
                     <p class="govuk-body">The certificate contains the following:</p>
                     <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                         <li>
@@ -143,6 +143,7 @@
                        {
                        PropertyName = "IsCabLogoCorrect",
                        Value = Model.IsCabLogoCorrect,
+                       Legend = "Logos and certificate number",
                        HasError = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabLogoCorrect") && Html.ViewData.ModelState["IsCabLogoCorrect"].Errors.Count > 0 ?
                        Html.ViewData.ModelState["IsCabLogoCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -154,7 +155,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Conformity Assessment Body details ----------------- *@
-                    <h4 class="govuk-heading-s">Conformity Assessment Body details</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Conformity Assessment Body details</h4>
                     <p class="govuk-body">The certificate contains the following:</p>
                     <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                         <li>
@@ -169,6 +170,7 @@
                     {
                         PropertyName = "IsCabDetailsCorrect",
                         Value = Model.IsCabDetailsCorrect,
+                        Legend = "Conformity Assessment Body details",
                         HasError = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCabDetailsCorrect") && Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsCabDetailsCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -178,7 +180,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Service provider details ----------------- *@
-                    <h4 class="govuk-heading-s">Service provider details</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Service provider details</h4>
                     <p class="govuk-body">The certificate contains the following:</p>
                     <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                         <li>
@@ -196,6 +198,7 @@
                      {
                         PropertyName = "IsProviderDetailsCorrect",
                         Value = Model.IsProviderDetailsCorrect,
+                        Legend = "Service provider details",
                         HasError = Html.ViewData.ModelState.ContainsKey("IsProviderDetailsCorrect") && Html.ViewData.ModelState["IsProviderDetailsCorrect"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsProviderDetailsCorrect") && Html.ViewData.ModelState["IsProviderDetailsCorrect"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsProviderDetailsCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -210,7 +213,7 @@
                     <h3 class="govuk-heading-m">Statement of conformity</h3>
 
                     @* --------------Name of service ----------------- *@
-                    <h4 class="govuk-heading-s">Name of service</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Name of service</h4>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity which includes the name of the service.
                     </p>
@@ -220,6 +223,7 @@
                    {
                        PropertyName = "IsServiceNameCorrect",
                        Value = Model.IsServiceNameCorrect,
+                       Legend = "Name of service",
                        HasError = Html.ViewData.ModelState.ContainsKey("IsServiceNameCorrect") && Html.ViewData.ModelState["IsServiceNameCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsServiceNameCorrect") && Html.ViewData.ModelState["IsServiceNameCorrect"].Errors.Count > 0 ?
                        Html.ViewData.ModelState["IsServiceNameCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -229,7 +233,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Roles certified against----------------- *@
-                    <h4 class="govuk-heading-s">Roles certified against</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Roles certified against</h4>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity which includes the roles certified against.
                     </p>
@@ -239,6 +243,7 @@
                    {
                        PropertyName = "IsRolesCertifiedCorrect",
                        Value = Model.IsRolesCertifiedCorrect,
+                       Legend = "Roles certified against",
                        HasError = Html.ViewData.ModelState.ContainsKey("IsRolesCertifiedCorrect") && Html.ViewData.ModelState["IsRolesCertifiedCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsRolesCertifiedCorrect") && Html.ViewData.ModelState["IsRolesCertifiedCorrect"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsRolesCertifiedCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -248,7 +253,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Scope of certification----------------- *@
-                    <h4 class="govuk-heading-s">Scope of certification</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Scope of certification</h4>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity which details the scope of certification, including any recognised supplementary schemes. If the service is scoped for supplementary schemes, only Right to Work, Right to Rent or Disclosure and Barring Service are applicable.
                     </p>
@@ -258,6 +263,7 @@
                    {
                        PropertyName = "IsCertificationScopeCorrect",
                        Value = Model.IsCertificationScopeCorrect,
+                       Legend = "Scope of certification",
                        HasError = Html.ViewData.ModelState.ContainsKey("IsCertificationScopeCorrect") && Html.ViewData.ModelState["IsCertificationScopeCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCertificationScopeCorrect") && Html.ViewData.ModelState["IsCertificationScopeCorrect"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsCertificationScopeCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -267,7 +273,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Summary of service----------------- *@
-                    <h4 class="govuk-heading-s">Summary of service</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Summary of service</h4>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity which includes a summary of the service.
                     </p>
@@ -277,6 +283,7 @@
                    {
                        PropertyName = "IsServiceSummaryCorrect",
                        Value = Model.IsServiceSummaryCorrect,
+                       Legend = "Summary of service",
                        HasError = Html.ViewData.ModelState.ContainsKey("IsServiceSummaryCorrect") && Html.ViewData.ModelState["IsServiceSummaryCorrect"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsServiceSummaryCorrect") && Html.ViewData.ModelState["IsServiceSummaryCorrect"].Errors.Count > 0 ?
                       Html.ViewData.ModelState["IsServiceSummaryCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -286,7 +293,7 @@
 
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------URL link to service----------------- *@
-                    <h4 class="govuk-heading-s">URL link to service</h4>
+                    <h4 class="govuk-heading-s" role="presentation">URL link to service</h4>
                     <p class="govuk-body">
                         The certificate contains a statement of conformity which includes a URL link to a website providing access to the service. This URL link may be slightly different from the company website address.
                     </p>
@@ -296,6 +303,7 @@
                     {
                         PropertyName = "IsURLLinkToServiceCorrect",
                         Value = Model.IsURLLinkToServiceCorrect,
+                        Legend = "URL link to service",
                          HasError = Html.ViewData.ModelState.ContainsKey("IsURLLinkToServiceCorrect") && Html.ViewData.ModelState["IsURLLinkToServiceCorrect"].Errors.Count > 0,
                          ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsURLLinkToServiceCorrect") && Html.ViewData.ModelState["IsURLLinkToServiceCorrect"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsURLLinkToServiceCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -307,7 +315,7 @@
                     <h3 class="govuk-heading-m">Unique designation of services</h3>
 
                     @* --------------GPG44 quality assessment----------------- *@
-                    <h4 class="govuk-heading-s">GPG44 quality assessment</h4>
+                    <h4 class="govuk-heading-s" role="presentation">GPG44 quality assessment</h4>
                     <p class="govuk-body">
                         The certificate includes a description of the GPG44 quality of authenticator and level of protection assessed. If the service is not scoped for GPG44, this should be clearly stated or a ‘not applicable’ description provided in the certificate.
                     </p>
@@ -317,6 +325,7 @@
                    {
                         PropertyName = "IsGPG44Correct",
                         Value = Model.IsGPG44Correct,
+                        Legend = "GPG44 quality assessment",
                         HasError = Html.ViewData.ModelState.ContainsKey("IsGPG44Correct") && Html.ViewData.ModelState["IsGPG44Correct"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsGPG44Correct") && Html.ViewData.ModelState["IsGPG44Correct"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsGPG44Correct"].Errors[0].ErrorMessage : string.Empty,
@@ -325,7 +334,7 @@
                    })
 
                     @* --------------GPG45 identity profiles----------------- *@
-                    <h4 class="govuk-heading-s">GPG45 identity profiles</h4>
+                    <h4 class="govuk-heading-s" role="presentation">GPG45 identity profiles</h4>
                     <p class="govuk-body">
                         The certificate includes GPG45 identity profiles assessed. If the provider has been certified on supplementary schemes, the profiles listed meet the certification scheme requirements.
                     </p>
@@ -335,6 +344,7 @@
                    {
                         PropertyName = "IsGPG45Correct",
                         Value = Model.IsGPG45Correct,
+                        Legend = "GPG45 identity profiles",
                         HasError = Html.ViewData.ModelState.ContainsKey("IsGPG45Correct") && Html.ViewData.ModelState["IsGPG45Correct"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsGPG45Correct") && Html.ViewData.ModelState["IsGPG45Correct"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsGPG45Correct"].Errors[0].ErrorMessage : string.Empty,
@@ -346,7 +356,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Methods of service provision----------------- *@
 
-                    <h4 class="govuk-heading-s">Methods of service provision</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Methods of service provision</h4>
                     <p class="govuk-body">
                         The certificate includes methods of service provision, for example online, person-to-person, physical sites.
                     </p>
@@ -356,6 +366,7 @@
                     {
                     PropertyName = "IsServiceProvisionCorrect",
                     Value = Model.IsServiceProvisionCorrect,
+                    Legend = "Methods of service provision",
                     HasError = Html.ViewData.ModelState.ContainsKey("IsServiceProvisionCorrect") && Html.ViewData.ModelState["IsServiceProvisionCorrect"].Errors.Count > 0,
                     ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsServiceProvisionCorrect") && Html.ViewData.ModelState["IsServiceProvisionCorrect"].Errors.Count > 0 ?
                     Html.ViewData.ModelState["IsServiceProvisionCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -366,7 +377,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Geographical location----------------- *@
 
-                    <h4 class="govuk-heading-s">Geographical location</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Geographical location</h4>
                     <p class="govuk-body">
                         The certificate includes the geographical location of service provision, if applicable.
                     </p>
@@ -376,6 +387,7 @@
                    {
                     PropertyName = "IsLocationCorrect",
                     Value = Model.IsLocationCorrect,
+                    Legend = "Geographical location",
                     HasError = Html.ViewData.ModelState.ContainsKey("IsLocationCorrect") && Html.ViewData.ModelState["IsLocationCorrect"].Errors.Count > 0,
                     ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsLocationCorrect") && Html.ViewData.ModelState["IsLocationCorrect"].Errors.Count > 0 ?
                     Html.ViewData.ModelState["IsLocationCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -386,7 +398,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Date of issue----------------- *@
 
-                    <h4 class="govuk-heading-s">Date of issue</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Date of issue</h4>
                     <p class="govuk-body">
                         The certificate includes a valid date of issue. The issue date should not be in the future.
                     </p>
@@ -396,6 +408,7 @@
                     {
                         PropertyName = "IsDateOfIssueCorrect",
                         Value = Model.IsDateOfIssueCorrect,
+                        Legend = "Date of issue",
                         HasError = Html.ViewData.ModelState.ContainsKey("IsDateOfIssueCorrect") && Html.ViewData.ModelState["IsDateOfIssueCorrect"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDateOfIssueCorrect") && Html.ViewData.ModelState["IsDateOfIssueCorrect"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsDateOfIssueCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -406,7 +419,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* --------------Date of expiry----------------- *@
 
-                    <h4 class="govuk-heading-s">Date of expiry</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Date of expiry</h4>
                     <p class="govuk-body">
                         The certificate includes a valid date of expiry. The expiry date should not be more than 2 years and 60 days after the date of issue.
                     </p>
@@ -416,6 +429,7 @@
                     {
                     PropertyName = "IsDateOfExpiryCorrect",
                     Value = Model.IsDateOfExpiryCorrect,
+                    Legend = "Date of expiry",
                     HasError = Html.ViewData.ModelState.ContainsKey("IsDateOfExpiryCorrect") && Html.ViewData.ModelState["IsDateOfExpiryCorrect"].Errors.Count > 0,
                     ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDateOfExpiryCorrect") && Html.ViewData.ModelState["IsDateOfExpiryCorrect"].Errors.Count > 0 ?
                     Html.ViewData.ModelState["IsDateOfExpiryCorrect"].Errors[0].ErrorMessage : string.Empty,
@@ -427,7 +441,7 @@
                     <hr class="govuk-section-break govuk-section-break--s">
                     @* -------------Authenticity verification----------------- *@
 
-                    <h4 class="govuk-heading-s">Authenticity verification</h4>
+                    <h4 class="govuk-heading-s" role="presentation">Authenticity verification</h4>
                     <p class="govuk-body">
                         The certificate includes means by which the authenticity of the certificate can be verified. This may be a URL link to the Conformity Assessment Body website where provider certificates are available for public viewing.
                     </p>
@@ -437,6 +451,7 @@
                     {
                         PropertyName = "IsAuthenticyVerifiedCorrect",
                         Value = Model.IsAuthenticyVerifiedCorrect,
+                        Legend = "Authenticity verification",
                         HasError = Html.ViewData.ModelState.ContainsKey("IsAuthenticyVerifiedCorrect") && Html.ViewData.ModelState["IsAuthenticyVerifiedCorrect"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsAuthenticyVerifiedCorrect") && Html.ViewData.ModelState["IsAuthenticyVerifiedCorrect"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsAuthenticyVerifiedCorrect"].Errors[0].ErrorMessage : string.Empty,

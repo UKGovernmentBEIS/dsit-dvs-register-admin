@@ -9,6 +9,7 @@ namespace DVSAdmin.Models
         public string FieldSet { get; set; }
         public HeadingEnum Heading { get; set; }
         public string LegendStyleClass { get; set; }
+        public string Legend { get; set; }
         public string ErrorMessage { get; set; }
         public bool HasError { get; set; }
         public string Label1 { get; set; }

@@ -282,7 +282,7 @@
                         @* --------------Companies House or charity information  ----------------- *@
 
 
-                        <h3 class="govuk-heading-s">Companies House or charity information or D U-N-S number</h3>
+                        <h3 class="govuk-heading-s" role="presentation">Companies House or charity information or D U-N-S number</h3>
                         <p class="govuk-body">
                             <a href="https://www.gov.uk/government/organisations/companies-house" class="govuk-link" rel="noreferrer noopener" target="_blank">Link to Companies House</a>.
                         </p>
@@ -309,6 +309,7 @@
                        {
                            PropertyName = "IsCompanyHouseNumberApproved",
                            Value = Model.IsCompanyHouseNumberApproved,
+                           Legend = "Companies House or charity information or D U-N-S number",
                            HasError = Html.ViewData.ModelState.ContainsKey("IsCompanyHouseNumberApproved") && Html.ViewData.ModelState["IsCompanyHouseNumberApproved"].Errors.Count > 0,
                            ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsCompanyHouseNumberApproved") && Html.ViewData.ModelState["IsCompanyHouseNumberApproved"].Errors.Count > 0 ?
                             Html.ViewData.ModelState["IsCompanyHouseNumberApproved"].Errors[0].ErrorMessage : string.Empty,
@@ -321,7 +322,7 @@
 
                         @* --------------Directorships Approval ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">Directorships</h3>
+                        <h3 class="govuk-heading-m" role="presentation">Directorships</h3>
 
                         <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                             <li>
@@ -343,6 +344,7 @@
                        {
                            PropertyName = "IsDirectorshipsApproved",
                            Value = Model.IsDirectorshipsApproved,
+                           Legend = "Directorships",
                            HasError = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsApproved") && Html.ViewData.ModelState["IsDirectorshipsApproved"].Errors.Count > 0,
                            ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsApproved") && Html.ViewData.ModelState["IsDirectorshipsApproved"].Errors.Count > 0 ?
                             Html.ViewData.ModelState["IsDirectorshipsApproved"].Errors[0].ErrorMessage : string.Empty,
@@ -352,7 +354,7 @@
 
                         @* --------------Directorships and Relationships Approval ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">Directors and relationships</h3>
+                        <h3 class="govuk-heading-m" role="presentation">Directors and relationships</h3>
 
 
                         <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
@@ -366,6 +368,7 @@
                        {
                            PropertyName = "IsDirectorshipsAndRelationApproved",
                            Value = Model.IsDirectorshipsAndRelationApproved,
+                           Legend = "Directors and relationships",
                            HasError = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsAndRelationApproved") && Html.ViewData.ModelState["IsDirectorshipsAndRelationApproved"].Errors.Count > 0,
                            ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsDirectorshipsAndRelationApproved") && Html.ViewData.ModelState["IsDirectorshipsAndRelationApproved"].Errors.Count > 0 ?
                             Html.ViewData.ModelState["IsDirectorshipsAndRelationApproved"].Errors[0].ErrorMessage : string.Empty,
@@ -374,13 +377,14 @@
                        })
                         @* --------------Trading Address checks ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">Trading as address checks, if applicable</h3>
+                        <h3 class="govuk-heading-m" role="presentation">Trading as address checks, if applicable</h3>
 
 
                         @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                        {
                            PropertyName = "IsTradingAddressApproved",
                            Value = Model.IsTradingAddressApproved,
+                           Legend = "Trading as address checks, if applicable",
                            HasError = Html.ViewData.ModelState.ContainsKey("IsTradingAddressApproved") && Html.ViewData.ModelState["IsTradingAddressApproved"].Errors.Count > 0,
                            ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsTradingAddressApproved") && Html.ViewData.ModelState["IsTradingAddressApproved"].Errors.Count > 0 ?
                             Html.ViewData.ModelState["IsTradingAddressApproved"].Errors[0].ErrorMessage : string.Empty,
@@ -391,7 +395,7 @@
 
                         @* --------------sanction list checks ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">Sanctions list checks</h3>
+                        <h3 class="govuk-heading-m" role="presentation">Sanctions list checks</h3>
                         <p class="govuk-body"><a href="https://sanctionssearchapp.ofsi.hmtreasury.gov.uk/" class="govuk-link" rel="noreferrer noopener" target="_blank">OFSI Check</a></p>
 
 
@@ -401,6 +405,7 @@
                        {
                            PropertyName = "IsSanctionListApproved",
                            Value = Model.IsSanctionListApproved,
+                           Legend = "Sanctions list checks",
                            HasError = Html.ViewData.ModelState.ContainsKey("IsSanctionListApproved") && Html.ViewData.ModelState["IsSanctionListApproved"].Errors.Count > 0,
                            ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsSanctionListApproved") && Html.ViewData.ModelState["IsSanctionListApproved"].Errors.Count > 0 ?
                             Html.ViewData.ModelState["IsSanctionListApproved"].Errors[0].ErrorMessage : string.Empty,
@@ -410,13 +415,14 @@
 
                         @* --------------UNFC checks ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">UNFC check, if applicable</h3>
+                        <h3 class="govuk-heading-m" role="presentation">UNFC check, if applicable</h3>
 
 
                         @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                        {
                            PropertyName = "IsUNFCApproved",
                            Value = Model.IsUNFCApproved,
+                           Legend = "UNFC check, if applicable",
                            HasError = Html.ViewData.ModelState.ContainsKey("IsUNFCApproved") && Html.ViewData.ModelState["IsUNFCApproved"].Errors.Count > 0,
                            ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsUNFCApproved") && Html.ViewData.ModelState["IsUNFCApproved"].Errors.Count > 0 ?
                             Html.ViewData.ModelState["IsUNFCApproved"].Errors[0].ErrorMessage : string.Empty,
@@ -426,12 +432,13 @@
 
                         @* --------------EC checks ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">EC check, if applicable</h3>
+                        <h3 class="govuk-heading-m" role="presentation">EC check, if applicable</h3>
 
                         @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                        {
                            PropertyName = "IsECCheckApproved",
                            Value = Model.IsECCheckApproved,
+                           Legend = "EC check, if applicable",
                            HasError = Html.ViewData.ModelState.ContainsKey("IsECCheckApproved") && Html.ViewData.ModelState["IsECCheckApproved"].Errors.Count > 0,
                            ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsECCheckApproved") && Html.ViewData.ModelState["IsECCheckApproved"].Errors.Count > 0 ?
                             Html.ViewData.ModelState["IsECCheckApproved"].Errors[0].ErrorMessage : string.Empty,
@@ -442,12 +449,13 @@
 
                         @* --------------TARIC checks ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">TARIC check, if applicable</h3>
+                        <h3 class="govuk-heading-m" role="presentation">TARIC check, if applicable</h3>
 
                         @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                        {
                            PropertyName = "IsTARICApproved",
                            Value = Model.IsTARICApproved,
+                           Legend = "TARIC check, if applicable",
                            HasError = Html.ViewData.ModelState.ContainsKey("IsTARICApproved") && Html.ViewData.ModelState["IsTARICApproved"].Errors.Count > 0,
                            ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsTARICApproved") && Html.ViewData.ModelState["IsTARICApproved"].Errors.Count > 0 ?
                             Html.ViewData.ModelState["IsTARICApproved"].Errors[0].ErrorMessage : string.Empty,
@@ -458,7 +466,7 @@
 
                         @* --------------Banned Political affiliation ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">Banned political affiliations</h3>
+                        <h3 class="govuk-heading-m" role="presentation">Banned political affiliations</h3>
 
 
                         <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
@@ -482,6 +490,7 @@
                        {
                            PropertyName = "IsBannedPoliticalApproved",
                            Value = Model.IsBannedPoliticalApproved,
+                           Legend = "Banned political affiliations",
                            HasError = Html.ViewData.ModelState.ContainsKey("IsBannedPoliticalApproved") && Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors.Count > 0,
                            ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsBannedPoliticalApproved") && Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors.Count > 0 ?
                             Html.ViewData.ModelState["IsBannedPoliticalApproved"].Errors[0].ErrorMessage : string.Empty,
@@ -493,7 +502,7 @@
 
                         @* --------------Providers webpage ----------------- *@
                         <hr class="govuk-section-break govuk-section-break--l">
-                        <h3 class="govuk-heading-m">Service provider's website</h3>
+                        <h3 class="govuk-heading-m" role="presentation">Service provider's website</h3>
                         <p class="govuk-body"><a href="@Model.Service.Provider.ProviderWebsiteAddress" class="govuk-link" rel="noreferrer noopener" target="_blank">Link to service provider's website</a></p>
 
                         <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
@@ -512,6 +521,7 @@
                        {
                            PropertyName = "IsProvidersWebpageApproved",
                            Value = Model.IsProvidersWebpageApproved,
+                           Legend = "Service provider's website",
                            HasError = Html.ViewData.ModelState.ContainsKey("IsProvidersWebpageApproved") && Html.ViewData.ModelState["IsProvidersWebpageApproved"].Errors.Count > 0,
                            ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsProvidersWebpageApproved") && Html.ViewData.ModelState["IsProvidersWebpageApproved"].Errors.Count > 0 ?
                             Html.ViewData.ModelState["IsProvidersWebpageApproved"].Errors[0].ErrorMessage : string.Empty,
