@@ -25,7 +25,7 @@
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
                     <h1 class="govuk-heading-xl">You are about to agree to publish your service on the register</h1>
-                    <p class="govuk-body">To consent to publish your service on the register, please click the Give consent to publish’ button below.</p>
+                    <p class="govuk-body">To agree to publish your service on the register, please select ‘I agree to publish these details on the register’ and then select ‘Confirm’ to continue.</p>
                     <h2 class="govuk-heading-m">Basic information</h2>
                     <dl class="govuk-summary-list govuk-!-margin-bottom-8">
                         <div class="govuk-summary-list__row">
@@ -33,15 +33,15 @@
                                 Public contact email
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.Provider.PublicContactEmail
+                                @Model.Service.Provider.PublicContactEmail
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Telephone number
+                                Public telephone number
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.Provider.TelephoneNumber
+                                @Model.Service.Provider.ProviderTelephoneNumber
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -49,26 +49,16 @@
                                 Website address
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateInformation.Provider.WebsiteAddress
+                                @Model.Service.Provider.ProviderWebsiteAddress
                             </dd>
                         </div>
                     </dl>
 
 
 
-                    <h2 class="govuk-heading-m">@Model.CertificateInformation.ServiceName </h2>
-                   
-                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.CertificateInformation)
-                    <h2 class="govuk-heading-l">Certificate of conformity</h2>
-                    <span class="govuk-caption-xl">@Model.CertificateInformation.FileName</span>
-                    <div id="download-certificate-hint" class="govuk-hint">
-                        PDF, 19.5 KB, 1 page
-                        This file may not be suitable for users of assistive technology.
-                    </div>
+                    <h2 class="govuk-heading-m">@Model.Service.ServiceName </h2>
 
-                    <a href="#" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                        Download certificate of conformity
-                    </a>
+                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
 
                     <hr class="govuk-section-break govuk-section-break--m">              
 
@@ -89,7 +79,7 @@
                             Confirm
                         </button>
                     </div>
-                    <p class="govuk-body">Once you consent to publication it may take up to 24 hours for your service to appear on the register.</p>
+                    <p class="govuk-body">Once you agree for the details to be published, it may take up to 5 working days for your service to appear on the register.</p>
                 </div>
             </div>
         </main>

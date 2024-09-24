@@ -1,7 +1,7 @@
 ﻿@model DVSAdmin.Models.CertificateReviewListViewModel;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @{
-    ViewData["Title"] = "CertificateReviews";
+    ViewData["Title"] = "Review a provider certificate";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -12,14 +12,24 @@
                 <div class="govuk-breadcrumbs">
                     <ol class="govuk-breadcrumbs__list">
                         <li class="govuk-breadcrumbs__list-item">
-                            @Html.ActionLink("Home", "LandingPage", "OfDia", null, new { @class = "govuk-breadcrumbs__link" })
+                            @Html.ActionLink("Home", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-breadcrumbs__link" })
                         </li>
                         <li class="govuk-breadcrumbs__list-item">
                             @Html.ActionLink("Certificate review", "CertificateReviews", "CertificateReview", null, new { @class = "govuk-breadcrumbs__link" })
                         </li>
                     </ol>
                 </div>
-                <h1 class="govuk-heading-xl">Certificate review</h1>
+                <h1 class="govuk-heading-xl">Review a provider certificate</h1>
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Guidance on this section
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        In this section, you will need to review the certificate information submitted by Conformity Assessment Bodies. Start the review from top to bottom, as the applications that need more urgent action will appear at the top. Once completed, they will appear in the Archive tab.
+                    </div>
+                </details>
                 <div class="govuk-tabs" data-module="govuk-tabs">
                     <ul class="govuk-tabs__list">
                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">

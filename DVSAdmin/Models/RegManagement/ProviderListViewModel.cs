@@ -4,7 +4,7 @@ namespace DVSAdmin.Models.RegManagement
 {
     public class ProviderListViewModel
     {
-        public List<ProviderDto> ActionRequiredList { get; set; }
-        public List<ProviderDto> PublicationCompleteList { get; set; }
+        public List<ProviderProfileDto> ActionRequiredList { get; set; }
+        public List<ProviderProfileDto> PublicationCompleteList { get; set; }
     }
 }

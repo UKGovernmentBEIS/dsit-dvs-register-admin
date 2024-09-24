@@ -1,4 +1,4 @@
-﻿@model DVSAdmin.BusinessLogic.Models.ProviderDto
+﻿@model DVSAdmin.BusinessLogic.Models.ProviderProfileDto
 
 <div class="govuk-summary-card">
     <div class="govuk-summary-card__title-wrapper">
@@ -18,10 +18,10 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    Telephone number
+                    Public telephone number
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @Model.TelephoneNumber
+                    @Model.ProviderTelephoneNumber
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -29,7 +29,7 @@
                     Website address
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @Model.WebsiteAddress
+                    @Model.ProviderWebsiteAddress
                 </dd>
             </div>
         </dl>

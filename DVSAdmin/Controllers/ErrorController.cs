@@ -39,5 +39,13 @@ namespace DVSAdmin.Controllers
             HttpContext.Session.Clear();
             return View("ConsentError");
         }
+
+
+        [HttpGet("publish-service-consent/service-error")]
+        public IActionResult PublishServiceConsentHandleException()
+        {
+            HttpContext.Session.Clear();
+            return View("PublishServiceConsentError");
+        }
     }
 }

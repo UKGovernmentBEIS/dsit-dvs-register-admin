@@ -6,9 +6,10 @@ namespace DVSAdmin.Data.Repositories
 {
     public interface IRegManagementRepository
     {
-        public Task<List<Provider>> GetProviders();
-        public Task<Provider> GetProviderDetails(int providerId);
-        public Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, string userEmail, CertificateInfoStatusEnum certificateInfoStatus);
+        public Task<List<ProviderProfile>> GetProviders();
+        public Task<ProviderProfile> GetProviderDetails(int providerId);
+        public Task<ProviderProfile> GetProviderWithServiceDetails(int providerId);
+        public Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, ServiceStatusEnum serviceStatus);
         public Task<GenericResponse> UpdateProviderStatus(int providerId, ProviderStatusEnum providerStatus);
         public Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog);
     }

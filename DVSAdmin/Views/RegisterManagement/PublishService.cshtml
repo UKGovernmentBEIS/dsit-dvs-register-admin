@@ -1,19 +1,19 @@
-﻿@model ProviderDetailsViewModel
+﻿@using DVSAdmin.BusinessLogic.Models;
+@model ProviderProfileDto;
 @{
-    ViewData["Title"] = "Publish service";
+    ViewData["Title"] = "You are publishing the following service provider on the register";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { @providerId = @Model.Provider.Id }, new { @class = "govuk-back-link" })          
-         
-        @Html.HiddenFor(m => m.Provider.CertificateInformation)
+    @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { @providerId = @Model.Id }, new { @class = "govuk-back-link" })                   
+   
         <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
 
             <div class="govuk-grid-column-full">
-                <h1 class="govuk-heading-xl">You are publishing the following service provider on the register</h1>
+                <h1 class="govuk-heading-xl">You are publishing the following services on the register</h1>
                 <p class="govuk-body">Please review the information you are about to publish below.</p>
           
                 <h2 class="govuk-heading-m">Basic information</h2>
@@ -23,7 +23,7 @@
                             Public contact email
                         </dt>
                         <dd class="govuk-summary-list__value">
-                           @Model.Provider.PublicContactEmail
+                           @Model.PublicContactEmail
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -31,7 +31,7 @@
                             Telephone number
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Provider.TelephoneNumber
+                            @Model.ProviderTelephoneNumber
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -39,25 +39,25 @@
                             Website address
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Provider.WebsiteAddress
+                            @Model.ProviderWebsiteAddress
                         </dd>
                     </div>
                 </dl>
 
-                @foreach(var item in Model.Provider.CertificateInformation)
+                @foreach(var item in Model.Services)
                 {
-                    <h2 class="govuk-heading-m">Service @item.ServiceNumber: Remote Verify</h2>
+                    <h2 class="govuk-heading-m">Service @item.ServiceNumber: @item.ServiceName</h2>
                     @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", item)
                   
                     
                 }
 
                 <div class="govuk-button-group">
-                    <a href="proceed-publication?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                    <a href="proceed-publication?providerId=@Model.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
                         Proceed with publication
                     </a>
 
-                    <a href="publish-service?providerId=@Model.Provider.Id" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    <a href="publish-service?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                         Cancel
                     </a>
                 </div>             

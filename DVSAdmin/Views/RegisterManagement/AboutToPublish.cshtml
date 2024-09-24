@@ -1,30 +1,31 @@
-﻿@model ProviderDetailsViewModel
+﻿@using DVSAdmin.BusinessLogic.Models;
+@model ProviderProfileDto;
 @{
-    ViewData["Title"] = "You are about to publish this service provider on the register";
+    ViewData["Title"] = "You are about to publish services on the register";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ProceedPublication", "RegisterManagement", new { @providerId = @Model.Provider.Id }, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "ProceedPublication", "RegisterManagement", new { @providerId = @Model.Id }, new { @class = "govuk-back-link" })
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
 
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl">You are about to publish this service provider on the register</h1>
+                <h1 class="govuk-heading-xl">You are about to publish services on the register</h1>
                 <p class="govuk-body">The service provider will receive a confirmation email. The Conformity Assessment Body will also be notified of this decision.</p>
 
                 <div class="govuk-warning-text">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-visually-hidden">Warning</span>
-                        Once you publish this service provider’s details, this action can’t be undone.
+                        Once you publish this service provider’s details, this action can’t be undone
                     </strong>
                 </div>
 
 
                 @using (Html.BeginForm("Publish", "RegisterManagement", FormMethod.Post))
                 {
-                    @Html.HiddenFor(m => m.Provider.Id)
+                    @Html.HiddenFor(m => m.Id)
 
                     <div class="govuk-button-group">
                         <button type="submit" class="govuk-button" data-module="govuk-button" name="action" value="publish">

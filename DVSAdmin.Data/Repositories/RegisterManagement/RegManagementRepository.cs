@@ -16,25 +16,36 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             this.logger = logger;
         }
 
-        public async Task<List<Provider>> GetProviders()
+        public async Task<List<ProviderProfile>> GetProviders()
         {
-            return await context.Provider.Include(p => p.CertificateInformation.Where(x=>x.CertificateInfoStatus == CertificateInfoStatusEnum.Published
-            ||x.CertificateInfoStatus == CertificateInfoStatusEnum.ReadyToPublish)).OrderBy(c => c.CreatedTime).ToListAsync();
+            return await context.ProviderProfile
+           .Include(p => p.Services.Where(x => x.ServiceStatus == ServiceStatusEnum.Published
+            ||x.ServiceStatus  == ServiceStatusEnum.ReadyToPublish)).Include(x=>x.CabUser).ThenInclude(x=>x.Cab)
+            .OrderBy(c => c.ModifiedTime).ToListAsync();
+            
         }
 
-        public async Task<Provider> GetProviderDetails(int providerId)
+        public async Task<ProviderProfile> GetProviderDetails(int providerId)
         {
-            Provider provider = new Provider();
-            provider = await context.Provider.Include(p => p.PreRegistration)
-           .Include(p => p.CertificateInformation).ThenInclude(x=>x.CertificateInfoRoleMapping)
-           .Include(p => p.CertificateInformation).ThenInclude(x => x.CertificateInfoIdentityProfileMapping)
-           .Include(p => p.CertificateInformation).ThenInclude(x => x.CertificateInfoSupSchemeMappings)
-           .Include(p => p.CertificateInformation).OrderBy(p=>p.ModifiedTime)
-           .Where(p => p.Id == providerId).OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new Provider();
-            return provider;
+            return await context.ProviderProfile.Include(p => p.Services).Include(x => x.CabUser).ThenInclude(x => x.Cab)
+            .Where(p=>p.Id == providerId && (p.ProviderStatus == ProviderStatusEnum.Published ||
+            p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired || p.ProviderStatus == ProviderStatusEnum.ActionRequired)).FirstOrDefaultAsync() ?? new ProviderProfile();
+            
         }
 
-        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, string userEmail, CertificateInfoStatusEnum certificateInfoStatus)
+
+        public async Task<ProviderProfile> GetProviderWithServiceDetails(int providerId)
+        {
+             return await context.ProviderProfile
+            .Include(p=>p.Services).ThenInclude(s=>s.ServiceRoleMapping).ThenInclude(s=>s.Role)
+            .Include(p => p.Services).ThenInclude(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel)
+            .Include(p => p.Services).ThenInclude(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
+            .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
+            .Where(p => p.Id == providerId &&( p.ProviderStatus == ProviderStatusEnum.Published ||
+            p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired || p.ProviderStatus == ProviderStatusEnum.ActionRequired)).FirstOrDefaultAsync() ?? new ProviderProfile();
+        }
+
+        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, ServiceStatusEnum serviceStatus)
         {
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = context.Database.BeginTransaction();
@@ -42,13 +53,17 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             {
                 foreach (var serviceId in serviceIds)
                 {
-                    var existingService = await context.CertificateInformation.FirstOrDefaultAsync(e => e.Id == serviceId);
+                    var existingService = await context.Service.FirstOrDefaultAsync(e => e.Id == serviceId);
 
                     if (existingService != null)
                     {
-                        existingService.CertificateInfoStatus = certificateInfoStatus;
-                        existingService.ModifiedBy = userEmail;
-                        existingService.ModifiedDate = DateTime.UtcNow;
+                        existingService.ServiceStatus = serviceStatus;
+                        existingService.ModifiedTime = DateTime.UtcNow;
+                        if(serviceStatus == ServiceStatusEnum.Published)
+                        {
+                            existingService.PublishedTime = DateTime.UtcNow;
+                        }
+                     
                     }
                     context.SaveChanges();
                 }
@@ -72,11 +87,15 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             try
             {
 
-                var existingProvider = await context.Provider.FirstOrDefaultAsync(e => e.Id == providerId);     
+                var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(e => e.Id == providerId);     
                 if (existingProvider != null)
                 {
                     existingProvider.ProviderStatus = providerStatus;
-                    existingProvider.PublishedTime = DateTime.UtcNow;
+                    if(providerStatus == ProviderStatusEnum.Published)
+                    {
+                        existingProvider.PublishedTime = DateTime.UtcNow;
+                    }
+                  
                 }
 
                 context.SaveChanges();

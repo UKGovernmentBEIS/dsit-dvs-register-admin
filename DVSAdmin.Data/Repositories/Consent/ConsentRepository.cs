@@ -15,17 +15,17 @@ namespace DVSAdmin.Data.Repositories
             this.context = context;
             this.logger = logger;
         }
-        public async Task<GenericResponse> SaveConsentToken(ConsentToken consentToken)
+        public async Task<GenericResponse> SaveConsentToken(ProceedPublishConsentToken consentToken)
         {
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.ConsentToken.FirstOrDefaultAsync(e => e.Token == consentToken.Token && e.TokenId == consentToken.TokenId);
+                var existingEntity = await context.ProceedPublishConsentToken.FirstOrDefaultAsync(e => e.Token == consentToken.Token && e.TokenId == consentToken.TokenId);
 
                 if (existingEntity == null)
                 {
-                    await context.ConsentToken.AddAsync(consentToken);
+                    await context.ProceedPublishConsentToken.AddAsync(consentToken);
                     await context.SaveChangesAsync();
                     transaction.Commit();
                     genericResponse.Success = true;
@@ -42,23 +42,74 @@ namespace DVSAdmin.Data.Repositories
             return genericResponse;
         }
 
-        public async Task<ConsentToken> GetConsentToken(string token, string tokenId)
+        public async Task<ProceedPublishConsentToken> GetConsentToken(string token, string tokenId)
         {
-            return await context.ConsentToken.FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId)??new ConsentToken();
+            return await context.ProceedPublishConsentToken.FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId)??new ProceedPublishConsentToken();
         }
 
+     
         public async Task<bool> RemoveConsentToken(string token, string tokenId)
         {
-            var consent = await context.ConsentToken.FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId);
+            var consent = await context.ProceedPublishConsentToken.FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId);
 
             if (consent != null)
             {
-                context.ConsentToken.Remove(consent);
+                context.ProceedPublishConsentToken.Remove(consent);
                 await context.SaveChangesAsync();
                 return true;
             }
 
             return false;
         }
+
+        #region Opening Loop
+
+        public async Task<GenericResponse> SaveProceedApplicationConsentToken(ProceedApplicationConsentToken consentToken)
+        {
+            GenericResponse genericResponse = new ();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                var existingEntity = await context.ProceedApplicationConsentToken.FirstOrDefaultAsync(e => e.Token == consentToken.Token && e.TokenId == consentToken.TokenId);
+
+                if (existingEntity == null)
+                {
+                    await context.ProceedApplicationConsentToken.AddAsync(consentToken);
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
+        public async Task<ProceedApplicationConsentToken> GetProceedApplicationConsentToken(string token, string tokenId)
+        {
+            return await context.ProceedApplicationConsentToken.FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId)??new ProceedApplicationConsentToken();
+        }
+
+        public async Task<bool> RemoveProceedApplicationConsentToken(string token, string tokenId)
+        {
+            var consent = await context.ProceedApplicationConsentToken.FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId);
+
+            if (consent != null)
+            {
+                context.ProceedApplicationConsentToken.Remove(consent);
+                await context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+        #endregion
+
     }
 }

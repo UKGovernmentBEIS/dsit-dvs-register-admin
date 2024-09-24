@@ -1,0 +1,66 @@
+﻿@model DVSAdmin.Models.PublicInterestCheckViewModel;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@{
+    ViewData["Title"] = "Public interest check";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-back-link" })
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <h1 class="govuk-heading-xl">Public interest check</h1>
+
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Guidance on this section
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    In this section, you can complete primary or secondary public interest checks. This is part of the 2i check, which enhances security by ensuring that the decision-making process does not depend on a single individual. You can only complete either the primary check or the secondary check on any application.
+                </div>
+            </details>
+
+            <div class="govuk-tabs" data-module="govuk-tabs">
+                <ul class="govuk-tabs__list">
+                    <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                        <a class="govuk-tabs__tab" href="#primary-check">
+                            Primary check
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#secondary-check">
+                            Secondary check
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#archive">
+                            Archive
+                        </a>
+                    </li>
+
+                </ul>
+              
+                    @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/PublicInterestPrimaryCheckView.cshtml", Model)          
+              
+                    @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/PublicInterestSecondaryCheckView.cshtml", Model)  
+               
+                    @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/ArchiveView.cshtml", Model)
+               
+
+            </div>
+        </div>
+</div>
+    </main>
+</div>
+
+
+
+
+
+
+
+
+
+

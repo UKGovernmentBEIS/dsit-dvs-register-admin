@@ -3,7 +3,7 @@
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using DVSAdmin.Extensions;
 @{
-    ViewData["Title"] = "Certificate rejection Confirmation";
+    ViewData["Title"] = "You have rejected this submission";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -13,7 +13,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">
-                    You have rejected this<br> submission
+                    You have rejected this submission
                 </h1>
                 <p class="govuk-body">
                     You have chosen to reject the following submission:
@@ -21,10 +21,10 @@
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
 
-                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsView.cshtml", Model.CertificateInformation)
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
 
                 <p class="govuk-body">
-                    The Conformity Assessment Body and OfDIA will receive an email notification of the submission decision within 20 minutes.
+                    The Conformity Assessment Body and DSIT will receive an email notification of the submission decision within 20 minutes.
                 </p>
 
 

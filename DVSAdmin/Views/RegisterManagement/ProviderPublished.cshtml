@@ -2,9 +2,9 @@
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using DVSAdmin.Extensions;
 @using DVSAdmin.Models;
-@model ProviderDetailsViewModel
+@model ProviderProfileDto;
 @{
-    ViewData["Title"] = "You have published this service provider on the register";
+    ViewData["Title"] = "You have published services on the register";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -12,7 +12,7 @@
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <h1 class="govuk-heading-xl">You have published on the register</h1>
+                <h1 class="govuk-heading-xl">You have published services on the register</h1>
                 <p class="govuk-body">You have successfully published the following service provider:</p>
             
 
@@ -29,17 +29,17 @@
 
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell"> @Model.Provider.TradingName </td>
-                            <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@Model.Provider.ProviderStatus) </td>
-                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.Provider.PublishedTime)</td>
-                            <td class="govuk-table__cell">@Model.Provider.CertificateInformation[0].SubmittedCAB</td>
+                            <td class="govuk-table__cell"> @Model.RegisteredName </td>
+                            <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@Model.ProviderStatus) </td>
+                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.PublishedTime)</td>
+                            <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
                             <td class="govuk-table__cell">
-                            @foreach (var item in Model.Provider.CertificateInformation)
+                            @foreach (var item in Model.Services)
                             {   
                                 <div class="govuk-!-margin-bottom-1">
                                         @item.ServiceName
                                 </div>
-                            }
+                            } 
                             </td>
                         
                     </tbody>
@@ -49,7 +49,7 @@
         </div>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">The service provider, the Conformity Assessment Body and OfDIA will receive an email notification of the publication within 20 minutes.</p>
+                <p class="govuk-body">The service provider, the Conformity Assessment Body and DSIT will receive an email notification of the publication within 20 minutes.</p>
 
                 <div class="govuk-button-group" id="submitvalidation">
                     <a href="register-management-list" type="submit" class="govuk-button" data-module="govuk-button" name="goBack" value="approve">

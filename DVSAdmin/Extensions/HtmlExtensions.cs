@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models.Enums;
+﻿using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using Microsoft.AspNetCore.Html;
 using System.ComponentModel;
 using System.Reflection;
@@ -15,31 +16,37 @@ namespace DVSAdmin.Extensions
             
             switch (value)
             {
-                case ApplicationReviewStatusEnum.Received:                   
-                case URNStatusEnum.Created:                   
-                case URNStatusEnum.ValidatedByCAB:                  
+                case ApplicationReviewStatusEnum.Received:      
                 case CertificateInfoStatusEnum.Received:
                 case CertificateInfoStatusEnum.Published:
                 case ProviderStatusEnum.Published:
+                case ServiceStatusEnum.Submitted:
+                case ServiceStatusEnum.Published:
+                case ServiceStatusEnum.Received:
                 return "govuk-tag govuk-tag--blue";
 
 
                 case ApplicationReviewStatusEnum.PrimaryCheckPassed:                        
-                case ApplicationReviewStatusEnum.ApplicationApproved:                    
-                case URNStatusEnum.Approved:                  
+                case ApplicationReviewStatusEnum.ApplicationApproved:
                 case CertificateInfoStatusEnum.Approved:
+                case CertificateReviewEnum.Approved:
+                case PublicInterestCheckEnum.PrimaryCheckPassed:
+                case PublicInterestCheckEnum.PublicInterestCheckPassed:
                 return "govuk-tag govuk-tag--green";
 
                 case ApplicationReviewStatusEnum.SentBackBySecondReviewer:                   
                 case ApplicationReviewStatusEnum.PrimaryCheckFailed:                   
-                case ApplicationReviewStatusEnum.ApplicationRejected:  
-                case URNStatusEnum.Expired:                   
-                case URNStatusEnum.Rejected:                    
+                case ApplicationReviewStatusEnum.ApplicationRejected: 
+                              
                 case CertificateInfoStatusEnum.Rejected:                  
                 case CertificateInfoStatusEnum.Expired:
                 case CertificateInfoStatusEnum.Removed:
-                case ProviderStatusEnum.RemovedFromRegister:                  
-                 return "govuk-tag govuk-tag--red";
+                case ProviderStatusEnum.RemovedFromRegister:
+                case CertificateReviewEnum.Rejected:
+                case PublicInterestCheckEnum.PublicInterestCheckFailed:
+                case PublicInterestCheckEnum.PrimaryCheckFailed:
+                case PublicInterestCheckEnum.SentBackBySecondReviewer:
+                return "govuk-tag govuk-tag--red";
 
 
 
@@ -48,6 +55,10 @@ namespace DVSAdmin.Extensions
                 case CertificateInfoStatusEnum.ReadyToPublish:
                 case ProviderStatusEnum.ActionRequired:
                 case ProviderStatusEnum.PublishedActionRequired:
+                case ServiceStatusEnum.ReadyToPublish:
+                case CertificateReviewEnum.InReview:
+                case PublicInterestCheckEnum.InPrimaryReview:
+                case PublicInterestCheckEnum.PrimaryCheckSkipped:
                     return "govuk-tag govuk-tag--yellow";
 
                 default:

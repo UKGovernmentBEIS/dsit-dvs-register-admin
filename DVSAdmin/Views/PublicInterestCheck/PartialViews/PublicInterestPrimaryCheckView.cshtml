@@ -1,0 +1,47 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.Extensions;
+@model DVSAdmin.Models.PublicInterestCheckViewModel;
+@using DVSAdmin.CommonUtility.Models.Enums
+
+<div class="govuk-tabs__panel" id="primary-check">
+    <h2 class="govuk-heading-l">Primary check overview</h2>
+
+
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Service provider </th>
+                <th scope="col" class="govuk-table__header">Service name</th>
+                <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
+                <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
+                <th scope="col" class="govuk-table__header">Review status</th>
+                <th scope="col" class="govuk-table__header">Days left to <br />complete<br />review</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+             @foreach (var item in Model.PrimaryChecksList)
+            {
+
+            <tr class="govuk-table__row">
+
+                <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.TradingName, "PrimaryCheckReview", "PublicInterestPrimaryCheck", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>               
+                <td class="govuk-table__cell">@item.ServiceName</td>
+                    <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
+                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.ModifiedTime) </td>
+                    @if (item.PublicInterestCheck == null)
+                {
+                        <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
+                }
+                else
+                {
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.PublicInterestCheck.PublicInterestCheckStatus)</td>
+                }
+                    <td class="govuk-table__cell">@item.DaysLeftToCompletePICheck days</td>
+
+            </tr>
+
+            }
+        </tbody>
+    </table>
+
+</div>
