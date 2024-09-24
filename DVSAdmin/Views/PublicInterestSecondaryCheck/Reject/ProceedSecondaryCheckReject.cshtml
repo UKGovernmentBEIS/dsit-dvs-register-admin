@@ -67,7 +67,7 @@
 
                     @if (Html.ViewData?.ModelState.ContainsKey("SelectedReasonIds") == true && Html.ViewData.ModelState["SelectedReasonIds"].Errors.Count > 0)
                     {
-                        <div class="govuk-form-group govuk-form-group--error">
+                        <div class="govuk-form-group govuk-form-group--error" aria-describedby="selectedreasonids-hint selectedreasonids-error">
                             <fieldset class="govuk-fieldset">
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                                     Select reason for rejection
@@ -84,7 +84,7 @@
                                     {
                                         var idSuffix = index > 0 ? $"_{index}" : string.Empty; // added to make the first checkbox id as selectedreasonids so that error summary ahref refers first item
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedReasonIds" value="@role.Id" id="selectedreasonids@(idSuffix)" aria-describedby="selectedreasonids-error"
+                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedReasonIds" value="@role.Id" id="selectedreasonids@(idSuffix)"
                                             @(Model.SelectedReasonIds.Contains(role.Id) ? "checked" : "") />
                                             <label class="govuk-label govuk-checkboxes__label" for="selectedreasonids@(idSuffix)">@role.RejectionReasonName</label>
                                         </div>
@@ -98,7 +98,7 @@
                     else
                     {
                         <div class="govuk-form-group">
-                            <fieldset class="govuk-fieldset">
+                            <fieldset class="govuk-fieldset" aria-describedby="selectedreasonids-hint">
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                                     Select reason for rejection
                                 </legend>
@@ -110,7 +110,7 @@
                                     @foreach (var role in Model.AvailableReasons)
                                     {
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedReasonIds" value="@role.Id" id="selectedreasonids_@role.Id" aria-describedby="selectedreasonids-hint"
+                                            <input class="govuk-checkboxes__input" type="checkbox" name="SelectedReasonIds" value="@role.Id" id="selectedreasonids_@role.Id"
                                             @(Model.SelectedReasonIds.Contains(role.Id) ? "checked" : "") />
                                             <label class="govuk-label govuk-checkboxes__label" for="selectedreasonids_@role.Id">@role.RejectionReasonName</label>
                                         </div>
