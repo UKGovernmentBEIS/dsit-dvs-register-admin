@@ -124,17 +124,20 @@ namespace DVSAdmin.Controllers
                     ServiceDto ServiceDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
                     if (ServiceDto != null && (ServiceDto.ServiceStatus == ServiceStatusEnum.Received ||ServiceDto.CertificateReview.CertificateReviewStatus != CertificateReviewEnum.Approved))
                     {
+                       
                         return RedirectToAction("ProceedApplicationConsentError");
                     }
                     consentViewModel.Service = ServiceDto;
                 }
                 else
                 {
+                    Console.WriteLine("TokenDetails null or IsAuthorised false");
                     return RedirectToAction("ProceedApplicationConsentError");
                 }
             }
             else
             {
+                Console.WriteLine("Token empty");
                 return RedirectToAction("ProceedApplicationConsentError");
             }
 
