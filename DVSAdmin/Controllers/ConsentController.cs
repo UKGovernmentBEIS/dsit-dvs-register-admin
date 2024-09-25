@@ -130,14 +130,12 @@ namespace DVSAdmin.Controllers
                     consentViewModel.Service = ServiceDto;
                 }
                 else
-                {
-                    Console.WriteLine("TokenDetails null or IsAuthorised false");
+                {                    
                     return RedirectToAction("ProceedApplicationConsentError");
                 }
             }
             else
-            {
-                Console.WriteLine("Token empty");
+            {               
                 return RedirectToAction("ProceedApplicationConsentError");
             }
 
