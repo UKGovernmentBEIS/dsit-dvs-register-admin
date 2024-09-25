@@ -1,5 +1,6 @@
 ﻿using DVSAdmin.CommonUtility.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -12,11 +13,13 @@ namespace DVSAdmin.CommonUtility.JWT
     {
         private readonly JwtSettings jwtSettings;
         private readonly IConfiguration configuration;
+        private readonly ILogger<JwtService> logger;
 
-        public JwtService(IOptions<JwtSettings> jwtSettings, IConfiguration configuration)
+        public JwtService(IOptions<JwtSettings> jwtSettings, IConfiguration configuration, ILogger<JwtService> logger)
         {
             this.jwtSettings = jwtSettings.Value;
             this.configuration = configuration;
+            this.logger = logger;
         }
 
         public TokenDetails GenerateToken()
@@ -75,6 +78,10 @@ namespace DVSAdmin.CommonUtility.JWT
                 }
                 else
                 {
+                    if(claimsPrincipal!=null && claimsPrincipal.Exception !=null)
+                    {
+                        logger.LogError($"Claims principal exception: {claimsPrincipal.Exception}");
+                    }
                     tokenDetails.IsAuthorised = false;
                 }               
                
@@ -82,7 +89,14 @@ namespace DVSAdmin.CommonUtility.JWT
             catch (Exception ex)
             {
                 tokenDetails.IsAuthorised = false;
-                Console.WriteLine(ex);
+
+                logger.LogError($"Validate token error: {ex}");
+                logger.LogError($"Stacktrace: {ex.StackTrace}");
+                if (ex.InnerException != null)
+                {
+                    Console.Write("Inner Exception");
+                    Console.Write(String.Concat(ex.InnerException.StackTrace, ex.InnerException.Message));
+                }
             }
             return tokenDetails;
         }
