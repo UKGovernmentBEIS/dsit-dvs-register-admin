@@ -1,6 +1,7 @@
 ﻿using DVSAdmin;
 using DVSAdmin.Data;
 using DVSAdmin.Middleware;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,8 +49,18 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseCookiePolicy();
 app.UseRouting();
-
 app.UseAuthorization();
+
+// Configure Forwarded Headers Middleware
+var forwardedHeadersOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+// Clear the default settings for KnownNetworks and KnownProxies
+forwardedHeadersOptions.KnownNetworks.Clear(); // Clear default networks
+forwardedHeadersOptions.KnownProxies.Clear();  // Clear default proxies
+app.UseForwardedHeaders(forwardedHeadersOptions);
+
 app.UseSession();
 app.MapControllers();
 
