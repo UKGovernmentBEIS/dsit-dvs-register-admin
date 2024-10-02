@@ -2,6 +2,7 @@
 using Amazon.S3;
 using DVSAdmin.BusinessLogic;
 using DVSAdmin.BusinessLogic.Services;
+using DVSAdmin.BusinessLogic.Models.Cookies;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.JWT;
@@ -10,6 +11,8 @@ using DVSAdmin.Data;
 using DVSAdmin.Data.Repositories;
 using DVSAdmin.Data.Repositories.RegisterManagement;
 using DVSAdmin.Middleware;
+using DVSAdmin.BusinessLogic.Models.Cookies;
+using DVSAdmin.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
@@ -41,6 +44,7 @@ namespace DVSAdmin
             ConfigureAutomapperServices(services);
             ConfigureGovUkNotify(services);
             ConfigureJwtServices(services);
+            ConfigureCookieService(services);
             ConfigureS3Client(services);
             ConfigureS3FileReader(services);
 
@@ -51,9 +55,10 @@ namespace DVSAdmin
             services.AddHttpContextAccessor();
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(360);
+                options.IdleTimeout = TimeSpan.FromMinutes(360); 
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;               
             });
         }
 
@@ -147,6 +152,21 @@ namespace DVSAdmin
             services.Configure<S3Configuration>(
                 configuration.GetSection(S3Configuration.ConfigSection));
             services.AddScoped<IBucketService, BucketService>();
+        }
+
+        private void ConfigureCookieService(IServiceCollection services)
+        {
+            services.Configure<CookieServiceConfiguration>(
+                configuration.GetSection(CookieServiceConfiguration.ConfigSection));
+
+            // Change the default antiforgery cookie name so it doesn't include Asp.Net for security reasons
+            services.AddAntiforgery(options =>
+            {
+                options.Cookie.Name = "Antiforgery";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
+            services.AddSingleton<CookieService>();
         }
     }
 }
