@@ -33,7 +33,8 @@ namespace DVSAdmin.Data
         public DbSet<PICheckLogs> PICheckLogs { get; set; }
         public DbSet<ProceedPublishConsentToken> ProceedPublishConsentToken { get;set; }
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
+        public DbSet<TrustmarkNumber> TrustmarkNumber { get; set; }
 
-       
+
     }
 }

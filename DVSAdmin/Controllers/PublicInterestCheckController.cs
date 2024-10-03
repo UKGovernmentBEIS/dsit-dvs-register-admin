@@ -37,14 +37,14 @@ namespace DVSAdmin.Controllers
 
                 var publicinterestchecks = await publicInterestCheckService.GetPICheckList();
 
-                publicInterestCheckViewModel.PrimaryChecksList = publicinterestchecks.Where(x => x.DaysLeftToComplete > 0).
+                publicInterestCheckViewModel.PrimaryChecksList = publicinterestchecks.
                 Where(x => (x.ServiceStatus == ServiceStatusEnum.Received && x.Id != x?.PublicInterestCheck?.ServiceId) ||
                 (x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview               
                 || x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)
                  && x.PublicInterestCheck.SecondaryCheckUserId != userDto.Id).ToList();
 
                 publicInterestCheckViewModel.SecondaryChecksList = publicinterestchecks
-                .Where(x => x.PublicInterestCheck !=null    && x.DaysLeftToComplete>0
+                .Where(x => x.PublicInterestCheck !=null   
                 &&(x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
                 x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
                 && x.PublicInterestCheck.PrimaryCheckUserId != userDto.Id).ToList();
