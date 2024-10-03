@@ -38,8 +38,7 @@ namespace DVSAdmin.Data.Entities
         [ForeignKey("CabUser")]
         public int CabUserId { get; set; }
         public CabUser CabUser { get; set; }
-        public int ServiceNumber { get;set; }
-        public int TrustMarkNumber { get; set; }
+        public int ServiceNumber { get;set; }      
         public ServiceStatusEnum ServiceStatus { get; set; }
         public NpgsqlTsVector SearchVector { get; set; }
         public DateTime? CreatedTime { get; set; }

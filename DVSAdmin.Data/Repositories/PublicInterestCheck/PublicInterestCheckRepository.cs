@@ -3,7 +3,6 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using static Amazon.S3.Util.S3EventNotification;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -149,8 +148,7 @@ namespace DVSAdmin.Data.Repositories
             GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();
             try
-            {
-               
+            {               
                 await context.PICheckLogs.AddAsync(pICheck);
                 await context.SaveChangesAsync();
                 transaction.Commit();
@@ -176,7 +174,7 @@ namespace DVSAdmin.Data.Repositories
 
         public async Task<GenericResponse> UpdateServiceAndProviderStatus(int serviceId,  ProviderStatusEnum providerStatus)
         {
-            GenericResponse genericResponse = new GenericResponse();
+            GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();
             try
             {
@@ -185,15 +183,23 @@ namespace DVSAdmin.Data.Repositories
                 var providerEntity = await context.ProviderProfile.FirstOrDefaultAsync(e => e.Id == serviceEntity.ProviderProfileId);
 
                 if (serviceEntity != null && providerEntity != null)
-                {
-                    //update review table status so that it won't appear in review list again
+                {                  
                     serviceEntity.ServiceStatus = ServiceStatusEnum.ReadyToPublish;
                     serviceEntity.ModifiedTime = DateTime.UtcNow;   
                     providerEntity.ProviderStatus = providerStatus;
                     providerEntity.ModifiedTime = DateTime.UtcNow;
                     await context.SaveChangesAsync();
-                    transaction.Commit();
-                    genericResponse.Success = true;
+
+                    if(await AddTrustMarkNumber(serviceEntity.Id,providerEntity.Id)) 
+                    {
+                        transaction.Commit();
+                        genericResponse.Success = true;
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        genericResponse.Success = false;
+                    }                   
                 }
             }
             catch (Exception ex)
@@ -205,5 +211,56 @@ namespace DVSAdmin.Data.Repositories
             }
             return genericResponse;
         }
-    }
+
+
+
+      
+
+        private async Task<bool> AddTrustMarkNumber(int serviceId, int providerId)
+        {
+            bool success = false;
+            try
+            {
+                int serviceNumber;
+                int companyId;
+                var existingTrustmark = await context.TrustmarkNumber.FirstOrDefaultAsync(t => t.ProviderProfileId == providerId);               
+                if (existingTrustmark != null)
+                {
+                    // If it exists, select the existing CompanyId, select max of service number
+                    serviceNumber = await context.TrustmarkNumber.Where(p => p.ProviderProfileId == providerId).MaxAsync(p => (int?)p.ServiceNumber) ?? 0;
+                    companyId = existingTrustmark.CompanyId;
+                   
+                }
+                else
+                {
+                    //If doesn't exist, get max company id and add 1
+                    int maxCompanyId = await context.TrustmarkNumber.MaxAsync(t => (int?)t.CompanyId) ?? 1999;
+                    companyId = maxCompanyId+1;
+                    serviceNumber = 0; // service number always 0 if doesnt exist
+                }
+           
+                TrustmarkNumber trustmarkNumber = new()
+                {
+                    ProviderProfileId = providerId,
+                    ServiceId = serviceId,
+                    CompanyId = companyId,
+                    ServiceNumber = serviceNumber+1,
+                    TimeStamp = DateTime.UtcNow
+                    
+                };
+
+                await context.TrustmarkNumber.AddAsync(trustmarkNumber);
+                await context.SaveChangesAsync();
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                success =false;
+                logger.LogError($"Failed to geenrate trustmark number: {ex}");
+                logger.LogInformation("ProviderId:{0} serviceId: {1}", providerId, serviceId);
+            }
+           return success;
+        
+          }
+}
 }
