@@ -1,0 +1,61 @@
+﻿@model DVSAdmin.Models.MFARegistrationViewModel
+@{
+    ViewData["Title"] = "Configure your authenticator app";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string qrCodeImageBase64 = DVSAdmin.CommonUtility.Helper.GenerateQRCode(Model.SecretToken, Model.Email);
+}
+
+@using (Html.BeginForm("MFAConfirmationCheck", "Login", FormMethod.Post))
+{
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                    }
+
+                    <h1 class="govuk-heading-xl govuk-!-margin-top-8">Configure your authenticator app and sign in to your account</h1>
+
+                    <h2 class="govuk-heading-m">1. Configure your authenticator app for the servicee</h2>
+
+                    <p class="govuk-body">Once your authenticator app is installed on your device, open it and scan the QR code or manually enter the Secret Key below. You will now be able to use your authenticator app to sign in to your account.</p>
+
+                    <div>
+                        <img src="data:image/png;base64, @qrCodeImageBase64" alt="QR Code for MFA Code" style="max-width: 200px; width: 30vw; height: auto; min-width: 100px;" />
+                    </div>
+
+                    <div class="govuk-inset-text">
+                        Do not try to scan the QR code with a phone camera. You will need to scan the QR code once you open your authenticator app.
+                    </div>
+
+                    <p class="govuk-body"> Alternatively, you may use the following Secret Key for manual entry:  @Model.SecretToken</p>
+
+                    <h2 class="govuk-heading-m">2. Use your authenticator app to sign in to your account</h2>
+
+                    <p class="govuk-body">Once you have configured your authenticator app, a six-digit passcode will appear in the authenticator app which you should enter in the box below. This will enable you to sign in to the service.</p>
+
+                    <p class="govuk-body">
+                        <b>Enter the one time multi-factor authentication code on your phone:</b>
+                        <br />
+                        <span id="mfa-hint" class="govuk-hint">
+                            This is a six-digit passcode. For example, 123456
+                        </span>
+
+                    </p>
+
+                    <div class="govuk-form-group @(Html.ViewData.ModelState.ContainsKey("MFACode") && Html.ViewData.ModelState["MFACode"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
+                        @Html.ValidationMessageFor(m => m.MFACode, "", new { @class = "govuk-error-message" })
+                        @Html.TextBoxFor(m => m.MFACode, new { @class = "govuk-input", id = "mfacode", name = "mfa-code" })
+                    </div>
+
+                    <button type="submit" class="govuk-button govuk-!-margin-top-2" data-module="govuk-button">
+                        Continue
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+}
