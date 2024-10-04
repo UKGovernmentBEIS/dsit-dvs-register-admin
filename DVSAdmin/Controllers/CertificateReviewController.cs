@@ -31,7 +31,7 @@ namespace DVSAdmin.Controllers
         {            
             CertificateReviewListViewModel certificateReviewListViewModel = new ();
             var serviceList = await certificateReviewService.GetServiceList();
-            certificateReviewListViewModel.CertificateReviewList =  serviceList.Where(x => x.DaysLeftToComplete >0 &&
+            certificateReviewListViewModel.CertificateReviewList =  serviceList.Where(x => 
             ((x.ServiceStatus == ServiceStatusEnum.Submitted &&  x.Id !=x?.CertificateReview?.ServiceId) || 
             (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))).ToList();            
             certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
