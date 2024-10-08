@@ -1,18 +1,17 @@
 ﻿using Amazon;
 using Amazon.S3;
 using DVSAdmin.BusinessLogic;
-using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.BusinessLogic.Models.Cookies;
+using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.Cookies;
 using DVSAdmin.Data;
 using DVSAdmin.Data.Repositories;
 using DVSAdmin.Data.Repositories.RegisterManagement;
 using DVSAdmin.Middleware;
-using DVSAdmin.BusinessLogic.Models.Cookies;
-using DVSAdmin.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
@@ -32,6 +31,13 @@ namespace DVSAdmin
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            //Adding strict transport security header
+            services.AddHsts(options =>
+            {
+                options.Preload = true;
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(1);
+            });
             services.Configure<BasicAuthMiddlewareConfiguration>(
             configuration.GetSection(BasicAuthMiddlewareConfiguration.ConfigSection));
             string connectionString = string.Format(configuration.GetValue<string>("DB_CONNECTIONSTRING"));
