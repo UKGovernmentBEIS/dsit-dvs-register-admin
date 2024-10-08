@@ -60,12 +60,12 @@ namespace DVSAdmin.Controllers
                 return View("EnterEmail");
             }
         }
-        
+
 
         [HttpGet("confirm-password")]
         public IActionResult ConfirmPassword(bool passwordReset)
         {
-            ConfirmPasswordViewModel confirmPasswordViewModel = new ConfirmPasswordViewModel();           
+            ConfirmPasswordViewModel confirmPasswordViewModel = new ConfirmPasswordViewModel();
             confirmPasswordViewModel.PasswordReset = passwordReset;
             string email = HttpContext?.Session.Get<string>("Email");
             ViewBag.Email= email;
@@ -75,7 +75,7 @@ namespace DVSAdmin.Controllers
         [HttpPost("confirm-password")]
         public async Task<IActionResult> ConfirmPasswordCheck(ConfirmPasswordViewModel confirmPasswordViewModel)
         {
-            string email = HttpContext?.Session.Get<string>("Email");           
+            string email = HttpContext?.Session.Get<string>("Email");
             if (ModelState.IsValid)
             {
                 GenericResponse confirmPasswordResponse = new GenericResponse();
@@ -88,7 +88,7 @@ namespace DVSAdmin.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError("ErrorMessage", "Error in resetting password");                      
+                        ModelState.AddModelError("ErrorMessage", "Error in resetting password");
                         return View("ConfirmPassword", confirmPasswordViewModel);
                     }
                 }
@@ -98,7 +98,7 @@ namespace DVSAdmin.Controllers
                     if (confirmPasswordResponse.Success)
                     {
                         HttpContext?.Session.Set("MFARegistrationViewModel", new MFARegistrationViewModel { Email = email, Password = confirmPasswordViewModel.Password, SecretToken = confirmPasswordResponse.Data });
-                        return RedirectToAction("MFARegistration", "Login");
+                        return RedirectToAction("MFADescription", "Login");
                     }
                     else
                     {
@@ -110,17 +110,23 @@ namespace DVSAdmin.Controllers
                         {
                             ModelState.AddModelError("ErrorMessage", confirmPasswordResponse.ErrorMessage);
                         }
-                        
+
                         return View("ConfirmPassword", confirmPasswordViewModel);
                     }
-                }               
-               
+                }
+
             }
             else
             {
                 return View("ConfirmPassword", confirmPasswordViewModel);
             }
-                        
+
+        }
+
+        [HttpGet("mfa-description")]
+        public IActionResult MFADescription()
+        {           
+            return View();
         }
 
         [HttpGet("mfa-registration")]
@@ -146,7 +152,7 @@ namespace DVSAdmin.Controllers
                 {
                     viewModel.SecretToken=MFARegistrationViewModel.SecretToken;
                     viewModel.Email = MFARegistrationViewModel.Email;
-                    ModelState.AddModelError("MFACode", "Invalid MFA code provided");
+                    ModelState.AddModelError("MFACode", "Enter a valid MFA code");
                     return View("MFARegistration", viewModel);
                 }
             }
@@ -156,7 +162,7 @@ namespace DVSAdmin.Controllers
                 viewModel.Email = MFARegistrationViewModel.Email;
                 return View("MFARegistration", viewModel);
             }
-            
+
         }
 
         [HttpGet("login")]
