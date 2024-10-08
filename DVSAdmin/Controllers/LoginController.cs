@@ -152,7 +152,7 @@ namespace DVSAdmin.Controllers
                 {
                     viewModel.SecretToken=MFARegistrationViewModel.SecretToken;
                     viewModel.Email = MFARegistrationViewModel.Email;
-                    ModelState.AddModelError("MFACode", "Invalid MFA code provided");
+                    ModelState.AddModelError("MFACode", "Enter a valid MFA code");
                     return View("MFARegistration", viewModel);
                 }
             }
