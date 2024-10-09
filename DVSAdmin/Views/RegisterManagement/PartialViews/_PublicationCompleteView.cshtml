@@ -24,7 +24,7 @@
                 @if(item.Services!=null && item.Services.Count()>0)
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell"> @Html.ActionLink(@item.TradingName, "ProviderDetails", "RegisterManagement", new { @providerId = item.Id }, new { @class = "govuk-link" })</td>
+                        <td class="govuk-table__cell"> @Html.ActionLink(@item.RegisteredName, "ProviderDetails", "RegisterManagement", new { @providerId = item.Id }, new { @class = "govuk-link" })</td>
                         <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@item.ProviderStatus) </td>
                         <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(@item.ModifiedTime)</td>
                         <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
