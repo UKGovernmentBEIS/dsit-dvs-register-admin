@@ -95,7 +95,7 @@ namespace DVSAdmin.BusinessLogic.Services
                     List<string> emailList = [serviceDto.Provider.PrimaryContactEmail, serviceDto.Provider.SecondaryContactEmail];
                     await emailSender.SendProceedApplicationConsentToDIP(serviceDto.Provider.RegisteredName, serviceDto.ServiceName,
                     !string.IsNullOrEmpty(serviceDto.Provider.CompanyRegistrationNumber) ? serviceDto.Provider.CompanyRegistrationNumber : serviceDto.Provider.DUNSNumber??string.Empty,
-                    serviceDto.CompanyAddress, serviceDto.Provider.PublicContactEmail, serviceDto.Provider.ProviderTelephoneNumber, consentLink, emailList);
+                    serviceDto.CompanyAddress, serviceDto.Provider.PublicContactEmail, serviceDto.Provider.ProviderTelephoneNumber??string.Empty, consentLink, emailList);
                 }
 
             }
