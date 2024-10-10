@@ -223,30 +223,31 @@ namespace DVSAdmin.Data.Repositories
             {
                 int serviceNumber;
                 int companyId;
-                var existingTrustmark = await context.TrustmarkNumber.FirstOrDefaultAsync(t => t.ProviderProfileId == providerId);               
+                var existingTrustmark = await context.TrustmarkNumber.FirstOrDefaultAsync(t => t.ProviderProfileId == providerId);
                 if (existingTrustmark != null)
                 {
-                    // If it exists, select the existing CompanyId, select max of service number
+                    // If it exists, select the existing CompanyId
+                    // select max of service number, if doesnt exist set as 0                    
                     serviceNumber = await context.TrustmarkNumber.Where(p => p.ProviderProfileId == providerId).MaxAsync(p => (int?)p.ServiceNumber) ?? 0;
                     companyId = existingTrustmark.CompanyId;
-                   
+
                 }
                 else
                 {
-                    //If doesn't exist, get max company id and add 1
-                    int maxCompanyId = await context.TrustmarkNumber.MaxAsync(t => (int?)t.CompanyId) ?? 1999;
+                    //If doesn't exist, get max company id or return initial value as 199 and then increment by 1
+                    int maxCompanyId = await context.TrustmarkNumber.MaxAsync(t => (int?)t.CompanyId) ?? 199;
                     companyId = maxCompanyId+1;
-                    serviceNumber = 0; // service number always 0 if doesnt exist
+                    serviceNumber = 0; // service number initialize to 0 if doesnt exist
                 }
-           
+
                 TrustmarkNumber trustmarkNumber = new()
                 {
                     ProviderProfileId = providerId,
                     ServiceId = serviceId,
                     CompanyId = companyId,
-                    ServiceNumber = serviceNumber+1,
+                    ServiceNumber = serviceNumber+1, // service id start with 1 
                     TimeStamp = DateTime.UtcNow
-                    
+
                 };
 
                 await context.TrustmarkNumber.AddAsync(trustmarkNumber);
@@ -256,7 +257,7 @@ namespace DVSAdmin.Data.Repositories
             catch (Exception ex)
             {
                 success =false;
-                logger.LogError($"Failed to geenrate trustmark number: {ex}");
+                logger.LogError($"Failed to generate trustmark number: {ex}");
                 logger.LogInformation("ProviderId:{0} serviceId: {1}", providerId, serviceId);
             }
            return success;

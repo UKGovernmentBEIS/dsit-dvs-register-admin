@@ -22,7 +22,7 @@
             @foreach (var item in Model.ArchiveList)
             {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.TradingName, "ArchiveDetails", "PublicInterestCheck", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>
+                    <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "ArchiveDetails", "PublicInterestCheck", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>
                     <td class="govuk-table__cell">@item.ServiceName</td>
                     <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
                     <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.ModifiedTime) </td>
