@@ -15,7 +15,7 @@
 <div class="govuk-width-container">
 
     @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
-    <main class="govuk-main-wrapper">
+    <main id="main-content" class="govuk-main-wrapper" role="main">
         @using (Html.BeginForm("ProceedSecondaryCheckReject", "PublicInterestSecondaryCheck", FormMethod.Post))
         {
             @if (ViewData.ModelState.ErrorCount >0)
@@ -49,7 +49,7 @@
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
                                 
-                                <td class="govuk-table__cell">@Model?.Service?.Provider.TradingName</td>
+                                <td class="govuk-table__cell">@Model?.Service?.Provider.RegisteredName</td>
                                 <td class="govuk-table__cell">@Model.Service.ServiceName</td>
                                 <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
                                 <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.Service.ModifiedTime)</td>

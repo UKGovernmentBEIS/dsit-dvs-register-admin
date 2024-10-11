@@ -9,7 +9,7 @@
 
 <div class="govuk-width-container">
     @Html.ActionLink("Back", "CertificateReview", "CertificateReview", null, new { @class = "govuk-back-link" })
-    <main class="govuk-main-wrapper">
+    <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
 
             <div class="govuk-grid-column-full">
@@ -46,7 +46,7 @@
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
 
-                                <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.Provider.TradingName</td>
+                                <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.Provider.RegisteredName</td>
                                 <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.ServiceName</td>
                                 <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.CabUser.Cab.CabName</td>
                                 <td class="govuk-table__cell">

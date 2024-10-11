@@ -350,7 +350,7 @@ namespace DVSAdmin.Controllers
         }
 
         private void AddModelErrorForInvalidActions(PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckViewModel, string reviewAction)
-        {           
+        {          
 
             if (publicInterestPrimaryCheckViewModel.PrimaryCheckUserId == publicInterestPrimaryCheckViewModel.SecondaryCheckUserId)
             {
@@ -359,6 +359,22 @@ namespace DVSAdmin.Controllers
           
             else
             {
+
+                var errorMessages = new Dictionary<string, string>
+                {
+                    {"IsCompanyHouseNumberApproved", "Companies House or charity information or D U-N-S number"},
+                    {"IsDirectorshipsApproved", "Directorships"},
+                    {"IsDirectorshipsAndRelationApproved", "Directors and relationships"},
+                    {"IsTradingAddressApproved", "Trading as address checks"},
+                    {"IsSanctionListApproved", "Sanctions list checks"},
+                    {"IsUNFCApproved", "UNFC check"},
+                    {"IsECCheckApproved", "EC check"},
+                    {"IsTARICApproved", "TARIC check"},
+                    {"IsBannedPoliticalApproved", "Banned political affiliations"},
+                    {"IsProvidersWebpageApproved", "Service provider's website"}
+                };
+
+
                 if (publicInterestPrimaryCheckViewModel.IsCompanyHouseNumberApproved !=null && publicInterestPrimaryCheckViewModel.IsDirectorshipsApproved!=null
                     && publicInterestPrimaryCheckViewModel.IsDirectorshipsAndRelationApproved!=null && publicInterestPrimaryCheckViewModel.IsTradingAddressApproved!=null
                     && publicInterestPrimaryCheckViewModel.IsSanctionListApproved!=null && publicInterestPrimaryCheckViewModel.IsUNFCApproved!= null
@@ -382,16 +398,46 @@ namespace DVSAdmin.Controllers
                     if (isCompanyHouseNumberApproved && isDirectorshipsApproved &&  isDirectorshipsAndRelationApproved &&   isTradingAddressApproved &&
                         isSanctionListApproved && isUNFCApproved &&   isECCheckApproved && isTARICApproved && isBannedPoliticalApproved && isProvidersWebpageApproved
                         && !string.IsNullOrEmpty(publicInterestPrimaryCheckViewModel.PrimaryCheckComment)  && reviewAction == "reject")
-                    {
-                        ModelState.AddModelError("SubmitValidation", "Your decision to pass or fail this primary check must match with the selections");
+                    {                                              
+
+                        // Iterate over the dictionary and add model errors for all fields as all approve is selected
+                        foreach (var errorMessage in errorMessages)
+                        {
+                            ModelState.AddModelError(errorMessage.Key, string.Format(Constants.PrimaryCheckApproveErrorMessage, errorMessage.Value));
+                        }
+
                     }
-                    else if ((isCompanyHouseNumberApproved == false ||  isDirectorshipsApproved == false || isDirectorshipsAndRelationApproved == false ||
-                     isTradingAddressApproved == false || isSanctionListApproved == false || isUNFCApproved == false ||  isECCheckApproved == false ||
-                     isTARICApproved == false ||   isBannedPoliticalApproved == false ||    isProvidersWebpageApproved == false) && !string.IsNullOrEmpty(publicInterestPrimaryCheckViewModel.PrimaryCheckComment)
-                     && reviewAction == "approve")
+
+                    else if(!string.IsNullOrEmpty(publicInterestPrimaryCheckViewModel.PrimaryCheckComment) && reviewAction == "approve")
                     {
-                        ModelState.AddModelError("SubmitValidation", "Your decision to pass or fail this primary check must match with the selections");
+
+                        var approvalFlags = new List<(bool IsApproved, string ErrorKey)>
+                        {
+                            (isCompanyHouseNumberApproved, "IsCompanyHouseNumberApproved"),
+                            (isDirectorshipsApproved, "IsDirectorshipsApproved"),
+                            (isDirectorshipsAndRelationApproved, "IsDirectorshipsAndRelationApproved"),
+                            (isTradingAddressApproved, "IsTradingAddressApproved"),
+                            (isSanctionListApproved, "IsSanctionListApproved"),
+                            (isUNFCApproved, "IsUNFCApproved"),
+                            (isECCheckApproved, "IsECCheckApproved"),
+                            (isTARICApproved, "IsTARICApproved"),
+                            (isBannedPoliticalApproved, "IsBannedPoliticalApproved"),
+                            (isProvidersWebpageApproved, "IsProvidersWebpageApproved")
+                        };
+
+
+                        foreach (var flag in approvalFlags)
+                        {
+                            if (!flag.IsApproved)
+                            {
+                                string errorMessage = errorMessages[flag.ErrorKey];
+                                ModelState.AddModelError(flag.ErrorKey, string.Format(Constants.PrimaryCheckRejectErrorMessage, errorMessage));
+                            }
+                        }                    
+
                     }
+
+                   
                 }
             }
         }

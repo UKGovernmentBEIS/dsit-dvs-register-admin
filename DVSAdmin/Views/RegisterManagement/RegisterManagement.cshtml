@@ -6,19 +6,19 @@
 }
 
 <div class="govuk-width-container">
-    <main class="govuk-main-wrapper">
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                @Html.ActionLink("Home", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-breadcrumbs__link" })
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                @Html.ActionLink("Register management", "RegisterManagement", "RegisterManagement", null, new { @class = "govuk-breadcrumbs__link" })
+            </li>
+        </ol>
+    </div>
+    <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full govuk-!-padding-bottom-5">
-                <div class="govuk-breadcrumbs">
-                    <ol class="govuk-breadcrumbs__list">
-                        <li class="govuk-breadcrumbs__list-item">
-                            @Html.ActionLink("Home", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-breadcrumbs__link" })
-                        </li>
-                        <li class="govuk-breadcrumbs__list-item">
-                            @Html.ActionLink("Register management", "RegisterManagement", "RegisterManagement", null, new { @class = "govuk-breadcrumbs__link" })
-                        </li>
-                    </ol>
-                </div>
                 <h1 class="govuk-heading-xl">Register management</h1>
                 <div class="govuk-tabs" data-module="govuk-tabs">
                     <ul class="govuk-tabs__list">

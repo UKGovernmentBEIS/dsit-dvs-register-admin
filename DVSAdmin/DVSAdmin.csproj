@@ -11,6 +11,9 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
+    <Content Remove="Views\Login\MFARegister.cshtml.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.400" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.7" />
@@ -38,9 +41,16 @@
   <ItemGroup>
     <None Include="Views\Consent\Consent.cshtml" />
     <None Include="Views\Consent\ConsentSuccess.cshtml" />
+    <None Include="Views\Cookie\CookiePage.cshtml" />
     <None Include="Views\PublicInterestSecondaryCheck\Review\SecondaryCheckReview.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <RuntimeHostConfigurationOption Include="System.Drawing.EnableUnixSupport" Value="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Views\Login\MFADescription.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 </Project>

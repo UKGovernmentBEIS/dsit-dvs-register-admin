@@ -8,7 +8,7 @@
 }
 <div class="govuk-width-container">
 
-    <main class="govuk-main-wrapper">
+    <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">
@@ -32,7 +32,7 @@
                     </thead>
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@Model.Provider.TradingName</td>
+                            <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
                             <td class="govuk-table__cell">@Model.ServiceName</td>
                             <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
                             <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.CreatedTime)</td>
