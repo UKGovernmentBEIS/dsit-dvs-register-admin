@@ -46,5 +46,7 @@ namespace DVSAdmin.Data.Entities
         public DateTime? PublishedTime { get; set; }
         public CertificateReview CertificateReview { get; set; }
         public PublicInterestCheck PublicInterestCheck { get; set; }
+        public ProceedApplicationConsentToken ProceedApplicationConsentToken { get; set; }
+        public ProceedPublishConsentToken ProceedPublishConsentToken { get;set; }
     }
 }

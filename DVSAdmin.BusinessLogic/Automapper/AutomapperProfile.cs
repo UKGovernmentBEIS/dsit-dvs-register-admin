@@ -81,6 +81,11 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<PublicInterestCheck, PublicInterestCheckDto>();
             CreateMap<PublicInterestCheckDto, PublicInterestCheck>();
 
+            CreateMap<ProceedApplicationConsentToken, ProceedApplicationConsentTokenDto>()
+           .ForMember(dest => dest.Service, opt => opt.MapFrom(src => src.Service));
+            CreateMap<ProceedApplicationConsentTokenDto, ProceedApplicationConsentToken>()
+            .ForMember(dest => dest.Service, opt => opt.MapFrom(src => src.Service));
+
         }
     }
 }

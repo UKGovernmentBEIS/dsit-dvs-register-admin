@@ -36,5 +36,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public PublicInterestCheckDto PublicInterestCheck { get; set; }
         public int DaysLeftToComplete { get; set; }
         public int DaysLeftToCompletePICheck { get; set; }
+        public ProceedApplicationConsentTokenDto ProceedApplicationConsentToken { get; set; }
+        public ProceedPublishConsentTokenDto ProceedPublishConsentToken { get; set; }       
     }
 }

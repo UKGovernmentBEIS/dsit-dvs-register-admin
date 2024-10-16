@@ -50,13 +50,14 @@ namespace DVSAdmin.Data.Repositories
      
         public async Task<bool> RemoveConsentToken(string token, string tokenId)
         {
-            var consent = await context.ProceedPublishConsentToken.FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId);
-
+            var consent = await context.ProceedPublishConsentToken.Include(p => p.Service)
+           .FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId);
             if (consent != null)
             {
                 context.ProceedPublishConsentToken.Remove(consent);
                 await context.SaveChangesAsync();
-                return true;
+                logger.LogInformation("Closing Loop : Token Removed for service {0}", consent.Service.ServiceName);
+                return true;                
             }
 
             return false;
@@ -93,7 +94,8 @@ namespace DVSAdmin.Data.Repositories
 
         public async Task<ProceedApplicationConsentToken> GetProceedApplicationConsentToken(string token, string tokenId)
         {
-            return await context.ProceedApplicationConsentToken.FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId)??new ProceedApplicationConsentToken();
+            return await context.ProceedApplicationConsentToken.Include(p=>p.Service)
+            .FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId)??new ProceedApplicationConsentToken();
         }
 
         public async Task<bool> RemoveProceedApplicationConsentToken(string token, string tokenId)
@@ -104,6 +106,7 @@ namespace DVSAdmin.Data.Repositories
             {
                 context.ProceedApplicationConsentToken.Remove(consent);
                 await context.SaveChangesAsync();
+                logger.LogInformation("Opening Loop : Token Removed for service {0}", consent.Service.ServiceName);
                 return true;
             }
 

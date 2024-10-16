@@ -1,5 +1,4 @@
-﻿using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.Data.Repositories;
+﻿using DVSAdmin.Data.Repositories;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -18,6 +17,12 @@ namespace DVSAdmin.BusinessLogic.Services
         {
             return await consentRepository.RemoveConsentToken(token, tokenId);
         }
-      
+
+
+        public async Task<bool> RemoveProceedApplicationConsentToken(string token, string tokenId)
+        {
+            return await consentRepository.RemoveProceedApplicationConsentToken(token, tokenId);
+        }
+
     }
 }

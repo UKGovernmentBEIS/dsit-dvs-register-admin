@@ -75,6 +75,7 @@ namespace DVSAdmin.Controllers
                         GenericResponse genericResponse = await publicInterestCheckService.UpdateServiceAndProviderStatus(tokenDetails.Token, tokenDetails.TokenId, ServiceDto);
                         if (genericResponse.Success)
                         {
+                            await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId);
                             return RedirectToAction("ConsentSuccess");
                         }
                         else
@@ -124,7 +125,7 @@ namespace DVSAdmin.Controllers
                     ServiceDto ServiceDto = await certificateReviewService.GetProviderAndCertificateDetailsByToken(tokenDetails.Token, tokenDetails.TokenId);
                     if (ServiceDto != null && (ServiceDto.ServiceStatus == ServiceStatusEnum.Received ||ServiceDto.CertificateReview.CertificateReviewStatus != CertificateReviewEnum.Approved))
                     {
-                       
+                        await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId);
                         return RedirectToAction("ProceedApplicationConsentError");
                     }
                     consentViewModel.Service = ServiceDto;
@@ -159,6 +160,7 @@ namespace DVSAdmin.Controllers
                         GenericResponse genericResponse = await certificateReviewService.UpdateServiceStatus(serviceDto.Id);
                         if (genericResponse.Success)
                         {
+                            await consentService.RemoveProceedApplicationConsentToken(tokenDetails.Token, tokenDetails.TokenId);
                             return RedirectToAction("ProceedApplicationConsentSuccess");
                         }
                         else
@@ -175,7 +177,7 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId);
+                    await consentService.RemoveProceedApplicationConsentToken(tokenDetails.Token, tokenDetails.TokenId);
                     return RedirectToAction("ProceedApplicationConsentError");
                 }
             }

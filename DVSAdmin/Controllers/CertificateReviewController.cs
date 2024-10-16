@@ -19,11 +19,14 @@ namespace DVSAdmin.Controllers
         private readonly ICertificateReviewService certificateReviewService;      
         private readonly IUserService userService;
         private readonly IBucketService bucketService;
-        public CertificateReviewController(ICertificateReviewService certificateReviewService, IUserService userService, IBucketService bucketService)
+        private readonly IConfiguration configuration;
+        public CertificateReviewController(ICertificateReviewService certificateReviewService, IUserService userService, 
+        IBucketService bucketService, IConfiguration configuration)
         {           
             this.certificateReviewService = certificateReviewService;
             this.userService = userService; 
             this.bucketService = bucketService;
+            this.configuration = configuration;
         }
 
         [HttpGet("certificate-review-list")]
@@ -44,7 +47,12 @@ namespace DVSAdmin.Controllers
         public async Task<ActionResult> CertificateSubmissionDetails(int certificateInfoId)
         {
             CertificateDetailsViewModel certificateDetailsViewModel = new();
-            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateInfoId);           
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateInfoId);
+            
+            if (serviceDto.ProceedApplicationConsentToken != null &serviceDto.ServiceStatus == ServiceStatusEnum.Submitted)
+            {
+                certificateDetailsViewModel.OpeningTheloopLink = configuration["ReviewPortalLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
+            }
 
 
             CertificateValidationViewModel certificateValidationViewModel = MapDtoToViewModel(serviceDto);

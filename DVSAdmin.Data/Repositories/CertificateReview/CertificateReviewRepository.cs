@@ -194,6 +194,7 @@ namespace DVSAdmin.Data.Repositories
             .Where(p => p.Id == serviceId)
             .Include(p => p.Provider)
             .Include(p => p.CertificateReview)
+            .Include (p => p.ProceedApplicationConsentToken)
             .Include(p => p.CabUser).ThenInclude(cu => cu.Cab)
             .Include(p => p.ServiceRoleMapping)
             .ThenInclude(s => s.Role);
