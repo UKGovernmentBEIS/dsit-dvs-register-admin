@@ -1,5 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.Data.Entities;
+using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -36,7 +36,11 @@ namespace DVSAdmin.BusinessLogic.Models
         public PublicInterestCheckDto PublicInterestCheck { get; set; }
         public int DaysLeftToComplete { get; set; }
         public int DaysLeftToCompletePICheck { get; set; }
+
+        [JsonIgnore]
         public ProceedApplicationConsentTokenDto ProceedApplicationConsentToken { get; set; }
+
+        [JsonIgnore]
         public ProceedPublishConsentTokenDto ProceedPublishConsentToken { get; set; }       
     }
 }
