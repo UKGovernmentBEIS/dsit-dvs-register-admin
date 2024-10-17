@@ -19,8 +19,8 @@ namespace DVSAdmin.Data.Repositories
         public async Task<List<Service>> GetPICheckList()
         {
             List<Service> piCheckList = await context.Service.Include(p => p.Provider)
-            .Include(p => p.PublicInterestCheck).Include(p => p.CabUser).ThenInclude(p => p.Cab).
-             Where(x => x.ServiceStatus == ServiceStatusEnum.Received).ToListAsync();
+            .Include(p => p.PublicInterestCheck).Include(p => p.CabUser).ThenInclude(p => p.Cab)
+             .ToListAsync();
             return piCheckList;
         }
 
@@ -31,6 +31,7 @@ namespace DVSAdmin.Data.Repositories
             .Include(s => s.Provider)
             .Include(s => s.CabUser).ThenInclude(s => s.Cab)
             .Include(s => s.PublicInterestCheck)
+            .Include(s => s.ProceedPublishConsentToken)
             .Include(s => s.ServiceRoleMapping)
             .Include(s => s.PublicInterestCheck).ThenInclude(p => p.PrimaryCheckUser)
             .Include(s => s.PublicInterestCheck).ThenInclude(p => p.SecondaryCheckUser)
