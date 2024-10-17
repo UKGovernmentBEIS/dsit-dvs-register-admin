@@ -11,7 +11,8 @@
     @Html.ActionLink("Back", "PublicInterestCheck", "PublicInterestCheck", null, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
+            <div class="govuk-grid-column-full">           
+
                 <h1 class="govuk-heading-xl">Application review</h1>
                
                    
@@ -42,7 +43,6 @@
                         </tbody>
                     </table>
 
-                
 
                     <h2 class="govuk-heading-l">Application details</h2>
                     <h3 class="govuk-heading-m">Provider contact details</h3>
@@ -136,6 +136,30 @@
                             <dd class="govuk-summary-list__value">@Model.Provider.ProviderWebsiteAddress</dd>
                         </div>
                     </dl>
+
+
+                <h3 class="govuk-heading-m">  Closing the loop</h3>
+                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Link
+                        </dt>
+                        @if (ViewBag.ClosingTheLoopLink!=null)
+                        {
+                            <dd class="govuk-summary-list__value">
+                                @Convert.ToString(ViewBag.ClosingTheLoopLink)
+                            </dd>
+                        }
+                        else
+                        {
+                            <dd class="govuk-summary-list__value">
+                                Already consented
+                            </dd>
+                        }
+                    </div>
+
+                </dl>
 
                     <hr class="govuk-section-break govuk-section-break--l">
                     <h2 class="govuk-heading-l">Approval checklist</h2>
@@ -310,7 +334,8 @@
                 <h3 class="govuk-heading-m">Secondary check reviewer comments</h3>
                 <p class="govuk-body govuk-summary-list__key">@Model.PublicInterestCheck.PrimaryCheckUser.UserName</p>
                 <p class="govuk-body"> @DateTimeExtensions.FormatDateTime(@Model.PublicInterestCheck.PrimaryCheckTime, "h:mm tt; d MMM yyyy")</p>
-                <p class="govuk-body">  @HtmlExtensions.ToStringWithLineBreaks(@Model?.PublicInterestCheck.PrimaryCheckComment??string.Empty)</p>
+                <p class="govuk-body">  @HtmlExtensions.ToStringWithLineBreaks(@Model?.PublicInterestCheck.PrimaryCheckComment??string.Empty)</p>           
+                
 
 
 
