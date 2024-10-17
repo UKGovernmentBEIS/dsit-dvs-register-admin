@@ -16,12 +16,15 @@ namespace DVSAdmin.Controllers
         private readonly ILogger<PublicInterestCheckController> logger;
         private readonly IPublicInterestCheckService publicInterestCheckService;
         private readonly IUserService userService;
+        private readonly IConfiguration configuration;
 
-        public PublicInterestCheckController(ILogger<PublicInterestCheckController> logger, IPublicInterestCheckService publicInterestCheckService, IUserService userService)
+        public PublicInterestCheckController(ILogger<PublicInterestCheckController> logger, IPublicInterestCheckService publicInterestCheckService,
+        IUserService userService, IConfiguration configuration)
         {
             this.logger = logger;
             this.publicInterestCheckService = publicInterestCheckService;
             this.userService = userService;
+            this.configuration = configuration;
         }
 
         [HttpGet("public-interest-check-list")]
@@ -70,6 +73,12 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ArchiveDetails(int serviceId)
         {
             ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
+            if(serviceDto.ProceedPublishConsentToken !=null && serviceDto.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed &&
+                serviceDto.ServiceStatus == ServiceStatusEnum.Received)
+            {
+                ViewBag.ClosingTheLoopLink=  configuration["ReviewPortalLink"] +"consent/publish-service-give-consent?token="+serviceDto.ProceedPublishConsentToken.Token;
+            }
+           
             return View(serviceDto);
 
         }
