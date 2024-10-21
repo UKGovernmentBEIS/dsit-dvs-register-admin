@@ -12,6 +12,7 @@ using DVSAdmin.Data;
 using DVSAdmin.Data.Repositories;
 using DVSAdmin.Data.Repositories.RegisterManagement;
 using DVSAdmin.Middleware;
+using DVSRegister.Middleware;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
@@ -26,6 +27,17 @@ namespace DVSAdmin
         {
             this.configuration = configuration;
             this.webHostEnvironment = webHostEnvironment;
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseStaticFiles();
+            app.UseMvc();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
 
         public void ConfigureServices(IServiceCollection services)
