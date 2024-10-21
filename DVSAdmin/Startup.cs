@@ -12,7 +12,6 @@ using DVSAdmin.Data;
 using DVSAdmin.Data.Repositories;
 using DVSAdmin.Data.Repositories.RegisterManagement;
 using DVSAdmin.Middleware;
-using DVSRegister.Middleware;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
