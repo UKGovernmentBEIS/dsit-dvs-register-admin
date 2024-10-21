@@ -4,7 +4,7 @@ using DVSAdmin.CommonUtility;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
 
-namespace DVSRegister.Middleware
+namespace DVSAdmin.Middleware
 {
     public class SecurityHeadersMiddleware
     {
