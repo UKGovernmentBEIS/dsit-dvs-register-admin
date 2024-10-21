@@ -1,7 +1,6 @@
 ﻿using DVSAdmin;
 using DVSAdmin.Data;
 using DVSAdmin.Middleware;
-using DVSRegister.Middleware;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
