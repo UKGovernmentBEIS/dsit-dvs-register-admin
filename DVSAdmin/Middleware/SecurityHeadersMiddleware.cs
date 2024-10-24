@@ -19,14 +19,13 @@ namespace DVSAdmin.Middleware
             {
                 // Added security headers
                 context.Response.Headers["X-Frame-Options"] = "DENY";
-                context.Response.Headers["Content-Security-Policy"] = "frame-ancestors 'none'";
                 context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private";
                 context.Response.Headers["Pragma"] = "no-cache";
                 context.Response.Headers["Expires"] = "-1";
 
                 //CSP for inline scripts
                 context.Response.Headers["Content-Security-Policy"] =
-                "script-src 'self' https:; " +
+                "script-src 'unsafe-inline' 'self' https:; " +
                 "connect-src 'self'; " +
                 "img-src 'self'; " +
                 "style-src 'self'; " +
