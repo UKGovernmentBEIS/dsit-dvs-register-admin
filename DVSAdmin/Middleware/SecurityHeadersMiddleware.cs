@@ -13,7 +13,6 @@ namespace DVSAdmin.Middleware
         {
             _next = next;//Storing the reference to next middleware in pipeline
         }
-
         public async Task InvokeAsync(HttpContext context)
         {
             if (!context.Response.HasStarted)
@@ -24,8 +23,17 @@ namespace DVSAdmin.Middleware
                 context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private";
                 context.Response.Headers["Pragma"] = "no-cache";
                 context.Response.Headers["Expires"] = "-1";
-            }
 
+                //CSP for inline scripts
+                context.Response.Headers["Content-Security-Policy"] =
+                "script-src 'self' https:; " +
+                "connect-src 'self'; " +
+                "img-src 'self'; " +
+                "style-src 'self'; " +
+                "base-uri 'self'; " +
+                "font-src 'self'; " +
+                "form-action 'self';";
+            }
             // Calling the next middleware in the pipeline
             await _next(context);
         }
