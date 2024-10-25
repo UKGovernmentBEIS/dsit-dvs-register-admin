@@ -1,32 +1,33 @@
-﻿using System.Net.Http.Headers;
-using System.Text;
-using DVSAdmin.CommonUtility;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.Extensions.Options;
-
-namespace DVSAdmin.Middleware
+﻿namespace DVSAdmin.Middleware
 {
     public class SecurityHeadersMiddleware
     {
         private readonly RequestDelegate _next;
+        private const string sources = "https://www.google-analytics.com https://ssl.google-analytics.com https://www.googletagmanager.com https://www.region1.google-analytics.com https://region1.google-analytics.com; ";
         public SecurityHeadersMiddleware(RequestDelegate next)
         {
-            _next = next;//Storing the reference to next middleware in pipeline
+            _next = next;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             if (!context.Response.HasStarted)
             {
-                // Added security headers
+             
                 context.Response.Headers["X-Frame-Options"] = "DENY";
-                context.Response.Headers["Content-Security-Policy"] = "frame-ancestors 'none'";
                 context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private";
                 context.Response.Headers["Pragma"] = "no-cache";
-                context.Response.Headers["Expires"] = "-1";
-            }
-
-            // Calling the next middleware in the pipeline
+                context.Response.Headers["Expires"] = "-1";                
+                context.Response.Headers["Content-Security-Policy"] =
+                "script-src 'unsafe-inline' 'self' " + sources +
+                "object-src 'none'; " +
+                "connect-src 'self' " + sources +
+                "img-src 'self' " + sources +
+                "style-src 'self'; " +
+                "base-uri 'self'; " +
+                "font-src 'self'; " +
+                "form-action 'self';";
+            }           
             await _next(context);
         }
     }
