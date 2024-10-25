@@ -89,7 +89,6 @@ namespace DVSAdmin.Controllers
             if (ModelState.IsValid)
             {
                 publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus = reviewStatus;
-                publicInterestPrimaryCheckViewModel.PrimaryCheckComment = InputSanitizeExtensions.CleanseInput(publicInterestPrimaryCheckViewModel.PrimaryCheckComment??string.Empty);
                 PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckViewModel);
                 if (reviewStatus == PublicInterestCheckEnum.InPrimaryReview)
                 {

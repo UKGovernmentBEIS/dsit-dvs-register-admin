@@ -94,8 +94,7 @@ namespace DVSAdmin.Controllers
         public async Task<ActionResult> SaveCertificateValidation(CertificateValidationViewModel certificateValidationViewModel, string saveReview)
         {           
             ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);
-            certificateValidationViewModel.Service = serviceDto;            
-            certificateValidationViewModel.CommentsForIncorrect = InputSanitizeExtensions.CleanseInput(certificateValidationViewModel.CommentsForIncorrect??string.Empty);           
+            certificateValidationViewModel.Service = serviceDto;                
             string loggedinUserEmail = HttpContext?.Session.Get<string>("Email")??string.Empty;
             if (!string.IsNullOrEmpty(loggedinUserEmail))
             {
@@ -157,7 +156,6 @@ namespace DVSAdmin.Controllers
            
             CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
             certificateReviewViewModel.Service = certificateValidationViewModel.Service;
-            certificateReviewViewModel.Comments =  InputSanitizeExtensions.CleanseInput(certificateReviewViewModel.Comments??string.Empty);
             ValidateCertificateReviewViewModel(certificateReviewViewModel, certificateValidationViewModel, saveReview);
             string loggedinUserEmail = HttpContext?.Session.Get<string>("Email")??string.Empty;
             if (!string.IsNullOrEmpty(loggedinUserEmail))
