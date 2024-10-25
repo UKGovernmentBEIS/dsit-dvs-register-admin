@@ -26,8 +26,8 @@ namespace DVSAdmin.Middleware
                 //CSP for inline scripts
                 context.Response.Headers["Content-Security-Policy"] =
                 "script-src 'unsafe-inline' 'self' https://www.google-analytics.com https://ssl.google-analytics.com https://www.googletagmanager.com https://www.region1.google-analytics.com https://region1.google-analytics.com; " +
-                "object-src 'none'; " + 
-                "connect-src 'self'; " +
+                "object-src 'none'; " +
+                "connect-src 'self' https://www.google-analytics.com https://ssl.google-analytics.com https://www.googletagmanager.com https://www.region1.google-analytics.com https://region1.google-analytics.com; " +
                 "img-src 'self'; " +
                 "style-src 'self'; " +
                 "base-uri 'self'; " +
