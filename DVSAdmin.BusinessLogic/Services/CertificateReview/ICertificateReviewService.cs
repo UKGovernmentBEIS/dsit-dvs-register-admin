@@ -7,15 +7,13 @@ namespace DVSAdmin.BusinessLogic.Services
     {
         public Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto);
         public  Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons();
-        public  Task<CertificateReviewDto> GetCertificateReview(int reviewId);       
-       
-        #region New methods
+        public  Task<CertificateReviewDto> GetCertificateReview(int reviewId);      
         public Task<List<ServiceDto>> GetServiceList();
         public Task<ServiceDto> GetServiceDetails(int serviceId);
         public Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto);
         public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons);
         public Task<GenericResponse> UpdateServiceStatus(int serviceId);
         public Task<ServiceDto> GetProviderAndCertificateDetailsByToken(string token, string tokenId);
-        #endregion
+        public Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId);
     }
 }

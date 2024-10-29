@@ -1,6 +1,4 @@
-﻿    using DVSAdmin.Models;
-using DVSRegister.Extensions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
