@@ -4,7 +4,6 @@ using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
-using DVSAdmin.Extensions;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -29,21 +28,7 @@ namespace DVSAdmin.Controllers
             this.configuration = configuration;
         }
 
-        //========== TEMP ROUTES ========\\
-
-        [HttpGet("restore-submission")]
-        public IActionResult ConfirmRestoreSubmission()
-        {
-            return View();
-        }
-
-        [HttpGet("restore-submission-confirmation")]
-        public IActionResult RestoreSubmissionConfirmation()
-        {
-            return View();
-        }
-
-        //========== TEMP ROUTES =======\\
+      
 
         [HttpGet("certificate-review-list")]
         public async Task<ActionResult> CertificateReviews()
@@ -160,7 +145,7 @@ namespace DVSAdmin.Controllers
                 CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReview(reviewId);             
                 certificateReviewViewModel.Service = certificateValidationViewModel.Service;
                 certificateReviewViewModel.CertificateReviewId = reviewId;
-                certificateReviewViewModel.Comments = certificateReviewDto.Comments;
+                certificateReviewViewModel.Comments = certificateReviewDto.Comments;               
                 certificateReviewViewModel.InformationMatched = certificateReviewDto.InformationMatched;
             }
             return View(certificateReviewViewModel);
@@ -393,11 +378,59 @@ namespace DVSAdmin.Controllers
             CertificateValidationViewModel certificateValidationViewModel = await GetUpdatedCertificateDetails();
             ClearSessionVariables();
             return View(certificateValidationViewModel);
-        }     
+        }
 
-        #endregion     
+        #endregion
 
+        #region Restore Flow      
 
+        [HttpGet("restore-submission")]
+        public IActionResult ConfirmRestoreSubmission(int reviewId, int serviceId)
+        {
+            ViewBag.ServiceId = serviceId;
+            ViewBag.ReviewId = reviewId;
+            return View();
+        }
+
+        /// <summary>
+        /// Save to db
+        /// </summary>
+        /// <param name="serviceId"></param>
+        /// <returns></returns>
+        [HttpPost("restore-submission")]
+        public async Task<IActionResult> RestoreSubmission(int reviewId, int serviceId)
+        {
+
+            ServiceDto serviceDetails = await certificateReviewService.GetServiceDetails(serviceId);
+            if (serviceDetails.CertificateReview.Id ==reviewId && serviceDetails.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)
+            {
+                GenericResponse genericResponse = await certificateReviewService.RestoreRejectedCertificateReview(reviewId);
+                if (genericResponse.Success)
+                {
+                    return RedirectToAction("RestoreSubmissionConfirmation",new { serviceId = serviceId });
+                }
+                else
+                {
+                    return RedirectToAction(Constants.ErrorPath);
+                }
+            
+            }
+            else
+            {
+                return RedirectToAction(Constants.ErrorPath);
+            }
+           
+        }
+
+        [HttpGet("restore-submission-confirmation")]
+        public async Task<IActionResult> RestoreSubmissionConfirmation(int serviceId)
+        {
+            ServiceDto serviceDetails = await certificateReviewService.GetServiceDetails(serviceId);
+            return View(serviceDetails);
+        }
+
+     
+        #endregion
 
         /// <summary>
         /// Download from s3

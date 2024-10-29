@@ -130,6 +130,25 @@
                         </p>
 
                     }
+
+                    <hr class="govuk-section-break govuk-section-break--m">
+
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            If you select 'Restore this submission' the submission will be removed from the archive and moved to the certificate submissions tab
+                        </strong>
+                    </div>
+
+                    <div class="govuk-button-group">
+                        <a href="/certificate-review/restore-submission?reviewId=@Model.CertificateValidation.Service.CertificateReview.Id&serviceId=@Model.CertificateValidation.Service.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                       Restore this submission
+                    </a>
+                        <a href="/certificate-review/certificate-review-list#archive" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                        Go back to archive
+                    </a>
+                    </div>
                 }
                
 

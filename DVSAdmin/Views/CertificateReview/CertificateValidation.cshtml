@@ -28,45 +28,7 @@
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
                     <h1 class="govuk-heading-xl">Part 1 of 2: Certificate Validation</h1>
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">Service provider</th>
-                                <th scope="col" class="govuk-table__header"> Service name </th>
-                                <th scope="col" class="govuk-table__header">Conformity Assessment Body </th>
-                                <th scope="col" class="govuk-table__header">Role type</th>
-                                <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
-                                <th scope="col" class="govuk-table__header">Review status</th>
-                                <th scope="col" class="govuk-table__header">Days left to complete checks</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
-
-                                <td class="govuk-table__cell">@Model.Service.Provider.RegisteredName</td>
-                                <td class="govuk-table__cell">@Model.Service.ServiceName</td>
-                                <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
-                                <td class="govuk-table__cell">
-                                    @foreach (var role in @Model.Service.ServiceRoleMapping)
-                                    {
-                                        RoleEnum enumValue = (RoleEnum)role.RoleId;
-                                        <div> @Enum.GetName(enumValue) </div>
-                                    }
-                                </td>
-                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.Service.CreatedTime)</td>
-                                @if (@Model.Service.CertificateReview == null)
-                                {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.ServiceStatus)</td>
-                                }
-                                else
-                                {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.CertificateReview.CertificateReviewStatus)</td>
-                                }
-                                <td class="govuk-table__cell">@Model.Service.DaysLeftToComplete  days</td>
-
-                            </tr>
-                        </tbody>
-                    </table>
+                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithDaysLeftView.cshtml", Model.Service)
                 </div>
 
                 <div class="govuk-grid-column-two-thirds">

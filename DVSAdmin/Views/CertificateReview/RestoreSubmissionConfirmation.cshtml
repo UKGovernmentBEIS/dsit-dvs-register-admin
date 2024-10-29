@@ -1,4 +1,6 @@
-﻿@*@model CertificateValidationViewModel*@
+﻿@using DVSAdmin.BusinessLogic.Models
+@model ServiceDto 
+
 
 @{
     ViewData["Title"] = "You have restored this submission ";
@@ -6,7 +8,7 @@
 }
 
 <div class="govuk-width-container">
-    @*@Html.ActionLink("Back", "CertificateReview", "CertificateReview", null, new { @class = "govuk-back-link" })*@
+   
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -16,11 +18,12 @@
                 <p class="govuk-body">
                     You have successfully restored the submission.
                 </p>
+
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithDaysLeftView.cshtml", Model)
             </div>
 
 
-
-            @*@await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsView.cshtml", Model.Service)*@
+           
 
 
 
@@ -31,7 +34,7 @@
                 <p class="govuk-body">
                     The Conformity Assessment Body and DSIT will receive an email notification of the submission decision within 20 minutes.
                 </p>
-                <a href="/certificate-review/certificate-review-list" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                <a href="/certificate-review/certificate-review-validation?serviceId=@Model.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
                     Go to submission details
                 </a>
 

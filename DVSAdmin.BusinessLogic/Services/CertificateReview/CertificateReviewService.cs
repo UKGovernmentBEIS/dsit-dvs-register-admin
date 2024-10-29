@@ -133,8 +133,13 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await certificateReviewRepository.UpdateServiceStatus(serviceId, ServiceStatusEnum.Received);
             return genericResponse;
         }
-           
-        
+
+        public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId)
+        {
+            return await certificateReviewRepository.RestoreRejectedCertificateReview(reviewId);
+        }
+
+
 
         #endregion
 

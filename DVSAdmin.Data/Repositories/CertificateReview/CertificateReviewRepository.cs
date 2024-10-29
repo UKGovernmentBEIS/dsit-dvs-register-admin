@@ -110,7 +110,9 @@ namespace DVSAdmin.Data.Repositories
                 var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId  && e.ProviProviderProfileId ==cetificateReview.ProviProviderProfileId);
 
                 if (existingEntity != null)
+                 
                 {
+                    existingEntity.Comments = cetificateReview.Comments;
                     existingEntity.InformationMatched = cetificateReview.InformationMatched;
                     existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
@@ -134,8 +136,41 @@ namespace DVSAdmin.Data.Repositories
             return genericResponse;
         }
 
-       
-      
+
+        public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId)
+        {
+            GenericResponse genericResponse = new();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                var existingEntity = await context.CertificateReview.Include(p=>p.CertificateReviewRejectionReasonMapping).FirstOrDefaultAsync(e => e.Id == reviewId);
+                if (existingEntity != null)
+                {
+                    existingEntity.CertificateReviewStatus = CertificateReviewEnum.InReview;                    
+                    existingEntity.ModifiedDate = DateTime.UtcNow;
+                    //clear rejection reasons and comments
+                    if(existingEntity.CertificateReviewRejectionReasonMapping != null)
+                    context.CertificateReviewRejectionReasonMapping.RemoveRange(existingEntity.CertificateReviewRejectionReasonMapping);
+                    existingEntity.RejectionComments = null;
+                    genericResponse.InstanceId = existingEntity.Id;
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
+
+
         public async Task<List<Service>> GetServiceListByProvider(int providerId)
         {
             return await context.Service.Where(p => p.ProviderProfileId == providerId && 
