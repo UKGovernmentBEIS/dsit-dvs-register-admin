@@ -29,6 +29,22 @@ namespace DVSAdmin.Controllers
             this.configuration = configuration;
         }
 
+        //========== TEMP ROUTES ========\\
+
+        [HttpGet("restore-submission")]
+        public IActionResult ConfirmRestoreSubmission()
+        {
+            return View();
+        }
+
+        [HttpGet("restore-submission-confirmation")]
+        public IActionResult RestoreSubmissionConfirmation()
+        {
+            return View();
+        }
+
+        //========== TEMP ROUTES =======\\
+
         [HttpGet("certificate-review-list")]
         public async Task<ActionResult> CertificateReviews()
         {            
