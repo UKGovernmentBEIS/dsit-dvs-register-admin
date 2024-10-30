@@ -68,6 +68,7 @@ namespace DVSAdmin.Controllers
             secondaryCheckViewModelData = MapDtoToViewModel(serviceDto);
             secondaryCheckViewModelData.Service = serviceDto;
             secondaryCheckViewModelData.SecondaryCheckUserId = publicInterestSecondaryCheckViewModel.SecondaryCheckUserId;
+            secondaryCheckViewModelData.SecondaryCheckComment = publicInterestSecondaryCheckViewModel.SecondaryCheckComment;
             AddModelErrorForInvalidActions(publicInterestSecondaryCheckViewModel, saveReview);
             HttpContext?.Session.Set("SecondaryCheckData", secondaryCheckViewModelData);
 
