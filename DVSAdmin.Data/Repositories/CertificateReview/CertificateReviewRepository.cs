@@ -232,7 +232,7 @@ namespace DVSAdmin.Data.Repositories
             .Include (p => p.ProceedApplicationConsentToken)
             .Include(p => p.CabUser).ThenInclude(cu => cu.Cab)
             .Include(p => p.ServiceRoleMapping)
-            .ThenInclude(s => s.Role);
+            .ThenInclude(s => s.Role).AsSplitQuery(); 
 
 
 
