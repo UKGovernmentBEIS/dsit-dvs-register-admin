@@ -27,6 +27,7 @@ namespace DVSAdmin.CommonUtility.Models
         public CertificateInfoApprovedToDSIT CertificateInfoApprovedToDSIT { get; set; }
         public CertificateInfoRejectedToCabTemplate CertificateInfoRejectedToCabTemplate { get; set; }
         public CertificateInfoRejectedToDSITTemplate CertificateInfoRejectedToDSITTemplate { get; set; }
+        public CertificateReviewRestoredToDSITTemplate CertificateReviewRestoredToDSITTemplate { get; set; }
         public DIPConsentToPublishTemplate DIPConsentToPublishTemplate { get; set; }
       
         public AgreementToPublishTemplate AgreementToPublishTemplate { get; set; }
@@ -34,7 +35,7 @@ namespace DVSAdmin.CommonUtility.Models
         public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }
         public ServicePublishedCABTemplate ServicePublishedCABTemplate { get; set; }
         public ServicePublishedDSITTemplate ServicePublishedDSITTemplate { get;set; }
-        public ProceedApplicationConsentToDIPTemplate ProceedApplicationConsentToDIPTemplate { get; set; }
+        public ProceedApplicationConsentToDIPTemplate ProceedApplicationConsentToDIPTemplate { get; set; }       
 
     }
 }

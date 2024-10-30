@@ -136,6 +136,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId)
         {
+            await emailSender.SendApplicationRestroredToDSIT();
             return await certificateReviewRepository.RestoreRejectedCertificateReview(reviewId);
         }
 

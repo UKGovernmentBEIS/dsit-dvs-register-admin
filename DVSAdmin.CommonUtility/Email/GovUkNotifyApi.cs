@@ -311,7 +311,22 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
+        public async Task<bool> SendApplicationRestroredToDSIT()
+        {
+            var template = govUkNotifyConfig.CertificateReviewRestoredToDSITTemplate;
 
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.LoginLink,  govUkNotifyConfig.LoginLink}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
 
         #endregion
 
@@ -469,7 +484,7 @@ namespace DVSAdmin.CommonUtility.Email
                 Personalisation = personalisation
             };
             return await SendEmail(emailModel);
-        }
+        }       
 
         #endregion
     }
