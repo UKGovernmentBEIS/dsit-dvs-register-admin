@@ -53,7 +53,7 @@ else
 }
 
 
-
+//app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseCookiePolicy();

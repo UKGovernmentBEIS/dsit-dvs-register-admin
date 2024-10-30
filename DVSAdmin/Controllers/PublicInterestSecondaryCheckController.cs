@@ -66,9 +66,9 @@ namespace DVSAdmin.Controllers
             ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(publicInterestSecondaryCheckViewModel.ServiceId);
             PublicInterestSecondaryCheckViewModel secondaryCheckViewModelData = new ();
             secondaryCheckViewModelData = MapDtoToViewModel(serviceDto);
-            secondaryCheckViewModelData.SecondaryCheckComment = InputSanitizeExtensions.CleanseInput(publicInterestSecondaryCheckViewModel.SecondaryCheckComment??string.Empty);
             secondaryCheckViewModelData.Service = serviceDto;
             secondaryCheckViewModelData.SecondaryCheckUserId = publicInterestSecondaryCheckViewModel.SecondaryCheckUserId;
+            secondaryCheckViewModelData.SecondaryCheckComment = publicInterestSecondaryCheckViewModel.SecondaryCheckComment;
             AddModelErrorForInvalidActions(publicInterestSecondaryCheckViewModel, saveReview);
             HttpContext?.Session.Set("SecondaryCheckData", secondaryCheckViewModelData);
 

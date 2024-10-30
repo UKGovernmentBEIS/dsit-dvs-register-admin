@@ -185,15 +185,8 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    if (loginResponse == Constants.IncorrectPassword)
-                    {
-                        ModelState.AddModelError("Password", Constants.IncorrectLoginDetails);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("Email", Constants.IncorrectLoginDetails);
-                    }
-                    return View("LoginPage");
+                    ModelState.AddModelError("Email", Constants.IncorrectLoginDetails);
+                    return View("LoginPage", loginPageViewModel);
                 }
             }
             else

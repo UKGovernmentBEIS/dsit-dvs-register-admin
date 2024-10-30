@@ -1,0 +1,44 @@
+﻿@*@model CertificateValidationViewModel*@
+
+@{
+    ViewData["Title"] = "You have restored this submission ";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @*@Html.ActionLink("Back", "CertificateReview", "CertificateReview", null, new { @class = "govuk-back-link" })*@
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+
+                <h1 class="govuk-heading-xl">You have restored this submission </h1>
+
+                <p class="govuk-body">
+                    You have successfully restored the submission.
+                </p>
+            </div>
+
+
+
+            @*@await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsView.cshtml", Model.Service)*@
+
+
+
+            <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-body">
+                    The submission is now being restored to the Certificate submissions tab. The process can take a few minutes to complete.
+                </p>
+                <p class="govuk-body">
+                    The Conformity Assessment Body and DSIT will receive an email notification of the submission decision within 20 minutes.
+                </p>
+                <a href="/certificate-review/certificate-review-list" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                    Go to submission details
+                </a>
+
+            </div>
+        </div>
+    </main>
+
+</div>
+
+

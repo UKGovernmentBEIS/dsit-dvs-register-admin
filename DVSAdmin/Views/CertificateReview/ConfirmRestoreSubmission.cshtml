@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "You are about to restore this submission";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @*@Html.ActionLink("Back", "ApproveSubmission", "CertificateReview", null, new { @class = "govuk-back-link" })*@
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+
+                <h1 class="govuk-heading-xl">You are about to restore this submission</h1>
+
+                <p class="govuk-body">
+                    You are about to restore this submission. Completing this action will move the submission to the Certificate submissions tab for review.
+                </p>
+                <p class="govuk-body">
+                    You should only take this action if the original submission was rejected in error. If you restore this submission, the submission details shown on the previous page will be re-reviewed by DSIT.
+                </p>
+
+
+                <hr class="govuk-section-break govuk-section-break--xl">
+
+                @*@using (Html.BeginForm("ProceedApproveSubmission", "CertificateReview", FormMethod.Post))
+                    {*@
+                <div class="govuk-button-group">
+                    <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
+                        Confirm and restore this submission
+                    </button>
+                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
+                        Cancel
+                    </button>
+                </div>
+                @*}*@
+
+
+            </div>
+        </div>
+    </main>
+
+</div>
+
