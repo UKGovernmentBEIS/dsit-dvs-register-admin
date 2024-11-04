@@ -411,13 +411,13 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    return RedirectToAction(Constants.ErrorPath);
+                    return RedirectToAction("RestoreFailed");
                 }
             
             }
             else
             {
-                return RedirectToAction(Constants.ErrorPath);
+                return RedirectToAction("RestoreFailed");
             }
            
         }
@@ -429,7 +429,12 @@ namespace DVSAdmin.Controllers
             return View(serviceDetails);
         }
 
-     
+        [HttpGet("restore-failed")]
+        public IActionResult RestoreFailed()
+        {
+            return View();
+        }
+
         #endregion
 
         /// <summary>
