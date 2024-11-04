@@ -1,0 +1,29 @@
+﻿@*@model CertificateValidationViewModel*@
+
+@{
+    ViewData["Title"] = "Sorry, the service is unavailable";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @*@Html.ActionLink("Back", "CertificateReview", "CertificateReview", null, new { @class = "govuk-back-link" })*@
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+
+                <h1 class="govuk-heading-xl">Sorry, the service is unavailable</h1>
+
+                <p class="govuk-body">
+                    The application hasn't been restored. Try refreshing the page and restoring the submission again.
+                </p>
+                <p class="govuk-body">
+                    If you've receiving this error multiple times, please tell us by emailing digital.identity.register@dsit.gov.uk.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+
