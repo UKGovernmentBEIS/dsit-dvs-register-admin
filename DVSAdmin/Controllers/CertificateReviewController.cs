@@ -432,6 +432,7 @@ namespace DVSAdmin.Controllers
         [HttpGet("restore-failed")]
         public IActionResult RestoreFailed()
         {
+            HttpContext.Session.Clear();
             return View();
         }
 
