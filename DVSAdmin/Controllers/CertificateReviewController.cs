@@ -4,7 +4,6 @@ using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
-using DVSAdmin.Extensions;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -29,21 +28,7 @@ namespace DVSAdmin.Controllers
             this.configuration = configuration;
         }
 
-        //========== TEMP ROUTES ========\\
-
-        [HttpGet("restore-submission")]
-        public IActionResult ConfirmRestoreSubmission()
-        {
-            return View();
-        }
-
-        [HttpGet("restore-submission-confirmation")]
-        public IActionResult RestoreSubmissionConfirmation()
-        {
-            return View();
-        }
-
-        //========== TEMP ROUTES =======\\
+      
 
         [HttpGet("certificate-review-list")]
         public async Task<ActionResult> CertificateReviews()
@@ -55,7 +40,7 @@ namespace DVSAdmin.Controllers
             (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))).ToList();            
             certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
             ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) 
-            || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)).OrderBy(x=>x.ModifiedTime).ToList();
+            || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)).OrderByDescending(x => x.CertificateReview.ModifiedDate).ToList();
             return View(certificateReviewListViewModel);
         }
 
@@ -160,7 +145,7 @@ namespace DVSAdmin.Controllers
                 CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReview(reviewId);             
                 certificateReviewViewModel.Service = certificateValidationViewModel.Service;
                 certificateReviewViewModel.CertificateReviewId = reviewId;
-                certificateReviewViewModel.Comments = certificateReviewDto.Comments;
+                certificateReviewViewModel.Comments = certificateReviewDto.Comments;               
                 certificateReviewViewModel.InformationMatched = certificateReviewDto.InformationMatched;
             }
             return View(certificateReviewViewModel);
@@ -288,17 +273,36 @@ namespace DVSAdmin.Controllers
         {
             CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
             CertificateReviewViewModel certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData")??new CertificateReviewViewModel();
+            CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReviewWithRejectionData(certificateReviewViewModel.CertificateReviewId);
 
-            CertficateRejectionViewModel certficateRejectionViewModel = HttpContext?.Session.Get<CertficateRejectionViewModel>("CertficateRejectionData")??
-             new CertficateRejectionViewModel
-             {
-                 SelectedReasons = new List<CertificateReviewRejectionReasonDto>(),
-                 RejectionReasons = await certificateReviewService.GetRejectionReasons()
-             };
-            certficateRejectionViewModel.CertificateValidation = certificateValidationViewModel;
-            certficateRejectionViewModel.CertificateReview = certificateReviewViewModel;
-            certficateRejectionViewModel.SelectedRejectionReasonIds = certficateRejectionViewModel?.SelectedReasons?.Select(c => c.Id).ToList();          
-            return View(certficateRejectionViewModel);
+            CertficateRejectionViewModel certficateRejectionViewModel = HttpContext?.Session.Get<CertficateRejectionViewModel>("CertficateRejectionData");
+            if (certficateRejectionViewModel!=null && certficateRejectionViewModel.SelectedRejectionReasonIds!=null)
+            {
+                return View(certficateRejectionViewModel);
+            }
+            else
+            {
+                certficateRejectionViewModel =  new CertficateRejectionViewModel
+                {
+                    SelectedReasons = [],
+                    RejectionReasons = await certificateReviewService.GetRejectionReasons(),
+                    CertificateValidation = certificateValidationViewModel,
+                    CertificateReview = certificateReviewViewModel
+                };
+                
+                if (certificateReviewDto != null && certificateReviewDto.CertificateReviewRejectionReasonMapping != null)
+                {
+                    //bind previous rejection reason selectopns and comments
+                    certficateRejectionViewModel.SelectedRejectionReasonIds = certificateReviewDto.CertificateReviewRejectionReasonMapping
+                     .Select(x => x.CertificateReviewRejectionReasonId).ToList();
+                    certficateRejectionViewModel.Comments = certificateReviewDto.RejectionComments;
+                }
+                else
+                {
+                    certficateRejectionViewModel.SelectedRejectionReasonIds = certficateRejectionViewModel?.SelectedReasons?.Select(c => c.Id).ToList();
+                }
+                return View(certficateRejectionViewModel);
+            } 
         }
 
         [HttpPost("reject-submission")]
@@ -325,7 +329,7 @@ namespace DVSAdmin.Controllers
                     HttpContext?.Session.Set("CertficateRejectionData", certficateRejectionViewModel);
                     CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
                     certificateReviewDto.RejectionComments = certficateRejectionViewModel.Comments;
-                    List<CertificateReviewRejectionReasonMappingDto> rejectionReasonIdDtos = new List<CertificateReviewRejectionReasonMappingDto>();
+                    List<CertificateReviewRejectionReasonMappingDto> rejectionReasonIdDtos = [];
                     foreach (var item in certficateRejectionViewModel?.SelectedRejectionReasonIds)
                     {
                         rejectionReasonIdDtos.Add(new CertificateReviewRejectionReasonMappingDto { CertificateReviewRejectionReasonId = item });
@@ -393,11 +397,65 @@ namespace DVSAdmin.Controllers
             CertificateValidationViewModel certificateValidationViewModel = await GetUpdatedCertificateDetails();
             ClearSessionVariables();
             return View(certificateValidationViewModel);
-        }     
+        }
 
-        #endregion     
+        #endregion
 
+        #region Restore Flow      
 
+        [HttpGet("restore-submission")]
+        public IActionResult ConfirmRestoreSubmission(int reviewId, int serviceId)
+        {
+            ViewBag.ServiceId = serviceId;
+            ViewBag.ReviewId = reviewId;
+            return View();
+        }
+
+        /// <summary>
+        /// Save to db
+        /// </summary>
+        /// <param name="serviceId"></param>
+        /// <returns></returns>
+        [HttpPost("restore-submission")]
+        public async Task<IActionResult> RestoreSubmission(int reviewId, int serviceId)
+        {
+
+            ServiceDto serviceDetails = await certificateReviewService.GetServiceDetails(serviceId);
+            if (serviceDetails.CertificateReview.Id ==reviewId && serviceDetails.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)
+            {
+                GenericResponse genericResponse = await certificateReviewService.RestoreRejectedCertificateReview(reviewId);
+                if (genericResponse.Success)
+                {
+                    return RedirectToAction("RestoreSubmissionConfirmation",new { serviceId = serviceId });
+                }
+                else
+                {
+                    return RedirectToAction("RestoreFailed");
+                }
+            
+            }
+            else
+            {
+                return RedirectToAction("RestoreFailed");
+            }
+           
+        }
+
+        [HttpGet("restore-submission-confirmation")]
+        public async Task<IActionResult> RestoreSubmissionConfirmation(int serviceId)
+        {
+            ServiceDto serviceDetails = await certificateReviewService.GetServiceDetails(serviceId);
+            return View(serviceDetails);
+        }
+
+        [HttpGet("restore-failed")]
+        public IActionResult RestoreFailed()
+        {
+            HttpContext.Session.Clear();
+            return View();
+        }
+
+        #endregion
 
         /// <summary>
         /// Download from s3
