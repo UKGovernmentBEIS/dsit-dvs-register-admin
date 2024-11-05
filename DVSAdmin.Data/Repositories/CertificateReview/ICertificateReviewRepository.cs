@@ -14,8 +14,9 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<SupplementaryScheme>> GetSupplementarySchemes();      
         public Task<List<Service>> GetServiceListByProvider(int providerId);        
         public Task<List<CertificateReviewRejectionReason>> GetRejectionReasons();
-        public Task<CertificateReview> GetCertificateReview(int reviewId);        
-      
+        public Task<CertificateReview> GetCertificateReview(int reviewId);
+        public Task<CertificateReview> GetCertificateReviewWithRejectionData(int reviewId);
+
         public Task<List<Service>> GetServiceList();
         public Task<Service> GetServiceDetails(int serviceId);
         public Task<GenericResponse> UpdateServiceStatus(int serviceId, ServiceStatusEnum serviceStatus);
