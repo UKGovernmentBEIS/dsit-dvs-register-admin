@@ -47,16 +47,19 @@ namespace DVSAdmin.BusinessLogic.Services
             return certificateReviewDto;
         }
 
+        public async Task<CertificateReviewDto> GetCertificateReviewWithRejectionData(int reviewId)
+        {
+            var certificateInfo = await certificateReviewRepository.GetCertificateReviewWithRejectionData(reviewId);
+            CertificateReviewDto certificateReviewDto = automapper.Map<CertificateReviewDto>(certificateInfo);
+            return certificateReviewDto;
+        }
+
+
         public async Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons()
         {
             var rejectionReasonList = await certificateReviewRepository.GetRejectionReasons();
             return automapper.Map<List<CertificateReviewRejectionReasonDto>>(rejectionReasonList);
         }
-
-       
-     
-
-        #region New methods
         public async Task<List<ServiceDto>> GetServiceList()
         {
             var serviceList = await certificateReviewRepository.GetServiceList();
@@ -136,14 +139,13 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId)
         {
-            await emailSender.SendApplicationRestroredToDSIT();
-            return await certificateReviewRepository.RestoreRejectedCertificateReview(reviewId);
+            GenericResponse genericResponse = await certificateReviewRepository.RestoreRejectedCertificateReview(reviewId);
+            if (genericResponse.Success)
+            {
+                await emailSender.SendApplicationRestroredToDSIT();
+            }         
+            return genericResponse;
         }
-
-
-
-        #endregion
-
 
     }
 }

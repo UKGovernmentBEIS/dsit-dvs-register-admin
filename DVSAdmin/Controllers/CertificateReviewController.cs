@@ -273,17 +273,36 @@ namespace DVSAdmin.Controllers
         {
             CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
             CertificateReviewViewModel certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData")??new CertificateReviewViewModel();
+            CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReviewWithRejectionData(certificateReviewViewModel.CertificateReviewId);
 
-            CertficateRejectionViewModel certficateRejectionViewModel = HttpContext?.Session.Get<CertficateRejectionViewModel>("CertficateRejectionData")??
-             new CertficateRejectionViewModel
-             {
-                 SelectedReasons = new List<CertificateReviewRejectionReasonDto>(),
-                 RejectionReasons = await certificateReviewService.GetRejectionReasons()
-             };
-            certficateRejectionViewModel.CertificateValidation = certificateValidationViewModel;
-            certficateRejectionViewModel.CertificateReview = certificateReviewViewModel;
-            certficateRejectionViewModel.SelectedRejectionReasonIds = certficateRejectionViewModel?.SelectedReasons?.Select(c => c.Id).ToList();          
-            return View(certficateRejectionViewModel);
+            CertficateRejectionViewModel certficateRejectionViewModel = HttpContext?.Session.Get<CertficateRejectionViewModel>("CertficateRejectionData");
+            if (certficateRejectionViewModel!=null && certficateRejectionViewModel.SelectedRejectionReasonIds!=null)
+            {
+                return View(certficateRejectionViewModel);
+            }
+            else
+            {
+                certficateRejectionViewModel =  new CertficateRejectionViewModel
+                {
+                    SelectedReasons = [],
+                    RejectionReasons = await certificateReviewService.GetRejectionReasons(),
+                    CertificateValidation = certificateValidationViewModel,
+                    CertificateReview = certificateReviewViewModel
+                };
+                
+                if (certificateReviewDto != null && certificateReviewDto.CertificateReviewRejectionReasonMapping != null)
+                {
+                    //bind previous rejection reason selectopns and comments
+                    certficateRejectionViewModel.SelectedRejectionReasonIds = certificateReviewDto.CertificateReviewRejectionReasonMapping
+                     .Select(x => x.CertificateReviewRejectionReasonId).ToList();
+                    certficateRejectionViewModel.Comments = certificateReviewDto.RejectionComments;
+                }
+                else
+                {
+                    certficateRejectionViewModel.SelectedRejectionReasonIds = certficateRejectionViewModel?.SelectedReasons?.Select(c => c.Id).ToList();
+                }
+                return View(certficateRejectionViewModel);
+            } 
         }
 
         [HttpPost("reject-submission")]
@@ -310,7 +329,7 @@ namespace DVSAdmin.Controllers
                     HttpContext?.Session.Set("CertficateRejectionData", certficateRejectionViewModel);
                     CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
                     certificateReviewDto.RejectionComments = certficateRejectionViewModel.Comments;
-                    List<CertificateReviewRejectionReasonMappingDto> rejectionReasonIdDtos = new List<CertificateReviewRejectionReasonMappingDto>();
+                    List<CertificateReviewRejectionReasonMappingDto> rejectionReasonIdDtos = [];
                     foreach (var item in certficateRejectionViewModel?.SelectedRejectionReasonIds)
                     {
                         rejectionReasonIdDtos.Add(new CertificateReviewRejectionReasonMappingDto { CertificateReviewRejectionReasonId = item });
