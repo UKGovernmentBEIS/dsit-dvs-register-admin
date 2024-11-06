@@ -4,7 +4,7 @@
 }
 
 <div class="govuk-width-container">
-    @*@Html.ActionLink("Back", "ApproveSubmission", "CertificateReview", null, new { @class = "govuk-back-link" })*@
+    @Html.ActionLink("Back", "CertificateSubmissionDetails", "CertificateReview", new { certificateInfoId = ViewBag.ServiceId}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -21,21 +21,28 @@
 
                 <hr class="govuk-section-break govuk-section-break--xl">
 
-                @*@using (Html.BeginForm("ProceedApproveSubmission", "CertificateReview", FormMethod.Post))
-                    {*@
-                <div class="govuk-button-group">
-                    <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
-                        Confirm and restore this submission
-                    </button>
-                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
-                        Cancel
-                    </button>
-                </div>
-                @*}*@
 
+                @using (Html.BeginForm("RestoreSubmission", "CertificateReview", FormMethod.Post))
+                {
+                    int serviceId = ViewBag.ServiceId;
+                    int reviewId = ViewBag.ReviewId;
+
+                    <input type="hidden" name="serviceId" value="@serviceId" />
+                    <input type="hidden" name="reviewId" value="@reviewId" />
+
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button" data-module="govuk-button">
+                            Confirm and restore this submission
+                        </button>
+                        <a href="/certificate-review/certificate-submission-details?certificateInfoId=@ViewBag.ServiceId" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                            Cancel
+                        </a>
+                    </div>
+                }
+                </div> 
 
             </div>
-        </div>
+     
     </main>
 
 </div>
