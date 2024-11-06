@@ -16,9 +16,7 @@ namespace DVSAdmin.Extensions
             
             switch (value)
             {
-                case ApplicationReviewStatusEnum.Received:      
-                case CertificateInfoStatusEnum.Received:
-                case CertificateInfoStatusEnum.Published:
+                case ApplicationReviewStatusEnum.Received: 
                 case ProviderStatusEnum.Published:
                 case ServiceStatusEnum.Submitted:
                 case ServiceStatusEnum.Published:
@@ -28,7 +26,6 @@ namespace DVSAdmin.Extensions
 
                 case ApplicationReviewStatusEnum.PrimaryCheckPassed:                        
                 case ApplicationReviewStatusEnum.ApplicationApproved:
-                case CertificateInfoStatusEnum.Approved:
                 case CertificateReviewEnum.Approved:
                 case PublicInterestCheckEnum.PrimaryCheckPassed:
                 case PublicInterestCheckEnum.PublicInterestCheckPassed:
@@ -38,9 +35,7 @@ namespace DVSAdmin.Extensions
                 case ApplicationReviewStatusEnum.PrimaryCheckFailed:                   
                 case ApplicationReviewStatusEnum.ApplicationRejected: 
                               
-                case CertificateInfoStatusEnum.Rejected:                  
-                case CertificateInfoStatusEnum.Expired:
-                case CertificateInfoStatusEnum.Removed:
+             
                 case ProviderStatusEnum.RemovedFromRegister:
                 case CertificateReviewEnum.Rejected:
                 case PublicInterestCheckEnum.PublicInterestCheckFailed:
@@ -50,9 +45,7 @@ namespace DVSAdmin.Extensions
 
 
 
-                case ApplicationReviewStatusEnum.InPrimaryReview:    
-                case CertificateInfoStatusEnum.InReview:
-                case CertificateInfoStatusEnum.ReadyToPublish:
+                case ApplicationReviewStatusEnum.InPrimaryReview: 
                 case ProviderStatusEnum.ActionRequired:
                 case ProviderStatusEnum.PublishedActionRequired:
                 case ServiceStatusEnum.ReadyToPublish:
