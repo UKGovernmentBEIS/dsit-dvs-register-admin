@@ -17,6 +17,7 @@ namespace DVSAdmin.Data.Repositories
             this.logger=logger;
         }
 
+        //First save -  Part 1 of 2: Certificate Validation Continue and save as draft flow
         public async Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview)
         {
             GenericResponse genericResponse = new ();
@@ -69,6 +70,8 @@ namespace DVSAdmin.Data.Repositories
             }
             return genericResponse;
         }
+
+        // Part 2 of 2: Information match  Approve submission and Save as draft flow
         public async Task<GenericResponse> UpdateCertificateReview(CertificateReview cetificateReview)
         {
             GenericResponse genericResponse = new ();
@@ -79,8 +82,8 @@ namespace DVSAdmin.Data.Repositories
 
                 if (existingEntity != null)
                 {
-                    //clear rejection reasons if already exists and update
-                    if (existingEntity.CertificateReviewRejectionReasonMapping != null)
+                    //clear rejection reasons if already exists for approval 
+                    if (existingEntity.CertificateReviewRejectionReasonMapping != null && cetificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
                     {
                         context.CertificateReviewRejectionReasonMapping.RemoveRange(existingEntity.CertificateReviewRejectionReasonMapping);
                         existingEntity.RejectionComments = null;
@@ -108,6 +111,7 @@ namespace DVSAdmin.Data.Repositories
             return genericResponse;
         }
 
+        //// Part 2 of 2: Information match  Reject submission flow
         public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReview cetificateReview)
         {
             GenericResponse genericResponse = new ();
@@ -125,7 +129,7 @@ namespace DVSAdmin.Data.Repositories
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
                     existingEntity.RejectionComments = cetificateReview.RejectionComments;
 
-                    //clear rejection reasons if already exists and update
+                    //clear rejection reasons if already exists and update with reasons selected
                     if (existingEntity.CertificateReviewRejectionReasonMapping != null)
                         context.CertificateReviewRejectionReasonMapping.RemoveRange(existingEntity.CertificateReviewRejectionReasonMapping);
                     
@@ -149,6 +153,7 @@ namespace DVSAdmin.Data.Repositories
         }
 
 
+        //Restore from archive tab
         public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId)
         {
             GenericResponse genericResponse = new();
