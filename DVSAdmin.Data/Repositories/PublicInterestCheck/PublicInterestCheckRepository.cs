@@ -23,8 +23,6 @@ namespace DVSAdmin.Data.Repositories
              .ToListAsync();
             return piCheckList;
         }
-
-
         public async Task<Service> GetServiceDetails(int serviceId)
         {
             return await context.Service
@@ -40,9 +38,6 @@ namespace DVSAdmin.Data.Repositories
 
 
         }
-
-
-
         public async Task<Service> GetServiceDetailsWithMappings(int serviceId)
         {
 
@@ -78,8 +73,12 @@ namespace DVSAdmin.Data.Repositories
 
             return service;
         }
+        public async Task<List<Service>> GetServiceList(int providerId)
+        {
+            return await context.Service.Where(s => s.ProviderProfileId == providerId).ToListAsync();
+        }
 
-        public async Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheck publicInterestCheck, ReviewTypeEnum reviewType)
+        public async Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheck publicInterestCheck, ReviewTypeEnum reviewType, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new ();
             using var transaction = context.Database.BeginTransaction();
@@ -119,7 +118,7 @@ namespace DVSAdmin.Data.Repositories
                         existingEntity.RejectionReasons = publicInterestCheck.RejectionReasons;
                     }
 
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.PICheck, loggedInUserEmail);
                     genericResponse.InstanceId = existingEntity.Id;
 
                 }
@@ -128,7 +127,7 @@ namespace DVSAdmin.Data.Repositories
                   
                     publicInterestCheck.PrimaryCheckTime = DateTime.UtcNow;
                     var entity = await context.PublicInterestCheck.AddAsync(publicInterestCheck);                 
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.PICheck, loggedInUserEmail);
                     genericResponse.InstanceId = entity.Entity.Id;
                 }
                 transaction.Commit();
@@ -143,15 +142,14 @@ namespace DVSAdmin.Data.Repositories
             }
             return genericResponse;
         }
-
-        public async Task<GenericResponse> SavePICheckLog(PICheckLogs pICheck)
+        public async Task<GenericResponse> SavePICheckLog(PICheckLogs pICheck, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();
             try
             {               
                 await context.PICheckLogs.AddAsync(pICheck);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.PICheck, loggedInUserEmail);
                 transaction.Commit();
                 genericResponse.Success = true;
             }
@@ -164,16 +162,8 @@ namespace DVSAdmin.Data.Repositories
 
             }
             return genericResponse;
-        }
-
-
-        public async Task<List<Service>> GetServiceList(int providerId)
-        {
-            return await context.Service .Where(s => s.ProviderProfileId == providerId).ToListAsync();
-        }
-
-
-        public async Task<GenericResponse> UpdateServiceAndProviderStatus(int serviceId,  ProviderStatusEnum providerStatus)
+        }     
+        public async Task<GenericResponse> UpdateServiceAndProviderStatus(int serviceId,  ProviderStatusEnum providerStatus, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();
@@ -189,9 +179,9 @@ namespace DVSAdmin.Data.Repositories
                     serviceEntity.ModifiedTime = DateTime.UtcNow;   
                     providerEntity.ProviderStatus = providerStatus;
                     providerEntity.ModifiedTime = DateTime.UtcNow;
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.ClosingTheLoop, loggedInUserEmail);
 
-                    if(await AddTrustMarkNumber(serviceEntity.Id,providerEntity.Id)) 
+                    if(await AddTrustMarkNumber(serviceEntity.Id,providerEntity.Id, loggedInUserEmail)) 
                     {
                         transaction.Commit();
                         genericResponse.Success = true;
@@ -211,13 +201,8 @@ namespace DVSAdmin.Data.Repositories
                 logger.LogError(ex.Message);
             }
             return genericResponse;
-        }
-
-
-
-      
-
-        private async Task<bool> AddTrustMarkNumber(int serviceId, int providerId)
+        }      
+        private async Task<bool> AddTrustMarkNumber(int serviceId, int providerId, string loggedInUserEmail)
         {
             bool success = false;
             try
@@ -252,7 +237,7 @@ namespace DVSAdmin.Data.Repositories
                 };
 
                 await context.TrustmarkNumber.AddAsync(trustmarkNumber);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.TrustmarkNumberGeneration, loggedInUserEmail);
                 success = true;
             }
             catch (Exception ex)

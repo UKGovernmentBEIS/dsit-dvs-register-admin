@@ -157,19 +157,21 @@ namespace DVSAdmin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> GiveConsent(ConsentViewModel consentViewModel)
         {
-            if(!string.IsNullOrEmpty(consentViewModel.token))
+            string email = UserEmail;
+            if (!string.IsNullOrEmpty(consentViewModel.token))
             {
                 TokenDetails tokenDetails = await jwtService.ValidateToken(consentViewModel.token);
                
                 if(tokenDetails!= null && tokenDetails.IsAuthorised)
                 {
                     ServiceDto ServiceDto = await publicInterestCheckService.GetProviderAndCertificateDetailsByConsentToken(tokenDetails.Token, tokenDetails.TokenId);
+                    email = string.IsNullOrEmpty(email) ? ServiceDto.Provider.PrimaryContactEmail + ";"+ ServiceDto.Provider.SecondaryContactEmail : email;
                     if (ModelState.IsValid)
                     {
-                        GenericResponse genericResponse = await publicInterestCheckService.UpdateServiceAndProviderStatus(tokenDetails.Token, tokenDetails.TokenId, ServiceDto);
+                        GenericResponse genericResponse = await publicInterestCheckService.UpdateServiceAndProviderStatus(tokenDetails.Token, tokenDetails.TokenId, ServiceDto,email);
                         if (genericResponse.Success)
                         {
-                            await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId);
+                            await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId,email);
                             return RedirectToAction("ConsentSuccess");
                         }
                         else
@@ -186,7 +188,7 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId);
+                    await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId, email ?? "");
                     return RedirectToAction(Constants.ErrorPath);
                 }
             }

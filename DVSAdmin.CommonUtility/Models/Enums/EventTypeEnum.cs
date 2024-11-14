@@ -17,6 +17,10 @@
         Adduser = 12,
         RestoreCertificateReview = 13,
         AddOpeningLoopToken = 14,
-        RemoveOpeningLoopToken = 15
+        RemoveOpeningLoopToken = 15,
+        TrustmarkNumberGeneration = 16,
+        PICheckLog = 17,
+        AddClosingLoopToken = 18,
+        RemoveClosingLoopToken = 19
     }
 }

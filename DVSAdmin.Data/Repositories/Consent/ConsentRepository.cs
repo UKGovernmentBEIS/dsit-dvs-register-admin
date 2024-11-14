@@ -74,7 +74,7 @@ namespace DVSAdmin.Data.Repositories
 
         #region closing the loop
 
-        public async Task<GenericResponse> SaveConsentToken(ProceedPublishConsentToken consentToken)
+        public async Task<GenericResponse> SaveConsentToken(ProceedPublishConsentToken consentToken, string loggedinUserEmail)
         {
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = context.Database.BeginTransaction();
@@ -85,7 +85,7 @@ namespace DVSAdmin.Data.Repositories
                 if (existingEntity == null)
                 {
                     await context.ProceedPublishConsentToken.AddAsync(consentToken);
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.AddClosingLoopToken, loggedinUserEmail);
                     transaction.Commit();
                     genericResponse.Success = true;
                 }
@@ -106,14 +106,14 @@ namespace DVSAdmin.Data.Repositories
             return await context.ProceedPublishConsentToken.FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId)??new ProceedPublishConsentToken();
         }
      
-        public async Task<bool> RemoveConsentToken(string token, string tokenId)
+        public async Task<bool> RemoveConsentToken(string token, string tokenId, string loggedInUserEmail)
         {
             var consent = await context.ProceedPublishConsentToken.Include(p => p.Service)
            .FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId);
             if (consent != null)
             {
                 context.ProceedPublishConsentToken.Remove(consent);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveClosingLoopToken, loggedInUserEmail);
                 logger.LogInformation("Closing Loop : Token Removed for service {0}", consent.Service.ServiceName);
                 return true;                
             }
