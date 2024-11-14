@@ -31,11 +31,11 @@ namespace DVSAdmin.BusinessLogic.Services
         }
            
 
-        public async Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto)
+        public async Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto, string loggedInUserEmail)
         {
             CertificateReview certificateReview = new CertificateReview();
             automapper.Map(cetificateReviewDto, certificateReview);
-            GenericResponse genericResponse = await certificateReviewRepository.SaveCertificateReview(certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.SaveCertificateReview(certificateReview, loggedInUserEmail);
             return genericResponse;
 
         }    
@@ -72,11 +72,11 @@ namespace DVSAdmin.BusinessLogic.Services
             return serviceDto;
         }
 
-        public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto)
+        public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail)
         {
             CertificateReview certificateReview = new CertificateReview();
             automapper.Map(cetificateReviewDto, certificateReview);
-            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview, loggedInUserEmail);
             if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Approved)
             {
               
@@ -89,7 +89,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 consentToken.Token = tokenDetails.Token;
                 consentToken.TokenId = tokenDetails.TokenId;
                 consentToken.CreatedTime = DateTime.UtcNow;
-                genericResponse = await consentRepository.SaveProceedApplicationConsentToken(consentToken);
+                genericResponse = await consentRepository.SaveProceedApplicationConsentToken(consentToken, loggedInUserEmail);
                 if (genericResponse.Success)
                 {
                     await emailSender.SendCertificateInfoApprovedToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, serviceDto.CabUser.CabEmail);
@@ -106,11 +106,11 @@ namespace DVSAdmin.BusinessLogic.Services
         }
 
 
-        public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons)
+        public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons, string loggedInUserEmail)
         {
             CertificateReview certificateReview = new CertificateReview();
             automapper.Map(cetificateReviewDto, certificateReview);
-            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReviewRejection(certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReviewRejection(certificateReview, loggedInUserEmail);
 
        
             if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Rejected )
@@ -131,15 +131,15 @@ namespace DVSAdmin.BusinessLogic.Services
             return serviceDto;
         }
 
-        public async Task<GenericResponse> UpdateServiceStatus(int serviceId)
+        public async Task<GenericResponse> UpdateServiceStatus(int serviceId, string providerEmail)
         {
-            GenericResponse genericResponse = await certificateReviewRepository.UpdateServiceStatus(serviceId, ServiceStatusEnum.Received);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateServiceStatus(serviceId, ServiceStatusEnum.Received, providerEmail);
             return genericResponse;
         }
 
-        public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId)
+        public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail)
         {
-            GenericResponse genericResponse = await certificateReviewRepository.RestoreRejectedCertificateReview(reviewId);
+            GenericResponse genericResponse = await certificateReviewRepository.RestoreRejectedCertificateReview(reviewId, loggedInUserEmail);
             if (genericResponse.Success)
             {
                 await emailSender.SendApplicationRestroredToDSIT();

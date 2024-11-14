@@ -19,9 +19,9 @@ namespace DVSAdmin.BusinessLogic.Services
         }
 
 
-        public async Task<bool> RemoveProceedApplicationConsentToken(string token, string tokenId)
+        public async Task<bool> RemoveProceedApplicationConsentToken(string token, string tokenId, string loggedInUserEmail)
         {
-            return await consentRepository.RemoveProceedApplicationConsentToken(token, tokenId);
+            return await consentRepository.RemoveProceedApplicationConsentToken(token, tokenId, loggedInUserEmail);
         }
 
     }
