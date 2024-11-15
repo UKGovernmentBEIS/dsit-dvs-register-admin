@@ -163,6 +163,8 @@ namespace DVSAdmin.Data.Repositories
             }
             return genericResponse;
         }     
+
+        // closing the loop
         public async Task<GenericResponse> UpdateServiceAndProviderStatus(int serviceId,  ProviderStatusEnum providerStatus, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new();
@@ -179,7 +181,7 @@ namespace DVSAdmin.Data.Repositories
                     serviceEntity.ModifiedTime = DateTime.UtcNow;   
                     providerEntity.ProviderStatus = providerStatus;
                     providerEntity.ModifiedTime = DateTime.UtcNow;
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.ClosingTheLoop, loggedInUserEmail);
+                    await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.ClosingTheLoop, loggedInUserEmail);
 
                     if(await AddTrustMarkNumber(serviceEntity.Id,providerEntity.Id, loggedInUserEmail)) 
                     {

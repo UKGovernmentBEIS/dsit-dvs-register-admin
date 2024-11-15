@@ -5,7 +5,6 @@ using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
-using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
@@ -16,8 +15,7 @@ namespace DVSAdmin.Controllers
         private readonly IJwtService jwtService;
         private readonly ICertificateReviewService certificateReviewService;
         private readonly IPublicInterestCheckService publicInterestCheckService;
-        private readonly IConsentService consentService;
-        private string UserEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
+        private readonly IConsentService consentService;       
 
         public ConsentController(IJwtService jwtService, ICertificateReviewService certificateReviewService, IConsentService consentService, IPublicInterestCheckService publicInterestCheckService)
         {
@@ -63,7 +61,7 @@ namespace DVSAdmin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ProceedApplicationGiveConsent(ConsentViewModel consentViewModel)
         {
-            string email = UserEmail;
+            string email = "";
             if (!string.IsNullOrEmpty(consentViewModel.token))
             {
                 TokenDetails tokenDetails = await jwtService.ValidateToken(consentViewModel.token);
@@ -95,7 +93,7 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    await consentService.RemoveProceedApplicationConsentToken(tokenDetails.Token, tokenDetails.TokenId, email??"");
+                    await consentService.RemoveProceedApplicationConsentToken(tokenDetails.Token, tokenDetails.TokenId, email);
                     return RedirectToAction("ProceedApplicationConsentError");
                 }
             }
@@ -157,7 +155,7 @@ namespace DVSAdmin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> GiveConsent(ConsentViewModel consentViewModel)
         {
-            string email = UserEmail;
+            string email = "";
             if (!string.IsNullOrEmpty(consentViewModel.token))
             {
                 TokenDetails tokenDetails = await jwtService.ValidateToken(consentViewModel.token);
@@ -188,7 +186,7 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId, email ?? "");
+                    await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId, email;
                     return RedirectToAction(Constants.ErrorPath);
                 }
             }

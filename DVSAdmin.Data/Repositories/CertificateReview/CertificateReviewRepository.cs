@@ -289,7 +289,7 @@ namespace DVSAdmin.Data.Repositories
                 {
                     service.ServiceStatus = serviceStatus;
                     service.ModifiedTime = DateTime.UtcNow;
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.OpeningLoop, providerEmail);
+                    await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.OpeningLoop, providerEmail);
                     transaction.Commit();
                     genericResponse.Success = true;
                 }

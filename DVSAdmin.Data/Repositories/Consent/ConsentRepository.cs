@@ -85,7 +85,7 @@ namespace DVSAdmin.Data.Repositories
                 if (existingEntity == null)
                 {
                     await context.ProceedPublishConsentToken.AddAsync(consentToken);
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.AddClosingLoopToken, loggedinUserEmail);
+                    await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.AddClosingLoopToken, loggedinUserEmail);
                     transaction.Commit();
                     genericResponse.Success = true;
                 }
@@ -113,7 +113,7 @@ namespace DVSAdmin.Data.Repositories
             if (consent != null)
             {
                 context.ProceedPublishConsentToken.Remove(consent);
-                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveClosingLoopToken, loggedInUserEmail);
+                await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.RemoveClosingLoopToken, loggedInUserEmail);
                 logger.LogInformation("Closing Loop : Token Removed for service {0}", consent.Service.ServiceName);
                 return true;                
             }
