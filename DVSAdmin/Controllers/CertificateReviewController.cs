@@ -19,7 +19,7 @@ namespace DVSAdmin.Controllers
         private readonly IUserService userService;
         private readonly IBucketService bucketService;
         private readonly IConfiguration configuration;
-        private string UserEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
+        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
         public CertificateReviewController(ICertificateReviewService certificateReviewService, IUserService userService, 
         IBucketService bucketService, IConfiguration configuration)
         {           
@@ -98,14 +98,14 @@ namespace DVSAdmin.Controllers
             ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);
             certificateValidationViewModel.Service = serviceDto;               
           
-            if (!string.IsNullOrEmpty(UserEmail))
+            if (!string.IsNullOrEmpty(userEmail))
             {
                 if (ModelState.IsValid)
                 {
                     HttpContext?.Session.Set("CertificateValidationData", certificateValidationViewModel);
-                    UserDto userDto = await userService.GetUser(UserEmail);
+                    UserDto userDto = await userService.GetUser(userEmail);
                     CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, CertificateReviewEnum.InReview, null);
-                    GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto, UserEmail);
+                    GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto, userEmail);
                    
                     if (saveReview == "draft")
                     {
@@ -160,17 +160,17 @@ namespace DVSAdmin.Controllers
             certificateReviewViewModel.Service = certificateValidationViewModel.Service;
             ValidateCertificateReviewViewModel(certificateReviewViewModel, certificateValidationViewModel, saveReview);
           
-            if (!string.IsNullOrEmpty(UserEmail))
+            if (!string.IsNullOrEmpty(userEmail))
             {
                 if (ModelState.IsValid)
                 {
                     HttpContext?.Session.Set("CertificateReviewData", certificateReviewViewModel);
                     CertificateReviewEnum certificateInfoStatus = GetCertificateReviewStatus(saveReview);
-                    UserDto userDto = await userService.GetUser(UserEmail);
+                    UserDto userDto = await userService.GetUser(userEmail);
                     CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, certificateInfoStatus, certificateReviewViewModel);
                     if(saveReview == "draft")
                     {
-                        GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto, certificateReviewViewModel.Service, UserEmail);
+                        GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto, certificateReviewViewModel.Service, userEmail);
                         if (genericResponse.Success)
                         {
                             return RedirectToAction("CertificateReview", new { reviewId = certificateReviewViewModel.CertificateReviewId});
@@ -236,7 +236,7 @@ namespace DVSAdmin.Controllers
                 HttpContext.Session.Remove("CertificateReviewDto");           
                 CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
                 certificateReviewDto.CertificateReviewStatus = CertificateReviewEnum.Approved;
-                GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto, certificateValidationViewModel.Service, UserEmail);
+                GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto, certificateValidationViewModel.Service, userEmail);
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("ApprovalConfirmation");
@@ -371,7 +371,7 @@ namespace DVSAdmin.Controllers
 
                 CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
                 certificateReviewDto.CertificateReviewStatus = CertificateReviewEnum.Rejected;
-                GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewRejection(certificateReviewDto, certificateValidationViewModel.Service, certficateRejectionViewModel.SelectedReasons, UserEmail);
+                GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewRejection(certificateReviewDto, certificateValidationViewModel.Service, certficateRejectionViewModel.SelectedReasons, userEmail);
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("RejectionConfirmation");
@@ -424,7 +424,7 @@ namespace DVSAdmin.Controllers
             ServiceDto serviceDetails = await certificateReviewService.GetServiceDetails(serviceId);
             if (serviceDetails.CertificateReview.Id ==reviewId && serviceDetails.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)
             {
-                GenericResponse genericResponse = await certificateReviewService.RestoreRejectedCertificateReview(reviewId, UserEmail);
+                GenericResponse genericResponse = await certificateReviewService.RestoreRejectedCertificateReview(reviewId, userEmail);
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("RestoreSubmissionConfirmation",new { serviceId = serviceId });

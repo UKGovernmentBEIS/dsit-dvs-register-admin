@@ -239,7 +239,7 @@ namespace DVSAdmin.Data.Repositories
                 };
 
                 await context.TrustmarkNumber.AddAsync(trustmarkNumber);
-                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.TrustmarkNumberGeneration, loggedInUserEmail);
+                await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.TrustmarkNumberGeneration, loggedInUserEmail);
                 success = true;
             }
             catch (Exception ex)

@@ -15,7 +15,7 @@ namespace DVSAdmin.Controllers
     {
         private readonly IPublicInterestCheckService publicInterestCheckService;
         private readonly IUserService userService;
-        private string UserEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
+        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
         public PublicInterestSecondaryCheckController(IPublicInterestCheckService publicInterestCheckService, IUserService userService)
         {
             this.publicInterestCheckService = publicInterestCheckService;
@@ -145,7 +145,7 @@ namespace DVSAdmin.Controllers
             {
                 secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.PublicInterestCheckPassed;
                 PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
-                genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
+                genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, userEmail);
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("SecondaryCheckApprovalConfirmation", "PublicInterestSecondaryCheck");
@@ -253,7 +253,7 @@ namespace DVSAdmin.Controllers
             {
                 secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.PublicInterestCheckFailed;
                 PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
-                GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
+                GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, userEmail);
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("SecondaryCheckRejectionConfirmation", "PublicInterestSecondaryCheck");
@@ -310,7 +310,7 @@ namespace DVSAdmin.Controllers
                 {
                     secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.SentBackBySecondReviewer;
                     PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
-                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
+                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, userEmail);
                     if (genericResponse.Success)
                     {
                         return RedirectToAction("SentBackConfirmation", "PublicInterestSecondaryCheck");

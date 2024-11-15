@@ -21,7 +21,7 @@ namespace DVSAdmin.Controllers
         private readonly IRegManagementService regManagementService;
         private readonly ICertificateReviewService certificateReviewService;
         private readonly IBucketService bucketService;
-
+        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
         public RegisterManagementController(IRegManagementService regManagementService, ICertificateReviewService certificateReviewService, IBucketService bucketService)
         {
            
@@ -88,11 +88,11 @@ namespace DVSAdmin.Controllers
         {
             if(action == "publish")
             {
-                string email = HttpContext?.Session.Get<string>("Email") ?? string.Empty;
+              
                 List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
                 if (serviceids != null && serviceids.Any())
                 {
-                    GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id);
+                    GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,userEmail);
                     if (genericResponse.Success)
                     {
                         return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Id });

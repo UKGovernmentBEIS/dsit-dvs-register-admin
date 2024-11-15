@@ -62,7 +62,7 @@ namespace DVSAdmin.Data.Repositories
             if (consent != null)
             {
                 context.ProceedApplicationConsentToken.Remove(consent);
-                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveOpeningLoopToken, loggedinUserEmail);
+                await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.RemoveOpeningLoopToken, loggedinUserEmail);
                 logger.LogInformation("Opening Loop : Token Removed for service {0}", consent.Service.ServiceName);
                 return true;
             }

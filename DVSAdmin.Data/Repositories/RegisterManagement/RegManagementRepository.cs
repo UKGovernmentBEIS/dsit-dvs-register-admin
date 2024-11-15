@@ -45,7 +45,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired || p.ProviderStatus == ProviderStatusEnum.ActionRequired)).FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
-        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, ServiceStatusEnum serviceStatus)
+        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, ServiceStatusEnum serviceStatus, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = context.Database.BeginTransaction();
@@ -65,7 +65,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                         }
                      
                     }
-                    context.SaveChanges();
+                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RegisterManagement, loggedInUserEmail);
                 }
                 transaction.Commit();
                 genericResponse.Success = true;
@@ -80,7 +80,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return genericResponse;
         }
 
-        public async Task<GenericResponse> UpdateProviderStatus(int providerId, ProviderStatusEnum providerStatus)
+        public async Task<GenericResponse> UpdateProviderStatus(int providerId, ProviderStatusEnum providerStatus, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = context.Database.BeginTransaction();
@@ -98,7 +98,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                   
                 }
 
-                context.SaveChanges();
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RegisterManagement, loggedInUserEmail);
                 transaction.Commit();
                 genericResponse.Success = true;
             }
@@ -112,7 +112,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return genericResponse;
         }
 
-        public async Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog)
+        public async Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = context.Database.BeginTransaction();

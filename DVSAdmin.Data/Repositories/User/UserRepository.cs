@@ -1,12 +1,11 @@
-﻿using Amazon.Runtime.Internal.Util;
-using DVSAdmin.CommonUtility.Models;
+﻿using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace DVSAdmin.Data.Repositories
 {
-	public class UserRepository : IUserRepository
+    public class UserRepository : IUserRepository
 	{
         private readonly DVSAdminDbContext context;
 
@@ -33,7 +32,7 @@ namespace DVSAdmin.Data.Repositories
                     existingEntity.Email = user.Email;
                 }
                 
-                context.SaveChanges();
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.Adduser, user.Email);
                 transaction.Commit();
                 genericResponse.Success = true;
             }

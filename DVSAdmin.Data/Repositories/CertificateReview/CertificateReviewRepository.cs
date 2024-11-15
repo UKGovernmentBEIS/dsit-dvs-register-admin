@@ -229,6 +229,11 @@ namespace DVSAdmin.Data.Repositories
                         context.CertificateReviewRejectionReasonMapping.RemoveRange(existingEntity.CertificateReviewRejectionReasonMapping);
 
                     existingEntity.CertificateReviewRejectionReasonMapping = cetificateReview.CertificateReviewRejectionReasonMapping;
+
+                    foreach (var mapping in cetificateReview.CertificateReviewRejectionReasonMapping)
+                    {
+                        context.Entry(mapping).State = EntityState.Added;
+                    }
                     existingEntity.ModifiedDate = DateTime.UtcNow;
                     genericResponse.InstanceId = existingEntity.Id;
                     await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);

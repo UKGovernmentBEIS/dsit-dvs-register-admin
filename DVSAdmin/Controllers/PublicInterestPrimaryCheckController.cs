@@ -17,7 +17,7 @@ namespace DVSAdmin.Controllers
 
         private readonly IPublicInterestCheckService publicInterestCheckService;
         private readonly IUserService userService;
-        private string UserEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
+        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
         public PublicInterestPrimaryCheckController(IPublicInterestCheckService publicInterestCheckService, IUserService userService)
         {
             this.publicInterestCheckService = publicInterestCheckService;
@@ -42,9 +42,9 @@ namespace DVSAdmin.Controllers
             else
             {
               
-                if (!string.IsNullOrEmpty(UserEmail))
+                if (!string.IsNullOrEmpty(userEmail))
                 {
-                    UserDto userDto = await userService.GetUser(UserEmail);
+                    UserDto userDto = await userService.GetUser(userEmail);
 
                     if (userDto.Id>0)
                     {
@@ -92,7 +92,7 @@ namespace DVSAdmin.Controllers
                 PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckViewModel);
                 if (reviewStatus == PublicInterestCheckEnum.InPrimaryReview)
                 {
-                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
+                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, userEmail);
                     if (genericResponse.Success)
                     {
                         return RedirectToAction("PrimaryCheckReview", new { serviceId = publicInterestPrimaryCheckViewModel.Service.Id });
@@ -156,7 +156,7 @@ namespace DVSAdmin.Controllers
                     {
                         PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
                         publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckPassed;
-                        GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
+                        GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, userEmail);
                         if (genericResponse.Success)
                         {
                             return RedirectToAction("PrimaryCheckPassedConfirmation", "PublicInterestPrimaryCheck");
@@ -233,7 +233,7 @@ namespace DVSAdmin.Controllers
                 {
                     PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
                     publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckFailed;
-                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
+                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, userEmail);
                     if (genericResponse.Success)
                     {
                         return RedirectToAction("PrimaryCheckFailedConfirmation", "PublicInterestPrimaryCheck");

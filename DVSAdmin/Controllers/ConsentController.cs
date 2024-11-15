@@ -186,7 +186,7 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId, email;
+                    await consentService.RemoveConsentToken(tokenDetails.Token, tokenDetails.TokenId, email);
                     return RedirectToAction(Constants.ErrorPath);
                 }
             }
