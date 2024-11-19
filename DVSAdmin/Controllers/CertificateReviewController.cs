@@ -53,7 +53,7 @@ namespace DVSAdmin.Controllers
             
             if (serviceDto.ProceedApplicationConsentToken != null &serviceDto.ServiceStatus == ServiceStatusEnum.Submitted && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
             {
-                ViewBag.OpeningTheLoopLink = configuration["ReviewPortalLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
+                ViewBag.OpeningTheLoopLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
             }
 
 

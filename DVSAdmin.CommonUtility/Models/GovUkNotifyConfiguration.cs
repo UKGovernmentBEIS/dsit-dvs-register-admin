@@ -1,5 +1,4 @@
-﻿using DVSAdmin.CommonUtility.Models.Consent;
-using DVSAdmin.CommonUtility.Models.PublicInterestCheck;
+﻿using DVSAdmin.CommonUtility.Models.PublicInterestCheck;
 
 namespace DVSAdmin.CommonUtility.Models
 {
@@ -28,10 +27,8 @@ namespace DVSAdmin.CommonUtility.Models
         public CertificateInfoRejectedToCabTemplate CertificateInfoRejectedToCabTemplate { get; set; }
         public CertificateInfoRejectedToDSITTemplate CertificateInfoRejectedToDSITTemplate { get; set; }
         public CertificateReviewRestoredToDSITTemplate CertificateReviewRestoredToDSITTemplate { get; set; }
-        public DIPConsentToPublishTemplate DIPConsentToPublishTemplate { get; set; }
-      
-        public AgreementToPublishTemplate AgreementToPublishTemplate { get; set; }
-        public AgreementToPublishToDSITTemplate AgreementToPublishToDSITTemplate { get; set; }
+        public DIPConsentToPublishTemplate DIPConsentToPublishTemplate { get; set; }      
+     
         public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }
         public ServicePublishedCABTemplate ServicePublishedCABTemplate { get; set; }
         public ServicePublishedDSITTemplate ServicePublishedDSITTemplate { get;set; }

@@ -281,33 +281,7 @@ namespace DVSAdmin.Data.Repositories
             }
             return genericResponse;
         }
-
-        // opening loop - update service status to received
-        public async Task<GenericResponse> UpdateServiceStatus(int serviceId, ServiceStatusEnum serviceStatus, string providerEmail)
-        {
-            GenericResponse genericResponse = new();
-            using var transaction = context.Database.BeginTransaction();
-            try
-            {
-                var service = await context.Service.FirstOrDefaultAsync(e => e.Id == serviceId);
-                if (service != null)
-                {
-                    service.ServiceStatus = serviceStatus;
-                    service.ModifiedTime = DateTime.UtcNow;
-                    await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.OpeningLoop, providerEmail);
-                    transaction.Commit();
-                    genericResponse.Success = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                genericResponse.EmailSent = false;
-                genericResponse.Success = false;
-                transaction.Rollback();
-                logger.LogError(ex.Message);
-            }
-            return genericResponse;
-        }
+        
 
         #endregion
     }

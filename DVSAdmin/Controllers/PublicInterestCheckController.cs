@@ -76,7 +76,7 @@ namespace DVSAdmin.Controllers
             if(serviceDto.ProceedPublishConsentToken !=null && serviceDto.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed &&
                 serviceDto.ServiceStatus == ServiceStatusEnum.Received)
             {
-                ViewBag.ClosingTheLoopLink=  configuration["ReviewPortalLink"] +"consent/publish-service-give-consent?token="+serviceDto.ProceedPublishConsentToken.Token;
+                ViewBag.ClosingTheLoopLink=  configuration["DvsRegisterLink"] +"consent/publish-service-give-consent?token="+serviceDto.ProceedPublishConsentToken.Token;
             }
            
             return View(serviceDto);
