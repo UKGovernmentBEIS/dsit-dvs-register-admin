@@ -71,14 +71,14 @@
                         Download the certificate of conformity provided by the CAB to check that the certificate meets the requirements in the statements below.
                     </p>
 
-                    <span class="govuk-caption-xl">@Model.Service.FileName (Opens in a new tab)</span>
+                    <span class="govuk-caption-xl">@Model.Service.FileName</span>
 
                     <div id="download-certificate-hint" class="govuk-hint">
                         PDF, @Model.Service.FileSizeInKb KB, 1 page
                         This file may not be suitable for users of assistive technology.
                     </div>
 
-                    <a href="/certificate-review/download-certificate?key=@Model.Service.FileLink&filename=@Model.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
+                    <a href="/certificate-review/download-certificate?key=@Model.Service.FileLink&filename=@Model.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
 
                         Download certificate of conformity
                     </a>
