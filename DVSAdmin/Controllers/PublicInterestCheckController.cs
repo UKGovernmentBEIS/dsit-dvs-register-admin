@@ -17,6 +17,7 @@ namespace DVSAdmin.Controllers
         private readonly IPublicInterestCheckService publicInterestCheckService;
         private readonly IUserService userService;
         private readonly IConfiguration configuration;
+        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
 
         public PublicInterestCheckController(ILogger<PublicInterestCheckController> logger, IPublicInterestCheckService publicInterestCheckService,
         IUserService userService, IConfiguration configuration)
@@ -30,12 +31,11 @@ namespace DVSAdmin.Controllers
         [HttpGet("public-interest-check-list")]
         public async Task<IActionResult> PublicInterestCheck()
         {
+           
 
-            string loggedinUserEmail = HttpContext?.Session.Get<string>("Email");
-
-            if (!string.IsNullOrEmpty(loggedinUserEmail))
+            if (!string.IsNullOrEmpty(userEmail))
             {
-                UserDto userDto = await userService.GetUser(loggedinUserEmail);
+                UserDto userDto = await userService.GetUser(userEmail);
                 PublicInterestCheckViewModel publicInterestCheckViewModel = new PublicInterestCheckViewModel();
 
                 var publicinterestchecks = await publicInterestCheckService.GetPICheckList();

@@ -1,14 +1,11 @@
 ﻿using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.Data.Repositories
 {
     public interface ICertificateReviewRepository
     {
-        public Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview);
-        public Task<GenericResponse> UpdateCertificateReview(CertificateReview cetificateReview);
-        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReview cetificateReview);        
+        
         public Task<List<Role>> GetRoles();
         public Task<List<IdentityProfile>> GetIdentityProfiles();
         public Task<List<SupplementaryScheme>> GetSupplementarySchemes();      
@@ -16,10 +13,16 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<CertificateReviewRejectionReason>> GetRejectionReasons();
         public Task<CertificateReview> GetCertificateReview(int reviewId);
         public Task<CertificateReview> GetCertificateReviewWithRejectionData(int reviewId);
-
         public Task<List<Service>> GetServiceList();
         public Task<Service> GetServiceDetails(int serviceId);
-        public Task<GenericResponse> UpdateServiceStatus(int serviceId, ServiceStatusEnum serviceStatus);
-        public Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId);
+
+        #region Save - update 
+
+        public Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview, string loggedInUserEmail);
+        public Task<GenericResponse> UpdateCertificateReview(CertificateReview cetificateReview, string loggedInUserEmail);
+        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReview cetificateReview, string loggedInUserEmail);
+        public Task<GenericResponse> UpdateServiceStatus(int serviceId, ServiceStatusEnum serviceStatus, string loggedInUserEmail);
+        public Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail);
+        #endregion
     }
 }

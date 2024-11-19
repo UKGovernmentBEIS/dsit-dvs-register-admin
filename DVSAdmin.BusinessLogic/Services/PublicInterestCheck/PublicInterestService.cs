@@ -50,13 +50,13 @@ namespace DVSAdmin.BusinessLogic.Services
             ServiceDto serviceDto = automapper.Map<ServiceDto>(certificateInfo);
             return serviceDto;
         }
-        public async Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheckDto publicInterestCheckDto, ReviewTypeEnum reviewType)
+        public async Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheckDto publicInterestCheckDto, ReviewTypeEnum reviewType, string loggedInUserEmail)
         {
             Service service = await publicInterestCheckRepository.GetServiceDetails(publicInterestCheckDto.ServiceId);
 
             PublicInterestCheck publicInterestCheck = new();
             automapper.Map(publicInterestCheckDto, publicInterestCheck);
-            GenericResponse genericResponse = await publicInterestCheckRepository.SavePublicInterestCheck(publicInterestCheck, reviewType);
+            GenericResponse genericResponse = await publicInterestCheckRepository.SavePublicInterestCheck(publicInterestCheck, reviewType, loggedInUserEmail);
            
             if (genericResponse.Success)
             {
@@ -76,7 +76,7 @@ namespace DVSAdmin.BusinessLogic.Services
                     pICheckLog.UserId = Convert.ToInt32(publicInterestCheckDto.SecondaryCheckUserId);
                 }
 
-                await publicInterestCheckRepository.SavePICheckLog(pICheckLog);
+                await publicInterestCheckRepository.SavePICheckLog(pICheckLog, loggedInUserEmail);
 
 
                 DateTime expirationdate = Convert.ToDateTime(service.ModifiedTime).AddDays(Constants.DaysLeftToCompletePICheck);
@@ -119,7 +119,7 @@ namespace DVSAdmin.BusinessLogic.Services
                         consentToken.Token = tokenDetails.Token;
                         consentToken.TokenId = tokenDetails.TokenId;
                         consentToken.CreatedTime = DateTime.UtcNow;
-                        genericResponse = await consentRepository.SaveConsentToken(consentToken);
+                        genericResponse = await consentRepository.SaveConsentToken(consentToken, loggedInUserEmail);
 
 
                         await emailSender.SendApplicationApprovedToDSIT(service.Provider.RegisteredName, service.ServiceName);
@@ -145,7 +145,7 @@ namespace DVSAdmin.BusinessLogic.Services
         }
 
 
-        public async Task<GenericResponse> UpdateServiceAndProviderStatus(string token, string tokenId, ServiceDto serviceDto)
+        public async Task<GenericResponse> UpdateServiceAndProviderStatus(string token, string tokenId, ServiceDto serviceDto, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new GenericResponse();
             ProceedPublishConsentToken consentToken = await consentRepository.GetConsentToken(token, tokenId);          
@@ -157,7 +157,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 {
                     providerStatus = ProviderStatusEnum.PublishedActionRequired;
                 }
-                genericResponse =  await publicInterestCheckRepository.UpdateServiceAndProviderStatus(serviceDto.Id, providerStatus);
+                genericResponse =  await publicInterestCheckRepository.UpdateServiceAndProviderStatus(serviceDto.Id, providerStatus, loggedInUserEmail);
                 if (genericResponse.Success)
                 {
                  

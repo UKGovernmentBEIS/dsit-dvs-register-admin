@@ -13,15 +13,15 @@ namespace DVSAdmin.BusinessLogic.Services
             this.consentRepository = consentRepository;            
         }
 
-        public async Task<bool> RemoveConsentToken(string token, string tokenId)
+        public async Task<bool> RemoveConsentToken(string token, string tokenId,string loggedInUserEmail)
         {
-            return await consentRepository.RemoveConsentToken(token, tokenId);
+            return await consentRepository.RemoveConsentToken(token, tokenId, loggedInUserEmail);
         }
 
 
-        public async Task<bool> RemoveProceedApplicationConsentToken(string token, string tokenId)
+        public async Task<bool> RemoveProceedApplicationConsentToken(string token, string tokenId, string loggedInUserEmail)
         {
-            return await consentRepository.RemoveProceedApplicationConsentToken(token, tokenId);
+            return await consentRepository.RemoveProceedApplicationConsentToken(token, tokenId, loggedInUserEmail);
         }
 
     }
