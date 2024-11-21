@@ -20,8 +20,7 @@ namespace DVSAdmin.Data.Repositories
 
         public Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview, string loggedInUserEmail);
         public Task<GenericResponse> UpdateCertificateReview(CertificateReview cetificateReview, string loggedInUserEmail);
-        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReview cetificateReview, string loggedInUserEmail);
-        public Task<GenericResponse> UpdateServiceStatus(int serviceId, ServiceStatusEnum serviceStatus, string loggedInUserEmail);
+        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReview cetificateReview, string loggedInUserEmail);        
         public Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail);
         #endregion
     }

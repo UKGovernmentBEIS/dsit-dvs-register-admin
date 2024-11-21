@@ -18,12 +18,13 @@
         public Task<bool> SendCertificateInfoApprovedToDSIT(string companyName, string serviceName);
         public Task<bool> SendCertificateInfoRejectedToCab(string recipientName, string companyName, string serviceName, string rejectionCategory, string rejectionComments, string emailAddress);
         public Task<bool> SendCertificateInfoRejectedToDSIT(string companyName, string serviceName, string rejectionCategory, string rejectionComments);        public Task<bool> SendApplicationRestroredToDSIT();
+
+        //consent - opening the loop to dip
         public Task<bool> SendProceedApplicationConsentToDIP(string companyName, string serviceName, string companyNumber, string companyAddress, string publicContactEmail, string publicPhoneNumber, string consentLink, List<string> emailAddress);        
 
-        //Consent - closing loop
+        //Consent - closing loop to dip 
         public Task<bool> SendConsentToPublishToDIP(string companyName, string serviceName, string recipientName, string consentLink, string emailAddress);
-        public Task<bool> SendAgreementToPublishToDIP(string companyName, string serviceName, string recipientName, string emailAddress);
-        public Task<bool> SendAgreementToPublishToDSIT(string companyName, string serviceName);
+      
 
         //reg - management
         public Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName, string companyName, string emailAddress);

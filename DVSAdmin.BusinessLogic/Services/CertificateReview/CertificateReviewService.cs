@@ -81,7 +81,7 @@ namespace DVSAdmin.BusinessLogic.Services
             {
               
                 TokenDetails tokenDetails = jwtService.GenerateToken();
-                string consentLink = configuration["ReviewPortalLink"] +"consent/proceed-application-consent?token="+tokenDetails.Token;
+                string consentLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+tokenDetails.Token;
 
                 //Insert token details to db for further reference
                 ProceedApplicationConsentToken consentToken = new ProceedApplicationConsentToken();
@@ -123,19 +123,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
             return genericResponse;
         }
-
-        public async Task<ServiceDto> GetProviderAndCertificateDetailsByToken(string token, string tokenId)
-        {
-            ProceedApplicationConsentToken consentToken = await consentRepository.GetProceedApplicationConsentToken(token, tokenId);          
-            var serviceDto = await GetServiceDetails(consentToken.ServiceId);
-            return serviceDto;
-        }
-
-        public async Task<GenericResponse> UpdateServiceStatus(int serviceId, string providerEmail)
-        {
-            GenericResponse genericResponse = await certificateReviewRepository.UpdateServiceStatus(serviceId, ServiceStatusEnum.Received, providerEmail);
-            return genericResponse;
-        }
+       
 
         public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail)
         {
