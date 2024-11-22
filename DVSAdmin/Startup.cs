@@ -110,8 +110,7 @@ namespace DVSAdmin
             });
 
             services.AddScoped<ICertificateReviewRepository, CertificateReviewRepository>();
-            services.AddScoped<ICertificateReviewService, CertificateReviewService>();
-            services.AddScoped<IConsentService, ConsentService>();
+            services.AddScoped<ICertificateReviewService, CertificateReviewService>();      
             services.AddScoped<IConsentRepository, ConsentRepository>();
             services.AddScoped<IRegManagementService, RegManagementService>();
             services.AddScoped<IRegManagementRepository, RegManagementRepository>();

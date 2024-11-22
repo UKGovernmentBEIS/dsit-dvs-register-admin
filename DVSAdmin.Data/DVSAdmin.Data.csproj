@@ -8,8 +8,11 @@
 
   <ItemGroup>
     <Compile Remove="Migrations\**" />
+    <Compile Remove="Repositories\NewFolder\**" />
     <EmbeddedResource Remove="Migrations\**" />
+    <EmbeddedResource Remove="Repositories\NewFolder\**" />
     <None Remove="Migrations\**" />
+    <None Remove="Repositories\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,10 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DVSAdmin.CommonUtility\DVSAdmin.CommonUtility.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repositories\NewFolder\" />
   </ItemGroup>
 
 </Project>

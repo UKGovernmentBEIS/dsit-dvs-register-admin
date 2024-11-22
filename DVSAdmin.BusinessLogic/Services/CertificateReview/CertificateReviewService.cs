@@ -31,11 +31,11 @@ namespace DVSAdmin.BusinessLogic.Services
         }
            
 
-        public async Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto)
+        public async Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto, string loggedInUserEmail)
         {
             CertificateReview certificateReview = new CertificateReview();
             automapper.Map(cetificateReviewDto, certificateReview);
-            GenericResponse genericResponse = await certificateReviewRepository.SaveCertificateReview(certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.SaveCertificateReview(certificateReview, loggedInUserEmail);
             return genericResponse;
 
         }    
@@ -72,16 +72,16 @@ namespace DVSAdmin.BusinessLogic.Services
             return serviceDto;
         }
 
-        public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto)
+        public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail)
         {
             CertificateReview certificateReview = new CertificateReview();
             automapper.Map(cetificateReviewDto, certificateReview);
-            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview, loggedInUserEmail);
             if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Approved)
             {
               
                 TokenDetails tokenDetails = jwtService.GenerateToken();
-                string consentLink = configuration["ReviewPortalLink"] +"consent/proceed-application-consent?token="+tokenDetails.Token;
+                string consentLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+tokenDetails.Token;
 
                 //Insert token details to db for further reference
                 ProceedApplicationConsentToken consentToken = new ProceedApplicationConsentToken();
@@ -89,7 +89,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 consentToken.Token = tokenDetails.Token;
                 consentToken.TokenId = tokenDetails.TokenId;
                 consentToken.CreatedTime = DateTime.UtcNow;
-                genericResponse = await consentRepository.SaveProceedApplicationConsentToken(consentToken);
+                genericResponse = await consentRepository.SaveProceedApplicationConsentToken(consentToken, loggedInUserEmail);
                 if (genericResponse.Success)
                 {
                     await emailSender.SendCertificateInfoApprovedToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, serviceDto.CabUser.CabEmail);
@@ -106,11 +106,11 @@ namespace DVSAdmin.BusinessLogic.Services
         }
 
 
-        public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons)
+        public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons, string loggedInUserEmail)
         {
             CertificateReview certificateReview = new CertificateReview();
             automapper.Map(cetificateReviewDto, certificateReview);
-            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReviewRejection(certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReviewRejection(certificateReview, loggedInUserEmail);
 
        
             if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Rejected )
@@ -123,23 +123,11 @@ namespace DVSAdmin.BusinessLogic.Services
 
             return genericResponse;
         }
+       
 
-        public async Task<ServiceDto> GetProviderAndCertificateDetailsByToken(string token, string tokenId)
+        public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail)
         {
-            ProceedApplicationConsentToken consentToken = await consentRepository.GetProceedApplicationConsentToken(token, tokenId);          
-            var serviceDto = await GetServiceDetails(consentToken.ServiceId);
-            return serviceDto;
-        }
-
-        public async Task<GenericResponse> UpdateServiceStatus(int serviceId)
-        {
-            GenericResponse genericResponse = await certificateReviewRepository.UpdateServiceStatus(serviceId, ServiceStatusEnum.Received);
-            return genericResponse;
-        }
-
-        public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId)
-        {
-            GenericResponse genericResponse = await certificateReviewRepository.RestoreRejectedCertificateReview(reviewId);
+            GenericResponse genericResponse = await certificateReviewRepository.RestoreRejectedCertificateReview(reviewId, loggedInUserEmail);
             if (genericResponse.Success)
             {
                 await emailSender.SendApplicationRestroredToDSIT();
