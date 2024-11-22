@@ -50,13 +50,13 @@ namespace DVSAdmin.BusinessLogic.Services
             ServiceDto serviceDto = automapper.Map<ServiceDto>(certificateInfo);
             return serviceDto;
         }
-        public async Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheckDto publicInterestCheckDto, ReviewTypeEnum reviewType)
+        public async Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheckDto publicInterestCheckDto, ReviewTypeEnum reviewType, string loggedInUserEmail)
         {
             Service service = await publicInterestCheckRepository.GetServiceDetails(publicInterestCheckDto.ServiceId);
 
             PublicInterestCheck publicInterestCheck = new();
             automapper.Map(publicInterestCheckDto, publicInterestCheck);
-            GenericResponse genericResponse = await publicInterestCheckRepository.SavePublicInterestCheck(publicInterestCheck, reviewType);
+            GenericResponse genericResponse = await publicInterestCheckRepository.SavePublicInterestCheck(publicInterestCheck, reviewType, loggedInUserEmail);
            
             if (genericResponse.Success)
             {
@@ -76,7 +76,7 @@ namespace DVSAdmin.BusinessLogic.Services
                     pICheckLog.UserId = Convert.ToInt32(publicInterestCheckDto.SecondaryCheckUserId);
                 }
 
-                await publicInterestCheckRepository.SavePICheckLog(pICheckLog);
+                await publicInterestCheckRepository.SavePICheckLog(pICheckLog, loggedInUserEmail);
 
 
                 DateTime expirationdate = Convert.ToDateTime(service.ModifiedTime).AddDays(Constants.DaysLeftToCompletePICheck);
@@ -111,7 +111,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
 
                         TokenDetails tokenDetails = jwtService.GenerateToken();
-                        string consentLink = configuration["ReviewPortalLink"] +"consent/publish-service-give-consent?token="+tokenDetails.Token;
+                        string consentLink = configuration["DvsRegisterLink"] +"consent/publish-service-give-consent?token="+tokenDetails.Token;
 
                         //Insert token details to db for further reference
                         ProceedPublishConsentToken consentToken = new ();
@@ -119,7 +119,7 @@ namespace DVSAdmin.BusinessLogic.Services
                         consentToken.Token = tokenDetails.Token;
                         consentToken.TokenId = tokenDetails.TokenId;
                         consentToken.CreatedTime = DateTime.UtcNow;
-                        genericResponse = await consentRepository.SaveConsentToken(consentToken);
+                        genericResponse = await consentRepository.SaveConsentToken(consentToken, loggedInUserEmail);
 
 
                         await emailSender.SendApplicationApprovedToDSIT(service.Provider.RegisteredName, service.ServiceName);
@@ -145,31 +145,6 @@ namespace DVSAdmin.BusinessLogic.Services
         }
 
 
-        public async Task<GenericResponse> UpdateServiceAndProviderStatus(string token, string tokenId, ServiceDto serviceDto)
-        {
-            GenericResponse genericResponse = new GenericResponse();
-            ProceedPublishConsentToken consentToken = await consentRepository.GetConsentToken(token, tokenId);          
-            if (!string.IsNullOrEmpty(consentToken.Token)  && !string.IsNullOrEmpty(consentToken.TokenId))   //proceed update status if token exists           
-            {
-                ProviderStatusEnum providerStatus = ProviderStatusEnum.ActionRequired;
-                List<Service> serviceList = await publicInterestCheckRepository.GetServiceList(serviceDto.ProviderProfileId);
-                if (serviceList.Any(item => item.ServiceStatus == ServiceStatusEnum.Published))
-                {
-                    providerStatus = ProviderStatusEnum.PublishedActionRequired;
-                }
-                genericResponse =  await publicInterestCheckRepository.UpdateServiceAndProviderStatus(serviceDto.Id, providerStatus);
-                if (genericResponse.Success)
-                {
-                 
-                    genericResponse.Success = await emailSender.SendAgreementToPublishToDIP(serviceDto.Provider.RegisteredName, serviceDto.ServiceName,
-                    serviceDto.Provider.PrimaryContactFullName, serviceDto.Provider.PrimaryContactEmail);
-                    genericResponse.Success = await emailSender.SendAgreementToPublishToDIP(serviceDto.Provider.RegisteredName, serviceDto.ServiceName,
-                    serviceDto.Provider.SecondaryContactFullName, serviceDto.Provider.SecondaryContactEmail);                   
-                    await emailSender.SendAgreementToPublishToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName);
-                }
-
-            }
-            return genericResponse;
-        }
+     
     }
 }

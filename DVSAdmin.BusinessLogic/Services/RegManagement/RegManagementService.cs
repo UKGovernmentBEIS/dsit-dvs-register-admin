@@ -43,9 +43,9 @@ namespace DVSAdmin.BusinessLogic.Services
             return providerDto;
         }
 
-        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerProfileId)
+        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerProfileId, string loggedInUserEmail)
         {
-            GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerProfileId, ServiceStatusEnum.Published);
+            GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerProfileId, ServiceStatusEnum.Published, loggedInUserEmail);
             ProviderStatusEnum providerStatus = ProviderStatusEnum.Published;
             ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
             ProviderStatusEnum currentStatus = providerProfile.ProviderStatus;// keep current status for log
@@ -73,7 +73,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 providerStatus = ProviderStatusEnum.PublishedActionRequired;
             }
 
-            genericResponse = await regManagementRepository.UpdateProviderStatus(providerProfileId,  providerStatus);
+            genericResponse = await regManagementRepository.UpdateProviderStatus(providerProfileId,  providerStatus, loggedInUserEmail);
          
             if(genericResponse.Success)
             {
@@ -91,7 +91,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 {
                     registerPublishLog.Description = serviceIds.Count +  " new services included";
                 }
-                 await regManagementRepository.SavePublishRegisterLog(registerPublishLog);  
+                 await regManagementRepository.SavePublishRegisterLog(registerPublishLog,  loggedInUserEmail);  
 
               
                 await emailSender.SendServicePublishedToDIP(providerProfile.PrimaryContactFullName, services, providerProfile.RegisteredName, providerProfile.PrimaryContactEmail);
