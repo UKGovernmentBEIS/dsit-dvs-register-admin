@@ -85,12 +85,12 @@ namespace DVSAdmin.Controllers
             // To handle back ward navigation between screens and cancel
             HttpContext?.Session.Set("PrimaryCheckData", publicInterestPrimaryCheckViewModel);
             AddModelErrorForInvalidActions(publicInterestPrimaryCheckViewModel, saveReview);
-
-            if (ModelState.IsValid)
+            
+            publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus = reviewStatus;
+            PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckViewModel);
+            if (reviewStatus == PublicInterestCheckEnum.InPrimaryReview)
             {
-                publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus = reviewStatus;
-                PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckViewModel);
-                if (reviewStatus == PublicInterestCheckEnum.InPrimaryReview)
+                if (ModelState["SubmitValidation"]?.Errors?.Count == 0)
                 {
                     GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, userEmail);
                     if (genericResponse.Success)
@@ -101,25 +101,41 @@ namespace DVSAdmin.Controllers
                     { 
                         return RedirectToAction("HandleException", "Error");
                     }
-                  
                 }
-                else if (reviewStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
+                else
+                {
+                    HttpContext?.Session.Remove("PrimaryCheckData");
+                    return View("PrimaryCheckReview", publicInterestPrimaryCheckViewModel);
+                }
+                  
+            } 
+            else if (reviewStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
+            {
+                if (ModelState.IsValid)
                 {
                     return RedirectToAction("ConfirmPrimaryCheckPass", "PublicInterestPrimaryCheck");
                 }
-                else if (reviewStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
+                else
+                {
+                    HttpContext?.Session.Remove("PrimaryCheckData");
+                    return View("PrimaryCheckReview", publicInterestPrimaryCheckViewModel);
+                }
+            }
+            else if (reviewStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
+            {
+                if (ModelState.IsValid)
                 {
                     return RedirectToAction("ConfirmPrimaryCheckFail", "PublicInterestPrimaryCheck");
                 }
                 else
                 {
-                    return RedirectToAction("HandleException", "Error");
+                    HttpContext?.Session.Remove("PrimaryCheckData");
+                    return View("PrimaryCheckReview", publicInterestPrimaryCheckViewModel);
                 }
             }
             else
             {
-                HttpContext?.Session.Remove("PrimaryCheckData");
-                return View("PrimaryCheckReview", publicInterestPrimaryCheckViewModel);
+                return RedirectToAction("HandleException", "Error");
             }
 
         }
@@ -315,16 +331,16 @@ namespace DVSAdmin.Controllers
             {
                 ServiceId =publicInterestPrimaryCheckViewModel.ServiceId,
                 ProviderProfileId = publicInterestPrimaryCheckViewModel.ProviderProfileId,
-                IsCompanyHouseNumberApproved= Convert.ToBoolean(publicInterestPrimaryCheckViewModel?.IsCompanyHouseNumberApproved),
-                IsDirectorshipsApproved = Convert.ToBoolean(publicInterestPrimaryCheckViewModel?.IsDirectorshipsApproved),
-                IsDirectorshipsAndRelationApproved= Convert.ToBoolean(publicInterestPrimaryCheckViewModel?.IsDirectorshipsAndRelationApproved),
-                IsTradingAddressApproved= Convert.ToBoolean(publicInterestPrimaryCheckViewModel?.IsTradingAddressApproved),
-                IsSanctionListApproved= Convert.ToBoolean(publicInterestPrimaryCheckViewModel?.IsSanctionListApproved),
-                IsUNFCApproved= Convert.ToBoolean(publicInterestPrimaryCheckViewModel?.IsUNFCApproved),
-                IsECCheckApproved= Convert.ToBoolean(publicInterestPrimaryCheckViewModel?.IsECCheckApproved),
-                IsTARICApproved= Convert.ToBoolean(publicInterestPrimaryCheckViewModel?.IsTARICApproved),
-                IsBannedPoliticalApproved= Convert.ToBoolean(publicInterestPrimaryCheckViewModel?.IsBannedPoliticalApproved),
-                IsProvidersWebpageApproved= Convert.ToBoolean(publicInterestPrimaryCheckViewModel?.IsProvidersWebpageApproved),
+                IsCompanyHouseNumberApproved= publicInterestPrimaryCheckViewModel?.IsCompanyHouseNumberApproved,
+                IsDirectorshipsApproved = publicInterestPrimaryCheckViewModel?.IsDirectorshipsApproved,
+                IsDirectorshipsAndRelationApproved= publicInterestPrimaryCheckViewModel?.IsDirectorshipsAndRelationApproved,
+                IsTradingAddressApproved= publicInterestPrimaryCheckViewModel?.IsTradingAddressApproved,
+                IsSanctionListApproved= publicInterestPrimaryCheckViewModel?.IsSanctionListApproved,
+                IsUNFCApproved= publicInterestPrimaryCheckViewModel?.IsUNFCApproved,
+                IsECCheckApproved= publicInterestPrimaryCheckViewModel?.IsECCheckApproved,
+                IsTARICApproved= publicInterestPrimaryCheckViewModel?.IsTARICApproved,
+                IsBannedPoliticalApproved= publicInterestPrimaryCheckViewModel?.IsBannedPoliticalApproved,
+                IsProvidersWebpageApproved= publicInterestPrimaryCheckViewModel?.IsProvidersWebpageApproved,
                 PrimaryCheckComment = publicInterestPrimaryCheckViewModel?.PrimaryCheckComment,
                 PublicInterestCheckStatus = publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus,
                 PrimaryCheckUserId = Convert.ToInt32(publicInterestPrimaryCheckViewModel.PrimaryCheckUserId)
