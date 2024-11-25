@@ -94,59 +94,37 @@ namespace DVSAdmin.Controllers
 
         [HttpPost("certificate-review-validation")]     
         public async Task<ActionResult> SaveCertificateValidation(CertificateValidationViewModel certificateValidationViewModel, string saveReview)
-        {           
+        {
             ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);
-            certificateValidationViewModel.Service = serviceDto;               
-          
-            if (!string.IsNullOrEmpty(userEmail))
+            certificateValidationViewModel.Service = serviceDto;
+
+            if (string.IsNullOrEmpty(userEmail) || (saveReview != "draft" && saveReview != "continue"))
             {
-                HttpContext?.Session.Set("CertificateValidationData", certificateValidationViewModel);
-                UserDto userDto = await userService.GetUser(userEmail);
-                CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, CertificateReviewEnum.InReview, null);
+                return RedirectToAction(Constants.ErrorPath);
+            }
 
+            HttpContext?.Session.Set("CertificateValidationData", certificateValidationViewModel);
+            UserDto userDto = await userService.GetUser(userEmail);
+            CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, CertificateReviewEnum.InReview, null);
 
-                if (saveReview == "draft")
-                {
-                    GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto, userEmail);
+            GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto, userEmail);
+            if (!genericResponse.Success)
+            {
+                return RedirectToAction(Constants.ErrorPath);
+            }
 
-                    if (genericResponse.Success)
-                    {
-                        return RedirectToAction("CertificateValidation", new { serviceId = certificateValidationViewModel?.Service?.Id });
-                    }
-                    else
-                    {
-                        return RedirectToAction(Constants.ErrorPath);
-                    }
-
-                }
-                else if (saveReview == "continue")
-                {
-                    if (ModelState.IsValid)
-                    {
-                        GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto, userEmail);
-                        if (genericResponse.Success)
-                        {
-                            return RedirectToAction("CertificateReview", new { reviewId = genericResponse.InstanceId });
-                        }
-                        else
-                        {
-                            return RedirectToAction(Constants.ErrorPath);
-
-                        }
-                    }
-                    else
+            switch (saveReview)
+            {
+                case "draft":
+                    return RedirectToAction("CertificateValidation", new { serviceId = certificateValidationViewModel?.Service?.Id });
+                case "continue":
+                    if (!ModelState.IsValid)
                     {
                         return View("CertificateValidation", certificateValidationViewModel);
                     }
-                }
-                else
-                {
+                    return RedirectToAction("CertificateReview", new { reviewId = genericResponse.InstanceId });
+                default:
                     return RedirectToAction(Constants.ErrorPath);
-                }                
-            }
-            else
-            {
-                return RedirectToAction(Constants.ErrorPath);
             }
         }
 

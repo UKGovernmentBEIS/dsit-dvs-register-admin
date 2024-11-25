@@ -90,7 +90,7 @@ namespace DVSAdmin.Controllers
             PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckViewModel);
             if (reviewStatus == PublicInterestCheckEnum.InPrimaryReview)
             {
-                if (ModelState["SubmitValidation"]?.Errors?.Count == 0)
+                if (ModelState["SubmitValidation"]?.Errors == null)
                 {
                     GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, userEmail);
                     if (genericResponse.Success)
