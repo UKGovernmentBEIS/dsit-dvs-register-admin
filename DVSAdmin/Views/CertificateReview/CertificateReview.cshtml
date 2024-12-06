@@ -15,8 +15,7 @@
 
         <div class="govuk-grid-row">
             @using (Html.BeginForm("SaveCertificateReview", "CertificateReview", FormMethod.Post))
-            {
-                @Html.AntiForgeryToken()
+            {              
                 @Html.HiddenFor(m => m.CertificateReviewId)
 
                 <div class="govuk-grid-column-full">
