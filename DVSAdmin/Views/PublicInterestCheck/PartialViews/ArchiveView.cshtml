@@ -27,7 +27,7 @@
                     <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
                     <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.ModifiedTime) </td>
                     <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.PublicInterestCheck.PublicInterestCheckStatus)</td>
-                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.PublicInterestCheck.SecondaryCheckTime, "dd MMMM yyyy")</td>
+                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.PublicInterestCheck.SecondaryCheckTime)</td>
                 </tr>
             }
 
