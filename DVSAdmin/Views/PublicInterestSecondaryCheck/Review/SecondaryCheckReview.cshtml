@@ -341,7 +341,7 @@
 
                     <h3 class="govuk-heading-m">Primary check reviewer comments</h3>
                     <p class="govuk-body govuk-summary-list__key">@Model.Service.PublicInterestCheck.PrimaryCheckUser.UserName</p>
-                    <p class="govuk-body"> @DateTimeExtensions.FormatDateTime(@Model.Service.PublicInterestCheck.PrimaryCheckTime, "h:mm tt; d MMM yyyy")</p>
+                    <p class="govuk-body"> @DateTimeExtensions.FormatDateTime(@Model.Service.PublicInterestCheck.PrimaryCheckTime)</p>
                     <p class="govuk-body">  @HtmlExtensions.ToStringWithLineBreaks(@Model?.PrimaryCheckComment??string.Empty)</p>
 
 
