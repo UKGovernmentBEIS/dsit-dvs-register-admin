@@ -32,7 +32,7 @@
                 @if (Model.CertificateReview !=null)
                 {
                     <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateReview.CertificateReviewStatus)</td>
-                    <td class="govuk-table__cell">@Model.CertificateReview.ModifiedDate</td>
+                    <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.CertificateReview.ModifiedDate)</td>
                 }
                 else
                 {

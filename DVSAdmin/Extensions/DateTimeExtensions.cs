@@ -11,9 +11,15 @@ namespace DVSAdmin.Extensions
             DateTime dateTimeValue = Convert.ToDateTime(dateTime);
             TimeZoneInfo localTimeZone = TimeZoneInfo.Local; // Get local time zone
             DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(dateTimeValue, localTimeZone); // Convert to local time
-            string time = localTime.ToString("h:mm tt");
+            string time = (localTime.Hour, localTime.Minute) switch
+            {
+                (12, 0) => "Midday",
+                (0, 0) => "Midnight",
+                _ => localTime.ToString("h:mmtt").ToLower()
+            };
+
             string date = localTime.ToString("d MMM yyyy");
-            return new HtmlString($"{time};<br/>{date}") ;
+            return new HtmlString($"{date}; {time}");
         }
 
         public static HtmlString FormatDateTime(DateTime? dateTime, string format)
