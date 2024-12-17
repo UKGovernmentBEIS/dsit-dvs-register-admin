@@ -15,7 +15,7 @@
                 <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
                 <th scope="col" class="govuk-table__header">Time submitted (UTC)</th>
                 <th scope="col" class="govuk-table__header">Review Status</th>
-                <th scope="col" class="govuk-table__header">Time and date of decision (UTC)</th>
+                <th scope="col" class="govuk-table__header">Date and time of decision (UTC)</th>
             </tr>
         </thead>
         <tbody class="govuk-table__body">
@@ -27,7 +27,7 @@
                     <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
                     <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.ModifiedTime) </td>
                     <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.PublicInterestCheck.PublicInterestCheckStatus)</td>
-                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.PublicInterestCheck.SecondaryCheckTime, "dd MMMM yyyy")</td>
+                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.PublicInterestCheck.SecondaryCheckTime)</td>
                 </tr>
             }
 

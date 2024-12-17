@@ -23,8 +23,7 @@
 
                 @using (Html.BeginForm("SaveRejectSubmission", "CertificateReview", FormMethod.Post))
                 {
-                    string checkboxid = string.Empty;
-                    @Html.AntiForgeryToken()
+                    string checkboxid = string.Empty;                  
 
                 <div class="govuk-grid-column-full">
                     <h1 class="govuk-heading-xl">Reject submission</h1>

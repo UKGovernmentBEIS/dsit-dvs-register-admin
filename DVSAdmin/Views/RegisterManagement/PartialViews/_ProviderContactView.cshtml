@@ -21,7 +21,14 @@
                     Public telephone number
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @Model.ProviderTelephoneNumber
+                    @if (!string.IsNullOrEmpty(Model.ProviderTelephoneNumber))
+                    {
+                        <div> @Model.ProviderTelephoneNumber </div>
+                    }
+                    else
+                    {
+                        <div>No public telephone number</div>
+                    }
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
