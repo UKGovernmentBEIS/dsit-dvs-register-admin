@@ -1,10 +1,15 @@
-﻿@model CertificateDetailsViewModel
+﻿@model CertificateDetailsViewModel;
 @using DVSAdmin.CommonUtility.Models.Enums
 @using DVSAdmin.Extensions
 @{
     ViewData["Title"] = "Submission details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
     ViewData["HidePublishStatus"] = true;// setting variable to hide status field in partial view
+    var providerEmailsViewModel = new ProviderEmailsViewModel
+    {
+        Heading = "Provider contact information",
+       ProviderContact = Model?.CertificateValidation?.Service?.Provider
+    };
 }
 
 <div class="govuk-width-container">
@@ -16,6 +21,7 @@
                 <h1 class="govuk-heading-xl">Submission details</h1>
 
                 @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsView.cshtml", Model?.CertificateValidation?.Service)
+
                 <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
                 <p class="govuk-body-l">
                     @Model?.CertificateValidation?.Service?.FileName.
@@ -37,18 +43,18 @@
 
                 <h2 class="govuk-heading-l">Submitted information</h2>
 
-          
+
 
                 @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model?.CertificateValidation?.Service)
 
                 @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ContactView.cshtml", Model?.CertificateValidation?.Service)
 
 
-
-                @if (Model?.CertificateValidation?.Service?.CertificateReview!=null)
+                @if (Model?.CertificateValidation?.Service?.CertificateReview != null)
                 {
                     if (Model?.CertificateValidation?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
                     {
+                        @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
 
                         <h3 class="govuk-heading-m">  Opening the loop</h3>
                         <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
@@ -74,7 +80,7 @@
                         </dl>
 
 
-                        <h2 class="govuk-heading-l">Review summary</h2>                        
+                        <h2 class="govuk-heading-l">Review summary</h2>
 
                         <dl class="govuk-summary-list">
                             <div class="govuk-summary-list__row">
@@ -98,25 +104,27 @@
                                     </strong>
                                 </dd>
                             </div>
-                        </dl>              
+                        </dl>
 
 
                         <h3 class="govuk-heading-m">Comments</h3>
                         <p class="govuk-body">
-                            @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateValidation?.CommentsForIncorrect??string.Empty)
+                            @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateValidation?.CommentsForIncorrect ?? string.Empty)
                         </p>
                         <p class="govuk-body">
-                            @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateReview?.Comments??string.Empty)
+                            @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateReview?.Comments ?? string.Empty)
                         </p>
 
 
-                }
+                    }
                     else if (Model?.CertificateValidation?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)
                     {
-                        <h2 class="govuk-heading-l">What was rejected</h2>
-                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",Model.CertficateRejection )
+                        @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
 
-                      
+                        <h2 class="govuk-heading-l">What was rejected</h2>
+                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml", Model.CertficateRejection)
+
+
 
                         <h3 class="govuk-heading-m">Comments</h3>
                         <p class="govuk-body">
@@ -150,9 +158,9 @@
 
                     }
 
-                    
+
                 }
-               
+
 
             </div>
         </div>
