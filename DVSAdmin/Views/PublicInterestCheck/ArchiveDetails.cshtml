@@ -5,6 +5,11 @@
 @{
     ViewData["Title"] = "Application review";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+    var providerEmailsViewModel = new ProviderEmailsViewModel
+    {
+        Heading = "Provider contact information",
+        ProviderContact = Model?.Provider
+    };
 }
 
 <div class="govuk-width-container">
@@ -137,7 +142,7 @@
                     </div>
                 </dl>
 
-
+                @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
                 <h3 class="govuk-heading-m">  Closing the loop</h3>
                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                 <dl class="govuk-summary-list">
