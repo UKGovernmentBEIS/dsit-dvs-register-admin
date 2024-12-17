@@ -5,6 +5,11 @@
 @{
     ViewData["Title"] = "Application review";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+    var providerEmailsViewModel = new ProviderEmailsViewModel
+    {
+        Heading = "Provider contact information",
+        ProviderContact = Model?.Provider
+    };
 }
 
 <div class="govuk-width-container">
@@ -137,7 +142,7 @@
                     </div>
                 </dl>
 
-
+                @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
                 <h3 class="govuk-heading-m">  Closing the loop</h3>
                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                 <dl class="govuk-summary-list">
@@ -327,12 +332,12 @@
 
                 <h3 class="govuk-heading-m">Primary check reviewer comments</h3>
                 <p class="govuk-body govuk-summary-list__key">@Model.PublicInterestCheck.PrimaryCheckUser.UserName</p>
-                <p class="govuk-body"> @DateTimeExtensions.FormatDateTime(@Model.PublicInterestCheck.PrimaryCheckTime, "h:mm tt; d MMM yyyy")</p>
+                <p class="govuk-body"> @DateTimeExtensions.FormatDateTime(@Model.PublicInterestCheck.PrimaryCheckTime)</p>
                 <p class="govuk-body">  @HtmlExtensions.ToStringWithLineBreaks(@Model?.PublicInterestCheck.PrimaryCheckComment??string.Empty)</p>
 
                 <h3 class="govuk-heading-m">Secondary check reviewer comments</h3>
                 <p class="govuk-body govuk-summary-list__key">@Model.PublicInterestCheck.SecondaryCheckUser.UserName</p>
-                <p class="govuk-body"> @DateTimeExtensions.FormatDateTime(@Model.PublicInterestCheck.SecondaryCheckTime, "h:mm tt; d MMM yyyy")</p>
+                <p class="govuk-body"> @DateTimeExtensions.FormatDateTime(@Model.PublicInterestCheck.SecondaryCheckTime)</p>
                 <p class="govuk-body">  @HtmlExtensions.ToStringWithLineBreaks(@Model?.PublicInterestCheck.SecondaryCheckComment??string.Empty)</p>           
             </div>
         </div>

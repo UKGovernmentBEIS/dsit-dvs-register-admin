@@ -38,6 +38,7 @@
                         {
                             PropertyName = "Password",
                             Label = "Password",
+                            hasShowPassword = true,
                             Value = Model?.Password,
                             Class = "govuk-input govuk-input--width-20",
                             HasError = Html.ViewData.ModelState.ContainsKey("Email") && Html.ViewData.ModelState["Password"].Errors.Count > 0,

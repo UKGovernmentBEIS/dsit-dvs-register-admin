@@ -5,6 +5,12 @@
 @{
     ViewData["Title"] = "Provider Details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+
+    var providerEmailsViewModel = new ProviderEmailsViewModel
+    {
+        Heading = "Provider contact information",
+        ProviderContact = Model
+    };
 }
 
 <div class="govuk-width-container">
@@ -15,6 +21,7 @@
                 <h1 class="govuk-heading-xl">@Model.RegisteredName</h1>
 
                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_PublicationStatusTableView.cshtml", Model)
+                @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ProviderContactView.cshtml", Model)
 
                 @foreach (var item in Model.Services)
@@ -63,6 +70,7 @@
 
                     </div>
                 }
+
             </div>
         </div>
     </main>

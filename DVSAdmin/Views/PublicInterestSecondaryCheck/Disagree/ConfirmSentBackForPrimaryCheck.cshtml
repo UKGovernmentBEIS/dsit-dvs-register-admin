@@ -1,6 +1,7 @@
 ﻿@model DVSAdmin.Models.PublicInterestSecondaryCheckViewModel;
 @using Newtonsoft.Json
 @using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
 @{
     ViewData["Title"] = "Request another primary check";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -33,7 +34,7 @@
                             <td class="govuk-table__cell">@Model?.Service?.CabUser.Cab.CabName</td>
                             <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.Service.ModifiedTime)</td>
                             <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.PublicInterestCheck.PublicInterestCheckStatus)</td>
-                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.Service.PublicInterestCheck.SecondaryCheckTime, "h:mm tt; d MMM yyyy")</td>
+                            <td class="govuk-table__cell">@Model.Service.DaysLeftToCompletePICheck  days</td>
                         </tr>
                     </tbody>
                 </table>              
