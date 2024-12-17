@@ -5,6 +5,11 @@
     ViewData["Title"] = "Submission details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
     ViewData["HidePublishStatus"] = true;// setting variable to hide status field in partial view
+    var providerEmailsViewModel = new ProviderEmailsViewModel
+    {
+        Heading = "Provider contact information",
+       ProviderContact = Model?.CertificateValidation?.Service?.Provider
+    };
 }
 
 <div class="govuk-width-container">
@@ -49,7 +54,7 @@
                 {
                     if (Model?.CertificateValidation?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
                     {
-                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ProviderContactView.cshtml")
+                        @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
 
                         <h3 class="govuk-heading-m">  Opening the loop</h3>
                         <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
@@ -114,7 +119,7 @@
                     }
                     else if (Model?.CertificateValidation?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)
                     {
-                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ProviderContactView.cshtml")
+                        @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
 
                         <h2 class="govuk-heading-l">What was rejected</h2>
                         @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml", Model.CertficateRejection)
