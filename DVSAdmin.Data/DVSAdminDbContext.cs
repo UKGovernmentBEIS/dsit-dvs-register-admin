@@ -37,6 +37,7 @@ namespace DVSAdmin.Data
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
         public DbSet<TrustmarkNumber> TrustmarkNumber { get; set; }
         public DbSet<Event> EventLogs { get; set; }
+        public DbSet<RemovalReasons> RemovalReasons { get; set; }
         public virtual async Task<int> SaveChangesAsync(TeamEnum team = TeamEnum.NA, EventTypeEnum eventType = EventTypeEnum.NA, string actorId = null)
         {
             if (actorId !=null)

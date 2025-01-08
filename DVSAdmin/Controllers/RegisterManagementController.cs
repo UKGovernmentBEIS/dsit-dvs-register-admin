@@ -6,7 +6,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
-
+ 
 namespace DVSAdmin.Controllers
 {
     [ValidCognitoToken]
@@ -128,6 +128,79 @@ namespace DVSAdmin.Controllers
             HttpContext.Session.Remove("ServiceIdsToPublish");
             return View(providerProfileDto);
         }
+
+        [HttpGet("reason-for-removal")]
+        public async Task<IActionResult> ReasonForRemoval(int providerId)
+        {
+            ProviderProfileDto providerDto = await regManagementService.GetProviderDetails(providerId);
+            List<RemovalReasonDto> removalReasons = await regManagementService.GetRemovalReasons();
+            var model = new Tuple<ProviderProfileDto, List<RemovalReasonDto>>(providerDto, removalReasons);
+            return View(model);
+        }
+
+
+        [HttpPost("publish-removal-reason")]
+        public async Task<IActionResult> PublishRemovalReason(ProviderProfileDto providerDetailsViewModel, string ReasonForRemoval)
+        {
+            ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerDetailsViewModel.Id);
+            GenericResponse genericResponse = await regManagementService.PublishRemovalReason(providerProfileDto.Id, ReasonForRemoval, User.Identity.Name);
+
+            if (genericResponse.Success)
+            {
+                return RedirectToAction("RemovalConfirmation", new { providerId = providerProfileDto.Id });
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "An error occurred while saving the removal reason.");
+                return View("ReasonForRemoval", providerProfileDto);
+            }
+        }
+
+        [HttpPost("proceed-with-removal")]
+        public async Task<IActionResult> ProceedWithRemoval(int providerId, string ReasonForRemoval, string? FurtherExplanation)
+        {
+            ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
+            List<RemovalReasonDto> removalReasonsDtos = await regManagementService.GetRemovalReasons();
+
+            if (string.IsNullOrEmpty(ReasonForRemoval))
+            {
+                ModelState.AddModelError("ReasonForRemoval", "Select a reason for removal");
+            }
+            else
+            {
+                var selectedReason = removalReasonsDtos.FirstOrDefault(r => r.RemovalReason == ReasonForRemoval);
+                if (selectedReason != null && selectedReason.RequiresAdditionalInfo && string.IsNullOrEmpty(FurtherExplanation))
+                {
+                    ModelState.AddModelError("FurtherExplanation", "Enter details about the reason selected");
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var model = new Tuple<ProviderProfileDto, List<RemovalReasonDto>>(providerProfileDto, removalReasonsDtos);
+                return View("ReasonForRemoval", model);
+            }
+
+            providerProfileDto.RemovalReason = ReasonForRemoval;
+            ViewBag.FurtherExplanation = FurtherExplanation ?? string.Empty;
+
+            return View("ProceedRemoval", providerProfileDto);
+        }
+
+
+
+        [HttpGet("removal-confirmation")]
+        public async Task<IActionResult> RemovalConfirmation(int providerId)
+        {
+            ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
+            return View(providerProfileDto);
+        }
+
+
+
+
+
+
 
 
         /// <summary>

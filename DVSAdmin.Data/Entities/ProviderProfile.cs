@@ -29,7 +29,8 @@ namespace DVSAdmin.Data.Entities
         public string SecondaryContactTelephoneNumber { get; set; }
         public string PublicContactEmail { get; set; }
         public string? ProviderTelephoneNumber { get; set; }
-        public string ProviderWebsiteAddress { get; set; }        
+        public string ProviderWebsiteAddress { get; set; }
+        public string? RemovalReason { get; set; }
 
         [ForeignKey("CabUser")]
         public int CabUserId { get; set; }
@@ -39,6 +40,7 @@ namespace DVSAdmin.Data.Entities
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
         public DateTime? PublishedTime { get; set; }
+        public DateTime? RemovalRequestTime { get; set; }
         public PublicInterestCheck PublicInterestCheck { get; set; }
     }
 }

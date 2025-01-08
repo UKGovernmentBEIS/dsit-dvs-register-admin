@@ -32,6 +32,13 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired || p.ProviderStatus == ProviderStatusEnum.ActionRequired)).FirstOrDefaultAsync() ?? new ProviderProfile();
             
         }
+        public async Task<List<RemovalReasons>> GetRemovalReasons()
+        {
+            return await context.RemovalReasons
+                .Where(r => r.IsActiveReason)
+                .OrderBy(r => r.RemovalReasonId)
+                .ToListAsync();
+        }
 
 
         public async Task<ProviderProfile> GetProviderWithServiceDetails(int providerId)
@@ -79,6 +86,35 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             }
             return genericResponse;
         }
+
+        
+
+        public async Task<GenericResponse> PublishRemovalReason(string reason, int providerProfileId, string loggedInUserEmail)
+        {
+            GenericResponse genericResponse = new GenericResponse();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(p => p.Id == providerProfileId);
+                if (existingProvider != null)
+                {
+                    existingProvider.RemovalReason = reason;
+                    existingProvider.ModifiedTime = DateTime.UtcNow;
+                    existingProvider.RemovalRequestTime = DateTime.UtcNow;
+                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RegisterManagement, loggedInUserEmail);
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
 
         public async Task<GenericResponse> UpdateProviderStatus(int providerId, ProviderStatusEnum providerStatus, string loggedInUserEmail)
         {
