@@ -36,6 +36,12 @@ namespace DVSAdmin.BusinessLogic.Services
             return providerDto;
         }
 
+        public async Task<List<RemovalReasonDto>> GetRemovalReasons()
+        {
+            var reasons = await regManagementRepository.GetRemovalReasons();
+            return automapper.Map<List<RemovalReasonDto>>(reasons);
+        }
+
         public async Task<ProviderProfileDto> GetProviderWithServiceDeatils(int providerProfileId)
         {
             var provider = await regManagementRepository.GetProviderWithServiceDetails(providerProfileId);
@@ -102,5 +108,24 @@ namespace DVSAdmin.BusinessLogic.Services
 
             return genericResponse;
         }
+
+        public async Task<GenericResponse> PublishRemovalReason(int providerProfileId, string reason, string loggedInUserEmail)
+        {
+            GenericResponse genericResponse = await regManagementRepository.PublishRemovalReason(reason, providerProfileId, loggedInUserEmail);
+
+            if (genericResponse.Success)
+            {
+                ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
+
+                // Second check - sent to both primary and secondardy contact
+                /*
+                await emailSender.SendRemovalReasonUpdated(providerProfile.PrimaryContactFullName, reason, providerProfile.RegisteredName, providerProfile.PrimaryContactEmail);
+                await emailSender.SendRemovalReasonUpdated(providerProfile.SecondaryContactFullName, reason, providerProfile.RegisteredName, providerProfile.SecondaryContactEmail);
+                */
+            }
+
+            return genericResponse;
+        }
+
     }
 }

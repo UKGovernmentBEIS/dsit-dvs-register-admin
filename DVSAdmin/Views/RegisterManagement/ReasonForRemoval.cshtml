@@ -1,0 +1,102 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@model Tuple<ProviderProfileDto, List<RemovalReasonDto>>;
+
+@{
+    ViewData["Title"] = "Removal Reason";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { providerId = Model.Item1.Id }, new { @class = "govuk-back-link" })
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Select a reason for removing this provider</h1>
+                @using (Html.BeginForm("ProceedWithRemoval", "RegisterManagement", FormMethod.Post))
+                {
+                    <input type="hidden" name="providerId" value="@Model.Item1.Id" />
+
+                    @if (ViewData.ModelState["ReasonForRemoval"] != null && ViewData.ModelState["ReasonForRemoval"].Errors.Count > 0)
+                    {
+                        <div class="govuk-error-summary" data-module="govuk-error-summary">
+                            <div role="alert">
+                                <h2 class="govuk-error-summary__title">
+                                    There is a problem
+                                </h2>
+                                <div class="govuk-error-summary__body">
+                                    <ul class="govuk-list govuk-error-summary__list">
+                                        <li>
+                                            <a href="#">@ViewData.ModelState["ReasonForRemoval"].Errors[1].ErrorMessage</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="govuk-form-group @(ViewData.ModelState["ReasonForRemoval"] != null && ViewData.ModelState["ReasonForRemoval"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
+                        <fieldset class="govuk-fieldset" aria-describedby="removal-reason-description">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Select reason for removal</legend>
+                            <div class="govuk-hint" id="removal-reason-description">You should proceed with removal if any of the reasons below apply.</div>
+                            @if (ViewData.ModelState["ReasonForRemoval"] != null && ViewData.ModelState["ReasonForRemoval"].Errors.Count > 0)
+                            {
+                                <span class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">Error:</span>
+                                    @ViewData.ModelState["ReasonForRemoval"].Errors[1].ErrorMessage
+                                </span>
+                            }
+
+                            <div class="govuk-radios" data-module="govuk-radios">
+                                @foreach (var reason in Model.Item2)
+                                {
+                                    var radioId = "radio" + reason.RemovalReasonId;
+                                    var ariaControls = "conditional-reason" + reason.RemovalReasonId;
+                                    var furtherExpalanationId = "further-explanation" + reason.RemovalReasonId;
+                                    var furtherExpalanationErrorId = "further-explanation-error" + reason.RemovalReasonId;
+
+                                    if (!@reason.RequiresAdditionalInfo)
+                                    {
+                                        <div class="govuk-radios__item">
+                                            @Html.RadioButton("ReasonForRemoval", reason.RemovalReason, false, new { @id = radioId, @class = "govuk-radios__input" })
+                                            <label class="govuk-label govuk-radios__label" for="@radioId">@reason.RemovalReason</label>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="govuk-radios__item">
+                                            @Html.RadioButton("ReasonForRemoval", reason.RemovalReason, false, new { id = radioId, @class = "govuk-radios__input", data_aria_controls = ariaControls })
+                                            <label class="govuk-label govuk-radios__label" for="@radioId">@reason.RemovalReason</label>
+                                        </div>
+                                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="@ariaControls">
+                                            <div class="govuk-form-group @(ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0 ? "govuk-form-group--error" : "")">
+                                                <label class="govuk-label" for="@furtherExpalanationId">
+                                                    Give further details on the reason selected:
+                                                </label>
+                                                @if (ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0)
+                                                {
+                                                    <p id="@furtherExpalanationErrorId" class="govuk-error-message">
+                                                        <span class="govuk-visually-hidden">Error:</span> @ViewData.ModelState["FurtherExplanation"].Errors[0].ErrorMessage
+                                                    </p>
+                                                    
+                                                }
+                                                <textarea class="govuk-textarea @(ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0 ? "govuk-input--error" : "")" rows="5" id="@furtherExpalanationId" name="FurtherExplanation" aria-describedby="@furtherExpalanationId"></textarea>   
+                                            </div>
+                                        </div>
+                                        
+                                    }
+                                }
+
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button">Continue</button>
+                        <a href="provider-details?providerId=@Model.Item1.Id" class="govuk-button govuk-button--secondary">Cancel</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+</div>
+
+

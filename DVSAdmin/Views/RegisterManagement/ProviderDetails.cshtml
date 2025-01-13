@@ -70,7 +70,13 @@
 
                     </div>
                 }
-
+                @if (@Model.ProviderStatus == ProviderStatusEnum.Published){
+                    <div class="govuk-button-group">
+                        <a href="reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
+                            Remove provider from register
+                        </a>
+                    </div>
+                }
             </div>
         </div>
     </main>

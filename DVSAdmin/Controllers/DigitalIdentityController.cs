@@ -7,7 +7,7 @@ namespace DVSAdmin.Controllers
     {
         [Route("home")]
         public IActionResult LandingPage()
-        {          
+        {         
             return View();
         }
     }
