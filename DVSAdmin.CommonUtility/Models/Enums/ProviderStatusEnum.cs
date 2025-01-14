@@ -15,7 +15,9 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("Published - action required")]
         PublishedActionRequired = 4,
         [Description("Removed from register")]
-        RemovedFromRegister = 5
+        RemovedFromRegister = 5,
+        [Description("Awaiting removal confirmation")]
+        AwaitingRemovalConfirmation = 6
 
     }
 }
