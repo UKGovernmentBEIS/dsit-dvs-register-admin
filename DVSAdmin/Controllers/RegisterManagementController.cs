@@ -33,13 +33,14 @@ namespace DVSAdmin.Controllers
         [HttpGet("register-management-list")]
         public async Task<IActionResult> RegisterManagement()
         {
-            ProviderListViewModel providerListViewModel = new ProviderListViewModel();
             var providersList = await regManagementService.GetProviders();
-            providerListViewModel.ActionRequiredList = providersList.Where(x => x.ProviderStatus == ProviderStatusEnum.ActionRequired 
-            ||  x.ProviderStatus == ProviderStatusEnum.PublishedActionRequired).ToList();
-            providerListViewModel.PublicationCompleteList = providersList.Where(x => x.ProviderStatus == ProviderStatusEnum.Published).ToList();
+            var providerListViewModel = new ProviderListViewModel
+            {
+                AllStatusesList = providersList.ToList()
+            };
             return View(providerListViewModel);
         }
+
         [HttpGet("provider-details")]
         public async Task<IActionResult> ProviderDetails(int providerId)
         {
