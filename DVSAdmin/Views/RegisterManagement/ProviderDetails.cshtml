@@ -2,6 +2,7 @@
 @using DVSAdmin.Extensions;
 @model ProviderProfileDto;
 @using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.CommonUtility.Models;
 @{
     ViewData["Title"] = "Provider Details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -36,6 +37,13 @@
                                 <li class="govuk-summary-card__action">
                                     <a class="govuk-link" href="service-details?serviceId=@item.Id">View service details <span class="govuk-visually-hidden"> of Service @item.ServiceNumber</span></a>
                                 </li>
+                                @if(item.ServiceStatus == ServiceStatusEnum.Published)
+                                {
+                                   @*  TODO @ remove service flow *@
+                                    <li class="govuk-summary-card__action">
+                                        <a class="govuk-link" href="#">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
+                                    </li>
+                                }
                             </ul>
                         </div>
                         <div class="govuk-summary-card__content">
@@ -70,7 +78,9 @@
 
                     </div>
                 }
-                @if (@Model.ProviderStatus == ProviderStatusEnum.Published){
+
+                @* Show button to remove entire provider when all services are published, other wise Remove hyperlink for each services which are published *@
+                @if (@Model.ProviderStatus == ProviderStatusEnum.Published && @Model.Services.All(s => s.ServiceStatus == ServiceStatusEnum.Published)){
                     <div class="govuk-button-group">
                         <a href="reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
                             Remove provider from register
