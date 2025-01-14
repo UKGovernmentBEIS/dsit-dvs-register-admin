@@ -15,6 +15,8 @@ namespace DVSAdmin.CommonUtility.Models
         [Description("Published")]
         Published = 4,
         [Description("Removed")]
-        Removed = 5
+        Removed = 5,
+        [Description("Awaiting removal confirmation")]
+        AwaitingRemovalConfirmation = 6
     }
 }

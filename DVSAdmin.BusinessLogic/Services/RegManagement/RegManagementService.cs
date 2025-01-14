@@ -109,9 +109,9 @@ namespace DVSAdmin.BusinessLogic.Services
             return genericResponse;
         }
 
-        public async Task<GenericResponse> PublishRemovalReason(int providerProfileId, string reason, string loggedInUserEmail)
+        public async Task<GenericResponse> UpdateRemovalStatus(int providerProfileId, List<int> serviceIds, string reason, string loggedInUserEmail)
         {
-            GenericResponse genericResponse = await regManagementRepository.PublishRemovalReason(reason, providerProfileId, loggedInUserEmail);
+            GenericResponse genericResponse = await regManagementRepository.UpdateRemovalStatus(providerProfileId, serviceIds, reason, loggedInUserEmail);
 
             if (genericResponse.Success)
             {

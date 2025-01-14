@@ -143,7 +143,8 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> PublishRemovalReason(ProviderProfileDto providerDetailsViewModel, string ReasonForRemoval)
         {
             ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerDetailsViewModel.Id);
-            GenericResponse genericResponse = await regManagementService.PublishRemovalReason(providerProfileDto.Id, ReasonForRemoval, User.Identity.Name);
+            List<int> ServiceIds = providerProfileDto.Services.Select(item => item.Id).ToList();
+            GenericResponse genericResponse = await regManagementService.UpdateRemovalStatus(providerProfileDto.Id, ServiceIds, ReasonForRemoval, User.Identity.Name);
 
             if (genericResponse.Success)
             {
