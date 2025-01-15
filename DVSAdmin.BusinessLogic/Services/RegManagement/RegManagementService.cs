@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Email;
+using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -14,14 +16,18 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly ICertificateReviewRepository certificateReviewRepository;
         private readonly IMapper automapper;       
         private readonly IEmailSender emailSender;
+        private readonly IJwtService jwtService;
+        private readonly IConfiguration configuration;
 
         public RegManagementService(IRegManagementRepository regManagementRepository, IMapper automapper,
-          IEmailSender emailSender, ICertificateReviewRepository certificateReviewRepository)
+          IEmailSender emailSender, ICertificateReviewRepository certificateReviewRepository, IJwtService jwtService, IConfiguration configuration)
         {
             this.regManagementRepository = regManagementRepository;
             this.automapper = automapper;
             this.emailSender = emailSender;
             this.certificateReviewRepository = certificateReviewRepository;
+            this.jwtService = jwtService;
+            this.configuration = configuration;
         }        
          public async Task<List<ProviderProfileDto>> GetProviders()
         {
@@ -109,13 +115,47 @@ namespace DVSAdmin.BusinessLogic.Services
             return genericResponse;
         }
 
-        public async Task<GenericResponse> UpdateRemovalStatus(int providerProfileId, List<int> serviceIds, string reason, string loggedInUserEmail)
+        /// <summary>
+        /// List<int> serviceIds : all services to be passed is event type RemoveProvider,
+        /// for RemoveService  selected services to be passed
+        /// </summary>
+        /// <param name="eventType"></param>
+        /// <param name="providerProfileId"></param>
+        /// <param name="serviceIds"></param>
+        /// <param name="reason"></param>
+        /// <param name="loggedInUserEmail"></param>
+        /// <returns></returns>
+        public async Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType, int providerProfileId, List<int> serviceIds, string reason, string loggedInUserEmail)
         {
             GenericResponse genericResponse = await regManagementRepository.UpdateRemovalStatus(providerProfileId, serviceIds, reason, loggedInUserEmail);
 
             if (genericResponse.Success)
             {
+                // save token for 2i check
+                //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
+                TokenDetails tokenDetails = jwtService.GenerateToken();
+                string link = configuration["DvsRegisterLink"] + "remove-provider/remove-provider?token=" + tokenDetails.Token;
+              
+                ICollection<RemoveTokenServiceMapping> removeTokenServiceMapping = [];
+                if (eventType == EventTypeEnum.RemoveService)
+                {
+                    foreach (var item in serviceIds)
+                    {
+                        removeTokenServiceMapping.Add(new RemoveTokenServiceMapping { ServiceId = item });
+                    }
+                }
+
+                RemoveProviderToken removeProviderToken = new();
+                removeProviderToken.ProviderProfileId = providerProfileId;
+                removeProviderToken.Token = tokenDetails.Token;
+                removeProviderToken.TokenId = tokenDetails.TokenId;
+                removeProviderToken.RemoveTokenServiceMapping = removeTokenServiceMapping;
+                removeProviderToken.CreatedTime = DateTime.UtcNow;
+                genericResponse = await regManagementRepository.SaveRemoveProviderToken(removeProviderToken, TeamEnum.DSIT, eventType, loggedInUserEmail);
+
                 ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
+
+                // To do: email for 2i check
 
                 // Second check - sent to both primary and secondardy contact
                 /*

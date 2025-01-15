@@ -25,6 +25,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                 .Include(x => x.CabUser).ThenInclude(x => x.Cab)
                 .OrderBy(c => statusOrder.IndexOf((int)c.ProviderStatus)) 
                 .ThenBy(c => c.PublishedTime) 
+                .Where(c=>c.ProviderStatus > ProviderStatusEnum.Unpublished)
                 .ToListAsync();
         }
 
@@ -32,9 +33,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         public async Task<ProviderProfile> GetProviderDetails(int providerId)
         {
             return await context.ProviderProfile.Include(p => p.Services).Include(x => x.CabUser).ThenInclude(x => x.Cab)
-            .Where(p=>p.Id == providerId && (p.ProviderStatus == ProviderStatusEnum.Published ||
-            p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired || p.ProviderStatus == ProviderStatusEnum.ActionRequired
-            || p.ProviderStatus == ProviderStatusEnum.AwaitingRemovalConfirmation)).FirstOrDefaultAsync() ?? new ProviderProfile();
+            .Where(p=>p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();
             
         }
         public async Task<List<RemovalReasons>> GetRemovalReasons()
@@ -126,6 +125,35 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             }
             return genericResponse;
         }
+
+
+        public async Task<GenericResponse> SaveRemoveProviderToken(RemoveProviderToken removeProviderToken, TeamEnum team, EventTypeEnum eventType, string loggedinUserEmail)
+        {
+            GenericResponse genericResponse = new();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                var existingEntity = await context.RemoveProviderToken.FirstOrDefaultAsync(e => e.Token == removeProviderToken.Token && e.TokenId == removeProviderToken.TokenId);
+
+                if (existingEntity == null)
+                {
+                    await context.RemoveProviderToken.AddAsync(removeProviderToken);
+                    await context.SaveChangesAsync(team, eventType, loggedinUserEmail);
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError($"Failed SaveRemoveProviderToken: {ex}");
+            }
+            return genericResponse;
+        }
+
 
 
         public async Task<GenericResponse> UpdateProviderStatus(int providerId, ProviderStatusEnum providerStatus, string loggedInUserEmail)

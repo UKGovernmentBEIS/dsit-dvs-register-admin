@@ -145,7 +145,7 @@ namespace DVSAdmin.Controllers
         {
             ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerDetailsViewModel.Id);
             List<int> ServiceIds = providerProfileDto.Services.Select(item => item.Id).ToList();
-            GenericResponse genericResponse = await regManagementService.UpdateRemovalStatus(providerProfileDto.Id, ServiceIds, ReasonForRemoval, User.Identity.Name);
+            GenericResponse genericResponse = await regManagementService.UpdateRemovalStatus(EventTypeEnum.RemoveProvider, providerProfileDto.Id, ServiceIds, ReasonForRemoval, User.Identity.Name);
 
             if (genericResponse.Success)
             {
