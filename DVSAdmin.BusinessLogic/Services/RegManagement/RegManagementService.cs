@@ -42,12 +42,6 @@ namespace DVSAdmin.BusinessLogic.Services
             return providerDto;
         }
 
-        public async Task<List<RemovalReasonDto>> GetRemovalReasons()
-        {
-            var reasons = await regManagementRepository.GetRemovalReasons();
-            return automapper.Map<List<RemovalReasonDto>>(reasons);
-        }
-
         public async Task<ProviderProfileDto> GetProviderWithServiceDeatils(int providerProfileId)
         {
             var provider = await regManagementRepository.GetProviderWithServiceDetails(providerProfileId);
@@ -125,7 +119,7 @@ namespace DVSAdmin.BusinessLogic.Services
         /// <param name="reason"></param>
         /// <param name="loggedInUserEmail"></param>
         /// <returns></returns>
-        public async Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType, int providerProfileId, List<int> serviceIds, string reason, string loggedInUserEmail)
+        public async Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType, int providerProfileId, List<int> serviceIds, RemovalReasonsEnum reason, string loggedInUserEmail)
         {
             GenericResponse genericResponse = await regManagementRepository.UpdateRemovalStatus(providerProfileId, serviceIds, reason, loggedInUserEmail);
 

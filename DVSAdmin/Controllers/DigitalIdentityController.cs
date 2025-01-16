@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using DVSRegister.Extensions;
 
 namespace DVSAdmin.Controllers
 {
@@ -7,7 +8,7 @@ namespace DVSAdmin.Controllers
     {
         [Route("home")]
         public IActionResult LandingPage()
-        {         
+        {
             return View();
         }
     }

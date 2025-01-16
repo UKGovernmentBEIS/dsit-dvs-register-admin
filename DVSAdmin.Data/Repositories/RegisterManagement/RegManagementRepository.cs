@@ -36,15 +36,6 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             .Where(p=>p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();
             
         }
-        public async Task<List<RemovalReasons>> GetRemovalReasons()
-        {
-            return await context.RemovalReasons
-                .Where(r => r.IsActiveReason)
-                .OrderBy(r => r.RemovalReasonId)
-                .ToListAsync();
-        }
-
-
         public async Task<ProviderProfile> GetProviderWithServiceDetails(int providerId)
         {
              return await context.ProviderProfile
@@ -91,7 +82,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return genericResponse;
         }
 
-        public async Task<GenericResponse> UpdateRemovalStatus(int providerProfileId, List<int> serviceIds, string reason, string loggedInUserEmail)
+        public async Task<GenericResponse> UpdateRemovalStatus(int providerProfileId, List<int> serviceIds, RemovalReasonsEnum reason, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = await context.Database.BeginTransactionAsync();

@@ -1,4 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Data.Entities;
 using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
@@ -25,7 +26,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public string PublicContactEmail { get; set; }
         public string? ProviderTelephoneNumber { get; set; }
         public string ProviderWebsiteAddress { get; set; }
-        public string? RemovalReason { get; set; }
+        public RemovalReasonsEnum RemovalReason { get; set; }
         public int CompanyId { get; set; }
         public int CabUserId { get; set; }       
         public CabUserDto CabUser { get; set; }
