@@ -82,26 +82,52 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return genericResponse;
         }
 
-        public async Task<GenericResponse> UpdateRemovalStatus(int providerProfileId, List<int> serviceIds, RemovalReasonsEnum reason, string loggedInUserEmail)
+        public async Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType, TeamEnum team, RemovalReasonsEnum reason, int providerProfileId, List<int> serviceIds, string loggedInUserEmail)
         {
-            GenericResponse genericResponse = new GenericResponse();
+            GenericResponse genericResponse = new();
+            ServiceStatusEnum serviceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
                 var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(p => p.Id == providerProfileId);
                 if (existingProvider != null)
                 {
-                    existingProvider.RemovalReason = reason;
-                    existingProvider.ModifiedTime = DateTime.UtcNow;
-                    existingProvider.RemovalRequestTime = DateTime.UtcNow;
-                    existingProvider.ProviderStatus = ProviderStatusEnum.AwaitingRemovalConfirmation;
-                }
+                    if (eventType == EventTypeEnum.RemoveProvider) // remove provider and all published services under it
+                    {
+                        existingProvider.RemovalReason = reason;
+                        existingProvider.ModifiedTime = DateTime.UtcNow;
+                        existingProvider.RemovalRequestTime = DateTime.UtcNow;
+                        existingProvider.ProviderStatus = ProviderStatusEnum.AwaitingRemovalConfirmation;
 
-                var existingServices = await context.Service.Where(e => serviceIds.Contains(e.Id)).ToListAsync();
-                foreach (var existingService in existingServices)
-                {
-                    existingService.ServiceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
-                    existingService.ModifiedTime = DateTime.UtcNow;
+                        var existingServices = await context.Service.Where(e => serviceIds.Contains(e.Id)
+                        && e.ProviderProfileId == providerProfileId && e.ServiceStatus == ServiceStatusEnum.Published).ToListAsync();
+                        foreach (var existingService in existingServices)
+                        {
+                            existingService.ServiceStatus = serviceStatus;
+                            existingService.ModifiedTime = DateTime.UtcNow;
+                        }
+                    }
+                    else if (eventType == EventTypeEnum.RemoveService || eventType == EventTypeEnum.RemoveServiceRequestedByCab || eventType == EventTypeEnum.RemovedByCronJob)
+                    {
+                        if (eventType == EventTypeEnum.RemoveServiceRequestedByCab || eventType == EventTypeEnum.RemovedByCronJob)
+                        {
+                            serviceStatus = ServiceStatusEnum.Removed;
+                        }
+
+                        foreach (var item in serviceIds)
+                        {
+                            var service = await context.Service.Where(s => s.Id == item && s.ProviderProfileId == providerProfileId).FirstOrDefaultAsync();
+                            service.ServiceStatus = serviceStatus;
+                            service.ModifiedTime = DateTime.UtcNow;
+                        }
+
+                        if (existingProvider.Services.All(service => service.ServiceStatus == ServiceStatusEnum.Removed))
+                        {
+                            existingProvider.RemovalReason = reason;
+                            existingProvider.ModifiedTime = DateTime.UtcNow;
+                            existingProvider.ProviderStatus = ProviderStatusEnum.RemovedFromRegister;
+                        }
+                    }
                 }
 
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RegisterManagement, loggedInUserEmail);

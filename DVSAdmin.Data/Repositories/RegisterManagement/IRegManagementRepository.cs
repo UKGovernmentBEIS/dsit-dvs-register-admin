@@ -13,7 +13,7 @@ namespace DVSAdmin.Data.Repositories
         public Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, ServiceStatusEnum serviceStatus, string loggedInUserEmail);
         public Task<GenericResponse> UpdateProviderStatus(int providerId, ProviderStatusEnum providerStatus,string loggedInUserEmail);
         public Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail);
-        public Task<GenericResponse> UpdateRemovalStatus(int providerProfileId, List<int> serviceIds, RemovalReasonsEnum reason, string loggedInUserEmail);
+        public Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType, TeamEnum team, RemovalReasonsEnum reason, int providerProfileId, List<int> serviceIds, string loggedInUserEmail);
         public  Task<GenericResponse> SaveRemoveProviderToken(RemoveProviderToken removeProviderToken, TeamEnum team, EventTypeEnum eventType, string loggedinUserEmail);
     }
 }

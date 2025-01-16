@@ -26,7 +26,9 @@
         RemoveService = 21,
         RemoveProvider2i = 22,
         RemoveServices2i = 23,
-        RemoveProviderRemovalToken = 24
+        RemoveProviderRemovalToken = 24, 
+        RemovedByCronJob = 25,
+        RemoveServiceRequestedByCab = 25
 
     }
 }
