@@ -136,11 +136,7 @@
                                 data-module="govuk-button">
                             Request provider removal
                         </button>
-
-                        <a class="govuk-button govuk-button--secondary"
-                           href="reason-for-removal?providerId=@Model.Id">
-                            Cancel
-                        </a>
+                        @Html.ActionLink("Cancel", "ReasonForRemoval", "RegisterManagement", new { providerId = Model.Id }, new { @class = "govuk-button govuk-button--secondary" })
                     </div>
                 }
             </div>

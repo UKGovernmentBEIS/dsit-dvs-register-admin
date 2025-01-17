@@ -1,0 +1,57 @@
+﻿@model DVSAdmin.Models.RegManagement.MultipleRadiosViewModel
+
+<div class="govuk-form-group @(ViewData.ModelState["SelectedRemovalReason"] != null && ViewData.ModelState["SelectedRemovalReason"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
+    <fieldset class="govuk-fieldset" aria-describedby="removal-reason-description @(ViewData.ModelState["SelectedRemovalReason"] != null && ViewData.ModelState["SelectedRemovalReason"].Errors.Count > 0 ? "removal-reason-error" : "")">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Select reason for removal</legend>
+        <div class="govuk-hint" id="removal-reason-description">You should proceed with removal if any of the reasons below apply.</div>
+
+        @if (ViewData.ModelState["SelectedRemovalReason"] != null && ViewData.ModelState["SelectedRemovalReason"].Errors.Count > 0)
+        {
+            <span id="removal-reason-error" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span>
+                @ViewData.ModelState["SelectedRemovalReason"].Errors[0].ErrorMessage
+            </span>
+        }
+
+        <div class="govuk-radios" data-module="govuk-radios">
+            @foreach (var reason in Model.RemovalReasons)
+            {
+                var radioId = "radio" + reason.Id;
+                var ariaControls = "conditional-reason" + reason.Id;
+                var furtherExplanationId = "further-explanation" + reason.Id;
+                var furtherExplanationErrorId = "further-explanation-error" + reason.Id;
+
+                if (!reason.RequiresAdditionalInfo)
+                {
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.SelectedRemovalReason, reason.Id, new { @id = radioId, @class = "govuk-radios__input" })
+                        <label class="govuk-label govuk-radios__label" for="@radioId">@reason.Description</label>
+                    </div>
+                }
+                else
+                {
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.SelectedRemovalReason, reason.Id, new { @id = radioId, @class = "govuk-radios__input", @data_aria_controls = ariaControls })
+                        <label class="govuk-label govuk-radios__label" for="@radioId">@reason.Description</label>
+                    </div>
+                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="@ariaControls">
+                        <div class="govuk-form-group @(ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0 ? "govuk-form-group--error" : "")">
+                            <label class="govuk-label" for="@furtherExplanationId">
+                                Give further details on the reason selected:
+                            </label>
+                            @if (ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0)
+                            {
+                                <p id="@furtherExplanationErrorId" class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">Error:</span> @ViewData.ModelState["FurtherExplanation"].Errors[0].ErrorMessage
+                                </p>
+                            }
+                            <textarea class="govuk-textarea @(ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0 ? "govuk-input--error" : "")" rows="5" id="@furtherExplanationId" name="FurtherExplanation" aria-describedby="@furtherExplanationErrorId"></textarea>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </fieldset>
+</div>
+
+

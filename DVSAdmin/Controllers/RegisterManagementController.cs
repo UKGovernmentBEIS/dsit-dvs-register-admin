@@ -6,7 +6,6 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace DVSAdmin.Controllers
 {
@@ -167,27 +166,52 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ReasonForRemoval(int providerId)
         {
             ProviderProfileDto providerDto = await regManagementService.GetProviderDetails(providerId);
-            return View(providerDto);
-        }
-
-        [HttpPost("proceed-with-removal")]
-        public async Task<IActionResult> ProceedWithRemoval(int providerId, RemovalReasonsEnum? removalReason)
-        {
-            ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
-            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail, userprofile);
-            if (removalReason == null)
+            var model = new MultipleRadiosViewModel
             {
-                ModelState.AddModelError("RemovalReason", "Select a reason for removal");
+                ProviderId = providerDto.Id,
+                RemovalReasons = Enum.GetValues(typeof(RemovalReasonsEnum))
+                                   .Cast<RemovalReasonsEnum>()
+                                   .Skip(1)
+                                   .Select(reason => new RemovalReasonViewModel
+                                   {
+                                       Id = (int)reason,
+                                       Description = reason.GetDescription(),
+                                       RequiresAdditionalInfo = reason.RequiresAdditionalInfo()
+                                   }).ToList()
+            };
+            return View(model);
+        }
+        public async Task<IActionResult> ProceedWithRemoval(MultipleRadiosViewModel model)
+        {
+            ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(model.ProviderId);
+            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail, userprofile);
+
+            if (model.SelectedRemovalReason == null)
+            {
+                ModelState.AddModelError("SelectedRemovalReason", "Select a reason for removal");
             }
+
             if (!ModelState.IsValid)
             {
-                return View("ReasonForRemoval", providerProfileDto);
+                model.RemovalReasons = Enum.GetValues(typeof(RemovalReasonsEnum))
+                                           .Cast<RemovalReasonsEnum>()
+                                           .Skip(1)
+                                           .Select(reason => new RemovalReasonViewModel
+                                           {
+                                               Id = (int)reason,
+                                               Description = reason.GetDescription(),
+                                               RequiresAdditionalInfo = reason.RequiresAdditionalInfo()
+                                           }).ToList();
+
+                return View("ReasonForRemoval", model);
             }
-           
+
             providerProfileDto.DSITUserEmails = userEmails;
-            providerProfileDto.RemovalReason = removalReason.Value;
+            providerProfileDto.RemovalReason = model.SelectedRemovalReason.Value;
+
             return View("ProceedRemoval", providerProfileDto);
         }
+
 
 
         [HttpPost("publish-removal-reason")]
