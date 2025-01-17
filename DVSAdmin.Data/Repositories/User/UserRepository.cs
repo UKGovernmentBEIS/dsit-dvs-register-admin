@@ -55,9 +55,9 @@ namespace DVSAdmin.Data.Repositories
             return user;
         }
 
-        public async Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUser, string profile)
+        public async Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUser)
         { 
-            List<string> userEmails = await context.User.Where(u => u.Email != loggedInUser && u.Profile == profile) 
+            List<string> userEmails = await context.User.Where(u => u.Email != loggedInUser && u.Profile == "DSIT") 
             .Select(u => u.Email).ToListAsync()??new List<string>();
             return userEmails;
         }
@@ -70,7 +70,7 @@ namespace DVSAdmin.Data.Repositories
             try
             {
                 var existingEntity = await context.User.FirstOrDefaultAsync(e => e.Email == loggedInUserEmail);
-                if (existingEntity != null &&  string.IsNullOrEmpty(existingEntity.Profile))
+                if (existingEntity != null &&  (string.IsNullOrEmpty(existingEntity.Profile) || existingEntity.Profile!= profile))
                 {
                     existingEntity.ModifiedDate = DateTime.UtcNow;
                     existingEntity.Profile = profile;

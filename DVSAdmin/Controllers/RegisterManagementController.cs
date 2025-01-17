@@ -23,8 +23,7 @@ namespace DVSAdmin.Controllers
         private readonly ICertificateReviewService certificateReviewService;
         private readonly IUserService userService;
         private readonly IBucketService bucketService;
-        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
-        private string userprofile => HttpContext.Session.Get<string>("Profile") ?? string.Empty;
+        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;       
         public RegisterManagementController(IRegManagementService regManagementService, ICertificateReviewService certificateReviewService, IUserService userService, IBucketService bucketService)
         {
            
@@ -174,7 +173,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ProceedWithRemoval(int providerId, RemovalReasonsEnum? removalReason)
         {
             ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
-            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail, userprofile);
+            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
             if (removalReason == null)
             {
                 ModelState.AddModelError("RemovalReason", "Select a reason for removal");
