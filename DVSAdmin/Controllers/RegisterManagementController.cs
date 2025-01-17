@@ -6,7 +6,8 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
- 
+using System.Diagnostics;
+
 namespace DVSAdmin.Controllers
 {
     [ValidCognitoToken]
@@ -20,13 +21,15 @@ namespace DVSAdmin.Controllers
     {       
         private readonly IRegManagementService regManagementService;
         private readonly ICertificateReviewService certificateReviewService;
+        private readonly IUserService userService;
         private readonly IBucketService bucketService;
         private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
-        public RegisterManagementController(IRegManagementService regManagementService, ICertificateReviewService certificateReviewService, IBucketService bucketService)
+        public RegisterManagementController(IRegManagementService regManagementService, ICertificateReviewService certificateReviewService, IUserService userService, IBucketService bucketService)
         {
            
             this.regManagementService = regManagementService;
             this.certificateReviewService = certificateReviewService;
+            this.userService = userService;
             this.bucketService = bucketService;
         }
 
@@ -160,6 +163,25 @@ namespace DVSAdmin.Controllers
         {
             ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
 
+            // Log the userEmail to ensure it's not null or empty
+            Debug.WriteLine($"The user is: {userEmail}");
+
+            // Check if userService is null
+            if (userService == null)
+            {
+                Debug.WriteLine("userService is null.");
+                return StatusCode(500, "Internal server error: userService is not initialized.");
+            }
+
+            // Check if the session is null
+            if (HttpContext.Session == null)
+            {
+                Debug.WriteLine("HttpContext.Session is null.");
+                return StatusCode(500, "Internal server error: Session is not available.");
+            }
+
+            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
+
             if (removalReason == null)
             {
                 ModelState.AddModelError("RemovalReason", "Select a reason for removal");
@@ -169,6 +191,7 @@ namespace DVSAdmin.Controllers
                 return View("ReasonForRemoval", providerProfileDto);
             }
 
+            ViewBag.UserEmails = userEmails;
             providerProfileDto.RemovalReason = removalReason.Value;
             return View("ProceedRemoval", providerProfileDto);
         }
