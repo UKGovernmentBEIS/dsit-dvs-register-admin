@@ -21,5 +21,16 @@ namespace DVSAdmin.BusinessLogic.Services
             UserDto userDto = automapper.Map<UserDto>(user);           
             return userDto;
         }
+        public async Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUserEmail, string profile)
+        {         
+            var userEmails = await userRepository.GetUserEmailsExcludingLoggedIn(loggedInUserEmail, profile)?? new List<string>();
+            return userEmails;
+        }
+
+        public async Task UpdateUserProfile(string loggedInUserEmail, string profile)
+        {
+            await userRepository.UpdateUserProfile(loggedInUserEmail, profile);
+        }
+
     }
 }

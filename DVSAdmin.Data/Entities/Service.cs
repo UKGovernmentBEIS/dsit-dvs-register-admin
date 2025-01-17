@@ -1,4 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models;
+using DVSRegister.CommonUtility.Models.Enums;
 using NpgsqlTypes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -48,5 +49,9 @@ namespace DVSAdmin.Data.Entities
         public PublicInterestCheck PublicInterestCheck { get; set; }
         public ProceedApplicationConsentToken ProceedApplicationConsentToken { get; set; }
         public ProceedPublishConsentToken ProceedPublishConsentToken { get;set; }
+
+        public ServiceRemovalReasonEnum? ServiceRemovalReason { get; set; }
+        public DateTime? RemovalRequestTime { get; set; }
+        public DateTime? RemovedTime { get; set; }
     }
 }

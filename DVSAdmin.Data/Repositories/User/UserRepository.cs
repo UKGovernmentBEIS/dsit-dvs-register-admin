@@ -48,12 +48,41 @@ namespace DVSAdmin.Data.Repositories
             return genericResponse;
         }
 
-
         public async Task<User> GetUser(string email)
         {
             User user = new User();
             user = await context.User.FirstOrDefaultAsync<User>(e => e.Email == email);
             return user;
+        }
+
+        public async Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUser, string profile)
+        { 
+            List<string> userEmails = await context.User.Where(u => u.Email != loggedInUser && u.Profile == profile) 
+            .Select(u => u.Email).ToListAsync()??new List<string>();
+            return userEmails;
+        }
+
+        public async Task UpdateUserProfile(string loggedInUserEmail, string profile)
+        {
+
+            using var transaction = context.Database.BeginTransaction();
+            User user = new();
+            try
+            {
+                var existingEntity = await context.User.FirstOrDefaultAsync(e => e.Email == loggedInUserEmail);
+                if (existingEntity != null &&  string.IsNullOrEmpty(existingEntity.Profile))
+                {
+                    existingEntity.ModifiedDate = DateTime.UtcNow;
+                    existingEntity.Profile = profile;
+                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.UpdateUser);
+                    transaction.Commit();
+                }
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                Console.Write($"Exception while updatding user profile - {ex}");
+            }
         }
     }
 }

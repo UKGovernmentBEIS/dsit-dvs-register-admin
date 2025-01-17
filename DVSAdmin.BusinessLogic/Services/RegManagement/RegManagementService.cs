@@ -6,6 +6,7 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
+using DVSRegister.CommonUtility.Models.Enums;
 using Microsoft.Extensions.Configuration;
 
 namespace DVSAdmin.BusinessLogic.Services
@@ -119,10 +120,10 @@ namespace DVSAdmin.BusinessLogic.Services
         /// <param name="reason"></param>
         /// <param name="loggedInUserEmail"></param>
         /// <returns></returns>
-        public async Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType, RemovalReasonsEnum reason, int providerProfileId, List<int> serviceIds, string loggedInUserEmail)
+        public async Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType,  int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, RemovalReasonsEnum? reason, ServiceRemovalReasonEnum? serviceRemovalReason)
         {
             TeamEnum team = eventType == EventTypeEnum.RemovedByCronJob ? TeamEnum.CronJob : TeamEnum.DSIT;
-            GenericResponse genericResponse = await regManagementRepository.UpdateRemovalStatus(eventType, team, reason, providerProfileId, serviceIds, loggedInUserEmail);
+            GenericResponse genericResponse = await regManagementRepository.UpdateRemovalStatus(eventType, team, providerProfileId, serviceIds, loggedInUserEmail, reason, serviceRemovalReason);
 
             if (genericResponse.Success)
             {
@@ -157,7 +158,11 @@ namespace DVSAdmin.BusinessLogic.Services
                     if (reason == RemovalReasonsEnum.ProviderRequestedRemoval)
                     {
                         string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
-                        //To Do: email to provider
+                        //To Do: email to providers
+                        foreach(var email in dsitUserEmails)
+                        {
+                            //send email
+                        }
                     }
                     else
                     {
