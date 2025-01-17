@@ -7,7 +7,9 @@ namespace DVSAdmin.Data.Repositories
 	{
 		public Task<GenericResponse> AddUser(User user);
 		public Task<User> GetUser(string email);
-		public Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUser);
+        public Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUser, string profile);
+        public Task UpdateUserProfile(string loggedInUserEmail, string profile);
+		
 
     }
 }

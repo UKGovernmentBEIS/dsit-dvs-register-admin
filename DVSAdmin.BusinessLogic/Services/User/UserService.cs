@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.Data.Repositories;
-using System.Diagnostics;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -22,18 +21,15 @@ namespace DVSAdmin.BusinessLogic.Services
             UserDto userDto = automapper.Map<UserDto>(user);           
             return userDto;
         }
-        public async Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUserEmail)
-        {
-            // Log the loggedInUser to ensure it's not null or empty
-            if (string.IsNullOrEmpty(loggedInUserEmail))
-            {
-                Debug.WriteLine("Logged-in user email is null or empty.");
-                return new List<string>(); // Return an empty list if loggedInUser is null or empty
-            }
-
-            Debug.WriteLine($"User Email is {loggedInUserEmail}");
-            var userEmails = await userRepository.GetUserEmailsExcludingLoggedIn(loggedInUserEmail);
+        public async Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUserEmail, string profile)
+        {         
+            var userEmails = await userRepository.GetUserEmailsExcludingLoggedIn(loggedInUserEmail, profile)?? new List<string>();
             return userEmails;
+        }
+
+        public async Task UpdateUserProfile(string loggedInUserEmail, string profile)
+        {
+            await userRepository.UpdateUserProfile(loggedInUserEmail, profile);
         }
 
     }

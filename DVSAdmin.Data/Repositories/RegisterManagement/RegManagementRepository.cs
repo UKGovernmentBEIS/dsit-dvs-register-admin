@@ -1,6 +1,7 @@
 ﻿using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
+using DVSRegister.CommonUtility.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 namespace DVSAdmin.Data.Repositories.RegisterManagement
@@ -82,10 +83,12 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return genericResponse;
         }
 
-        public async Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType, TeamEnum team, RemovalReasonsEnum reason, int providerProfileId, List<int> serviceIds, string loggedInUserEmail)
+        public async Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType, TeamEnum team, int providerProfileId,
+            List<int> serviceIds, string loggedInUserEmail, RemovalReasonsEnum? reason, ServiceRemovalReasonEnum? serviceRemovalReason)
         {
             GenericResponse genericResponse = new();
-            ServiceStatusEnum serviceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
+            ServiceStatusEnum serviceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;           
+            DateTime?removedTime = null;
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
@@ -105,6 +108,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                         {
                             existingService.ServiceStatus = serviceStatus;
                             existingService.ModifiedTime = DateTime.UtcNow;
+                            existingService.RemovalRequestTime = DateTime.UtcNow;
                         }
                     }
                     else if (eventType == EventTypeEnum.RemoveService || eventType == EventTypeEnum.RemoveServiceRequestedByCab || eventType == EventTypeEnum.RemovedByCronJob)
@@ -112,6 +116,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                         if (eventType == EventTypeEnum.RemoveServiceRequestedByCab || eventType == EventTypeEnum.RemovedByCronJob)
                         {
                             serviceStatus = ServiceStatusEnum.Removed;
+                            removedTime = DateTime.UtcNow;
                         }
 
                         foreach (var item in serviceIds)
@@ -119,13 +124,17 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                             var service = await context.Service.Where(s => s.Id == item && s.ProviderProfileId == providerProfileId).FirstOrDefaultAsync();
                             service.ServiceStatus = serviceStatus;
                             service.ModifiedTime = DateTime.UtcNow;
+                            service.RemovalRequestTime = DateTime.UtcNow;
+                            service.ServiceRemovalReason = serviceRemovalReason;
+                            service.RemovedTime = removedTime;
                         }
 
-                        if (existingProvider.Services.All(service => service.ServiceStatus == ServiceStatusEnum.Removed))
+                        if (existingProvider.Services.All(service => service.ServiceStatus == ServiceStatusEnum.Removed)) //to do : check different scenarios
                         {
                             existingProvider.RemovalReason = reason;
                             existingProvider.ModifiedTime = DateTime.UtcNow;
                             existingProvider.ProviderStatus = ProviderStatusEnum.RemovedFromRegister;
+                            existingProvider.RemovedTime = DateTime.UtcNow;
                         }
                     }
                 }

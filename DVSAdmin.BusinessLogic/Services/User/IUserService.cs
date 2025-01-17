@@ -6,6 +6,7 @@ namespace DVSAdmin.BusinessLogic.Services
     {
         public Task<UserDto> GetUser(string email);
 
-        public Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUserEmail);
+        public Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUserEmail, string profile);
+        public Task UpdateUserProfile(string loggedInUserEmail, string profile);
     }
 }

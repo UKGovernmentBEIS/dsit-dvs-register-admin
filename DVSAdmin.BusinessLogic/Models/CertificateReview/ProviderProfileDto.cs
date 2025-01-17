@@ -39,5 +39,6 @@ namespace DVSAdmin.BusinessLogic.Models
         public DateTime? PublishedTime { get; set; }
         public DateTime? RemovalRequestTime { get; set; }
         public int DaysLeftToComplete { get; set; }
+        public List<string>? DSITUserEmails { get; set; }
     }
 }

@@ -40,5 +40,6 @@ namespace DVSAdmin.Data.Entities
         public DateTime? PublishedTime { get; set; }
         public DateTime? RemovalRequestTime { get; set; }
         public PublicInterestCheck PublicInterestCheck { get; set; }
+        public DateTime? RemovedTime { get; set; }
     }
 }

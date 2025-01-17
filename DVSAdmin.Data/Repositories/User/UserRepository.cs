@@ -2,7 +2,6 @@
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -56,31 +55,34 @@ namespace DVSAdmin.Data.Repositories
             return user;
         }
 
-        public async Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUser)
-        {
-            // Log the loggedInUser to ensure it's not null or empty
-            if (string.IsNullOrEmpty(loggedInUser))
-            {
-                Debug.WriteLine("Logged-in user email is null or empty.");
-                return new List<string>(); // Return an empty list if loggedInUser is null or empty
-            }
-
-            Debug.WriteLine($"User Email is {loggedInUser}");
-
-            // Check if context.User is null
-            if (context.User == null)
-            {
-                Debug.WriteLine("context.User is null.");
-                throw new InvalidOperationException("Database context is not initialized.");
-            }
-
-            // Proceed with the query
-            List<string> userEmails = await context.User
-                .Where(u => u.Email != loggedInUser)
-                .Select(u => u.Email)
-                .ToListAsync();
-
+        public async Task<List<string>> GetUserEmailsExcludingLoggedIn(string loggedInUser, string profile)
+        { 
+            List<string> userEmails = await context.User.Where(u => u.Email != loggedInUser && u.Profile == profile) 
+            .Select(u => u.Email).ToListAsync()??new List<string>();
             return userEmails;
+        }
+
+        public async Task UpdateUserProfile(string loggedInUserEmail, string profile)
+        {
+
+            using var transaction = context.Database.BeginTransaction();
+            User user = new();
+            try
+            {
+                var existingEntity = await context.User.FirstOrDefaultAsync(e => e.Email == loggedInUserEmail);
+                if (existingEntity != null &&  string.IsNullOrEmpty(existingEntity.Profile))
+                {
+                    existingEntity.ModifiedDate = DateTime.UtcNow;
+                    existingEntity.Profile = profile;
+                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.UpdateUser);
+                    transaction.Commit();
+                }
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                Console.Write($"Exception while updatding user profile - {ex}");
+            }
         }
     }
 }
