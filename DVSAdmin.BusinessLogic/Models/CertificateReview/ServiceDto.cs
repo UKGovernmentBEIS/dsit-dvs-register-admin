@@ -1,4 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
@@ -42,5 +43,6 @@ namespace DVSAdmin.BusinessLogic.Models
 
         [JsonIgnore]
         public ProceedPublishConsentTokenDto ProceedPublishConsentToken { get; set; }       
+        public ServiceRemovalReasonEnum ServiceRemovalReason { get; set; }       
     }
 }

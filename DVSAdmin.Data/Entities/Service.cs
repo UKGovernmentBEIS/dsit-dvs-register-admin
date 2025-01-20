@@ -1,6 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models;
-using DVSRegister.CommonUtility.Models.Enums;
-using NpgsqlTypes;
+using DVSAdmin.CommonUtility.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

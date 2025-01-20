@@ -1,0 +1,159 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@model ServiceDto;
+@{
+    ViewData["Title"] = "You are about to send a request to remove a service from the register";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "ServiceRemovalReason", "RegisterManagement", new { providerId = Model.Provider.Id, serviceId = Model.Id }, new { @class = "govuk-back-link" })
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
+            You are about to send a request to remove a service from the register
+        </h1>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Service: @Model.ServiceName
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Service name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.ServiceName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Publication status
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @HtmlExtensions.ToStyledStrongTag(Model.ServiceStatus)
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Provider registered name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Provider.RegisteredName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Conformity Assessment Body
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Provider.CabUser.Cab.CabName
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-three-quarters">
+
+                <h2 class="govuk-heading-m govuk-!-margin-top-6">
+                    Selected reason for removing this service
+                </h2>
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-bottom-0" />
+                <dl class="govuk-summary-list govuk-!-margin-bottom-8">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Reason for removal</dt>
+                        <dd class="govuk-summary-list__value">@Model.ServiceRemovalReason.GetDescription()</dd>
+                    </div>
+                </dl>
+
+                <h2 class="govuk-heading-m govuk-!-margin-top-8">Who will receive the request</h2>
+                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                <dl class="govuk-summary-list">
+                    @if (Model.ServiceRemovalReason == ServiceRemovalReasonEnum.ProviderRequestedRemoval)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email address of <br /> primary contact
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Provider.PrimaryContactEmail
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email address of secondary contact
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Provider.SecondaryContactEmail
+                            </dd>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var email in Model.Provider.DSITUserEmails)
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Email address of <br /> DSIT user
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @email
+                                </dd>
+                            </div>
+                        }
+                    }
+                </dl>
+
+
+                <h2 class="govuk-heading-m govuk-!-margin-top-8">What will happen next</h2>
+                <p class="govuk-body">
+                    The named contacts above will be sent an email asking them to confirm that the details should be removed.
+                    Once they confirm, the details will be automatically removed from the register. The service provider and
+                    Conformity Assessment Body will receive an email confirmation of the removal.
+                </p>
+                <p class="govuk-body">
+                    If the contact does not confirm the removal, the details will remain published
+                    in the register of digital identity and attribute services.
+                </p>
+
+                <div class="govuk-warning-text govuk-!-margin-top-8">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-visually-hidden">Warning</span>
+                        Once you request the removal, the action can't be undone.
+                    </strong>
+                </div>
+
+                @using (Html.BeginForm("RequestServiceRemoval", "RegisterManagement", FormMethod.Post))
+                {
+                    @Html.HiddenFor(v => v.Id)
+                    @Html.HiddenFor(u => u.Provider.DSITUserEmails)
+                    @Html.HiddenFor(m => m.ProviderProfileId)
+                    <input type="hidden" name="ServiceRemovalReason" value="@Model.ServiceRemovalReason" />
+                    <div class="govuk-button-group govuk-!-margin-top-8 govuk-!-margin-bottom-8">
+                        <button type="submit"
+                                class="govuk-button govuk-button--warning"
+                                data-module="govuk-button">
+                            Request service removal
+                        </button>
+
+                        <a class="govuk-button govuk-button--secondary"
+                           href="service-removal-reason?providerId=@Model.Provider.Id&serviceId=@Model.Id">
+                            Cancel
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+</div>

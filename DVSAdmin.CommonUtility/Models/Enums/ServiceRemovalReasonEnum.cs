@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Reflection;
 
-namespace DVSRegister.CommonUtility.Models.Enums
+namespace DVSAdmin.CommonUtility.Models.Enums
 {
     public enum ServiceRemovalReasonEnum
     {
@@ -9,8 +10,18 @@ namespace DVSRegister.CommonUtility.Models.Enums
         [Description("The service certificate has expired")]
         RemovedByCronJob = 1,
         [Description("The service provider has requested to remove one or more services, and there are remaining services published on the register for this provider")]
-        ProviderRequestedRemoval,
+        ProviderRequestedRemoval = 2,
         [Description("The service provider no longer provides the listed service")]
-        ProviderNotExists,
+        ProviderNotExists = 3
+    }
+
+    public static class ServiceRemovalReasonEnumExtensions
+    {
+        public static string GetDescription(this ServiceRemovalReasonEnum value)
+        {
+            FieldInfo field = value.GetType().GetField(value.ToString());
+            DescriptionAttribute attribute = field.GetCustomAttribute<DescriptionAttribute>();
+            return attribute == null ? value.ToString() : attribute.Description;
+        }
     }
 }

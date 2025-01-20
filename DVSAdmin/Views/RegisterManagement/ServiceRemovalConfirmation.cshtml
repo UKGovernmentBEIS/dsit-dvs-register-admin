@@ -1,0 +1,68 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.Extensions;
+@model ServiceDto;
+
+@{
+    ViewData["Title"] = "You have requested to remove a service from the register";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    <main id="main-content" class="govuk-main-wrapper govuk-main-wrapper--l govuk-!-margin-top-8">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-8">You have requested to remove a service from the register</h1>
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Service: @Model.ServiceName
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Service name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.ServiceName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Service publication status
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @HtmlExtensions.ToStyledStrongTag(Model.ServiceStatus)
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Service provider registered name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Provider.RegisteredName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Conformity Assessment Body
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Provider.CabUser.Cab.CabName
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+                <p class="govuk-body govuk-!-margin-bottom-7">The service provider and DSIT will receive an email notification of the removal <br />
+                    request within 20 minutes.</p>
+            </div>
+        </div>
+        <div class="govuk-button-group govuk-!-margin-bottom-8">
+            <a href="provider-details?providerId=@Model.ProviderProfileId" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                Go back to service provider
+            </a>
+        </div>
+    </main>
+</div>
