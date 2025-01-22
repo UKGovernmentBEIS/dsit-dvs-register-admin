@@ -12,9 +12,12 @@ using DVSAdmin.Data;
 using DVSAdmin.Data.Repositories;
 using DVSAdmin.Data.Repositories.RegisterManagement;
 using DVSAdmin.Middleware;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
+using DVSAdmin.Data.Repositories.BackgroundJobs;
 
 namespace DVSAdmin
 {
@@ -27,20 +30,19 @@ namespace DVSAdmin
             this.configuration = configuration;
             this.webHostEnvironment = webHostEnvironment;
         }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            app.UseStaticFiles();
-            app.UseMvc();
-            app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
-
+        
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add Hangfire services.
+            services.AddHangfire(config => config
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(configuration.GetConnectionString("DB_CONNECTIONSTRING")));
+
+            // Add the Hangfire processing server as IHostedService
+            services.AddHangfireServer();
+            
             services.AddControllersWithViews();
             //Adding strict transport security header
             services.AddHsts(options =>
@@ -51,11 +53,11 @@ namespace DVSAdmin
             });
             services.Configure<BasicAuthMiddlewareConfiguration>(
             configuration.GetSection(BasicAuthMiddlewareConfiguration.ConfigSection));
-            string connectionString = string.Format(configuration.GetValue<string>("DB_CONNECTIONSTRING"));
-            services.AddDbContext<DVSAdminDbContext>(opt =>
-                opt.UseNpgsql(connectionString));
+            
             // This allows encrypted cookies to be understood across multiple web server instances
             services.AddDataProtection().PersistKeysToDbContext<DVSAdminDbContext>();
+            
+            ConfigureDatabaseContext(services);
             ConfigureSession(services);
             ConfigureDvsRegisterServices(services);
             ConfigureAutomapperServices(services);
@@ -65,6 +67,13 @@ namespace DVSAdmin
             ConfigureS3Client(services);
             ConfigureS3FileReader(services);
 
+        }
+
+        private void ConfigureDatabaseContext(IServiceCollection services)
+        {
+            var databaseConnectionString = configuration.GetConnectionString("DB_CONNECTIONSTRING");
+            services.AddDbContext<DVSAdminDbContext>(opt =>
+                opt.UseNpgsql(databaseConnectionString));
         }
 
         private void ConfigureSession(IServiceCollection services)
@@ -116,6 +125,7 @@ namespace DVSAdmin
             services.AddScoped<IRegManagementRepository, RegManagementRepository>();
             services.AddScoped<IPublicInterestCheckService, PublicInterestService>();
             services.AddScoped<IPublicInterestCheckRepository, PublicInterestCheckRepository>();
+            services.AddScoped<IBackgroundJobRepository, BackgroundJobRepository>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {
