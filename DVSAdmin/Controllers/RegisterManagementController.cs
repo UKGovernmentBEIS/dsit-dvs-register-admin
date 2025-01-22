@@ -246,7 +246,7 @@ namespace DVSAdmin.Controllers
                 return View("ServiceRemovalReason");
             }
            
-            providerProfileDto.DSITUserEmails = userEmails;
+            providerProfileDto.DSITUserEmails = string.Join(",", userEmails);
             serviceDto.ServiceRemovalReason = serviceRemovalReason.Value;
             return View("ProceedServiceRemoval", serviceDto);
         }
@@ -254,9 +254,10 @@ namespace DVSAdmin.Controllers
         [HttpPost("publish-service-removal-reason")]
         public async Task<IActionResult> RequestServiceRemoval(ServiceDto serviceDetailsViewModel, ServiceRemovalReasonEnum serviceRemovalReason)
         {
+            List<string> dsitUserEmails = serviceDetailsViewModel.Provider.DSITUserEmails.Split(',').ToList() ;
             ServiceDto serviceDto = await regManagementService.GetServiceDetails(serviceDetailsViewModel.Id);
             List<int> ServiceIds = [serviceDto.Id];
-            GenericResponse genericResponse = await regManagementService.UpdateRemovalStatus(EventTypeEnum.RemoveService, serviceDetailsViewModel.ProviderProfileId, ServiceIds, userEmail, serviceDetailsViewModel.Provider.DSITUserEmails, null, serviceRemovalReason);
+            GenericResponse genericResponse = await regManagementService.UpdateRemovalStatus(EventTypeEnum.RemoveService, serviceDetailsViewModel.ProviderProfileId, ServiceIds, userEmail, dsitUserEmails, null, serviceRemovalReason);
 
             if (genericResponse.Success)
             {
