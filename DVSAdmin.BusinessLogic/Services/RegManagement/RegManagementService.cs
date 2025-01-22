@@ -6,7 +6,6 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
-using DVSRegister.CommonUtility.Models.Enums;
 using Microsoft.Extensions.Configuration;
 
 namespace DVSAdmin.BusinessLogic.Services
@@ -36,6 +35,13 @@ namespace DVSAdmin.BusinessLogic.Services
             return automapper.Map<List<ProviderProfileDto>>(providers);
         }
 
+        public async Task<ServiceDto> GetServiceDetails(int serviceId)
+        {
+            var service = await regManagementRepository.GetServiceDetails(serviceId);
+            ServiceDto serviceDto = automapper.Map<ServiceDto>(service);
+            return serviceDto;
+        }
+
         public async Task<ProviderProfileDto> GetProviderDetails(int providerProfileId)
         {
             var provider = await regManagementRepository.GetProviderDetails(providerProfileId);
@@ -43,7 +49,7 @@ namespace DVSAdmin.BusinessLogic.Services
             return providerDto;
         }
 
-        public async Task<ProviderProfileDto> GetProviderWithServiceDeatils(int providerProfileId)
+        public async Task<ProviderProfileDto> GetProviderWithServiceDetails(int providerProfileId)
         {
             var provider = await regManagementRepository.GetProviderWithServiceDetails(providerProfileId);
             ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);           

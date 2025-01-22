@@ -6,7 +6,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+
 
 namespace DVSAdmin.Controllers
 {
@@ -62,7 +62,7 @@ namespace DVSAdmin.Controllers
         [HttpGet("publish-service")]
         public async Task<IActionResult> PublishService(int providerId)
         {           
-            ProviderProfileDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);
+            ProviderProfileDto providerDto = await regManagementService.GetProviderWithServiceDetails(providerId);
             providerDto.Services= providerDto.Services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish).ToList();
             List<int> ServiceIds = providerDto.Services.Select(item => item.Id).ToList();
             HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);              
@@ -215,6 +215,67 @@ namespace DVSAdmin.Controllers
         {
             ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
             return View(providerProfileDto);
+        }
+
+        #endregion
+        
+        #region Remove Service
+        [HttpGet("service-removal-reason")]
+        public async Task<IActionResult> ServiceRemovalReason(int providerId, int serviceId)
+        {
+            ViewBag.ProviderId = providerId;
+            ViewBag.ServiceId = serviceId;
+            return View();
+        }
+
+        [HttpPost("proceed-with-service-removal")]
+        public async Task<IActionResult> ProceedWithServiceRemoval(int providerId, int serviceId, ServiceRemovalReasonEnum? serviceRemovalReason)
+        {
+            ServiceDto serviceDto = await regManagementService.GetServiceDetails(serviceId);
+            ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
+            serviceDto.Provider = providerProfileDto;
+            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
+            if (serviceRemovalReason == null)
+            {
+                ModelState.AddModelError("ServiceRemovalReason", "Select a service reason for removal");
+            }
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ProviderId = providerProfileDto.Id;
+                ViewBag.ServiceId = serviceDto.Id;
+                return View("ServiceRemovalReason");
+            }
+           
+            providerProfileDto.DSITUserEmails = userEmails;
+            serviceDto.ServiceRemovalReason = serviceRemovalReason.Value;
+            return View("ProceedServiceRemoval", serviceDto);
+        }
+
+        [HttpPost("publish-service-removal-reason")]
+        public async Task<IActionResult> RequestServiceRemoval(ServiceDto serviceDetailsViewModel, ServiceRemovalReasonEnum serviceRemovalReason)
+        {
+            ServiceDto serviceDto = await regManagementService.GetServiceDetails(serviceDetailsViewModel.Id);
+            List<int> ServiceIds = [serviceDto.Id];
+            GenericResponse genericResponse = await regManagementService.UpdateRemovalStatus(EventTypeEnum.RemoveService, serviceDetailsViewModel.ProviderProfileId, ServiceIds, userEmail, serviceDetailsViewModel.Provider.DSITUserEmails, null, serviceRemovalReason);
+
+            if (genericResponse.Success)
+            {
+                return RedirectToAction("ServiceRemovalConfirmation", new { providerId = serviceDetailsViewModel.ProviderProfileId, serviceId = serviceDto.Id });
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "An error occurred while saving the removal reason.");
+                return View("ServiceRemovalReason", new { providerId = serviceDetailsViewModel.ProviderProfileId, serviceId = serviceDto.Id });
+            }
+        }
+
+        [HttpGet("service-removal-confirmation")]
+        public async Task<IActionResult> ServiceRemovalConfirmation(int providerId, int serviceId)
+        {
+            ServiceDto serviceDto = await regManagementService.GetServiceDetails(serviceId);
+            ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
+            serviceDto.Provider = providerProfileDto;
+            return View(serviceDto);
         }
 
         #endregion

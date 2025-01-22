@@ -1,7 +1,6 @@
 ﻿using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
-using DVSRegister.CommonUtility.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 namespace DVSAdmin.Data.Repositories.RegisterManagement
@@ -37,6 +36,12 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
              .Include(p => p.Services).ThenInclude(x=>x.CertificateReview).Include(p => p.Services).ThenInclude(x => x.PublicInterestCheck)
             .Where(p=>p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();
             
+        }
+
+        public async Task<Service> GetServiceDetails(int serviceId)
+        {
+            return await context.Service.Where(s => s.Id == serviceId).FirstOrDefaultAsync() ?? new Service(); ;
+
         }
         public async Task<ProviderProfile> GetProviderWithServiceDetails(int providerId)
         {
