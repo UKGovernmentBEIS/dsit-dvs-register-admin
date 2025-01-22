@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\RegisterManagement\**" />
+    <EmbeddedResource Remove="Models\RegisterManagement\**" />
+    <None Remove="Models\RegisterManagement\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Extensions\" />
   </ItemGroup>
 

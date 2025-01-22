@@ -1,0 +1,55 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.Extensions;
+@model ProviderProfileDto;
+
+@{
+    ViewData["Title"] = "You have requested to remove this provider from the register";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    <main id="main-content" class="govuk-main-wrapper govuk-main-wrapper--l govuk-!-margin-top-8">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">You have requested to remove this provider from the register</h1>
+                <p class="govuk-body govuk-!-margin-bottom-6">You have sent a removal request for the following provider:</p>
+                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible" />
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Service Provider</th>
+                            <th scope="col" class="govuk-table__header">Publication status</th>
+                            <th scope="col" class="govuk-table__header">Date and time of <br /> removal request <br />(UTC)</th>
+                            <th scope="col" class="govuk-table__header">Conformity <br />Assessment Body</th>
+                            <th scope="col" class="govuk-table__header">Services</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@Model.RegisteredName</td>
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.ProviderStatus)</td>
+                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.RemovalRequestTime)</td>
+                            <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
+                            <td class="govuk-table__cell">
+                                @foreach (var item in @Model.Services)
+                                {
+                                    <div class="govuk-!-margin-bottom-1">
+                                        @item.ServiceName
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="govuk-body govuk-!-margin-bottom-8">The service provider and DSIT will receive an email notification within 20 minutes.</p>
+            </div>
+        </div>
+        <div class="govuk-button-group govuk-!-margin-bottom-8">
+            <a href="register-management-list?providerId=@Model?.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                Go back to register management
+            </a>
+        </div>
+    </main>
+</div>
+
+

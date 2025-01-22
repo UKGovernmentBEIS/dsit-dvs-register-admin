@@ -2,9 +2,16 @@
 @using DVSAdmin.Extensions;
 @model ProviderProfileDto;
 @using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.CommonUtility.Models;
 @{
     ViewData["Title"] = "Provider Details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+
+    var providerEmailsViewModel = new ProviderEmailsViewModel
+    {
+        Heading = "Provider contact information",
+        ProviderContact = Model
+    };
 }
 
 <div class="govuk-width-container">
@@ -15,6 +22,7 @@
                 <h1 class="govuk-heading-xl">@Model.RegisteredName</h1>
 
                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_PublicationStatusTableView.cshtml", Model)
+                @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ProviderContactView.cshtml", Model)
 
                 @foreach (var item in Model.Services)
@@ -29,6 +37,13 @@
                                 <li class="govuk-summary-card__action">
                                     <a class="govuk-link" href="service-details?serviceId=@item.Id">View service details <span class="govuk-visually-hidden"> of Service @item.ServiceNumber</span></a>
                                 </li>
+                                @if(item.ServiceStatus == ServiceStatusEnum.Published)
+                                {
+                                   @*  TODO @ remove service flow *@
+                                    <li class="govuk-summary-card__action">
+                                        <a class="govuk-link" href="service-removal-reason?serviceId=@item.Id&providerId=@Model.Id">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
+                                    </li>
+                                }
                             </ul>
                         </div>
                         <div class="govuk-summary-card__content">
@@ -46,7 +61,21 @@
                                         Publication status
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        @HtmlExtensions.ToStyledStrongTag(@item.ServiceStatus)
+                                        @if(item?.CertificateReview!=null && item?.CertificateReview?.CertificateReviewStatus == CertificateReviewEnum.Rejected)
+                                        {
+                                            @HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateReviewStatus)
+                                        }
+                                        else if (item?.PublicInterestCheck != null 
+                                        && item?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckFailed ||
+                                        item?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
+                                        {
+                                            @HtmlExtensions.ToStyledStrongTag(item.PublicInterestCheck.PublicInterestCheckStatus)
+                                        }
+                                        else
+                                        {
+                                            @HtmlExtensions.ToStyledStrongTag(@item.ServiceStatus)
+                                        }
+                                      
                                     </dd>
                                 </div>
                             </dl>
@@ -61,6 +90,15 @@
                             Publish
                         </a>
 
+                    </div>
+                }
+
+                @* Show button to remove entire provider when all services are published, other wise Remove hyperlink for each services which are published *@
+                @if (@Model.ProviderStatus == ProviderStatusEnum.Published && @Model.Services.All(s => s.ServiceStatus == ServiceStatusEnum.Published)){
+                    <div class="govuk-button-group">
+                        <a href="reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
+                            Remove provider from register
+                        </a>
                     </div>
                 }
             </div>

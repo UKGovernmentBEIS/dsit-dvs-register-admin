@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DVSAdmin.CommonUtility.Models.Enums;
-using DVSAdmin.Data.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
-using NpgsqlTypes;
 
 namespace DVSAdmin.Data.Entities
 {
@@ -29,17 +27,19 @@ namespace DVSAdmin.Data.Entities
         public string SecondaryContactTelephoneNumber { get; set; }
         public string PublicContactEmail { get; set; }
         public string? ProviderTelephoneNumber { get; set; }
-        public string ProviderWebsiteAddress { get; set; }        
+        public string ProviderWebsiteAddress { get; set; }
+        public RemovalReasonsEnum? RemovalReason { get; set; }
 
         [ForeignKey("CabUser")]
         public int CabUserId { get; set; }
         public CabUser CabUser { get; set; }
         public ProviderStatusEnum ProviderStatus { get; set; }
-        public ICollection<Service>? Services { get; set; }
-        public NpgsqlTsVector SearchVector { get; set; }
+        public ICollection<Service>? Services { get; set; }      
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
         public DateTime? PublishedTime { get; set; }
+        public DateTime? RemovalRequestTime { get; set; }
         public PublicInterestCheck PublicInterestCheck { get; set; }
+        public DateTime? RemovedTime { get; set; }
     }
 }

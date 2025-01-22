@@ -41,14 +41,19 @@ namespace DVSAdmin.Extensions
                 case PublicInterestCheckEnum.PublicInterestCheckFailed:
                 case PublicInterestCheckEnum.PrimaryCheckFailed:
                 case PublicInterestCheckEnum.SentBackBySecondReviewer:
-                return "govuk-tag govuk-tag--red";
+                case ServiceStatusEnum.Removed:
+                case ServiceStatusEnum.CabAwaitingRemovalConfirmation:
+                case ProviderStatusEnum.CabAwaitingRemovalConfirmation:
+                    return "govuk-tag govuk-tag--red";
 
 
 
                 case ApplicationReviewStatusEnum.InPrimaryReview: 
                 case ProviderStatusEnum.ActionRequired:
                 case ProviderStatusEnum.PublishedActionRequired:
+                case ProviderStatusEnum.AwaitingRemovalConfirmation:
                 case ServiceStatusEnum.ReadyToPublish:
+                case ServiceStatusEnum.AwaitingRemovalConfirmation:
                 case CertificateReviewEnum.InReview:
                 case PublicInterestCheckEnum.InPrimaryReview:
                 case PublicInterestCheckEnum.PrimaryCheckSkipped:

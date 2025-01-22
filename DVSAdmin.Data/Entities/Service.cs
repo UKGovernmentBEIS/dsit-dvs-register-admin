@@ -1,5 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models;
-using NpgsqlTypes;
+using DVSAdmin.CommonUtility.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -40,7 +40,7 @@ namespace DVSAdmin.Data.Entities
         public CabUser CabUser { get; set; }
         public int ServiceNumber { get;set; }      
         public ServiceStatusEnum ServiceStatus { get; set; }
-        public NpgsqlTsVector SearchVector { get; set; }
+    
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
         public DateTime? PublishedTime { get; set; }
@@ -48,5 +48,9 @@ namespace DVSAdmin.Data.Entities
         public PublicInterestCheck PublicInterestCheck { get; set; }
         public ProceedApplicationConsentToken ProceedApplicationConsentToken { get; set; }
         public ProceedPublishConsentToken ProceedPublishConsentToken { get;set; }
+        public string? RemovalReasonByCab { get; set; }
+        public ServiceRemovalReasonEnum? ServiceRemovalReason { get; set; }
+        public DateTime? RemovalRequestTime { get; set; }
+        public DateTime? RemovedTime { get; set; }
     }
 }

@@ -32,7 +32,10 @@ namespace DVSAdmin.CommonUtility.Models
         public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }
         public ServicePublishedCABTemplate ServicePublishedCABTemplate { get; set; }
         public ServicePublishedDSITTemplate ServicePublishedDSITTemplate { get;set; }
-        public ProceedApplicationConsentToDIPTemplate ProceedApplicationConsentToDIPTemplate { get; set; }       
+        public ProceedApplicationConsentToDIPTemplate ProceedApplicationConsentToDIPTemplate { get; set; } 
+        
+        public RequestToRemoveToProviderTemplate RequestToRemoveToProviderTemplate { get; set; }
+        public Removal2iCheckToDSITTemplate Removal2iCheckToDSITTemplate { get; set; }
 
     }
 }
