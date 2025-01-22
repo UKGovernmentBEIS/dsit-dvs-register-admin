@@ -2,6 +2,7 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.Data.Repositories.BackgroundJobs
 
@@ -10,7 +11,7 @@ namespace DVSAdmin.Data.Repositories.BackgroundJobs
     {
         private readonly DVSAdminDbContext context;
         private readonly ILogger<BackgroundJobRepository> logger;
-        
+
         public BackgroundJobRepository(DVSAdminDbContext context, ILogger<BackgroundJobRepository> logger)
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
@@ -18,33 +19,46 @@ namespace DVSAdmin.Data.Repositories.BackgroundJobs
         }
 
         public async Task<List<Service>> GetExpiredCertificates()
-        { 
-            return await context.Service
-                .Where(s => s.ConformityExpiryDate <= DateTime.UtcNow)
+        {
+            return await context.Service.Include(s => s.Provider).ThenInclude(s=>s.Services)
+                .Where(s => s.ConformityExpiryDate <= DateTime.UtcNow && s.ServiceStatus == ServiceStatusEnum.Published)
                 .ToListAsync();
         }
 
         public async Task MarkAsRemoved(List<int>? serviceIds)
         {
-            if (serviceIds == null || !serviceIds.Any())
-            {
-                logger.LogError("Service IDs cannot be null or empty: {$1}", nameof(serviceIds));
-            }
-            
             var servicesToRemove = await context.Service
                 .Where(s => serviceIds != null && serviceIds.Contains(s.Id))
                 .ToListAsync();
 
-            if (!servicesToRemove.Any())
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
             {
-                logger.LogError("No services found with the provided IDs");
+                foreach (var service in servicesToRemove)
+                {
+                    service.ServiceStatus = ServiceStatusEnum.Removed;
+                    service.ModifiedTime = DateTime.UtcNow;
+                    service.RemovedTime = DateTime.UtcNow;
+                    service.ServiceRemovalReason = ServiceRemovalReasonEnum.RemovedByCronJob;
+
+                    if (service.Provider.Services != null && service.Provider.Services.All(s => s.ServiceStatus == ServiceStatusEnum.Removed))
+                    {
+                        var provider = await context.ProviderProfile.Where(p => p.Id == service.ProviderProfileId).FirstOrDefaultAsync();
+                        provider.ProviderStatus = ProviderStatusEnum.RemovedFromRegister;
+                        provider.RemovalReason = RemovalReasonsEnum.RemovedByCronJob;
+                        provider.RemovedTime = DateTime.UtcNow;
+                    }
+                }
+
+                await context.SaveChangesAsync();
+                transaction.Commit();
             }
-            
-            foreach (var service in servicesToRemove)
+
+            catch (Exception ex)
             {
-                service.ServiceStatus = ServiceStatusEnum.Removed;
+                await transaction.RollbackAsync();
+                logger.LogError($"BackgroundJobRepository: MarkAsRemoved method failed: {ex}");
             }
-            await context.SaveChangesAsync();
         }
     }
 }
