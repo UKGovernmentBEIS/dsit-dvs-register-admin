@@ -450,8 +450,49 @@ namespace DVSAdmin.CommonUtility.Email
                 Personalisation = personalisation
             };
             return await SendEmail(emailModel);
-        }       
+        }
 
+        #endregion
+
+        #region Remove emails
+        public async Task<bool> SendRequestToRemoveToProvider(string recipientName, string emailAddress, string confirmationLink)
+        {
+            var template = govUkNotifyConfig.RequestToRemoveToProviderTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.RecipientName,  recipientName},
+                { template.ConfirmationLink,  confirmationLink}
+
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendRemoval2iCheckToDSIT(string recipientName, string emailAddress, string removalLink, string companyName, string serviceName, string reasonForRemoval)
+        {
+            var template = govUkNotifyConfig.Removal2iCheckToDSITTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.RecipientName,  recipientName},           
+                { template.CompanyName,  companyName},
+                { template.ServiceName,  serviceName},
+                { template.RemovalLink,  removalLink},
+                { template.ReasonForRemoval,reasonForRemoval}
+
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
         #endregion
     }
 }

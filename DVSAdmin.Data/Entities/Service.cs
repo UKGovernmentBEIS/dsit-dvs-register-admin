@@ -49,7 +49,7 @@ namespace DVSAdmin.Data.Entities
         public PublicInterestCheck PublicInterestCheck { get; set; }
         public ProceedApplicationConsentToken ProceedApplicationConsentToken { get; set; }
         public ProceedPublishConsentToken ProceedPublishConsentToken { get;set; }
-
+        public string? RemovalReasonByCab { get; set; }
         public ServiceRemovalReasonEnum? ServiceRemovalReason { get; set; }
         public DateTime? RemovalRequestTime { get; set; }
         public DateTime? RemovedTime { get; set; }
