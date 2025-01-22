@@ -91,7 +91,7 @@
                     }
                     else
                     {
-                        @foreach (var email in Model.DSITUserEmails)
+                        @foreach (var email in Model.DSITUserEmails.Split(',').ToList())
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
@@ -127,7 +127,7 @@
 
                 @using (Html.BeginForm("RequestProviderRemoval", "RegisterManagement", FormMethod.Post))
                 {
-                    @Html.HiddenFor(u=>u.DSITUserEmails)
+                    @Html.Hidden("DSITUserEmails", string.Join(",", Model.DSITUserEmails))
                     @Html.HiddenFor(m => m.Id)
                     <input type="hidden" name="removalReason" value="@Model.RemovalReason" />
                     <div class="govuk-button-group govuk-!-margin-top-8 govuk-!-margin-bottom-8">

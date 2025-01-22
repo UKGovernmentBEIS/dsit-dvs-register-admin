@@ -154,20 +154,30 @@ namespace DVSAdmin.BusinessLogic.Services
                     genericResponse = await regManagementRepository.SaveRemoveProviderToken(removeProviderToken, TeamEnum.DSIT, eventType, loggedInUserEmail);
 
 
-                    ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
-                    if (reason == RemovalReasonsEnum.ProviderRequestedRemoval)
+                    if (genericResponse.Success)
                     {
-                        string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
-                        //To Do: email to providers
-                        foreach(var email in dsitUserEmails)
+                        ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
+
+                        var filteredServiceNames = providerProfile.Services.Where(s => serviceIds.Contains(s.Id)).Select(s => s.ServiceName).ToList();
+                        string serviceNames = string.Join("\r", filteredServiceNames);
+                        
+                        if (reason == RemovalReasonsEnum.ProviderRequestedRemoval)
                         {
-                            //send email
+                            string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
+                            await emailSender.SendRequestToRemoveToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, linkForEmailToProvider);
+                            await emailSender.SendRequestToRemoveToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, linkForEmailToProvider);
+
                         }
-                    }
-                    else
-                    {
-                        string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;
-                        //To do : email to dsit
+                        else if (reason >= RemovalReasonsEnum.ProviderNoLongerExists && reason<= RemovalReasonsEnum.NecessaryForNationalSecurity)
+                        {
+                            string reasonString = RemovalReasonsEnumExtensions.GetDescription(reason.Value);
+                            string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;                           
+                            foreach (var email in dsitUserEmails)
+                            {
+                                await emailSender.SendRemoval2iCheckToDSIT(email, email, linkForEmailToDSIT, providerProfile.RegisteredName, serviceNames, reasonString);
+                            }
+
+                        } 
                     }
 
                 }

@@ -17,6 +17,8 @@ namespace DVSAdmin.CommonUtility.Models
         [Description("Removed")]
         Removed = 5,
         [Description("Awaiting removal confirmation")]
-        AwaitingRemovalConfirmation = 6
+        AwaitingRemovalConfirmation = 6,
+        [Description("Removal requested by CAB")]
+        CabAwaitingRemovalConfirmation = 7
     }
 }

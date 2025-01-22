@@ -30,5 +30,9 @@
         public Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName, string companyName, string emailAddress);
         public Task<bool> SendServicePublishedToCAB(string recipientName, string serviceName, string companyName, string emailAddress);
         public Task<bool> SendServicePublishedToDSIT(string companyName, string serviceName);
+
+        //remove provider
+        public Task<bool> SendRequestToRemoveToProvider(string recipientName, string emailAddress, string confirmationLink);
+        public Task<bool> SendRemoval2iCheckToDSIT(string recipientName, string emailAddress, string removalLink, string companyName, string serviceName, string reasonForRemoval);
     }
 }
