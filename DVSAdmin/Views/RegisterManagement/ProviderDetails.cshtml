@@ -39,9 +39,16 @@
                                 </li>
                                 @if(item.ServiceStatus == ServiceStatusEnum.Published)
                                 {
-                                   @*  TODO @ remove service flow *@
+                                   
                                     <li class="govuk-summary-card__action">
                                         <a class="govuk-link" href="service-removal-reason?serviceId=@item.Id&providerId=@Model.Id">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
+                                    </li>
+                                }
+                                else if (item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
+                                {
+                                    @*  Add link for  cab withdrawal flow*@
+                                    <li class="govuk-summary-card__action">
+                                        <a class="govuk-link" href="#">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
                                     </li>
                                 }
                             </ul>
@@ -93,10 +100,22 @@
                     </div>
                 }
 
-                @* Show button to remove entire provider when all services are published, other wise Remove hyperlink for each services which are published *@
-                @if (@Model.ProviderStatus == ProviderStatusEnum.Published && @Model.Services.All(s => s.ServiceStatus == ServiceStatusEnum.Published)){
+                @* Show button to remove entire provider when all services are published, other wise Remove hyperlink for each services which are published 
+                    Identify button click using names
+                *@
+                @if ((@Model.ProviderStatus == ProviderStatusEnum.Published || @Model.ProviderStatus == ProviderStatusEnum.PublishedActionRequired)
+                && @Model.Services.All(s => s.ServiceStatus == ServiceStatusEnum.Published) )
+                {
                     <div class="govuk-button-group">
                         <a href="reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
+                            Remove provider from register
+                        </a>
+                    </div>
+                }
+                else if (@Model.Services.All(s => s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation))
+                {
+                    <div class="govuk-button-group">
+                        <a href="reason-for-removal?providerId=@Model.Id" role="button" name="cabremovalrequest" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
                             Remove provider from register
                         </a>
                     </div>
