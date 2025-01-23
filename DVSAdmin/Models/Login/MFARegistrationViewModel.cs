@@ -9,7 +9,7 @@ namespace DVSAdmin.Models
 		public string? Password { get; set; }
 
         [Required(ErrorMessage = "Enter a valid MFA code")]
-        [RegularExpression("^[0-9]{6}$", ErrorMessage = "The MFA code must be a 6-digit number.")]
+        [RegularExpression("^[0-9]{6}$", ErrorMessage = "The MFA code must be a 6-digit number")]
         public string MFACode { get; set; }
 	}
 }
