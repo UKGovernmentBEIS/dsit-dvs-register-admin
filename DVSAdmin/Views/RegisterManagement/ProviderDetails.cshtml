@@ -37,20 +37,25 @@
                                 <li class="govuk-summary-card__action">
                                     <a class="govuk-link" href="service-details?serviceId=@item.Id">View service details <span class="govuk-visually-hidden"> of Service @item.ServiceNumber</span></a>
                                 </li>
-                                @if(item.ServiceStatus == ServiceStatusEnum.Published)
+                                @if (item.ServiceStatus == ServiceStatusEnum.Published)
                                 {
-                                   
                                     <li class="govuk-summary-card__action">
                                         <a class="govuk-link" href="service-removal-reason?serviceId=@item.Id&providerId=@Model.Id">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
                                     </li>
                                 }
-                                else if (item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
+                                else if (item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation && Model.Services.Count() > 1)
                                 {
-                                    @*  Add link for  cab withdrawal flow*@
                                     <li class="govuk-summary-card__action">
-                                        <a class="govuk-link" href="#">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
+                                        <a class="govuk-link" href="@Url.Action("CabRemoval", "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id, whatToRemove = "Service" })">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
                                     </li>
                                 }
+                                else if (item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
+                                {
+                                    <li class="govuk-summary-card__action">
+                                        <a class="govuk-link" href="@Url.Action("CabRemoval", "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id, whatToRemove = "Provider" })">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
+                                    </li>
+                                }
+
                             </ul>
                         </div>
                         <div class="govuk-summary-card__content">
@@ -100,11 +105,7 @@
                     </div>
                 }
 
-                @* Show button to remove entire provider when all services are published, other wise Remove hyperlink for each services which are published 
-                    Identify button click using names
-                *@
-                @if ((@Model.ProviderStatus == ProviderStatusEnum.Published || @Model.ProviderStatus == ProviderStatusEnum.PublishedActionRequired)
-                && @Model.Services.All(s => s.ServiceStatus == ServiceStatusEnum.Published) )
+                @if (!(Model.ProviderStatus == ProviderStatusEnum.RemovedFromRegister || Model.ProviderStatus == ProviderStatusEnum.ActionRequired))
                 {
                     <div class="govuk-button-group">
                         <a href="reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
@@ -112,14 +113,7 @@
                         </a>
                     </div>
                 }
-                else if (@Model.Services.All(s => s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation))
-                {
-                    <div class="govuk-button-group">
-                        <a href="reason-for-removal?providerId=@Model.Id" role="button" name="cabremovalrequest" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
-                            Remove provider from register
-                        </a>
-                    </div>
-                }
+
             </div>
         </div>
     </main>

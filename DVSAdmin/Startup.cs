@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
 using DVSAdmin.Data.Repositories.BackgroundJobs;
+using DVSAdmin.Data.Repositories.RemoveProvider;
 
 namespace DVSAdmin
 {
@@ -127,6 +128,8 @@ namespace DVSAdmin
             services.AddScoped<IPublicInterestCheckService, PublicInterestService>();
             services.AddScoped<IPublicInterestCheckRepository, PublicInterestCheckRepository>();
             services.AddScoped<IBackgroundJobRepository, BackgroundJobRepository>();
+            services.AddScoped<IRemoveProviderService, RemoveProviderService>();
+            services.AddScoped<IRemoveProviderRepository, RemoveProviderRepository>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {

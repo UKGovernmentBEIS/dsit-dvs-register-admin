@@ -36,16 +36,19 @@ namespace DVSAdmin.Extensions
                 case ApplicationReviewStatusEnum.ApplicationRejected: 
                               
              
-                case ProviderStatusEnum.RemovedFromRegister:
+                
                 case CertificateReviewEnum.Rejected:
                 case PublicInterestCheckEnum.PublicInterestCheckFailed:
                 case PublicInterestCheckEnum.PrimaryCheckFailed:
                 case PublicInterestCheckEnum.SentBackBySecondReviewer:
-                case ServiceStatusEnum.Removed:
                 case ServiceStatusEnum.CabAwaitingRemovalConfirmation:
                 case ProviderStatusEnum.CabAwaitingRemovalConfirmation:
                     return "govuk-tag govuk-tag--red";
 
+
+                case ProviderStatusEnum.RemovedFromRegister:
+                case ServiceStatusEnum.Removed:
+                    return "govuk-tag govuk-tag--grey";
 
 
                 case ApplicationReviewStatusEnum.InPrimaryReview: 
