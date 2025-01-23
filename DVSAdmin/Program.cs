@@ -1,6 +1,8 @@
 ﻿using DVSAdmin;
+using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.Data;
 using DVSAdmin.Middleware;
+using Hangfire;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +21,6 @@ builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
 
 startup.ConfigureServices(builder.Services);
 var app = builder.Build();
-
 
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetRequiredService<DVSAdminDbContext>();
@@ -45,6 +46,7 @@ if (!app.Environment.IsDevelopment())
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
+    app.UseHangfireDashboard();
     app.UseMiddleware<BasicAuthMiddleware>();
 }
 else
@@ -52,6 +54,13 @@ else
     app.UseMiddleware<ExceptionHandlerMiddleware>();
 }
 
+var jobRunner = app.Services.GetService<IRecurringJobManager>();
+
+// Check for expired certificates at 00:00 daily
+jobRunner.AddOrUpdate<BackgroundJobService>(
+    "Set status of expired certificates to Removed",
+    service => service.RemoveExpiredCertificates(),
+    "0 0 * * *"); // 00:00 UTC
 
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseHttpsRedirection();
