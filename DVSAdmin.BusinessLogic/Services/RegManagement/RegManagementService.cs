@@ -128,17 +128,22 @@ namespace DVSAdmin.BusinessLogic.Services
         /// <returns></returns>
         public async Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType,  int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, RemovalReasonsEnum? reason, ServiceRemovalReasonEnum? serviceRemovalReason)
         {
-            TeamEnum team = eventType == EventTypeEnum.RemovedByCronJob ? TeamEnum.CronJob : TeamEnum.DSIT;
-            GenericResponse genericResponse = await regManagementRepository.UpdateRemovalStatus(eventType, team, providerProfileId, serviceIds, loggedInUserEmail, reason, serviceRemovalReason);
+            GenericResponse genericResponse = await regManagementRepository.UpdateRemovalStatus(eventType, TeamEnum.DSIT, providerProfileId, serviceIds, loggedInUserEmail, reason, serviceRemovalReason);
 
-            if (genericResponse.Success)
-            {
-
+                TeamEnum requstedBy = TeamEnum.DSIT;
+                if (reason == RemovalReasonsEnum.ProviderRequestedRemoval || (serviceRemovalReason!=null && serviceRemovalReason == ServiceRemovalReasonEnum.ProviderRequestedRemoval))
+                {
+                    requstedBy = TeamEnum.Provider;
+                }
+                 
+                if (genericResponse.Success)
+                {
                 if (eventType == EventTypeEnum.RemoveProvider || eventType == EventTypeEnum.RemoveService)
                 {
                     // save token for 2i check
                     //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
-                    TokenDetails tokenDetails = jwtService.GenerateToken();
+
+                    TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty);
 
                     ICollection<RemoveTokenServiceMapping> removeTokenServiceMapping = [];
                     if (eventType == EventTypeEnum.RemoveService)
@@ -155,7 +160,7 @@ namespace DVSAdmin.BusinessLogic.Services
                         Token = tokenDetails.Token,
                         TokenId = tokenDetails.TokenId,
                         RemoveTokenServiceMapping = removeTokenServiceMapping,
-                        CreatedTime = DateTime.UtcNow
+                        CreatedTime = DateTime.UtcNow                        
                     };
                     genericResponse = await regManagementRepository.SaveRemoveProviderToken(removeProviderToken, TeamEnum.DSIT, eventType, loggedInUserEmail);
 
@@ -167,14 +172,15 @@ namespace DVSAdmin.BusinessLogic.Services
                         var filteredServiceNames = providerProfile.Services.Where(s => serviceIds.Contains(s.Id)).Select(s => s.ServiceName).ToList();
                         string serviceNames = string.Join("\r", filteredServiceNames);
                         
-                        if (reason == RemovalReasonsEnum.ProviderRequestedRemoval)
+                        if (requstedBy == TeamEnum.Provider)
                         {
                             string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
-                            await emailSender.SendRequestToRemoveToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, linkForEmailToProvider);
-                            await emailSender.SendRequestToRemoveToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, linkForEmailToProvider);
-
+                            await emailSender.SendRequestToRemoveRecordToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, linkForEmailToProvider);
+                            await emailSender.SendRequestToRemoveRecordToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, linkForEmailToProvider);
+                       
+                            await emailSender.SendRecordRemovalRequestConfirmationToDSIT(providerProfile.RegisteredName, serviceNames);
                         }
-                        else if (reason >= RemovalReasonsEnum.ProviderNoLongerExists && reason<= RemovalReasonsEnum.NecessaryForNationalSecurity)
+                        else if (requstedBy == TeamEnum.DSIT)
                         {
                             string reasonString = RemovalReasonsEnumExtensions.GetDescription(reason.Value);
                             string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;                           
@@ -192,5 +198,180 @@ namespace DVSAdmin.BusinessLogic.Services
             return genericResponse;
         }
 
+
+
+        public async Task<GenericResponse> RemoveServiceRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails,ServiceRemovalReasonEnum? serviceRemovalReason)
+        {
+            GenericResponse genericResponse = await regManagementRepository.RemoveServiceRequest( providerProfileId, serviceIds, loggedInUserEmail, serviceRemovalReason);
+            
+            TeamEnum requstedBy = TeamEnum.DSIT;
+            if (serviceRemovalReason != null && serviceRemovalReason == ServiceRemovalReasonEnum.ProviderRequestedRemoval)
+            {
+                requstedBy = TeamEnum.Provider;
+            }
+
+            if (genericResponse.Success)
+            {
+                ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
+                // update provider status
+
+                ProviderStatusEnum providerStatus = GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
+                genericResponse = await regManagementRepository.UpdateProviderStatus(providerProfileId, providerStatus,loggedInUserEmail,EventTypeEnum.RemoveService);
+                // save token for 2i check
+                //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
+
+                TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty);
+
+                ICollection<RemoveTokenServiceMapping> removeTokenServiceMapping = [];
+                foreach (var item in serviceIds)
+                {
+                    removeTokenServiceMapping.Add(new RemoveTokenServiceMapping { ServiceId = item });
+                }
+
+                RemoveProviderToken removeProviderToken = new()
+                {
+                    ProviderProfileId = providerProfileId,
+                    Token = tokenDetails.Token,
+                    TokenId = tokenDetails.TokenId,
+                    RemoveTokenServiceMapping = removeTokenServiceMapping,
+                    CreatedTime = DateTime.UtcNow
+                };
+                genericResponse = await regManagementRepository.SaveRemoveProviderToken(removeProviderToken, TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
+
+
+                if (genericResponse.Success)
+                {
+                    var filteredServiceNames = providerProfile.Services.Where(s => serviceIds.Contains(s.Id)).Select(s => s.ServiceName).ToList();
+                    string serviceNames = string.Join("\r", filteredServiceNames);
+                    string reasonString = ServiceRemovalReasonEnumExtensions.GetDescription(serviceRemovalReason.Value);
+                    if (requstedBy == TeamEnum.Provider)
+                    {
+                        string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
+                        await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, serviceNames,reasonString, linkForEmailToProvider);
+                        await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
+                        
+
+                        //await emailSender.SendRecordRemovalRequestConfirmationToDSIT(providerProfile.RegisteredName, serviceNames);
+                    }
+                    else if (requstedBy == TeamEnum.DSIT)
+                    {
+
+                        string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;
+                        foreach (var email in dsitUserEmails)
+                        {
+                           await emailSender.SendRemoval2iCheckToDSIT(email, email, linkForEmailToDSIT, providerProfile.RegisteredName, serviceNames, reasonString);
+                        }
+
+                    }
+                }               
+            }
+
+            return genericResponse;
+        }
+
+
+
+
+        public async Task<GenericResponse> RemoveProviderRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, RemovalReasonsEnum? reason)
+        {
+            GenericResponse genericResponse = await regManagementRepository.RemoveProviderRequest(providerProfileId, serviceIds, loggedInUserEmail, reason);
+
+            TeamEnum requstedBy = reason == RemovalReasonsEnum.ProviderRequestedRemoval ? TeamEnum.Provider: TeamEnum.DSIT;           
+
+            if (genericResponse.Success)
+            {
+
+                // save token for 2i check
+                //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
+
+                TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty);               
+
+                RemoveProviderToken removeProviderToken = new()
+                {
+                    ProviderProfileId = providerProfileId,
+                    Token = tokenDetails.Token,
+                    TokenId = tokenDetails.TokenId,                  
+                    CreatedTime = DateTime.UtcNow
+                };
+                genericResponse = await regManagementRepository.SaveRemoveProviderToken(removeProviderToken, TeamEnum.DSIT, EventTypeEnum.RemoveProvider, loggedInUserEmail);
+
+                if (genericResponse.Success)
+                {
+                    ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
+
+                    string reasonString = RemovalReasonsEnumExtensions.GetDescription(reason.Value);
+                    await SendEmails(serviceIds, dsitUserEmails, reasonString, requstedBy, tokenDetails, providerProfile);
+                }
+            }
+
+            return genericResponse;
+        }
+
+        private async Task SendEmails(List<int> serviceIds, List<string> dsitUserEmails, string reason, TeamEnum requstedBy, TokenDetails tokenDetails, ProviderProfile providerProfile)
+        {
+            var filteredServiceNames = providerProfile.Services.Where(s => serviceIds.Contains(s.Id)).Select(s => s.ServiceName).ToList();
+            string serviceNames = string.Join("\r", filteredServiceNames);
+
+            if (requstedBy == TeamEnum.Provider)
+            {
+                string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
+                await emailSender.SendRequestToRemoveRecordToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, linkForEmailToProvider);
+                await emailSender.SendRequestToRemoveRecordToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, linkForEmailToProvider);
+
+                await emailSender.SendRecordRemovalRequestConfirmationToDSIT(providerProfile.RegisteredName, serviceNames);
+            }
+            else if (requstedBy == TeamEnum.DSIT)
+            {
+               
+                string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;
+                foreach (var email in dsitUserEmails)
+                {
+                    await emailSender.SendRemoval2iCheckToDSIT(email, email, linkForEmailToDSIT, providerProfile.RegisteredName, serviceNames, reason);
+                }
+
+            }
+        }
+
+        private ProviderStatusEnum GetProviderStatus(ICollection<Service> services, ProviderStatusEnum currentStatus)
+        {
+            ProviderStatusEnum providerStatus = currentStatus;
+            if (services != null && services.Count > 0)
+            {
+
+                if (services.All(service => service.ServiceStatus == ServiceStatusEnum.Removed))
+                {
+                    providerStatus = ProviderStatusEnum.RemovedFromRegister;
+                }
+
+                var priorityOrder = new List<ServiceStatusEnum>
+                    {
+                        ServiceStatusEnum.CabAwaitingRemovalConfirmation,
+                        ServiceStatusEnum.ReadyToPublish,
+                        ServiceStatusEnum.AwaitingRemovalConfirmation,
+                        ServiceStatusEnum.Published,
+                        ServiceStatusEnum.Removed
+                    };
+
+                ServiceStatusEnum highestPriorityStatus = services.Select(service => service.ServiceStatus).OrderBy(status => priorityOrder.IndexOf(status)).FirstOrDefault();
+
+
+                switch (highestPriorityStatus)
+                {
+                    case ServiceStatusEnum.CabAwaitingRemovalConfirmation:
+                        return ProviderStatusEnum.CabAwaitingRemovalConfirmation;
+                    case ServiceStatusEnum.ReadyToPublish:
+                        bool hasPublishedServices = services.Any(service => service.ServiceStatus == ServiceStatusEnum.Published);
+                        return hasPublishedServices ? ProviderStatusEnum.PublishedActionRequired : ProviderStatusEnum.ActionRequired;
+                    case ServiceStatusEnum.AwaitingRemovalConfirmation:
+                        return ProviderStatusEnum.AwaitingRemovalConfirmation;
+                    case ServiceStatusEnum.Published:
+                        return ProviderStatusEnum.Published;
+                    default:
+                        return ProviderStatusEnum.AwaitingRemovalConfirmation;
+                }
+
+            }
+            return providerStatus;
+        }
     }
 }
