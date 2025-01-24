@@ -32,7 +32,9 @@
         public Task<bool> SendServicePublishedToDSIT(string companyName, string serviceName);
 
         //remove provider
-        public Task<bool> SendRequestToRemoveToProvider(string recipientName, string emailAddress, string confirmationLink);
+        public Task<bool> SendRequestToRemoveRecordToProvider(string recipientName, string emailAddress, string confirmationLink);
         public Task<bool> SendRemoval2iCheckToDSIT(string recipientName, string emailAddress, string removalLink, string companyName, string serviceName, string reasonForRemoval);
+        public Task <bool> SendRecordRemovalRequestConfirmationToDSIT(string companyName, string serviceName);
+        public Task<bool> SendRequestToRemoveServiceToProvider(string recipientName, string emailAddress,string serviceName, string reason, string removalLink);
     }
 }

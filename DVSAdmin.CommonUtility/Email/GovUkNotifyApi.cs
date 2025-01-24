@@ -455,9 +455,9 @@ namespace DVSAdmin.CommonUtility.Email
         #endregion
 
         #region Remove emails
-        public async Task<bool> SendRequestToRemoveToProvider(string recipientName, string emailAddress, string confirmationLink)
+        public async Task<bool> SendRequestToRemoveRecordToProvider(string recipientName, string emailAddress, string confirmationLink)
         {
-            var template = govUkNotifyConfig.RequestToRemoveToProviderTemplate;
+            var template = govUkNotifyConfig.RequestToRemoveRecordToProvider;
             var personalisation = new Dictionary<string, dynamic>
             {
                 { template.RecipientName,  recipientName},
@@ -484,6 +484,44 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.RemovalLink,  removalLink},
                 { template.ReasonForRemoval,reasonForRemoval}
 
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendRecordRemovalRequestConfirmationToDSIT(string companyName, string serviceName)
+        {
+            var template = govUkNotifyConfig.RecordRemovalRequestSentConfirmationToDSIT;
+            var personalisation = new Dictionary<string, dynamic>
+            {             
+                { template.CompanyName,  companyName},
+                { template.ServiceName,  serviceName},
+             
+
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = govUkNotifyConfig.OfDiaEmailId,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendRequestToRemoveServiceToProvider(string recipientName, string emailAddress, string serviceName, string reason, string removalLink)
+        {
+            var template = govUkNotifyConfig.RequestToRemoveServiceToProvider;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.RecipientName,  recipientName},
+                { template.ServiceName,  serviceName},
+                { template.ReasonForRemoval,  reason},
+                { template.RemovalLink,  removalLink}
              };
             var emailModel = new GovUkNotifyEmailModel
             {

@@ -12,6 +12,10 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<ServiceDto> GetServiceDetails(int serviceId);
         public Task<ProviderProfileDto> GetProviderWithServiceDetails(int providerId);
         public Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, string loggedInUserEmail);
+
+        //to do : remove UpdateRemovalStatus
         public Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType,  int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, RemovalReasonsEnum? reason, ServiceRemovalReasonEnum? serviceRemovalReason);
+        public Task<GenericResponse> RemoveProviderRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, RemovalReasonsEnum? reason);
+        public Task<GenericResponse> RemoveServiceRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, ServiceRemovalReasonEnum? serviceRemovalReason);
     }
 }

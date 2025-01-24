@@ -117,13 +117,11 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                             existingService.RemovalRequestTime = DateTime.UtcNow;
                         }
                     }
-                    else if (eventType == EventTypeEnum.RemoveService || eventType == EventTypeEnum.RemoveServiceRequestedByCab || eventType == EventTypeEnum.RemovedByCronJob)
+                    else if (eventType == EventTypeEnum.RemoveService || eventType == EventTypeEnum.RemoveServiceRequestedByCab )
                     {
-                        if (eventType == EventTypeEnum.RemoveServiceRequestedByCab || eventType == EventTypeEnum.RemovedByCronJob)
-                        {
-                            serviceStatus = ServiceStatusEnum.Removed;
-                            removedTime = DateTime.UtcNow;
-                        }
+                        serviceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
+                        removedTime = DateTime.UtcNow;
+
 
                         foreach (var item in serviceIds)
                         {
@@ -157,6 +155,118 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             }
             return genericResponse;
         }
+
+
+
+
+        public async Task<GenericResponse> RemoveServiceRequest( int providerProfileId, List<int> serviceIds, string loggedInUserEmail, ServiceRemovalReasonEnum? serviceRemovalReason)
+        {
+            GenericResponse genericResponse = new();
+           
+            
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                foreach (var item in serviceIds)
+                {
+                    var service = await context.Service.Where(s => s.Id == item && s.ProviderProfileId == providerProfileId).FirstOrDefaultAsync();
+                    service.ServiceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
+                    service.ModifiedTime = DateTime.UtcNow;
+                    service.RemovalRequestTime = DateTime.UtcNow;
+                    service.ServiceRemovalReason = serviceRemovalReason;                    
+                }              
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
+                await transaction.CommitAsync();
+                genericResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                genericResponse.Success = false;
+                await transaction.RollbackAsync();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
+
+        public async Task<GenericResponse> UpdateProviderStatus(int providerProfileId, ProviderStatusEnum providerStatus, string loggedInUserEmail, EventTypeEnum eventType)
+        {
+            GenericResponse genericResponse = new();       
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(p => p.Id == providerProfileId);
+                if (existingProvider != null)
+                {
+
+                    existingProvider.ModifiedTime = DateTime.UtcNow;
+                    existingProvider.ProviderStatus = providerStatus;
+                  
+                    if (providerStatus == ProviderStatusEnum.RemovedFromRegister)
+                    {
+                        existingProvider.RemovedTime = DateTime.UtcNow;
+                    }
+                    else if (providerStatus == ProviderStatusEnum.AwaitingRemovalConfirmation)
+                    {
+                        existingProvider.RemovalRequestTime = DateTime.UtcNow;
+                    }
+                }
+                await context.SaveChangesAsync(TeamEnum.DSIT, eventType, loggedInUserEmail);
+                await transaction.CommitAsync();
+                genericResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                genericResponse.Success = false;
+                await transaction.RollbackAsync();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+        public async Task<GenericResponse> RemoveProviderRequest(int providerProfileId,List<int> serviceIds, string loggedInUserEmail, RemovalReasonsEnum? reason)
+        {
+            GenericResponse genericResponse = new();         
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(p => p.Id == providerProfileId);
+                if (existingProvider != null)
+                {
+                    existingProvider.RemovalReason = reason;
+                    existingProvider.ModifiedTime = DateTime.UtcNow;
+                    existingProvider.RemovalRequestTime = DateTime.UtcNow;
+                    existingProvider.ProviderStatus = ProviderStatusEnum.AwaitingRemovalConfirmation;
+
+                    var existingServices = await context.Service.Where(e => serviceIds.Contains(e.Id)
+                    && e.ProviderProfileId == providerProfileId && e.ServiceStatus == ServiceStatusEnum.Published).ToListAsync();
+                    foreach (var existingService in existingServices)
+                    {
+                        existingService.ServiceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
+                        existingService.ModifiedTime = DateTime.UtcNow;
+                        existingService.RemovalRequestTime = DateTime.UtcNow;
+                    }
+                }
+
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveProvider, loggedInUserEmail);
+                await transaction.CommitAsync();
+                genericResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                genericResponse.Success = false;
+                await transaction.RollbackAsync();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
+
+
+      
+
+
+
+
 
 
         public async Task<GenericResponse> SaveRemoveProviderToken(RemoveProviderToken removeProviderToken, TeamEnum team, EventTypeEnum eventType, string loggedinUserEmail)
@@ -202,8 +312,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                     if(providerStatus == ProviderStatusEnum.Published)
                     {
                         existingProvider.PublishedTime = DateTime.UtcNow;
-                    }
-                  
+                    }                  
                 }
 
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RegisterManagement, loggedInUserEmail);

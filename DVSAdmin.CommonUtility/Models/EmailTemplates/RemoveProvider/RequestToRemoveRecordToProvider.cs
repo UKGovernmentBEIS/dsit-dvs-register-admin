@@ -1,5 +1,5 @@
 ﻿namespace DVSAdmin.CommonUtility.Models
-{     public class RequestToRemoveToProviderTemplate
+{     public class RequestToRemoveRecordToProvider
     {
     public string Id { get; set; }
     public string RecipientName { get; set; }

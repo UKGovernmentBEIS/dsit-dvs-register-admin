@@ -34,8 +34,11 @@ namespace DVSAdmin.CommonUtility.Models
         public ServicePublishedDSITTemplate ServicePublishedDSITTemplate { get;set; }
         public ProceedApplicationConsentToDIPTemplate ProceedApplicationConsentToDIPTemplate { get; set; } 
         
-        public RequestToRemoveToProviderTemplate RequestToRemoveToProviderTemplate { get; set; }
+        public RequestToRemoveRecordToProvider RequestToRemoveRecordToProvider { get; set; }
         public Removal2iCheckToDSITTemplate Removal2iCheckToDSITTemplate { get; set; }
+        public RecordRemovalRequestSentConfirmationToDSIT RecordRemovalRequestSentConfirmationToDSIT { get; set; }
+
+        public RequestToRemoveServiceToProvider RequestToRemoveServiceToProvider { get;set; }
 
     }
 }

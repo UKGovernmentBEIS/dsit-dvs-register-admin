@@ -195,7 +195,7 @@ namespace DVSAdmin.Controllers
             List<string> dsitUserEmails = providerDetailsViewModel.DSITUserEmails.Split(',').ToList();
             ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerDetailsViewModel.Id);
             List<int> ServiceIds = providerProfileDto.Services.Select(item => item.Id).ToList();
-            GenericResponse genericResponse = await regManagementService.UpdateRemovalStatus(EventTypeEnum.RemoveProvider,  providerProfileDto.Id, ServiceIds, userEmail, dsitUserEmails, removalReason, null);
+            GenericResponse genericResponse = await regManagementService.RemoveProviderRequest(providerProfileDto.Id, ServiceIds, userEmail, dsitUserEmails, removalReason);
 
             if (genericResponse.Success)
             {
@@ -257,7 +257,7 @@ namespace DVSAdmin.Controllers
             List<string> dsitUserEmails = serviceDetailsViewModel.Provider.DSITUserEmails.Split(',').ToList() ;
             ServiceDto serviceDto = await regManagementService.GetServiceDetails(serviceDetailsViewModel.Id);
             List<int> ServiceIds = [serviceDto.Id];
-            GenericResponse genericResponse = await regManagementService.UpdateRemovalStatus(EventTypeEnum.RemoveService, serviceDetailsViewModel.ProviderProfileId, ServiceIds, userEmail, dsitUserEmails, null, serviceRemovalReason);
+            GenericResponse genericResponse = await regManagementService.RemoveServiceRequest(serviceDetailsViewModel.ProviderProfileId, ServiceIds, userEmail, dsitUserEmails, serviceRemovalReason);
 
             if (genericResponse.Success)
             {

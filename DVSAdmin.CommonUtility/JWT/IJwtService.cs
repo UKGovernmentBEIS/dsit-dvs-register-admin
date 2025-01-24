@@ -4,7 +4,7 @@ namespace DVSAdmin.CommonUtility.JWT
 {
     public interface IJwtService
     {
-        public TokenDetails GenerateToken();
+        public TokenDetails GenerateToken(string audience = "");
         public Task<TokenDetails> ValidateToken(string token);
     }
 }
