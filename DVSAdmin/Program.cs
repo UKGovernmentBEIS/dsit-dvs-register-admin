@@ -2,8 +2,8 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.Data;
 using DVSAdmin.Middleware;
-using Microsoft.AspNetCore.HttpOverrides;
 using Hangfire;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,11 +56,11 @@ else
 
 var jobRunner = app.Services.GetService<IRecurringJobManager>();
 
-// Check for expired certificates at 17:00 daily            
+// Check for expired certificates at 00:00 daily
 jobRunner.AddOrUpdate<BackgroundJobService>(
     "Set status of expired certificates to Removed",
     service => service.RemoveExpiredCertificates(),
-    "* * * * *"); // every minute
+    "0 0 * * *"); // 00:00 UTC
 
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseHttpsRedirection();
