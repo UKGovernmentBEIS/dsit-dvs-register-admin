@@ -33,12 +33,13 @@ namespace DVSAdmin
         
         public void ConfigureServices(IServiceCollection services)
         {
+            string connectionString = string.Format(configuration.GetValue<string>("DB_CONNECTIONSTRING"));
             // Add Hangfire services.
             services.AddHangfire(config => config
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
-                .UsePostgreSqlStorage(configuration.GetConnectionString("DB_CONNECTIONSTRING")));
+                .UsePostgreSqlStorage(connectionString));
 
             // Add the Hangfire processing server as IHostedService
             services.AddHangfireServer();
@@ -71,9 +72,9 @@ namespace DVSAdmin
 
         private void ConfigureDatabaseContext(IServiceCollection services)
         {
-            var databaseConnectionString = configuration.GetConnectionString("DB_CONNECTIONSTRING");
+            string connectionString = string.Format(configuration.GetValue<string>("DB_CONNECTIONSTRING"));
             services.AddDbContext<DVSAdminDbContext>(opt =>
-                opt.UseNpgsql(databaseConnectionString));
+                opt.UseNpgsql(connectionString));
         }
 
         private void ConfigureSession(IServiceCollection services)
