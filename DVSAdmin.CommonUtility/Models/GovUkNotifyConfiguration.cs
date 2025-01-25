@@ -40,5 +40,7 @@ namespace DVSAdmin.CommonUtility.Models
 
         public RequestToRemoveServiceToProvider RequestToRemoveServiceToProvider { get;set; }
 
+        public RemovalRequestForApprovalToDSIT RemovalRequestForApprovalToDSIT { get; set; }
+
     }
 }
