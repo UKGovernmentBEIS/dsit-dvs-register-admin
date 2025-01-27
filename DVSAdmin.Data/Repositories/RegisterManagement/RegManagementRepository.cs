@@ -18,14 +18,14 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
         public async Task<List<ProviderProfile>> GetProviders()
         {
-            var statusOrder = new List<int> { 2, 4, 6,7, 3, 5 };
+            var statusOrder = new List<int> { 2, 4, 6, 7, 3, 5 };
 
             return await context.ProviderProfile
                 .Include(p => p.Services)
                 .Include(x => x.CabUser).ThenInclude(x => x.Cab)
-                .OrderBy(c => statusOrder.IndexOf((int)c.ProviderStatus)) 
-                .ThenBy(c => c.PublishedTime) 
-                .Where(c=>c.ProviderStatus > ProviderStatusEnum.Unpublished)
+                .OrderBy(c => statusOrder.IndexOf((int)c.ProviderStatus))
+                .ThenBy(c => c.PublishedTime)
+                .Where(c => c.ProviderStatus > ProviderStatusEnum.Unpublished)
                 .ToListAsync();
         }
 
@@ -33,9 +33,9 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         public async Task<ProviderProfile> GetProviderDetails(int providerId)
         {
             return await context.ProviderProfile.Include(p => p.Services).Include(x => x.CabUser).Include(x => x.CabUser).ThenInclude(x => x.Cab)
-             .Include(p => p.Services).ThenInclude(x=>x.CertificateReview).Include(p => p.Services).ThenInclude(x => x.PublicInterestCheck)
-            .Where(p=>p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();
-            
+             .Include(p => p.Services).ThenInclude(x => x.CertificateReview).Include(p => p.Services).ThenInclude(x => x.PublicInterestCheck)
+            .Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();
+
         }
 
         public async Task<Service> GetServiceDetails(int serviceId)
@@ -45,13 +45,13 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         }
         public async Task<ProviderProfile> GetProviderWithServiceDetails(int providerId)
         {
-             return await context.ProviderProfile
-            .Include(p=>p.Services).ThenInclude(s=>s.ServiceRoleMapping).ThenInclude(s=>s.Role)
-            .Include(p => p.Services).ThenInclude(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel)
-            .Include(p => p.Services).ThenInclude(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
-            .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
-            .Where(p => p.Id == providerId &&( p.ProviderStatus == ProviderStatusEnum.Published ||
-            p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired || p.ProviderStatus == ProviderStatusEnum.ActionRequired)).FirstOrDefaultAsync() ?? new ProviderProfile();
+            return await context.ProviderProfile
+           .Include(p => p.Services).ThenInclude(s => s.ServiceRoleMapping).ThenInclude(s => s.Role)
+           .Include(p => p.Services).ThenInclude(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel)
+           .Include(p => p.Services).ThenInclude(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
+           .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
+           .Where(p => p.Id == providerId && (p.ProviderStatus == ProviderStatusEnum.Published ||
+           p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired || p.ProviderStatus == ProviderStatusEnum.ActionRequired)).FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
         public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, ServiceStatusEnum serviceStatus, string loggedInUserEmail)
@@ -68,11 +68,11 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                     {
                         existingService.ServiceStatus = serviceStatus;
                         existingService.ModifiedTime = DateTime.UtcNow;
-                        if(serviceStatus == ServiceStatusEnum.Published)
+                        if (serviceStatus == ServiceStatusEnum.Published)
                         {
                             existingService.PublishedTime = DateTime.UtcNow;
                         }
-                     
+
                     }
                     await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RegisterManagement, loggedInUserEmail);
                 }
@@ -93,8 +93,8 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             List<int> serviceIds, string loggedInUserEmail, RemovalReasonsEnum? reason, ServiceRemovalReasonEnum? serviceRemovalReason)
         {
             GenericResponse genericResponse = new();
-            ServiceStatusEnum serviceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;           
-            DateTime?removedTime = null;
+            ServiceStatusEnum serviceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
+            DateTime? removedTime = null;
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
@@ -117,7 +117,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                             existingService.RemovalRequestTime = DateTime.UtcNow;
                         }
                     }
-                    else if (eventType == EventTypeEnum.RemoveService || eventType == EventTypeEnum.RemoveServiceRequestedByCab )
+                    else if (eventType == EventTypeEnum.RemoveService || eventType == EventTypeEnum.RemoveServiceRequestedByCab)
                     {
                         serviceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
                         removedTime = DateTime.UtcNow;
@@ -159,11 +159,11 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
 
 
-        public async Task<GenericResponse> RemoveServiceRequest( int providerProfileId, List<int> serviceIds, string loggedInUserEmail, ServiceRemovalReasonEnum? serviceRemovalReason)
+        public async Task<GenericResponse> RemoveServiceRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, ServiceRemovalReasonEnum? serviceRemovalReason)
         {
             GenericResponse genericResponse = new();
-           
-            
+
+
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
@@ -173,8 +173,8 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                     service.ServiceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
                     service.ModifiedTime = DateTime.UtcNow;
                     service.RemovalRequestTime = DateTime.UtcNow;
-                    service.ServiceRemovalReason = serviceRemovalReason;                    
-                }              
+                    service.ServiceRemovalReason = serviceRemovalReason;
+                }
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
                 await transaction.CommitAsync();
                 genericResponse.Success = true;
@@ -191,7 +191,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
         public async Task<GenericResponse> UpdateProviderStatus(int providerProfileId, ProviderStatusEnum providerStatus, string loggedInUserEmail, EventTypeEnum eventType)
         {
-            GenericResponse genericResponse = new();       
+            GenericResponse genericResponse = new();
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
@@ -201,7 +201,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
                     existingProvider.ModifiedTime = DateTime.UtcNow;
                     existingProvider.ProviderStatus = providerStatus;
-                  
+
                     if (providerStatus == ProviderStatusEnum.RemovedFromRegister)
                     {
                         existingProvider.RemovedTime = DateTime.UtcNow;
@@ -223,9 +223,9 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             }
             return genericResponse;
         }
-        public async Task<GenericResponse> RemoveProviderRequest(int providerProfileId,List<int> serviceIds, string loggedInUserEmail, RemovalReasonsEnum? reason)
+        public async Task<GenericResponse> RemoveProviderRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, RemovalReasonsEnum? reason)
         {
-            GenericResponse genericResponse = new();         
+            GenericResponse genericResponse = new();
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
@@ -262,7 +262,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
 
 
-      
+
 
 
 
@@ -305,14 +305,14 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             try
             {
 
-                var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(e => e.Id == providerId);     
+                var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(e => e.Id == providerId);
                 if (existingProvider != null)
                 {
                     existingProvider.ProviderStatus = providerStatus;
-                    if(providerStatus == ProviderStatusEnum.Published)
+                    if (providerStatus == ProviderStatusEnum.Published)
                     {
                         existingProvider.PublishedTime = DateTime.UtcNow;
-                    }                  
+                    }
                 }
 
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RegisterManagement, loggedInUserEmail);
@@ -334,14 +334,14 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             GenericResponse genericResponse = new GenericResponse();
             using var transaction = context.Database.BeginTransaction();
             try
-            {               
-               await context.RegisterPublishLog.AddAsync(registerPublishLog);
-               await context.SaveChangesAsync();
-               transaction.Commit();
-               genericResponse.Success = true;
+            {
+                await context.RegisterPublishLog.AddAsync(registerPublishLog);
+                await context.SaveChangesAsync();
+                transaction.Commit();
+                genericResponse.Success = true;
             }
             catch (Exception ex)
-            {                
+            {
                 genericResponse.Success = false;
                 transaction.Rollback();
                 logger.LogError(ex.Message);

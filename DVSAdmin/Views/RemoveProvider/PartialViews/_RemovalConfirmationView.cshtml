@@ -1,0 +1,58 @@
+﻿@using DVSAdmin.Extensions
+@model CabRemovalViewModel
+
+<div class="govuk-width-container">
+    <main id="main-content" class="govuk-main-wrapper govuk-main-wrapper--l govuk-!-margin-top-8">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                @if (Model.WhatToRemove == "Service")
+                {
+                    <h1 class="govuk-heading-xl govuk-!-margin-bottom-8">You have removed a service from the register</h1>
+                    <p class="govuk-body govuk-!-margin-bottom-7">You have removed the following service:</p>
+                }
+                else if (Model.WhatToRemove == "Provider")
+                {
+                    <h1 class="govuk-heading-xl govuk-!-margin-bottom-8">You have removed a provider from the register</h1>
+                    <p class="govuk-body govuk-!-margin-bottom-7">You have removed the following provider:</p>
+                }
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Service: @Model.Service.ServiceName
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Service name</dt>
+                                <dd class="govuk-summary-list__value">@Model.Service.ServiceName</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Service publication status</dt>
+                                <dd class="govuk-summary-list__value">@HtmlExtensions.ToStyledStrongTag(Model.Service.ServiceStatus)</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Service provider registered name</dt>
+                                <dd class="govuk-summary-list__value">@Model.Service.Provider.RegisteredName</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Conformity Assessment Body</dt>
+                                <dd class="govuk-summary-list__value">@Model.Service.Provider.CabUser.Cab.CabName</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+                <p class="govuk-body govuk-!-margin-bottom-7">
+                    The Conformity Assessment Body, the provider and DSIT will receive an email notification of the removal within 20 minutes.
+                </p>
+            </div>
+        </div>
+
+        <div class="govuk-button-group govuk-!-margin-bottom-8">
+            <a href="@Url.Action("RegisterManagement", "RegisterManagement")" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                Go back to register management
+            </a>
+        </div>
+    </main>
+</div>
