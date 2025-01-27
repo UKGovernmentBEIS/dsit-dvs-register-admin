@@ -65,7 +65,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             return genericResponse;
         }
 
-        public async Task<GenericResponse> RemoveServiceRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, ServiceRemovalReasonEnum? serviceRemovalReason)
+        public async Task<GenericResponse> RemoveServiceRequestByCab(int providerProfileId, List<int> serviceIds, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new();
 
@@ -87,8 +87,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                         service.ServiceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
                     }
                     service.ModifiedTime = DateTime.UtcNow;
-                    service.RemovalRequestTime = DateTime.UtcNow;
-                    service.ServiceRemovalReason = serviceRemovalReason;
+                    service.RemovalRequestTime = DateTime.UtcNow;                  
                 }
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
                 await transaction.CommitAsync();

@@ -41,7 +41,7 @@ namespace DVSAdmin.Controllers
         {
             ServiceDto serviceDto = await removeProviderService.GetServiceDetails(cabRemovalViewModel.Service.Id);
             List<int> ServiceIds = [serviceDto.Id];
-            GenericResponse genericResponse = await removeProviderService.RemoveServiceRequest(cabRemovalViewModel.Service.ProviderProfileId, ServiceIds, userEmail, null, null);
+            GenericResponse genericResponse = await removeProviderService.RemoveServiceRequestByCab(cabRemovalViewModel.Service.ProviderProfileId, ServiceIds, userEmail, null);
  
             if (genericResponse.Success)
             {
