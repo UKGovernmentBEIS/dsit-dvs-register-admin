@@ -45,58 +45,28 @@ namespace DVSAdmin.BusinessLogic.Services
                 ProviderProfile providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
                 // update provider status
 
-                ProviderStatusEnum providerStatus = GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
+                ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
                 genericResponse = await removeProviderRepository.UpdateProviderStatus(providerProfileId, providerStatus, loggedInUserEmail, EventTypeEnum.RemoveServiceRequestedByCab);
                 // save token for 2i check
 
-                //To do : emails
+                Service service = providerProfile.Services.Where(s => s.Id == serviceIds[0]).FirstOrDefault(); // only single service removal in current release
+               if (genericResponse.Success && providerStatus == ProviderStatusEnum.RemovedFromRegister)
+                { 
+                    // to do provider removal emails
+                }
+                else
+                {
+                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.CabUser.CabEmail, service.CabUser.CabEmail, service.ServiceName, service.RemovalReasonByCab);//41/CAB + Provider/Service removed
+                    await emailSender.ServiceRemovedToDSIT(service.ServiceName, service.RemovalReasonByCab); //42/DSIT/Service removed
+                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.Provider.PrimaryContactFullName, service.Provider.PrimaryContactEmail, service.ServiceName, service.RemovalReasonByCab);//41/CAB + Provider/Service removed
+                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.Provider.SecondaryContactFullName, service.Provider.SecondaryContactEmail, service.ServiceName, service.RemovalReasonByCab);//41/CAB + Provider/Service removed
+                }
              
             }
 
             return genericResponse;
         }
 
-        private ProviderStatusEnum GetProviderStatus(ICollection<Service> services, ProviderStatusEnum currentStatus)
-        {
-            ProviderStatusEnum providerStatus = currentStatus;
-            if (services != null && services.Count > 0)
-            {
-
-                if (services.All(service => service.ServiceStatus == ServiceStatusEnum.Removed))
-                {
-                    providerStatus = ProviderStatusEnum.RemovedFromRegister;
-                    return providerStatus;
-                }
-
-                var priorityOrder = new List<ServiceStatusEnum>
-                    {
-                        ServiceStatusEnum.CabAwaitingRemovalConfirmation,
-                        ServiceStatusEnum.ReadyToPublish,
-                        ServiceStatusEnum.AwaitingRemovalConfirmation,
-                        ServiceStatusEnum.Published,
-                        ServiceStatusEnum.Removed
-                    };
-
-                ServiceStatusEnum highestPriorityStatus = services.Select(service => service.ServiceStatus).OrderBy(status => priorityOrder.IndexOf(status)).FirstOrDefault();
-
-
-                switch (highestPriorityStatus)
-                {
-                    case ServiceStatusEnum.CabAwaitingRemovalConfirmation:
-                        return ProviderStatusEnum.CabAwaitingRemovalConfirmation;
-                    case ServiceStatusEnum.ReadyToPublish:
-                        bool hasPublishedServices = services.Any(service => service.ServiceStatus == ServiceStatusEnum.Published);
-                        return hasPublishedServices ? ProviderStatusEnum.PublishedActionRequired : ProviderStatusEnum.ActionRequired;
-                    case ServiceStatusEnum.AwaitingRemovalConfirmation:
-                        return ProviderStatusEnum.AwaitingRemovalConfirmation;
-                    case ServiceStatusEnum.Published:
-                        return ProviderStatusEnum.Published;
-                    default:
-                        return ProviderStatusEnum.AwaitingRemovalConfirmation;
-                }
-
-            }
-            return providerStatus;
-        }
+       
     }
 }

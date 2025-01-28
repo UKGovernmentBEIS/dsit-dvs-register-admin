@@ -27,7 +27,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
 
         public async Task<Service> GetServiceDetails(int serviceId)
         {
-            return await context.Service.Where(s => s.Id == serviceId).FirstOrDefaultAsync() ?? new Service(); ;
+            return await context.Service.Include(s=>s.Provider).Include(s=>s.CabUser).Where(s => s.Id == serviceId).FirstOrDefaultAsync() ?? new Service(); ;
 
         }
         public async Task<GenericResponse> UpdateProviderStatus(int providerProfileId, ProviderStatusEnum providerStatus, string loggedInUserEmail, EventTypeEnum eventType)
