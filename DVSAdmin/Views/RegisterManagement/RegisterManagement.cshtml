@@ -1,4 +1,5 @@
 ﻿@model DVSAdmin.Models.RegManagement.ProviderListViewModel;
+@using DVSAdmin.CommonUtility.Models
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using DVSAdmin.Extensions
 @{
@@ -48,9 +49,11 @@
                                         <td class="govuk-table__cell">
                                             @foreach (var item1 in item.Services)
                                             {
-                                                <div class="govuk-!-margin-bottom-1">
-                                                    @item1.ServiceName
-                                                </div>
+                                                if (item1.ServiceStatus != ServiceStatusEnum.Removed){
+                                                    <div class="govuk-!-margin-bottom-1">
+                                                        @item1.ServiceName
+                                                    </div>
+                                                }
                                             }
                                         </td>
                                     </tr>
