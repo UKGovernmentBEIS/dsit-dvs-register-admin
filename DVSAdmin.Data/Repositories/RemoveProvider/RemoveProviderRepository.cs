@@ -3,7 +3,6 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 namespace DVSAdmin.Data.Repositories.RemoveProvider
 {
     public class RemoveProviderRepository : IRemoveProviderRepository
