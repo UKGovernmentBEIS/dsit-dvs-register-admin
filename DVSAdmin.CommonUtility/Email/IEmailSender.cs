@@ -37,5 +37,13 @@
         public Task <bool> SendRecordRemovalRequestConfirmationToDSIT(string companyName, string serviceName);
         public Task<bool> SendRequestToRemoveServiceToProvider(string recipientName, string emailAddress,string serviceName, string reason, string removalLink);
         public Task<bool> RemovalRequestForApprovalToDSIT(string emailAddress, string serviceName, string companyName, string reason);
+
+        public Task<bool> RequestToRemoveServiceNotificationToDSITUser(string emailAddress, string serviceName, string companyName, string reason);
+
+        public Task<bool> ServiceRemovedConfirmedToCabOrProvider(string recipientName, string emailAddress, string serviceName, string reasonForRemoval);
+        public Task<bool> ServiceRemovedToDSIT(string serviceName, string reasonForRemoval);
+
+
+
     }
 }

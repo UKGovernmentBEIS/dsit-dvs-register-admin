@@ -42,5 +42,10 @@ namespace DVSAdmin.CommonUtility.Models
 
         public RemovalRequestForApprovalToDSIT RemovalRequestForApprovalToDSIT { get; set; }
 
+        public RequestToRemoveServiceNotificationToDSIT RequestToRemoveServiceNotificationToDSIT { get; set; }
+
+        public ServiceRemovedConfirmedToCabOrProvider ServiceRemovedConfirmedToCabOrProvider { get; set; }
+        public ServiceRemovedToDSIT ServiceRemovedToDSIT { get; set; }
+
     }
 }

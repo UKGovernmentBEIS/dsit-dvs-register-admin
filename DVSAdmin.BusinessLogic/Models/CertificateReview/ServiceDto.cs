@@ -35,6 +35,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public DateTime? PublishedTime { get; set; }   
         public CertificateReviewDto CertificateReview { get; set; }
         public PublicInterestCheckDto PublicInterestCheck { get; set; }
+        public string? RemovalReasonByCab { get; set; }
         public int DaysLeftToComplete { get; set; }
         public int DaysLeftToCompletePICheck { get; set; }
 

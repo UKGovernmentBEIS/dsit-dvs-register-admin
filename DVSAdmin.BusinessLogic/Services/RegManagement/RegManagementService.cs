@@ -115,14 +115,11 @@ namespace DVSAdmin.BusinessLogic.Services
 
             return genericResponse;
         }
-
-       
-
-
+        
         public async Task<GenericResponse> RemoveServiceRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails,ServiceRemovalReasonEnum? serviceRemovalReason)
         {
             GenericResponse genericResponse = await regManagementRepository.RemoveServiceRequest( providerProfileId, serviceIds, loggedInUserEmail, serviceRemovalReason);
-            
+            ProviderProfile providerProfile = new();
             TeamEnum requstedBy = TeamEnum.DSIT;
             if (serviceRemovalReason != null && serviceRemovalReason == ServiceRemovalReasonEnum.ProviderRequestedRemoval)
             {
@@ -131,10 +128,10 @@ namespace DVSAdmin.BusinessLogic.Services
 
             if (genericResponse.Success)
             {
-                ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
+                providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
                 // update provider status
 
-                ProviderStatusEnum providerStatus = GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
+                ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
                 genericResponse = await regManagementRepository.UpdateProviderStatus(providerProfileId, providerStatus,loggedInUserEmail,EventTypeEnum.RemoveService);
                 // save token for 2i check
                 //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
@@ -168,17 +165,16 @@ namespace DVSAdmin.BusinessLogic.Services
                         string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
                         await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, serviceNames,reasonString, linkForEmailToProvider);
                         await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
-                        
+                        await emailSender.RequestToRemoveServiceNotificationToDSITUser(loggedInUserEmail, serviceNames, providerProfile.RegisteredName, reasonString);
 
-                        //await emailSender.SendRecordRemovalRequestConfirmationToDSIT(providerProfile.RegisteredName, serviceNames);
                     }
                     else if (requstedBy == TeamEnum.DSIT)
                     {
-
+                        await emailSender.RemovalRequestForApprovalToDSIT(loggedInUserEmail, serviceNames, providerProfile.RegisteredName, reasonString);//50/DSIT/Removal request created by DSIT
                         string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;
                         foreach (var email in dsitUserEmails)
                         {
-                           await emailSender.SendRemoval2iCheckToDSIT(email, email, linkForEmailToDSIT, providerProfile.RegisteredName, serviceNames, reasonString);
+                           await emailSender.SendRemoval2iCheckToDSIT(email, email, linkForEmailToDSIT, providerProfile.RegisteredName, serviceNames, reasonString);//47/DSIT/removal 2i check review request
                         }
 
                     }
@@ -187,8 +183,6 @@ namespace DVSAdmin.BusinessLogic.Services
 
             return genericResponse;
         }
-
-
 
 
         public async Task<GenericResponse> RemoveProviderRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, RemovalReasonsEnum? reason)
@@ -249,46 +243,6 @@ namespace DVSAdmin.BusinessLogic.Services
             }
         }
 
-        private ProviderStatusEnum GetProviderStatus(ICollection<Service> services, ProviderStatusEnum currentStatus)
-        {
-            ProviderStatusEnum providerStatus = currentStatus;
-            if (services != null && services.Count > 0)
-            {
-
-                if (services.All(service => service.ServiceStatus == ServiceStatusEnum.Removed))
-                {
-                    providerStatus = ProviderStatusEnum.RemovedFromRegister;
-                }
-
-                var priorityOrder = new List<ServiceStatusEnum>
-                    {
-                        ServiceStatusEnum.CabAwaitingRemovalConfirmation,
-                        ServiceStatusEnum.ReadyToPublish,
-                        ServiceStatusEnum.AwaitingRemovalConfirmation,
-                        ServiceStatusEnum.Published,
-                        ServiceStatusEnum.Removed
-                    };
-
-                ServiceStatusEnum highestPriorityStatus = services.Select(service => service.ServiceStatus).OrderBy(status => priorityOrder.IndexOf(status)).FirstOrDefault();
-
-
-                switch (highestPriorityStatus)
-                {
-                    case ServiceStatusEnum.CabAwaitingRemovalConfirmation:
-                        return ProviderStatusEnum.CabAwaitingRemovalConfirmation;
-                    case ServiceStatusEnum.ReadyToPublish:
-                        bool hasPublishedServices = services.Any(service => service.ServiceStatus == ServiceStatusEnum.Published);
-                        return hasPublishedServices ? ProviderStatusEnum.PublishedActionRequired : ProviderStatusEnum.ActionRequired;
-                    case ServiceStatusEnum.AwaitingRemovalConfirmation:
-                        return ProviderStatusEnum.AwaitingRemovalConfirmation;
-                    case ServiceStatusEnum.Published:
-                        return ProviderStatusEnum.Published;
-                    default:
-                        return ProviderStatusEnum.AwaitingRemovalConfirmation;
-                }
-
-            }
-            return providerStatus;
-        }
+    
     }
 }
