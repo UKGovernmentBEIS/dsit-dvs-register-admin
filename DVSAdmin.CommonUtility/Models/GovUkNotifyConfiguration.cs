@@ -47,5 +47,8 @@ namespace DVSAdmin.CommonUtility.Models
         public ServiceRemovedConfirmedToCabOrProvider ServiceRemovedConfirmedToCabOrProvider { get; set; }
         public ServiceRemovedToDSIT ServiceRemovedToDSIT { get; set; }
 
+        public RecordRemovedToDSIT RecordRemovedToDSIT { get; set; }
+        public RecordRemovedConfirmedToCabOrProvider RecordRemovedConfirmedToCabOrProvider { get; set; }
+
     }
 }
