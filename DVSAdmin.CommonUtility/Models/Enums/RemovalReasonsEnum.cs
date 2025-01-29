@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Numerics;
 using System.Reflection;
 namespace DVSAdmin.CommonUtility.Models.Enums
 {
@@ -8,7 +9,7 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         // New entries should be added at the last
         [Description("The service provider service certificates have all expired")]
         RemovedByCronJob = 1,
-        [Description("The service provider has requested to remove the whole provider record")]
+        [Description("The service provider has requested to remove the whole provider record or the only remaining service")]
         ProviderRequestedRemoval = 2,
         [Description("The service provider no longer exists")]
         ProviderNoLongerExists = 4,
