@@ -8,7 +8,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ReasonForRemoval", "RegisterManagement", new { providerId = Model.Id }, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "ReasonForRemoval", "RemoveProvider", new { providerId = Model.Id }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
             You are about to send a request to remove a provider’s whole record from the register
@@ -125,7 +125,7 @@
                     </strong>
                 </div>
 
-                @using (Html.BeginForm("RequestProviderRemoval", "RegisterManagement", FormMethod.Post))
+                @using (Html.BeginForm("RequestProviderRemoval", "RemoveProvider", FormMethod.Post))
                 {
                     @Html.Hidden("DSITUserEmails", string.Join(",", Model.DSITUserEmails))
                     @Html.HiddenFor(m => m.Id)

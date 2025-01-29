@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Email;
+using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -13,15 +15,19 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly IRemoveProviderRepository removeProviderRepository;
         private readonly IMapper automapper;
         private readonly IEmailSender emailSender;
+        private readonly IJwtService jwtService;
+        private readonly IConfiguration configuration;
 
 
 
         public RemoveProviderService(IRemoveProviderRepository removeProviderRepository, IMapper automapper,
-          IEmailSender emailSender)
+          IEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
             this.removeProviderRepository = removeProviderRepository;
             this.automapper = automapper;
-            this.emailSender = emailSender;           
+            this.emailSender = emailSender;      
+            this.jwtService = jwtService;
+            this.configuration = configuration;
         }
         public async Task<ServiceDto> GetServiceDetails(int serviceId)
         {
@@ -36,6 +42,131 @@ namespace DVSAdmin.BusinessLogic.Services
             ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);
             return providerDto;
         }
+
+        public async Task<GenericResponse> RemoveServiceRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, ServiceRemovalReasonEnum? serviceRemovalReason)
+        {
+            GenericResponse genericResponse = await removeProviderRepository.RemoveServiceRequest(providerProfileId, serviceIds, loggedInUserEmail, serviceRemovalReason);
+            ProviderProfile providerProfile = new();
+            TeamEnum requstedBy = TeamEnum.DSIT;
+            if (serviceRemovalReason != null && serviceRemovalReason == ServiceRemovalReasonEnum.ProviderRequestedRemoval)
+            {
+                requstedBy = TeamEnum.Provider;
+            }
+
+            if (genericResponse.Success)
+            {
+                providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
+                // update provider status
+
+                ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
+                genericResponse = await removeProviderRepository.UpdateProviderStatus(providerProfileId, providerStatus, loggedInUserEmail, EventTypeEnum.RemoveService);
+                // save token for 2i check
+                //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
+
+                TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty);
+
+                ICollection<RemoveTokenServiceMapping> removeTokenServiceMapping = [];
+                foreach (var item in serviceIds)
+                {
+                    removeTokenServiceMapping.Add(new RemoveTokenServiceMapping { ServiceId = item });
+                }
+
+                RemoveProviderToken removeProviderToken = new()
+                {
+                    ProviderProfileId = providerProfileId,
+                    Token = tokenDetails.Token,
+                    TokenId = tokenDetails.TokenId,
+                    RemoveTokenServiceMapping = removeTokenServiceMapping,
+                    CreatedTime = DateTime.UtcNow
+                };
+                genericResponse = await removeProviderRepository.SaveRemoveProviderToken(removeProviderToken, TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
+
+
+                if (genericResponse.Success)
+                {
+                    var filteredServiceNames = providerProfile.Services.Where(s => serviceIds.Contains(s.Id)).Select(s => s.ServiceName).ToList();
+                    string serviceNames = string.Join("\r", filteredServiceNames);
+                    string reasonString = ServiceRemovalReasonEnumExtensions.GetDescription(serviceRemovalReason.Value);
+                    if (requstedBy == TeamEnum.Provider)
+                    {
+                        string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
+                        await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
+                        await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
+                        await emailSender.RequestToRemoveServiceNotificationToDSITUser(loggedInUserEmail, serviceNames, providerProfile.RegisteredName, reasonString);
+
+                    }
+                    else if (requstedBy == TeamEnum.DSIT)
+                    {
+                        //to do : update notification email 
+                        // await emailSender.RemovalRequestForApprovalToDSIT(loggedInUserEmail, serviceNames, providerProfile.RegisteredName, reasonString);//50/DSIT/Removal request created by DSIT
+                        string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;
+                        foreach (var email in dsitUserEmails)
+                        {
+                            //to do : update notification email 
+                            // await emailSender.SendRemoval2iCheckToDSIT(email, email, linkForEmailToDSIT, providerProfile.RegisteredName, serviceNames, reasonString);//47/DSIT/removal 2i check review request
+                        }
+
+                    }
+                }
+            }
+
+            return genericResponse;
+        }
+
+
+        public async Task<GenericResponse> RemoveProviderRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, RemovalReasonsEnum? reason)
+        {
+            GenericResponse genericResponse = await removeProviderRepository.RemoveProviderRequest(providerProfileId, serviceIds, loggedInUserEmail, reason);
+            TeamEnum requstedBy = reason == RemovalReasonsEnum.ProviderRequestedRemoval ? TeamEnum.Provider : TeamEnum.DSIT;
+            if (genericResponse.Success)
+            {
+                // save token for 2i check
+                //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
+
+                TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty);
+                RemoveProviderToken removeProviderToken = new()
+                {
+                    ProviderProfileId = providerProfileId,
+                    Token = tokenDetails.Token,
+                    TokenId = tokenDetails.TokenId,
+                    CreatedTime = DateTime.UtcNow
+                };
+                genericResponse = await removeProviderRepository.SaveRemoveProviderToken(removeProviderToken, TeamEnum.DSIT, EventTypeEnum.RemoveProvider, loggedInUserEmail);
+                if (genericResponse.Success)
+                {
+                    ProviderProfile providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
+                    string reasonString = RemovalReasonsEnumExtensions.GetDescription(reason.Value);
+                    await SendEmails(serviceIds, dsitUserEmails, reasonString, requstedBy, tokenDetails, providerProfile, loggedInUserEmail);
+                }
+            }
+
+            return genericResponse;
+        }
+
+        private async Task SendEmails(List<int> serviceIds, List<string> dsitUserEmails, string reason, TeamEnum requstedBy, TokenDetails tokenDetails, ProviderProfile providerProfile, string loggedInUserEmail)
+        {
+            var filteredServiceNames = providerProfile.Services.Where(s => serviceIds.Contains(s.Id)).Select(s => s.ServiceName).ToList();
+            string serviceNames = string.Join("\r", filteredServiceNames);
+
+            if (requstedBy == TeamEnum.Provider)
+            {
+                string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
+                await emailSender.SendRequestToRemoveRecordToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, linkForEmailToProvider);
+                await emailSender.SendRequestToRemoveRecordToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, linkForEmailToProvider);
+                await emailSender.SendRecordRemovalRequestConfirmationToDSIT(providerProfile.RegisteredName, serviceNames);
+            }
+            else if (requstedBy == TeamEnum.DSIT)
+            {
+                await emailSender.RemovalRequestForApprovalToDSIT(loggedInUserEmail, serviceNames, providerProfile.RegisteredName, reason);
+                string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;
+                foreach (var email in dsitUserEmails)
+                {
+                    await emailSender.SendRemoval2iCheckToDSIT(email, email, linkForEmailToDSIT, providerProfile.RegisteredName, serviceNames, reason);
+                }
+
+            }
+        }
+
         public async Task<GenericResponse> RemoveServiceRequestByCab(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string>? dsitUserEmails)
         {
             GenericResponse genericResponse = await removeProviderRepository.RemoveServiceRequestByCab(providerProfileId, serviceIds, loggedInUserEmail);
@@ -69,6 +200,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
             return genericResponse;
         }
+
 
        
     }
