@@ -31,7 +31,7 @@
                     <div class="govuk-summary-card">
                         <div class="govuk-summary-card__title-wrapper">
                             <h2 class="govuk-summary-card__title">
-                                Service @item.ServiceNumber
+                                Service: @item.ServiceName
                             </h2>
                             <ul class="govuk-summary-card__actions">
                                 <li class="govuk-summary-card__action">
@@ -96,7 +96,7 @@
                         </div>
                     </div>
                 }
-                @if (!(@Model.ProviderStatus == ProviderStatusEnum.Published)
+                @if (!(Model.ProviderStatus == ProviderStatusEnum.Published)
                       && (Model.ProviderStatus == ProviderStatusEnum.ActionRequired || Model.ProviderStatus == ProviderStatusEnum.PublishedActionRequired) )
                 {
                     <div class="govuk-button-group">
@@ -107,7 +107,7 @@
                     </div>
                 }
 
-                @if (!(Model.ProviderStatus == ProviderStatusEnum.RemovedFromRegister || Model.ProviderStatus == ProviderStatusEnum.ActionRequired))
+                @if (Model.Services.Any(service => service.ServiceStatus == ServiceStatusEnum.Published))
                 {
                     <div class="govuk-button-group">
                         <a href="/remove/provider/reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
