@@ -605,6 +605,44 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+
+        public async Task<bool> RecordRemovedConfirmedToCabOrProvider(string recipientName, string emailAddress, string companyName, string serviceName, string reasonForRemoval)
+        {
+
+            var template = govUkNotifyConfig.RecordRemovedConfirmedToCabOrProvider;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                 { template.RecipientName,  recipientName},
+                { template.CompanyName,  companyName},
+                { template.ServiceName,  serviceName},
+                { template.ReasonForRemoval,  reasonForRemoval},
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendRecordRemovedToDSIT(string companyName, string serviceName, string reasonForRemoval)
+        {
+            var template = govUkNotifyConfig.RecordRemovedToDSIT;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.CompanyName,  companyName},
+                { template.ServiceName,  serviceName},
+                { template.ReasonForRemoval,  reasonForRemoval},
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = govUkNotifyConfig.OfDiaEmailId,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
         #endregion
     }
 }

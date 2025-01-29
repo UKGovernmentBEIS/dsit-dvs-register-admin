@@ -43,6 +43,9 @@
         public Task<bool> ServiceRemovedConfirmedToCabOrProvider(string recipientName, string emailAddress, string serviceName, string reasonForRemoval);
         public Task<bool> ServiceRemovedToDSIT(string serviceName, string reasonForRemoval);
 
+        public Task<bool> SendRecordRemovedToDSIT(string companyName, string serviceName, string reasonForRemoval);
+        public Task<bool> RecordRemovedConfirmedToCabOrProvider(string recipientName, string emailAddress, string companyName, string serviceName, string reasonForRemoval);
+
 
 
     }

@@ -51,8 +51,11 @@ namespace DVSAdmin.BusinessLogic.Services
 
                 Service service = providerProfile.Services.Where(s => s.Id == serviceIds[0]).FirstOrDefault(); // only single service removal in current release
                if (genericResponse.Success && providerStatus == ProviderStatusEnum.RemovedFromRegister)
-                { 
-                    // to do provider removal emails
+                {
+                    await emailSender.SendRecordRemovedToDSIT(providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
+                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.CabUser.CabEmail, providerProfile.CabUser.CabEmail, providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
+                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
+                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
                 }
                 else
                 {
