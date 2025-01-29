@@ -40,11 +40,25 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
         public async Task<ProviderProfile> GetProviderDetails(int providerId)
         {
-            return await context.ProviderProfile.Include(p => p.Services).Include(x => x.CabUser).Include(x => x.CabUser).ThenInclude(x => x.Cab)
-             .Include(p => p.Services).ThenInclude(x => x.CertificateReview).Include(p => p.Services).ThenInclude(x => x.PublicInterestCheck)
-            .Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();
+            var priorityOrder = new List<ServiceStatusEnum>
+            {
+                ServiceStatusEnum.CabAwaitingRemovalConfirmation,
+                ServiceStatusEnum.ReadyToPublish,
+                ServiceStatusEnum.AwaitingRemovalConfirmation,
+                ServiceStatusEnum.Published,
+                ServiceStatusEnum.Removed
+             };
 
+            return await context.ProviderProfile
+                .Include(p => p.Services.OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus))) 
+                .Include(x => x.CabUser)
+                .ThenInclude(x => x.Cab)
+                .Include(p => p.Services).ThenInclude(x => x.CertificateReview)
+                .Include(p => p.Services).ThenInclude(x => x.PublicInterestCheck)
+                .Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished))
+                .FirstOrDefaultAsync() ?? new ProviderProfile();
         }
+
 
         public async Task<Service> GetServiceDetails(int serviceId)
         {
