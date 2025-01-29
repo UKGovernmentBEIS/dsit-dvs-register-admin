@@ -551,7 +551,7 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-        public async Task<bool> RequestToRemoveServiceNotificationToDSITUser(string emailAddress, string serviceName, string companyName, string reason)
+        public async Task<bool> RequestToRemoveServiceNotificationToDSIT(string serviceName, string companyName, string reason)
         {
 
             var template = govUkNotifyConfig.RequestToRemoveServiceNotificationToDSIT;
@@ -563,7 +563,7 @@ namespace DVSAdmin.CommonUtility.Email
              };
             var emailModel = new GovUkNotifyEmailModel
             {
-                EmailAddress = emailAddress,
+                EmailAddress = govUkNotifyConfig.OfDiaEmailId,
                 TemplateId = template.Id,
                 Personalisation = personalisation
             };
