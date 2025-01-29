@@ -170,11 +170,13 @@ namespace DVSAdmin.BusinessLogic.Services
                     }
                     else if (requstedBy == TeamEnum.DSIT)
                     {
-                        await emailSender.RemovalRequestForApprovalToDSIT(loggedInUserEmail, serviceNames, providerProfile.RegisteredName, reasonString);//50/DSIT/Removal request created by DSIT
+                        //to do : update notification email 
+                        // await emailSender.RemovalRequestForApprovalToDSIT(loggedInUserEmail, serviceNames, providerProfile.RegisteredName, reasonString);//50/DSIT/Removal request created by DSIT
                         string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;
                         foreach (var email in dsitUserEmails)
                         {
-                           await emailSender.SendRemoval2iCheckToDSIT(email, email, linkForEmailToDSIT, providerProfile.RegisteredName, serviceNames, reasonString);//47/DSIT/removal 2i check review request
+                            //to do : update notification email 
+                          // await emailSender.SendRemoval2iCheckToDSIT(email, email, linkForEmailToDSIT, providerProfile.RegisteredName, serviceNames, reasonString);//47/DSIT/removal 2i check review request
                         }
 
                     }
