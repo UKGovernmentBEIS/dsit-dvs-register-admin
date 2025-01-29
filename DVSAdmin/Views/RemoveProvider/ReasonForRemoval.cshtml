@@ -17,7 +17,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl">Select a reason for removing this provider</h1>
-                @using (Html.BeginForm("ProceedWithRemoval", "RegisterManagement", FormMethod.Post))
+                @using (Html.BeginForm("ProceedWithRemoval", "RemoveProvider", FormMethod.Post))
                 {
                     <input type="hidden" name="providerId" value="@Model.Id" />
 
@@ -86,7 +86,7 @@
                     </div>
                     <div class="govuk-button-group">
                         <button type="submit" class="govuk-button">Continue</button>
-                        <a href="provider-details?providerId=@Model.Id" class="govuk-button govuk-button--secondary">Cancel</a>
+                        <a href="/register-management/provider-details?providerId=@Model.Id" class="govuk-button govuk-button--secondary">Cancel</a>
                     </div>
                 }
             </div>
