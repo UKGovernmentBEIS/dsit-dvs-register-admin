@@ -135,8 +135,8 @@ namespace DVSAdmin.BusinessLogic.Services
             if (requstedBy == TeamEnum.Provider)
             {
                 string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
-                await emailSender.SendRequestToRemoveRecordToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, linkForEmailToProvider);
-                await emailSender.SendRequestToRemoveRecordToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, linkForEmailToProvider);
+                await emailSender.SendRequestToRemoveRecordToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, linkForEmailToProvider);//29/Provider/Request to remove record
+                await emailSender.SendRequestToRemoveRecordToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, linkForEmailToProvider);//30/DSIT/Record removal request sent
                 await emailSender.SendRecordRemovalRequestConfirmationToDSIT(providerProfile.RegisteredName, serviceNames);
             }
             else if (requstedBy == TeamEnum.DSIT)

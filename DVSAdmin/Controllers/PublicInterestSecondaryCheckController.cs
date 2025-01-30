@@ -42,6 +42,10 @@ namespace DVSAdmin.Controllers
                     {
 
                         ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
+                        if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft || serviceDto.Provider.ProviderStatus == ProviderStatusEnum.RemovedFromRegister)
+                        {
+                            return RedirectToAction(Constants.ErrorPath);
+                        }
                         publicInterestSecondaryCheckViewModel = MapDtoToViewModel(serviceDto);
                         publicInterestSecondaryCheckViewModel.SecondaryCheckUserId = userDto.Id;
                     }
