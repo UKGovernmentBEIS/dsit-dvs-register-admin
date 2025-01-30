@@ -11,7 +11,7 @@
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
-<div class="govuk-width-container">
+<<div class="govuk-width-container">
     @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { providerId = Model.Id }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
@@ -32,7 +32,7 @@
                             <div class="govuk-hint" id="removal-reason-description">You should proceed with removal if any of the reasons below apply.</div>
                             @if (ViewData.ModelState["RemovalReason"] != null && ViewData.ModelState["RemovalReason"].Errors.Count > 0)
                             {
-                                <span class="govuk-error-message">
+                                <span class="govuk-error-message" aria-live="assertive">
                                     <span class="govuk-visually-hidden">Error:</span>
                                     @ViewData.ModelState["RemovalReason"].Errors[0].ErrorMessage
                                 </span>
@@ -44,10 +44,10 @@
                                     for (int i = 1; i < reasons.Count; i++)
                                     {
                                         var reason = reasons[i];
-                                        var radioId = "radio" + +(int)reason;
-                                        var ariaControls = "conditional-reason" + +(int)reason;
-                                        var furtherExpalanationId = "further-explanation" + +(int)reason;
-                                        var furtherExpalanationErrorId = "further-explanation-error" + +(int)reason;
+                                        var radioId = "radio" + (int)reason;
+                                        var ariaControls = "conditional-reason" + (int)reason;
+                                        var furtherExplanationId = "further-explanation" + (int)reason;
+                                        var furtherExplanationErrorId = "further-explanation-error" + (int)reason;
                                         var description = reason.GetDescription();
 
                                         if (!reason.RequiresAdditionalInfo())
@@ -65,22 +65,21 @@
                                             </div>
                                             <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="@ariaControls">
                                                 <div class="govuk-form-group @(ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                                                    <label class="govuk-label" for="@furtherExpalanationId">
+                                                    <label class="govuk-label" for="@furtherExplanationId">
                                                         Give further details on the reason selected:
                                                     </label>
                                                     @if (ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0)
                                                     {
-                                                        <p id="@furtherExpalanationErrorId" class="govuk-error-message">
+                                                        <p id="@furtherExplanationErrorId" class="govuk-error-message" aria-live="assertive">
                                                             <span class="govuk-visually-hidden">Error:</span> @ViewData.ModelState["FurtherExplanation"].Errors[0].ErrorMessage
                                                         </p>
                                                     }
-                                                    <textarea class="govuk-textarea @(ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0 ? "govuk-input--error" : "")" rows="5" id="@furtherExpalanationId" name="FurtherExplanation" aria-describedby="@furtherExpalanationId"></textarea>
+                                                    <textarea class="govuk-textarea @(ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0 ? "govuk-input--error" : "")" rows="5" id="@furtherExplanationId" name="FurtherExplanation" aria-describedby="@furtherExplanationId"></textarea>
                                                 </div>
                                             </div>
                                         }
                                     }
                                 }
-
                             </div>
                         </fieldset>
                     </div>
@@ -93,4 +92,5 @@
         </div>
     </main>
 </div>
+
 

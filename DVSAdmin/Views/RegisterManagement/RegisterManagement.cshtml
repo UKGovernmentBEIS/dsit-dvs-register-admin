@@ -32,8 +32,6 @@
                             <th scope="col" class="govuk-table__header">Services</th>
                         </tr>
                     </thead>
-
-
                     <tbody class="govuk-table__body">
                         @if (Model.AllStatusesList != null)
                         {
@@ -49,19 +47,15 @@
                                         <td class="govuk-table__cell">
                                             @foreach (var item1 in item.Services)
                                             {
-                                                if (item1.ServiceStatus != ServiceStatusEnum.Removed){
-                                                    <div class="govuk-!-margin-bottom-1">
-                                                        @item1.ServiceName
-                                                    </div>
-                                                }
+                                                <div class="govuk-!-margin-bottom-1">
+                                                    @item1.ServiceName
+                                                </div>                    
                                             }
                                         </td>
                                     </tr>
                                 }
-
                             }
                         }
-
                     </tbody>
                 </table>
             </div>
