@@ -44,7 +44,9 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             {
                 ServiceStatusEnum.CabAwaitingRemovalConfirmation,
                 ServiceStatusEnum.ReadyToPublish,
+                ServiceStatusEnum.Received,
                 ServiceStatusEnum.AwaitingRemovalConfirmation,
+                ServiceStatusEnum.Submitted,
                 ServiceStatusEnum.Published,
                 ServiceStatusEnum.Removed
              };

@@ -37,15 +37,7 @@
                                 <li class="govuk-summary-card__action">
                                     <a class="govuk-link" href="service-details?serviceId=@item.Id">View service details <span class="govuk-visually-hidden"> of Service @item.ServiceNumber</span></a>
                                 </li>
-                                @if (item.ServiceStatus == ServiceStatusEnum.Published)
-                                {                                    
-
-                                    <li class="govuk-summary-card__action">
-                                        <a class="govuk-link" href="@Url.Action("ServiceRemovalReason", "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id })">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
-                                    </li>
-
-                                }
-                                else if (item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation && Model.Services.Count() > 1)
+                                @if (item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation && Model.Services.Count(s => s.ServiceStatus == ServiceStatusEnum.Published) > 1)
                                 {
                                     <li class="govuk-summary-card__action">
                                         <a class="govuk-link" href="@Url.Action("CabRemoval", "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id, whatToRemove = "Service" })">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
@@ -57,6 +49,19 @@
                                         <a class="govuk-link" href="@Url.Action("CabRemoval", "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id, whatToRemove = "Provider" })">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
                                     </li>
                                 }
+                                else if (item.ServiceStatus == ServiceStatusEnum.Published && Model.Services.Count(s => s.ServiceStatus == ServiceStatusEnum.Published) == 1)
+                                {
+                                    <li class="govuk-summary-card__action">
+                                        <a class="govuk-link" href="@Url.Action("ReasonForRemoval", "RemoveProvider", new { providerId = @Model.Id})">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
+                                    </li>
+                                }
+                                else if (item.ServiceStatus == ServiceStatusEnum.Published)
+                                {
+                                    <li class="govuk-summary-card__action">
+                                        <a class="govuk-link" href="@Url.Action("ServiceRemovalReason", "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id })">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
+                                    </li>
+                                }
+
 
                             </ul>
                         </div>
@@ -96,26 +101,22 @@
                         </div>
                     </div>
                 }
-                @if (!(Model.ProviderStatus == ProviderStatusEnum.Published)
-                      && (Model.ProviderStatus == ProviderStatusEnum.ReadyToPublish || Model.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext) )
-                {
-                    <div class="govuk-button-group">
+                <div class="govuk-button-group">
+                    @if (!(Model.ProviderStatus == ProviderStatusEnum.Published)
+                    && (Model.ProviderStatus == ProviderStatusEnum.ReadyToPublish || Model.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext))
+                    {
                         <a href="publish-service?providerId=@Model.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
                             Publish
                         </a>
+                    }
 
-                    </div>
-                }
-
-                @if (Model.Services.Any(service => service.ServiceStatus == ServiceStatusEnum.Published))
-                {
-                    <div class="govuk-button-group">
+                    @if (Model.Services.Any(service => service.ServiceStatus == ServiceStatusEnum.Published))
+                    {
                         <a href="/remove/provider/reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
                             Remove provider from register
                         </a>
-                    </div>
-                }
-
+                    }
+                </div>
             </div>
         </div>
     </main>
