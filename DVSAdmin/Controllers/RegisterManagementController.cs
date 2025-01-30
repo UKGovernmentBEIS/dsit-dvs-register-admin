@@ -21,13 +21,22 @@ namespace DVSAdmin.Controllers
         private readonly IRegManagementService regManagementService;
         private readonly ICertificateReviewService certificateReviewService;      
         private readonly IBucketService bucketService;
+        private readonly ICsvDownloadService csvDownloadService;
+        private readonly ILogger<RegisterManagementController> logger;
         private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;       
-        public RegisterManagementController(IRegManagementService regManagementService, ICertificateReviewService certificateReviewService, IBucketService bucketService)
+        public RegisterManagementController(
+            IRegManagementService regManagementService,
+            ICertificateReviewService certificateReviewService,
+            IBucketService bucketService,
+            ICsvDownloadService csvDownloadService,
+            ILogger<RegisterManagementController> logger)
         {
            
             this.regManagementService = regManagementService;
             this.certificateReviewService = certificateReviewService;           
             this.bucketService = bucketService;
+            this.csvDownloadService = csvDownloadService;
+            this.logger = logger;
         }
 
         [HttpGet("register-management-list")]
@@ -156,6 +165,30 @@ namespace DVSAdmin.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DownloadRegister()
+        {
+            try
+            {
+                var result = await csvDownloadService.DownloadAsync();
+                
+                return File(
+                    result.FileContent, 
+                    result.ContentType, 
+                    result.FileName
+                );
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogWarning(ex, "No data available for download");
+                return NotFound("No data available for download");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Download failed");
+                return BadRequest("Unable to generate download");
+            }
+        }
 
     }
 }
