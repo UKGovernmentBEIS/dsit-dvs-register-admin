@@ -64,7 +64,7 @@ namespace DVSAdmin.BusinessLogic.Services
             //Then provider status = Action required            
             if (serviceList.All(item => item.ServiceStatus == ServiceStatusEnum.ReadyToPublish))
             {
-                providerStatus = ProviderStatusEnum.ActionRequired;
+                providerStatus = ProviderStatusEnum.ReadyToPublish;
             }
             //If all service status = Published:
             //Then provider status = Published
@@ -78,7 +78,7 @@ namespace DVSAdmin.BusinessLogic.Services
             if (serviceList.Any(item => item.ServiceStatus == ServiceStatusEnum.Published)  &&
              serviceList.Any(item => item.ServiceStatus == ServiceStatusEnum.ReadyToPublish))
             {
-                providerStatus = ProviderStatusEnum.PublishedActionRequired;
+                providerStatus = ProviderStatusEnum.ReadyToPublishNext;
             }
 
             genericResponse = await regManagementRepository.UpdateProviderStatus(providerProfileId,  providerStatus, loggedInUserEmail);
@@ -91,7 +91,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 registerPublishLog.CreatedTime = DateTime.UtcNow;
                 registerPublishLog.ProviderName = providerProfile.TradingName;
                 registerPublishLog.Services = services;
-                if (currentStatus == ProviderStatusEnum.ActionRequired) //Action required will be the status just before publishing provider for first time - which is updated through consent
+                if (currentStatus == ProviderStatusEnum.ReadyToPublish) //Action required will be the status just before publishing provider for first time - which is updated through consent
                 {
                     registerPublishLog.Description = "First published";
                 }

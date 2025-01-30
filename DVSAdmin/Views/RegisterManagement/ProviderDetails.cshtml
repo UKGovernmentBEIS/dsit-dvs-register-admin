@@ -97,7 +97,7 @@
                     </div>
                 }
                 @if (!(Model.ProviderStatus == ProviderStatusEnum.Published)
-                      && (Model.ProviderStatus == ProviderStatusEnum.ActionRequired || Model.ProviderStatus == ProviderStatusEnum.PublishedActionRequired) )
+                      && (Model.ProviderStatus == ProviderStatusEnum.ReadyToPublish || Model.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext) )
                 {
                     <div class="govuk-button-group">
                         <a href="publish-service?providerId=@Model.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">

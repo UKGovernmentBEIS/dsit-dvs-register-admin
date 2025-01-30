@@ -21,8 +21,8 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             var priorityOrder = new List<ProviderStatusEnum>
             {
         ProviderStatusEnum.CabAwaitingRemovalConfirmation,
-        ProviderStatusEnum.PublishedActionRequired,
-        ProviderStatusEnum.ActionRequired,
+        ProviderStatusEnum.ReadyToPublishNext,
+        ProviderStatusEnum.ReadyToPublish,
         ProviderStatusEnum.AwaitingRemovalConfirmation,
         ProviderStatusEnum.Published,
         ProviderStatusEnum.RemovedFromRegister
@@ -73,7 +73,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
            .Include(p => p.Services).ThenInclude(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
            .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
            .Where(p => p.Id == providerId && (p.ProviderStatus == ProviderStatusEnum.Published ||
-           p.ProviderStatus == ProviderStatusEnum.PublishedActionRequired || p.ProviderStatus == ProviderStatusEnum.ActionRequired)).FirstOrDefaultAsync() ?? new ProviderProfile();
+           p.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext || p.ProviderStatus == ProviderStatusEnum.ReadyToPublish)).FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
         public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, ServiceStatusEnum serviceStatus, string loggedInUserEmail)
