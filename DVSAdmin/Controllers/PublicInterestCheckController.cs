@@ -41,20 +41,24 @@ namespace DVSAdmin.Controllers
                 var publicinterestchecks = await publicInterestCheckService.GetPICheckList();
 
                 publicInterestCheckViewModel.PrimaryChecksList = publicinterestchecks.
-                Where(x => (x.ServiceStatus == ServiceStatusEnum.Received && x.Id != x?.PublicInterestCheck?.ServiceId) ||
+                Where(x => (x.ServiceStatus == ServiceStatusEnum.Received && x.ServiceStatus != ServiceStatusEnum.Removed 
+                && x.ServiceStatus!=ServiceStatusEnum.SavedAsDraft 
+                && x.Provider.ProviderStatus != ProviderStatusEnum.RemovedFromRegister &&
+                x.Id != x?.PublicInterestCheck?.ServiceId ) ||
                 (x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview               
                 || x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)
                  && x.PublicInterestCheck.SecondaryCheckUserId != userDto.Id).ToList();
 
                 publicInterestCheckViewModel.SecondaryChecksList = publicinterestchecks
-                .Where(x => x.PublicInterestCheck !=null   
+                .Where(x => x.ServiceStatus != ServiceStatusEnum.Removed && x.Provider.ProviderStatus != ProviderStatusEnum.RemovedFromRegister
+                &&  x.ServiceStatus != ServiceStatusEnum.SavedAsDraft && x.PublicInterestCheck !=null   
                 &&(x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
                 x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
                 && x.PublicInterestCheck.PrimaryCheckUserId != userDto.Id).ToList();
 
 
                 publicInterestCheckViewModel.ArchiveList = publicinterestchecks
-                .Where(x => x.PublicInterestCheck != null &&
+                .Where(x => x.PublicInterestCheck != null && x.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                 (x.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckFailed ||
                  x.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed)).ToList();
 
