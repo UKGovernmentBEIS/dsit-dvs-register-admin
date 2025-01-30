@@ -52,8 +52,8 @@ namespace DVSAdmin.Extensions
 
 
                 case ApplicationReviewStatusEnum.InPrimaryReview: 
-                case ProviderStatusEnum.ActionRequired:
-                case ProviderStatusEnum.PublishedActionRequired:
+                case ProviderStatusEnum.ReadyToPublish:
+                case ProviderStatusEnum.ReadyToPublishNext:
                 case ProviderStatusEnum.AwaitingRemovalConfirmation:
                 case ServiceStatusEnum.ReadyToPublish:
                 case ServiceStatusEnum.AwaitingRemovalConfirmation:
