@@ -36,9 +36,12 @@ namespace DVSAdmin.Controllers
         {            
             CertificateReviewListViewModel certificateReviewListViewModel = new ();
             var serviceList = await certificateReviewService.GetServiceList();
-            certificateReviewListViewModel.CertificateReviewList =  serviceList.Where(x => 
-            ((x.ServiceStatus == ServiceStatusEnum.Submitted &&  x.Id !=x?.CertificateReview?.ServiceId) || 
-            (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))).ToList();            
+
+            certificateReviewListViewModel.CertificateReviewList =  serviceList.Where(x =>
+             (x.ServiceStatus == ServiceStatusEnum.Submitted && x.ServiceStatus != ServiceStatusEnum.Removed && x.ServiceStatus != ServiceStatusEnum.SavedAsDraft
+             && x.Provider.ProviderStatus !=ProviderStatusEnum.RemovedFromRegister && x.Id != x?.CertificateReview?.ServiceId) || 
+            (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview )).ToList();  
+            
             certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
             ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) 
             || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)).OrderByDescending(x => x.CertificateReview.ModifiedDate).ToList();
@@ -49,8 +52,8 @@ namespace DVSAdmin.Controllers
         public async Task<ActionResult> CertificateSubmissionDetails(int certificateInfoId)
         {
             CertificateDetailsViewModel certificateDetailsViewModel = new();
-            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateInfoId);
-            
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateInfoId);            
+        
             if (serviceDto.ProceedApplicationConsentToken != null &serviceDto.ServiceStatus == ServiceStatusEnum.Submitted && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
             {
                 ViewBag.OpeningTheLoopLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
@@ -79,6 +82,7 @@ namespace DVSAdmin.Controllers
         {
             CertificateValidationViewModel certificateValidationViewModel = new();
 
+           
             if (serviceId == 0)
             {
                 certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
@@ -86,6 +90,10 @@ namespace DVSAdmin.Controllers
             else
             {
                 ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);
+                if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft || serviceDto.Provider.ProviderStatus == ProviderStatusEnum.RemovedFromRegister)
+                {
+                    return RedirectToAction(Constants.ErrorPath);
+                }
                 certificateValidationViewModel = MapDtoToViewModel(serviceDto);
             }
 

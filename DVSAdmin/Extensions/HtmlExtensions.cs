@@ -16,14 +16,14 @@ namespace DVSAdmin.Extensions
             
             switch (value)
             {
-                case ApplicationReviewStatusEnum.Received: 
-                case ProviderStatusEnum.Published:
+                case ApplicationReviewStatusEnum.Received:
                 case ServiceStatusEnum.Submitted:
-                case ServiceStatusEnum.Published:
+            
                 case ServiceStatusEnum.Received:
                 return "govuk-tag govuk-tag--blue";
 
-
+                case ServiceStatusEnum.Published:
+                case ProviderStatusEnum.Published:
                 case ApplicationReviewStatusEnum.PrimaryCheckPassed:                        
                 case ApplicationReviewStatusEnum.ApplicationApproved:
                 case CertificateReviewEnum.Approved:
