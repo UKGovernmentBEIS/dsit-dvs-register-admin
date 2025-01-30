@@ -46,12 +46,7 @@ namespace DVSAdmin.BusinessLogic.Services
         public async Task<GenericResponse> RemoveServiceRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, ServiceRemovalReasonEnum? serviceRemovalReason)
         {
             GenericResponse genericResponse = await removeProviderRepository.RemoveServiceRequest(providerProfileId, serviceIds, loggedInUserEmail, serviceRemovalReason);
-            ProviderProfile providerProfile = new();
-            TeamEnum requstedBy = TeamEnum.DSIT;
-            if (serviceRemovalReason != null && serviceRemovalReason == ServiceRemovalReasonEnum.ProviderRequestedRemoval)
-            {
-                requstedBy = TeamEnum.Provider;
-            }
+            ProviderProfile providerProfile = new();            
 
             if (genericResponse.Success)
             {
@@ -63,7 +58,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 // save token for 2i check
                 //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
 
-                TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty);
+                TokenDetails tokenDetails = jwtService.GenerateToken();
 
                 ICollection<RemoveTokenServiceMapping> removeTokenServiceMapping = [];
                 foreach (var item in serviceIds)
@@ -87,26 +82,15 @@ namespace DVSAdmin.BusinessLogic.Services
                     var filteredServiceNames = providerProfile.Services.Where(s => serviceIds.Contains(s.Id)).Select(s => s.ServiceName).ToList();
                     string serviceNames = string.Join("\r", filteredServiceNames);
                     string reasonString = ServiceRemovalReasonEnumExtensions.GetDescription(serviceRemovalReason.Value);
-                    if (requstedBy == TeamEnum.Provider)
-                    {
-                        string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
-                        await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
-                        await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
-                        await emailSender.RequestToRemoveServiceNotificationToDSITUser(loggedInUserEmail, serviceNames, providerProfile.RegisteredName, reasonString);
+                    string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
 
-                    }
-                    else if (requstedBy == TeamEnum.DSIT)
-                    {
-                        //to do : update notification email 
-                        // await emailSender.RemovalRequestForApprovalToDSIT(loggedInUserEmail, serviceNames, providerProfile.RegisteredName, reasonString);//50/DSIT/Removal request created by DSIT
-                        string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;
-                        foreach (var email in dsitUserEmails)
-                        {
-                            //to do : update notification email 
-                            // await emailSender.SendRemoval2iCheckToDSIT(email, email, linkForEmailToDSIT, providerProfile.RegisteredName, serviceNames, reasonString);//47/DSIT/removal 2i check review request
-                        }
 
-                    }
+                    //37/Provider/Service removal request
+                    await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
+                    await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
+                    await emailSender.RequestToRemoveServiceNotificationToDSIT(serviceNames, providerProfile.RegisteredName, reasonString);//38/DSIT/service removal request sent
+
+
                 }
             }
 
