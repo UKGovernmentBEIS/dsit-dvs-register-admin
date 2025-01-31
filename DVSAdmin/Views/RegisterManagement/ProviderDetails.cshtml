@@ -27,7 +27,6 @@
 
                 @foreach (var item in Model.Services)
                 {
-
                     <div class="govuk-summary-card">
                         <div class="govuk-summary-card__title-wrapper">
                             <h2 class="govuk-summary-card__title">
@@ -37,32 +36,18 @@
                                 <li class="govuk-summary-card__action">
                                     <a class="govuk-link" href="service-details?serviceId=@item.Id">View service details <span class="govuk-visually-hidden"> of Service @item.ServiceNumber</span></a>
                                 </li>
-                                @if (item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation && Model.Services.Count(s => s.ServiceStatus == ServiceStatusEnum.Published) > 1)
+                                @if (item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation || item.ServiceStatus == ServiceStatusEnum.Published)
                                 {
-                                    <li class="govuk-summary-card__action">
-                                        <a class="govuk-link" href="@Url.Action("CabRemoval", "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id, whatToRemove = "Service" })">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
-                                    </li>
-                                }
-                                else if (item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
-                                {
-                                    <li class="govuk-summary-card__action">
-                                        <a class="govuk-link" href="@Url.Action("CabRemoval", "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id, whatToRemove = "Provider" })">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
-                                    </li>
-                                }
-                                else if (item.ServiceStatus == ServiceStatusEnum.Published && Model.Services.Count(s => s.ServiceStatus == ServiceStatusEnum.Published) == 1)
-                                {
-                                    <li class="govuk-summary-card__action">
-                                        <a class="govuk-link" href="@Url.Action("ReasonForRemoval", "RemoveProvider", new { providerId = @Model.Id})">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
-                                    </li>
-                                }
-                                else if (item.ServiceStatus == ServiceStatusEnum.Published)
-                                {
-                                    <li class="govuk-summary-card__action">
-                                        <a class="govuk-link" href="@Url.Action("ServiceRemovalReason", "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id })">Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span></a>
-                                    </li>
-                                }
+                                    bool isAllRemoved = Model.Services.Count - 1 == Model.Services.Count(s => s.ServiceStatus == ServiceStatusEnum.Removed);
+                                    string whatToRemove = item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation ? (isAllRemoved ? "Provider" : "Service") : null;
+                                    string action = item.ServiceStatus == ServiceStatusEnum.Published ? (isAllRemoved ? "ReasonForRemoval" : "ServiceRemovalReason") : null;
 
-
+                                    <li class="govuk-summary-card__action">
+                                        <a class="govuk-link" href="@Url.Action(whatToRemove != null ? "CabRemoval" : action, "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id, whatToRemove })">
+                                            Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span>
+                                        </a>
+                                    </li>
+                                }
                             </ul>
                         </div>
                         <div class="govuk-summary-card__content">

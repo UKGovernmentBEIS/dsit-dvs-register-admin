@@ -31,7 +31,7 @@
                             <div class="govuk-hint" id="service-removal-reason-description">You should proceed with removal if any of the reasons below apply.</div>
                             @if (ViewData.ModelState["ServiceRemovalReason"] != null && ViewData.ModelState["ServiceRemovalReason"].Errors.Count > 0)
                             {
-                                <span class="govuk-error-message">
+                                <span class="govuk-error-message" aria-live="assertive">
                                     <span class="govuk-visually-hidden">Error:</span>
                                     @ViewData.ModelState["ServiceRemovalReason"].Errors[0].ErrorMessage
                                 </span>
