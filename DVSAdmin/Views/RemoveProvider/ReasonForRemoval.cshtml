@@ -27,15 +27,15 @@
                     }
 
                     <div class="govuk-form-group @(ViewData.ModelState["RemovalReason"] != null && ViewData.ModelState["RemovalReason"].Errors.Count > 0 ? "govuk-form-group--error" : "")">
-                        <fieldset class="govuk-fieldset" aria-describedby="removal-reason-description">
+                        <fieldset class="govuk-fieldset" aria-describedby="removal-reason-description @(ViewData.ModelState["RemovalReason"] != null && ViewData.ModelState["RemovalReason"].Errors.Count > 0 ? "removal-reason-description-error" : "")">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Select reason for removal</legend>
                             <div class="govuk-hint" id="removal-reason-description">You should proceed with removal if any of the reasons below apply.</div>
                             @if (ViewData.ModelState["RemovalReason"] != null && ViewData.ModelState["RemovalReason"].Errors.Count > 0)
                             {
-                                <span class="govuk-error-message" aria-live="assertive">
+                                <p class="govuk-error-message" id="removal-reason-description-error">
                                     <span class="govuk-visually-hidden">Error:</span>
                                     @ViewData.ModelState["RemovalReason"].Errors[0].ErrorMessage
-                                </span>
+                                </p>
                             }
 
                             <div class="govuk-radios" data-module="govuk-radios">
@@ -70,7 +70,7 @@
                                                     </label>
                                                     @if (ViewData.ModelState["FurtherExplanation"]?.Errors.Count > 0)
                                                     {
-                                                        <p id="@furtherExplanationErrorId" class="govuk-error-message" aria-live="assertive">
+                                                        <p id="@furtherExplanationErrorId" class="govuk-error-message">
                                                             <span class="govuk-visually-hidden">Error:</span> @ViewData.ModelState["FurtherExplanation"].Errors[0].ErrorMessage
                                                         </p>
                                                     }
