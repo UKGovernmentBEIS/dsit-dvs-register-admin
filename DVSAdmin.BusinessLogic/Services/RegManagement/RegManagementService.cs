@@ -6,6 +6,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -24,11 +25,25 @@ namespace DVSAdmin.BusinessLogic.Services
             this.automapper = automapper;
             this.emailSender = emailSender;
             this.certificateReviewRepository = certificateReviewRepository;          
-        }        
-         public async Task<List<ProviderProfileDto>> GetProviders()
+        }
+        public async Task<List<ProviderProfileDto>> GetProviders()
         {
             var providers = await regManagementRepository.GetProviders();
-            return automapper.Map<List<ProviderProfileDto>>(providers);
+            List<ProviderProfileDto> providersList = automapper.Map<List<ProviderProfileDto>>(providers);
+
+            providersList = providersList.Select(providerDto =>
+            {
+                providerDto.Services = providerDto.Services
+                    .Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
+                                s.ServiceStatus == ServiceStatusEnum.Published ||
+                                s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
+                                s.ServiceStatus == ServiceStatusEnum.Removed ||
+                                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
+                    .ToList();
+                return providerDto;
+            }).ToList();
+
+            return providersList;
         }
 
         public async Task<ServiceDto> GetServiceDetails(int serviceId)
