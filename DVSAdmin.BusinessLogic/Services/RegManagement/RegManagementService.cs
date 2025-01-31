@@ -5,6 +5,7 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -40,7 +41,15 @@ namespace DVSAdmin.BusinessLogic.Services
         public async Task<ProviderProfileDto> GetProviderDetails(int providerProfileId)
         {
             var provider = await regManagementRepository.GetProviderDetails(providerProfileId);
+            
             ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);
+            providerDto.Services = providerDto.Services.
+                Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish || 
+                s.ServiceStatus == ServiceStatusEnum.Published || 
+                s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation || 
+                s.ServiceStatus == ServiceStatusEnum.Removed || 
+                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation).ToList();
+            
             return providerDto;
         }
 
