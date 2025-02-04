@@ -5,9 +5,25 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using DVSAdmin.Data;
 using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
+    public sealed class PfrCsvMap : ClassMap<Service>
+    {
+        public PfrCsvMap()
+        {
+            //Maps Service table columns to Register fields
+            Map(s => s.Provider.RegisteredName).Name("Provider");
+            Map(s => s.ServiceName).Name("Service name");
+            Map(s => s.ServiceStatus).Name("Status");
+            Map(s => s.CabUser.Cab.CabName).Name("CAB");
+            Map(s => s.PublishedTime).Name("Published on");
+            Map(s => s.ConformityIssueDate).Name("Certificate Issue Date");
+            Map(s => s.ConformityExpiryDate).Name("Certificate Expiry Date");
+        }
+    }
     public class CsvDownloadService : ICsvDownloadService
     {
         private readonly DVSAdminDbContext context;
@@ -27,6 +43,20 @@ namespace DVSAdmin.BusinessLogic.Services
             {
                 var services = await context.Service
                     .AsNoTracking()//Read only, so no need for tracking query
+                    .Include(service => service.Provider)
+                    .Include(service => service.CabUser.Cab)
+                    .Where(service => service.ServiceStatus == ServiceStatusEnum.Published)
+                    // .Select(service => new //Only show an extract that resembles the PFR
+                    // {
+                    //     ProviderName = service.Provider.RegisteredName,
+                    //     service.ServiceName,
+                    //     service.ServiceStatus,
+                    //     service.ServiceSupSchemeMapping,
+                    //     service.CabUser.Cab.CabName,
+                    //     service.PublishedTime,
+                    //     service.ConformityIssueDate,
+                    //     service.ConformityExpiryDate
+                    // })
                     .ToListAsync();
 
                 if (!services.Any())
@@ -45,6 +75,9 @@ namespace DVSAdmin.BusinessLogic.Services
                     //Quote everything in the first row/header, and any value that has a comma
                     ShouldQuote = args => args.Row.Index == 0 || args.Field.Contains(",")
                 });
+
+                //Maps Service table columns to Register fields
+                csv.Context.RegisterClassMap<PfrCsvMap>();
 
                 await csv.WriteRecordsAsync(services);
                 await writer.FlushAsync();
