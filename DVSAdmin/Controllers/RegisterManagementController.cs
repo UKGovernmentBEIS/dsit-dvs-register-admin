@@ -2,10 +2,10 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace DVSAdmin.Controllers
 {
@@ -19,27 +19,28 @@ namespace DVSAdmin.Controllers
     public class RegisterManagementController : Controller
     {       
         private readonly IRegManagementService regManagementService;
-        private readonly ICertificateReviewService certificateReviewService;
+        private readonly ICertificateReviewService certificateReviewService;      
         private readonly IBucketService bucketService;
-        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
+        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;       
         public RegisterManagementController(IRegManagementService regManagementService, ICertificateReviewService certificateReviewService, IBucketService bucketService)
         {
            
             this.regManagementService = regManagementService;
-            this.certificateReviewService = certificateReviewService;
+            this.certificateReviewService = certificateReviewService;           
             this.bucketService = bucketService;
         }
 
         [HttpGet("register-management-list")]
         public async Task<IActionResult> RegisterManagement()
         {
-            ProviderListViewModel providerListViewModel = new ProviderListViewModel();
             var providersList = await regManagementService.GetProviders();
-            providerListViewModel.ActionRequiredList = providersList.Where(x => x.ProviderStatus == ProviderStatusEnum.ActionRequired 
-            ||  x.ProviderStatus == ProviderStatusEnum.PublishedActionRequired).ToList();
-            providerListViewModel.PublicationCompleteList = providersList.Where(x => x.ProviderStatus == ProviderStatusEnum.Published).ToList();
+            var providerListViewModel = new ProviderListViewModel
+            {
+                AllStatusesList = providersList.ToList()
+            };
             return View(providerListViewModel);
         }
+
         [HttpGet("provider-details")]
         public async Task<IActionResult> ProviderDetails(int providerId)
         {
@@ -58,7 +59,7 @@ namespace DVSAdmin.Controllers
         [HttpGet("publish-service")]
         public async Task<IActionResult> PublishService(int providerId)
         {           
-            ProviderProfileDto providerDto = await regManagementService.GetProviderWithServiceDeatils(providerId);
+            ProviderProfileDto providerDto = await regManagementService.GetProviderWithServiceDetails(providerId);
             providerDto.Services= providerDto.Services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish).ToList();
             List<int> ServiceIds = providerDto.Services.Select(item => item.Id).ToList();
             HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);              
@@ -129,7 +130,6 @@ namespace DVSAdmin.Controllers
             return View(providerProfileDto);
         }
 
-
         /// <summary>
         /// Download from s3
         /// </summary>
@@ -155,6 +155,7 @@ namespace DVSAdmin.Controllers
                 return RedirectToAction(Constants.ErrorPath);
             }
         }
+
 
     }
 }

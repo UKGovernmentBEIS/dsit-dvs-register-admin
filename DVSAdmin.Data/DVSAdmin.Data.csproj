@@ -8,11 +8,8 @@
 
   <ItemGroup>
     <Compile Remove="Migrations\**" />
-    <Compile Remove="Repositories\NewFolder\**" />
     <EmbeddedResource Remove="Migrations\**" />
-    <EmbeddedResource Remove="Repositories\NewFolder\**" />
     <None Remove="Migrations\**" />
-    <None Remove="Repositories\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>

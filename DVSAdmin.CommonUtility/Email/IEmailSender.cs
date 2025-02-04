@@ -30,5 +30,23 @@
         public Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName, string companyName, string emailAddress);
         public Task<bool> SendServicePublishedToCAB(string recipientName, string serviceName, string companyName, string emailAddress);
         public Task<bool> SendServicePublishedToDSIT(string companyName, string serviceName);
+
+        //remove provider
+        public Task<bool> SendRequestToRemoveRecordToProvider(string recipientName, string emailAddress, string confirmationLink);
+        public Task<bool> SendRemoval2iCheckToDSIT(string recipientName, string emailAddress, string removalLink, string companyName, string serviceName, string reasonForRemoval);
+        public Task <bool> SendRecordRemovalRequestConfirmationToDSIT(string companyName, string serviceName);
+        public Task<bool> SendRequestToRemoveServiceToProvider(string recipientName, string emailAddress,string serviceName, string reason, string removalLink);
+        public Task<bool> RemovalRequestForApprovalToDSIT(string emailAddress, string serviceName, string companyName, string reason);
+
+        public Task<bool> RequestToRemoveServiceNotificationToDSIT(string serviceName, string companyName, string reason);
+
+        public Task<bool> ServiceRemovedConfirmedToCabOrProvider(string recipientName, string emailAddress, string serviceName, string reasonForRemoval);
+        public Task<bool> ServiceRemovedToDSIT(string serviceName, string reasonForRemoval);
+
+        public Task<bool> SendRecordRemovedToDSIT(string companyName, string serviceName, string reasonForRemoval);
+        public Task<bool> RecordRemovedConfirmedToCabOrProvider(string recipientName, string emailAddress, string companyName, string serviceName, string reasonForRemoval);
+
+
+
     }
 }

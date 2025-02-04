@@ -1,0 +1,16 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.Extensions;
+@model ServiceDto;
+
+@{
+    ViewData["Title"] = "CAB have requested to remove a service from the register";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+    var cabRemovalViewModel = new CabRemovalViewModel
+            {
+                Service = Model,
+                WhatToRemove = ViewBag.whatToRemove
+
+            };
+}
+
+@await Html.PartialAsync("~/Views/RemoveProvider/PartialViews/_RemovalConfirmationView.cshtml", cabRemovalViewModel)

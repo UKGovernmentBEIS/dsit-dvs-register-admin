@@ -32,7 +32,23 @@ namespace DVSAdmin.CommonUtility.Models
         public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }
         public ServicePublishedCABTemplate ServicePublishedCABTemplate { get; set; }
         public ServicePublishedDSITTemplate ServicePublishedDSITTemplate { get;set; }
-        public ProceedApplicationConsentToDIPTemplate ProceedApplicationConsentToDIPTemplate { get; set; }       
+        public ProceedApplicationConsentToDIPTemplate ProceedApplicationConsentToDIPTemplate { get; set; } 
+        
+        public RequestToRemoveRecordToProvider RequestToRemoveRecordToProvider { get; set; }
+        public Removal2iCheckToDSITTemplate Removal2iCheckToDSITTemplate { get; set; }
+        public RecordRemovalRequestSentConfirmationToDSIT RecordRemovalRequestSentConfirmationToDSIT { get; set; }
+
+        public RequestToRemoveServiceToProvider RequestToRemoveServiceToProvider { get;set; }
+
+        public RemovalRequestForApprovalToDSIT RemovalRequestForApprovalToDSIT { get; set; }
+
+        public RequestToRemoveServiceNotificationToDSIT RequestToRemoveServiceNotificationToDSIT { get; set; }
+
+        public ServiceRemovedConfirmedToCabOrProvider ServiceRemovedConfirmedToCabOrProvider { get; set; }
+        public ServiceRemovedToDSIT ServiceRemovedToDSIT { get; set; }
+
+        public RecordRemovedToDSIT RecordRemovedToDSIT { get; set; }
+        public RecordRemovedConfirmedToCabOrProvider RecordRemovedConfirmedToCabOrProvider { get; set; }
 
     }
 }

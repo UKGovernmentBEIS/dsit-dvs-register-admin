@@ -5,6 +5,8 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -14,6 +16,7 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly ICertificateReviewRepository certificateReviewRepository;
         private readonly IMapper automapper;       
         private readonly IEmailSender emailSender;
+      
 
         public RegManagementService(IRegManagementRepository regManagementRepository, IMapper automapper,
           IEmailSender emailSender, ICertificateReviewRepository certificateReviewRepository)
@@ -21,22 +24,51 @@ namespace DVSAdmin.BusinessLogic.Services
             this.regManagementRepository = regManagementRepository;
             this.automapper = automapper;
             this.emailSender = emailSender;
-            this.certificateReviewRepository = certificateReviewRepository;
-        }        
-         public async Task<List<ProviderProfileDto>> GetProviders()
+            this.certificateReviewRepository = certificateReviewRepository;          
+        }
+        public async Task<List<ProviderProfileDto>> GetProviders()
         {
             var providers = await regManagementRepository.GetProviders();
-            return automapper.Map<List<ProviderProfileDto>>(providers);
+            List<ProviderProfileDto> providersList = automapper.Map<List<ProviderProfileDto>>(providers);
+
+            providersList = providersList.Select(providerDto =>
+            {
+                providerDto.Services = providerDto.Services
+                    .Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
+                                s.ServiceStatus == ServiceStatusEnum.Published ||
+                                s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
+                                s.ServiceStatus == ServiceStatusEnum.Removed ||
+                                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
+                    .ToList();
+                return providerDto;
+            }).ToList();
+
+            return providersList;
+        }
+
+        public async Task<ServiceDto> GetServiceDetails(int serviceId)
+        {
+            var service = await regManagementRepository.GetServiceDetails(serviceId);
+            ServiceDto serviceDto = automapper.Map<ServiceDto>(service);
+            return serviceDto;
         }
 
         public async Task<ProviderProfileDto> GetProviderDetails(int providerProfileId)
         {
             var provider = await regManagementRepository.GetProviderDetails(providerProfileId);
+            
             ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);
+            providerDto.Services = providerDto.Services.
+                Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish || 
+                s.ServiceStatus == ServiceStatusEnum.Published || 
+                s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation || 
+                s.ServiceStatus == ServiceStatusEnum.Removed || 
+                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation).ToList();
+            
             return providerDto;
         }
 
-        public async Task<ProviderProfileDto> GetProviderWithServiceDeatils(int providerProfileId)
+        public async Task<ProviderProfileDto> GetProviderWithServiceDetails(int providerProfileId)
         {
             var provider = await regManagementRepository.GetProviderWithServiceDetails(providerProfileId);
             ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);           
@@ -56,7 +88,7 @@ namespace DVSAdmin.BusinessLogic.Services
             //Then provider status = Action required            
             if (serviceList.All(item => item.ServiceStatus == ServiceStatusEnum.ReadyToPublish))
             {
-                providerStatus = ProviderStatusEnum.ActionRequired;
+                providerStatus = ProviderStatusEnum.ReadyToPublish;
             }
             //If all service status = Published:
             //Then provider status = Published
@@ -70,7 +102,7 @@ namespace DVSAdmin.BusinessLogic.Services
             if (serviceList.Any(item => item.ServiceStatus == ServiceStatusEnum.Published)  &&
              serviceList.Any(item => item.ServiceStatus == ServiceStatusEnum.ReadyToPublish))
             {
-                providerStatus = ProviderStatusEnum.PublishedActionRequired;
+                providerStatus = ProviderStatusEnum.ReadyToPublishNext;
             }
 
             genericResponse = await regManagementRepository.UpdateProviderStatus(providerProfileId,  providerStatus, loggedInUserEmail);
@@ -83,7 +115,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 registerPublishLog.CreatedTime = DateTime.UtcNow;
                 registerPublishLog.ProviderName = providerProfile.TradingName;
                 registerPublishLog.Services = services;
-                if (currentStatus == ProviderStatusEnum.ActionRequired) //Action required will be the status just before publishing provider for first time - which is updated through consent
+                if (currentStatus == ProviderStatusEnum.ReadyToPublish) //Action required will be the status just before publishing provider for first time - which is updated through consent
                 {
                     registerPublishLog.Description = "First published";
                 }
@@ -102,5 +134,8 @@ namespace DVSAdmin.BusinessLogic.Services
 
             return genericResponse;
         }
+        
+    
+    
     }
 }

@@ -2,6 +2,7 @@
 @using DVSAdmin.Extensions;
 @model ProviderProfileDto;
 @using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.CommonUtility.Models;
 @{
     ViewData["Title"] = "Provider Details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -26,16 +27,27 @@
 
                 @foreach (var item in Model.Services)
                 {
-
                     <div class="govuk-summary-card">
                         <div class="govuk-summary-card__title-wrapper">
                             <h2 class="govuk-summary-card__title">
-                                Service @item.ServiceNumber
+                                Service: @item.ServiceName
                             </h2>
                             <ul class="govuk-summary-card__actions">
                                 <li class="govuk-summary-card__action">
                                     <a class="govuk-link" href="service-details?serviceId=@item.Id">View service details <span class="govuk-visually-hidden"> of Service @item.ServiceNumber</span></a>
                                 </li>
+                                @if (item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation || item.ServiceStatus == ServiceStatusEnum.Published)
+                                {
+                                    bool isAllRemoved = Model.Services.Count - 1 == Model.Services.Count(s => s.ServiceStatus == ServiceStatusEnum.Removed);
+                                    string whatToRemove = item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation ? (isAllRemoved ? "Provider" : "Service") : null;
+                                    string action = item.ServiceStatus == ServiceStatusEnum.Published ? (isAllRemoved ? "ReasonForRemoval" : "ServiceRemovalReason") : null;
+
+                                    <li class="govuk-summary-card__action">
+                                        <a class="govuk-link" href="@Url.Action(whatToRemove != null ? "CabRemoval" : action, "RemoveProvider", new { providerId = @Model.Id, serviceId = @item.Id, whatToRemove })">
+                                            Remove Service <span class="govuk-visually-hidden"> Service number @item.ServiceNumber</span>
+                                        </a>
+                                    </li>
+                                }
                             </ul>
                         </div>
                         <div class="govuk-summary-card__content">
@@ -53,24 +65,43 @@
                                         Publication status
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        @HtmlExtensions.ToStyledStrongTag(@item.ServiceStatus)
+                                        @if(item?.CertificateReview!=null && item?.CertificateReview?.CertificateReviewStatus == CertificateReviewEnum.Rejected)
+                                        {
+                                            @HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateReviewStatus)
+                                        }
+                                        else if (item?.PublicInterestCheck != null 
+                                        && item?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckFailed ||
+                                        item?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
+                                        {
+                                            @HtmlExtensions.ToStyledStrongTag(item.PublicInterestCheck.PublicInterestCheckStatus)
+                                        }
+                                        else
+                                        {
+                                            @HtmlExtensions.ToStyledStrongTag(@item.ServiceStatus)
+                                        }
+                                      
                                     </dd>
                                 </div>
                             </dl>
                         </div>
                     </div>
                 }
-                @if (!(@Model.ProviderStatus == ProviderStatusEnum.Published)
-                      && (Model.ProviderStatus == ProviderStatusEnum.ActionRequired || Model.ProviderStatus == ProviderStatusEnum.PublishedActionRequired) )
-                {
-                    <div class="govuk-button-group">
+                <div class="govuk-button-group">
+                    @if (!(Model.ProviderStatus == ProviderStatusEnum.Published)
+                    && (Model.ProviderStatus == ProviderStatusEnum.ReadyToPublish || Model.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext))
+                    {
                         <a href="publish-service?providerId=@Model.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
                             Publish
                         </a>
+                    }
 
-                    </div>
-                }
-
+                    @if (Model.Services.Any(service => service.ServiceStatus == ServiceStatusEnum.Published))
+                    {
+                        <a href="/remove/provider/reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
+                            Remove provider from register
+                        </a>
+                    }
+                </div>
             </div>
         </div>
     </main>

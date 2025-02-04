@@ -13,5 +13,6 @@ namespace DVSAdmin.Data.Entities
 
         public string UserName { get; set; }
         public string Email { get; set; }
+        public string? Profile { get; set; }
     }
 }
