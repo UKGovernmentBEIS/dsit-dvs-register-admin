@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using DVSAdmin.CommonUtility.Models.Enums;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace DVSAdmin.CommonUtility.Models
 {
@@ -21,6 +23,18 @@ namespace DVSAdmin.CommonUtility.Models
         [Description("Removal requested by CAB")]
         CabAwaitingRemovalConfirmation = 7,
         [Description("Saved as draft")]
-        SavedAsDraft = 7
+        SavedAsDraft = 8
     }
+
+    public static class ServiceStatusEnumExtensions
+    {
+        
+        public static string GetDescription(this ServiceStatusEnum value)
+        {
+            FieldInfo field = value.GetType().GetField(value.ToString());
+            DescriptionAttribute attribute = field.GetCustomAttribute<DescriptionAttribute>();
+            return attribute == null ? value.ToString() : attribute.Description;
+        }
+    }
+   
 }
