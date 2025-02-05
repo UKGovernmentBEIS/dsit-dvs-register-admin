@@ -165,7 +165,7 @@ namespace DVSAdmin.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("download-register")]
         public async Task<IActionResult> DownloadRegister()
         {
             try
@@ -181,12 +181,12 @@ namespace DVSAdmin.Controllers
             catch (InvalidOperationException ex)
             {
                 logger.LogWarning(ex, "No data available for download");
-                return NotFound("No data available for download");
+                return RedirectToAction(Constants.ErrorPath);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Download failed");
-                return BadRequest("Unable to generate download");
+                return RedirectToAction(Constants.ErrorPath);
             }
         }
 

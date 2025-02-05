@@ -1,12 +1,10 @@
 using CsvHelper;
 using CsvHelper.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using DVSAdmin.Data;
 using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
+using DVSAdmin.Data.Repositories;
+using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -17,7 +15,7 @@ namespace DVSAdmin.BusinessLogic.Services
             //Maps Service table columns to Register fields
             Map(s => s.Provider.RegisteredName).Name("Provider");
             Map(s => s.ServiceName).Name("Service name");
-            Map(s => s.ServiceStatus).Name("Status");
+            Map(s => s.ServiceStatusDescription) .Name("Status");
             Map(s => s.CabUser.Cab.CabName).Name("CAB");
             Map(s => s.PublishedTime).Name("Published on");
             Map(s => s.ConformityIssueDate).Name("Certificate Issue Date");
@@ -26,14 +24,13 @@ namespace DVSAdmin.BusinessLogic.Services
     }
     public class CsvDownloadService : ICsvDownloadService
     {
-        private readonly DVSAdminDbContext context;
+        private readonly IRegManagementRepository regManagementRepository;
+     
         private readonly ILogger<CsvDownloadService> logger;
 
-        public CsvDownloadService(
-            DVSAdminDbContext context,
-            ILogger<CsvDownloadService> logger)
+        public CsvDownloadService(IRegManagementRepository regManagementRepository,ILogger<CsvDownloadService> logger)
         {
-            this.context = context;
+            this.regManagementRepository = regManagementRepository;
             this.logger = logger;
         }
 
@@ -41,23 +38,7 @@ namespace DVSAdmin.BusinessLogic.Services
         {
             try
             {
-                var services = await context.Service
-                    .AsNoTracking()//Read only, so no need for tracking query
-                    .Include(service => service.Provider)
-                    .Include(service => service.CabUser.Cab)
-                    .Where(service => service.ServiceStatus == ServiceStatusEnum.Published)
-                    // .Select(service => new //Only show an extract that resembles the PFR
-                    // {
-                    //     ProviderName = service.Provider.RegisteredName,
-                    //     service.ServiceName,
-                    //     service.ServiceStatus,
-                    //     service.ServiceSupSchemeMapping,
-                    //     service.CabUser.Cab.CabName,
-                    //     service.PublishedTime,
-                    //     service.ConformityIssueDate,
-                    //     service.ConformityExpiryDate
-                    // })
-                    .ToListAsync();
+                var services = await regManagementRepository.GetPublishedServices();
 
                 if (!services.Any())
                 {
