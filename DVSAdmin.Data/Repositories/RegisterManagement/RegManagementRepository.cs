@@ -235,11 +235,15 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         {
            return await context.Service.AsNoTracking()//Read only, so no need for tracking query
             .Include(service => service.Provider)
-            .Include(service => service.CabUser.Cab)
-            .Where(ci => ci.ServiceStatus >= ServiceStatusEnum.Published && ci.ServiceStatus != ServiceStatusEnum.Removed
-            && ci.ServiceStatus != ServiceStatusEnum.SavedAsDraft && ci.Provider.ProviderStatus !=ProviderStatusEnum.RemovedFromRegister)
+            .Include(service => service.CabUser)
+                .ThenInclude(cabUser => cabUser.Cab)
+            .Include(service => service.ServiceSupSchemeMapping)
+                .ThenInclude(ssm => ssm.SupplementaryScheme)
+            .Where(ci => ci.ServiceStatus >= ServiceStatusEnum.Published
+                         && ci.ServiceStatus != ServiceStatusEnum.Removed 
+                         && ci.ServiceStatus != ServiceStatusEnum.SavedAsDraft
+                         && ci.Provider.ProviderStatus !=ProviderStatusEnum.RemovedFromRegister)
             .ToListAsync();
         }
-
     }
 }
