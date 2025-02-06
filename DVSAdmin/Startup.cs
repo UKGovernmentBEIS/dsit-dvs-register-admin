@@ -128,6 +128,7 @@ namespace DVSAdmin
             services.AddScoped<IPublicInterestCheckService, PublicInterestService>();
             services.AddScoped<IPublicInterestCheckRepository, PublicInterestCheckRepository>();
             services.AddScoped<IBackgroundJobRepository, BackgroundJobRepository>();
+            services.AddScoped<ICsvDownloadService, CsvDownloadService>();
             services.AddScoped<IRemoveProviderService, RemoveProviderService>();
             services.AddScoped<IRemoveProviderRepository, RemoveProviderRepository>();
         }
