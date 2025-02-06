@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Notify.Client;
 using Notify.Exceptions;
+using System.Drawing;
 
 namespace DVSAdmin.CommonUtility.Email
 {
@@ -638,6 +639,41 @@ namespace DVSAdmin.CommonUtility.Email
             var emailModel = new GovUkNotifyEmailModel
             {
                 EmailAddress = govUkNotifyConfig.OfDiaEmailId,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> SendServiceRemoval2iCheckToDSIT(string emailAddress, string removalLink, string serviceName, string reasonForRemoval)
+        {
+            var template = govUkNotifyConfig.RemoveService2iCheckToDSIT;
+            var personalisation = new Dictionary<string, dynamic>
+            {          
+                { template.ServiceName,  serviceName},
+                { template.ReasonForRemoval,  reasonForRemoval},
+                { template.RemovalLink,  removalLink}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> ServiceRemovalRequestCreated(string emailAddress, string serviceName, string reasonForRemoval)
+        {
+            var template = govUkNotifyConfig.ServiceRemovalRequestCreated;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.ReasonForRemoval,  reasonForRemoval}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = emailAddress,
                 TemplateId = template.Id,
                 Personalisation = personalisation
             };

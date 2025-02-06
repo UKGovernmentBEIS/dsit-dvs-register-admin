@@ -15,7 +15,16 @@
             <td class="govuk-table__cell">              
                     @HtmlExtensions.ToStyledStrongTag(Model.ProviderStatus)  
             </td>
-            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.PublishedTime)</td>
+
+            @if (Model.PublishedTime != DateTime.MinValue )
+            {
+                <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.PublishedTime)</td>
+            }
+            else
+            {
+                <td class="govuk-table__cell"></td>
+            }
+          
             <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
             <td class="govuk-table__cell">
 
