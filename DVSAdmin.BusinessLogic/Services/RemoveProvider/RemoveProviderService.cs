@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
@@ -184,17 +185,19 @@ namespace DVSAdmin.BusinessLogic.Services
                 Service service = providerProfile.Services.Where(s => s.Id == serviceIds[0]).FirstOrDefault(); // only single service removal in current release
                if (genericResponse.Success && providerStatus == ProviderStatusEnum.RemovedFromRegister)
                 {
-                    await emailSender.SendRecordRemovedToDSIT(providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
-                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.CabUser.CabEmail, providerProfile.CabUser.CabEmail, providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
-                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
-                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
+                    //35/CAB + Provider/Whole record
+
+                    await emailSender.SendRecordRemovedToDSIT(providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
+                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.CabUser.CabEmail, providerProfile.CabUser.CabEmail, providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
+                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
+                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
                 }
                 else
                 {
-                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.CabUser.CabEmail, service.CabUser.CabEmail, service.ServiceName, service.RemovalReasonByCab);//41/CAB + Provider/Service removed
-                    await emailSender.ServiceRemovedToDSIT(service.ServiceName, service.RemovalReasonByCab); //42/DSIT/Service removed
-                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.Provider.PrimaryContactFullName, service.Provider.PrimaryContactEmail, service.ServiceName, service.RemovalReasonByCab);//41/CAB + Provider/Service removed
-                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.Provider.SecondaryContactFullName, service.Provider.SecondaryContactEmail, service.ServiceName, service.RemovalReasonByCab);//41/CAB + Provider/Service removed
+                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.CabUser.CabEmail, service.CabUser.CabEmail, service.ServiceName, Constants.CabHasWithdrawnCertificate);//41/CAB + Provider/Service removed
+                    await emailSender.ServiceRemovedToDSIT(service.ServiceName, Constants.CabHasWithdrawnCertificate); //42/DSIT/Service removed
+                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.Provider.PrimaryContactFullName, service.Provider.PrimaryContactEmail, service.ServiceName, Constants.CabHasWithdrawnCertificate);//41/CAB + Provider/Service removed
+                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.Provider.SecondaryContactFullName, service.Provider.SecondaryContactEmail, service.ServiceName, Constants.CabHasWithdrawnCertificate);//41/CAB + Provider/Service removed
                 }
              
             }
