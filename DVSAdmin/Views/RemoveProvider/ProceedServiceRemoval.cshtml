@@ -78,23 +78,41 @@
 
                 <h2 class="govuk-heading-m govuk-!-margin-top-8">Who will receive the request</h2>
                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Email address of <br /> primary contact
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.Provider.PrimaryContactEmail
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Email address of secondary contact
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.Provider.SecondaryContactEmail
-                        </dd>
-                    </div>
+                    @if (Model.ServiceRemovalReason == ServiceRemovalReasonEnum.ProviderRequestedRemoval)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email address of <br /> primary contact
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Provider.PrimaryContactEmail
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email address of secondary contact
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Provider.SecondaryContactEmail
+                            </dd>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var email in Model.Provider.DSITUserEmails.Split(',').ToList())
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Email address of <br /> OfDIA user
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @email
+                                </dd>
+                            </div>
+                        }
+                    }
                 </dl>
 
 
