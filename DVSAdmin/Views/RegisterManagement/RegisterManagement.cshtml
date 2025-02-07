@@ -45,15 +45,7 @@
                                     <tr class="govuk-table__row">
                                         <td class="govuk-table__cell"> @Html.ActionLink(@item.RegisteredName, "ProviderDetails", "RegisterManagement", new { @providerId = item.Id }, new { @class = "govuk-link" })</td>
                                         <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@item.ProviderStatus) </td>
-                                        @if(item.PublishedTime !=null)
-                                        {
-                                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(@item.PublishedTime)</td>
-                                        }
-                                        else
-                                        {
-                                            <td class="govuk-table__cell">  </td>
-                                        }
-
+                                        <td class="govuk-table__cell">@(item.PublishedTime != null ? DateTimeExtensions.FormatDateTime(item.PublishedTime) : string.Empty)</td>
                                         <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
                                         <td class="govuk-table__cell">
                                             @foreach (var item1 in item.Services)
