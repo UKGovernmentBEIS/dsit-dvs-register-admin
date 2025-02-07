@@ -40,14 +40,7 @@ namespace DVSAdmin.Data.Entities
         public CabUser CabUser { get; set; }
         public int ServiceNumber { get;set; }      
         public ServiceStatusEnum ServiceStatus { get; set; }
-
-        public string ServiceStatusDescription
-        {
-            get
-            {
-                return ServiceStatusEnumExtensions.GetDescription(ServiceStatus);
-            }
-        }
+    
 
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }

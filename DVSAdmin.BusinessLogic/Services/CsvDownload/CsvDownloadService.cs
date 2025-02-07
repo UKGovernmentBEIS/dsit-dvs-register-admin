@@ -1,6 +1,7 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.Extensions.Logging;
@@ -15,7 +16,12 @@ namespace DVSAdmin.BusinessLogic.Services
             //Maps Service table columns to Register fields
             Map(s => s.Provider.RegisteredName).Name("Provider");
             Map(s => s.ServiceName).Name("Service name");
-            Map(s => s.ServiceStatusDescription) .Name("Status");
+            Map(m => m.ServiceSupSchemeMapping).Name("Schemes")
+            .Convert(row => string.Join(", " , row.Value.ServiceSupSchemeMapping
+            ?.Where(ssm => ssm.SupplementaryScheme != null)
+            ?.Select(ssm => ssm.SupplementaryScheme.SchemeName)
+            ?? Enumerable.Empty<string>()));
+            Map(s => s.ServiceStatus).Name("Status").Convert(row => ServiceStatusEnumExtensions.GetDescription(row.Value.ServiceStatus));
             Map(s => s.CabUser.Cab.CabName).Name("CAB");
             Map(s => s.PublishedTime).Name("Published on");
             Map(s => s.ConformityIssueDate).Name("Certificate Issue Date");
@@ -39,6 +45,22 @@ namespace DVSAdmin.BusinessLogic.Services
             try
             {
                 var services = await regManagementRepository.GetPublishedServices();
+                
+                foreach (var service in services.Take(1))  // Just look at first record
+                {
+                    logger.LogInformation("Service {ServiceName} has {SchemeCount} schemes", 
+                        service.ServiceName,
+                        service.ServiceSupSchemeMapping?.Count ?? 0);
+    
+                    if (service.ServiceSupSchemeMapping != null)
+                    {
+                        foreach (var scheme in service.ServiceSupSchemeMapping)
+                        {
+                            logger.LogInformation("Scheme: {SchemeName}", 
+                                scheme.SupplementaryScheme?.SchemeName ?? "null");
+                        }
+                    }
+                }
 
                 if (!services.Any())
                 {
