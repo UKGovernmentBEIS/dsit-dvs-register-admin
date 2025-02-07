@@ -1,6 +1,7 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.Extensions.Logging;
@@ -16,14 +17,11 @@ namespace DVSAdmin.BusinessLogic.Services
             Map(s => s.Provider.RegisteredName).Name("Provider");
             Map(s => s.ServiceName).Name("Service name");
             Map(m => m.ServiceSupSchemeMapping).Name("Schemes")
-                .Convert(row => {
-                    var schemes = row.Value.ServiceSupSchemeMapping
-                                      ?.Where(ssm => ssm.SupplementaryScheme != null)
-                                      ?.Select(ssm => ssm.SupplementaryScheme.SchemeName)
-                                  ?? Enumerable.Empty<string>();
-                    return string.Join(", ", schemes);
-                });
-            Map(s => s.ServiceStatusDescription) .Name("Status");
+            .Convert(row => string.Join(", " , row.Value.ServiceSupSchemeMapping
+            ?.Where(ssm => ssm.SupplementaryScheme != null)
+            ?.Select(ssm => ssm.SupplementaryScheme.SchemeName)
+            ?? Enumerable.Empty<string>()));
+            Map(s => s.ServiceStatus).Name("Status").Convert(row => ServiceStatusEnumExtensions.GetDescription(row.Value.ServiceStatus));
             Map(s => s.CabUser.Cab.CabName).Name("CAB");
             Map(s => s.PublishedTime).Name("Published on");
             Map(s => s.ConformityIssueDate).Name("Certificate Issue Date");
