@@ -35,7 +35,7 @@
             Trading names
         </dt>
         <dd class="govuk-summary-list__value">
-            @Model.Provider.TradingName
+            @(string.IsNullOrEmpty(Model.Provider.TradingName)? Model.Provider.TradingName : "N/A")jjj
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -66,70 +66,73 @@
         </dd>
     </div>
 
-
-    @if (Model.HasGPG44 && Model.ServiceQualityLevelMapping!=null)
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                GPG44 quality of authenticator
-            </dt>
-            <dd class="govuk-summary-list__value">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">GPG44 quality of authenticator</dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ServiceQualityLevelMapping != null && Model.ServiceQualityLevelMapping.Any(x => x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+            {
                 @foreach (var item in Model.ServiceQualityLevelMapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
                 {
                     <div>@item.QualityLevel.Level</div>
                 }
-            </dd>
-        </div>
+            }
+            else
+            {
+                <div>Not certified against GPG44</div>
+            }
+        </dd>
+    </div>
 
-
-
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                GPG44 level of protection
-            </dt>
-            <dd class="govuk-summary-list__value">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">GPG44 level of protection</dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ServiceQualityLevelMapping != null && Model.ServiceQualityLevelMapping.Any(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
+            {
                 @foreach (var item in Model.ServiceQualityLevelMapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
                 {
                     <div>@item.QualityLevel.Level</div>
                 }
-            </dd>
-        </div>
-    }
+            }
+            else
+            {
+                <div>Not certified against GPG44</div>
+            }
+        </dd>
+    </div>
 
-    @if (Model.ServiceIdentityProfileMapping!=null)
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                GPG45 identity profiles
-            </dt>
-            <dd class="govuk-summary-list__value">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">GPG45 identity profiles</dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ServiceIdentityProfileMapping != null && Model.ServiceIdentityProfileMapping.Any())
+            {
                 @foreach (var item in Model.ServiceIdentityProfileMapping)
                 {
                     <div>@item.IdentityProfile.IdentityProfileName</div>
                 }
-            </dd>
-        </div>
+            }
+            else
+            {
+                <div>Not certified against GPG45</div>
+            }
+        </dd>
+    </div>
 
-    }
-    
-
-    @if (Model.HasSupplementarySchemes && Model.ServiceSupSchemeMapping!=null)
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Supplementary codes
-            </dt>
-            <dd class="govuk-summary-list__value">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Supplementary codes</dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ServiceSupSchemeMapping != null && Model.ServiceSupSchemeMapping.Any())
+            {
                 @foreach (var item in Model.ServiceSupSchemeMapping)
                 {
                     <div>@item.SupplementaryScheme.SchemeName</div>
                 }
-            </dd>
-        </div>
-
-    }
-
-
+            }
+            else
+            {
+                <div>Not certified against any supplementary codes</div>
+            }
+        </dd>
+    </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
             Certificate
