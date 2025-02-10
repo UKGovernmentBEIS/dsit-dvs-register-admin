@@ -31,7 +31,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
                     foreach (var service in expiredServiceList)
                     {
-                        Console.WriteLine(service.ServiceName);
+                        Console.WriteLine($"Service: {service.ServiceName} has an expired certificate and has been removed from the Register");
                         if (success)
                         {
                             ProviderProfile providerProfile = await removeProviderRepository.GetProviderAndServices(service.ProviderProfileId);
@@ -40,7 +40,7 @@ namespace DVSAdmin.BusinessLogic.Services
                             GenericResponse genericResponse = await removeProviderRepository.UpdateProviderStatus(providerProfile.Id, providerStatus, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
                             if (genericResponse.Success)
                             {
-                                Console.WriteLine(providerProfile.RegisteredName);
+                                Console.WriteLine($"Provider: {providerProfile.RegisteredName} has no valid services and been removed from the Register");
                             }
 
                         }
