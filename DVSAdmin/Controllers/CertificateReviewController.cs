@@ -39,7 +39,7 @@ namespace DVSAdmin.Controllers
 
             certificateReviewListViewModel.CertificateReviewList =  serviceList.Where(x =>
              (x.ServiceStatus == ServiceStatusEnum.Submitted && x.ServiceStatus != ServiceStatusEnum.Removed && x.ServiceStatus != ServiceStatusEnum.SavedAsDraft
-             && x.Provider.ProviderStatus !=ProviderStatusEnum.RemovedFromRegister && x.Id != x?.CertificateReview?.ServiceId) || 
+              && x.Id != x?.CertificateReview?.ServiceId) || 
             (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview )).ToList();  
             
             certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
@@ -90,7 +90,7 @@ namespace DVSAdmin.Controllers
             else
             {
                 ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);
-                if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft || serviceDto.Provider.ProviderStatus == ProviderStatusEnum.RemovedFromRegister)
+                if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft)
                 {
                     return RedirectToAction(Constants.ErrorPath);
                 }

@@ -42,15 +42,14 @@ namespace DVSAdmin.Controllers
 
                 publicInterestCheckViewModel.PrimaryChecksList = publicinterestchecks.
                 Where(x => (x.ServiceStatus == ServiceStatusEnum.Received && x.ServiceStatus != ServiceStatusEnum.Removed 
-                && x.ServiceStatus!=ServiceStatusEnum.SavedAsDraft 
-                && x.Provider.ProviderStatus != ProviderStatusEnum.RemovedFromRegister &&
+                && x.ServiceStatus!=ServiceStatusEnum.SavedAsDraft  &&
                 x.Id != x?.PublicInterestCheck?.ServiceId ) ||
                 (x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview               
                 || x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)
                  && x.PublicInterestCheck.SecondaryCheckUserId != userDto.Id).ToList();
 
                 publicInterestCheckViewModel.SecondaryChecksList = publicinterestchecks
-                .Where(x => x.ServiceStatus != ServiceStatusEnum.Removed && x.Provider.ProviderStatus != ProviderStatusEnum.RemovedFromRegister
+                .Where(x => x.ServiceStatus != ServiceStatusEnum.Removed
                 &&  x.ServiceStatus != ServiceStatusEnum.SavedAsDraft && x.PublicInterestCheck !=null   
                 &&(x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
                 x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
