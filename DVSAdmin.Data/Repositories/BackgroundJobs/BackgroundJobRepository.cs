@@ -26,8 +26,9 @@ namespace DVSAdmin.Data.Repositories.BackgroundJobs
                 .ToListAsync();
         }
 
-        public async Task MarkAsRemoved(List<int>? serviceIds)
+        public async Task<bool> MarkAsRemoved(List<int>? serviceIds)
         {
+            bool success = false;
             var servicesToRemove = await context.Service
                 .Where(s => serviceIds != null && serviceIds.Contains(s.Id))
                 .ToListAsync();
@@ -40,26 +41,22 @@ namespace DVSAdmin.Data.Repositories.BackgroundJobs
                     service.ServiceStatus = ServiceStatusEnum.Removed;
                     service.ModifiedTime = DateTime.UtcNow;
                     service.RemovedTime = DateTime.UtcNow;
-                    service.ServiceRemovalReason = ServiceRemovalReasonEnum.RemovedByCronJob;
-
-                    if (service.Provider.Services != null && service.Provider.Services.All(s => s.ServiceStatus == ServiceStatusEnum.Removed))
-                    {
-                        var provider = await context.ProviderProfile.Where(p => p.Id == service.ProviderProfileId).FirstOrDefaultAsync();
-                        provider.ProviderStatus = ProviderStatusEnum.RemovedFromRegister;
-                        provider.RemovalReason = RemovalReasonsEnum.RemovedByCronJob;
-                        provider.RemovedTime = DateTime.UtcNow;
-                    }
+                    service.ServiceRemovalReason = ServiceRemovalReasonEnum.RemovedByCronJob;                   
                 }
 
                 await context.SaveChangesAsync();
                 transaction.Commit();
+                success = true;
             }
 
             catch (Exception ex)
             {
+                success = false;
                 await transaction.RollbackAsync();
                 logger.LogError($"BackgroundJobRepository: MarkAsRemoved method failed: {ex}");
             }
+
+            return success;
         }
     }
 }

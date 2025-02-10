@@ -52,7 +52,7 @@ namespace DVSAdmin.BusinessLogic.Services
             TeamEnum requstedBy = serviceRemovalReason == ServiceRemovalReasonEnum.ProviderRequestedRemoval ? TeamEnum.Provider : TeamEnum.DSIT;
             if (genericResponse.Success)
             {
-                providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
+                providerProfile = await removeProviderRepository.GetProviderAndServices(providerProfileId);
                 // update provider status
 
                 ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
@@ -104,10 +104,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
                         await emailSender.ServiceRemovalRequestCreated(loggedInUserEmail,serviceNames, reasonString);//55/DSIT/Service removal request created by DSIT
 
-
                     }
-
-
 
                 }
             }
@@ -136,7 +133,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 genericResponse = await removeProviderRepository.SaveRemoveProviderToken(removeProviderToken, TeamEnum.DSIT, EventTypeEnum.RemoveProvider, loggedInUserEmail);
                 if (genericResponse.Success)
                 {
-                    ProviderProfile providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
+                    ProviderProfile providerProfile = await removeProviderRepository.GetProviderAndServices(providerProfileId);
                     string reasonString = RemovalReasonsEnumExtensions.GetDescription(reason.Value);
                     await SendEmails(serviceIds, dsitUserEmails, reasonString, requstedBy, tokenDetails, providerProfile, loggedInUserEmail);
                 }
