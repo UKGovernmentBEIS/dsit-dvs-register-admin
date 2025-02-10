@@ -24,12 +24,17 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
 
         }
 
+        public async Task<ProviderProfile> GetProviderAndServices(int providerId)
+        {
+           return await context.ProviderProfile.Include(p => p.Services).Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();
+        }
+
         public async Task<Service> GetServiceDetails(int serviceId)
         {
             return await context.Service.Include(s=>s.Provider).Include(s=>s.CabUser).Where(s => s.Id == serviceId).FirstOrDefaultAsync() ?? new Service(); ;
 
         }
-        public async Task<GenericResponse> UpdateProviderStatus(int providerProfileId, ProviderStatusEnum providerStatus, string loggedInUserEmail, EventTypeEnum eventType)
+        public async Task<GenericResponse> UpdateProviderStatus(int providerProfileId, ProviderStatusEnum providerStatus, string loggedInUserEmail, EventTypeEnum eventType, TeamEnum team = TeamEnum.DSIT)
         {
             GenericResponse genericResponse = new();
             using var transaction = await context.Database.BeginTransactionAsync();
@@ -50,7 +55,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                         existingProvider.RemovalRequestTime = DateTime.UtcNow;
                     }
                 }
-                await context.SaveChangesAsync(TeamEnum.DSIT, eventType, loggedInUserEmail);
+                await context.SaveChangesAsync(team, eventType, loggedInUserEmail);
                 await transaction.CommitAsync();
                 genericResponse.Success = true;
             }
