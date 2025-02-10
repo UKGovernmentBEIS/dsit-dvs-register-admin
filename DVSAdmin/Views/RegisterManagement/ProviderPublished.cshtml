@@ -31,7 +31,11 @@
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell"> @Model.RegisteredName </td>
                             <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@Model.ProviderStatus) </td>
-                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.PublishedTime)</td>
+                            <td class="govuk-table__cell">
+                                @(Model.PublishedTime != null
+                                ? DateTimeExtensions.FormatDateTime(Model.PublishedTime)
+                                : string.Empty)
+                            </td>
                             <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
                             <td class="govuk-table__cell">
                             @foreach (var item in Model.Services)

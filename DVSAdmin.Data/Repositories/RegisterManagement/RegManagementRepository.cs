@@ -113,72 +113,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return genericResponse;
         }
 
-        public async Task<GenericResponse> UpdateRemovalStatus(EventTypeEnum eventType, TeamEnum team, int providerProfileId,
-            List<int> serviceIds, string loggedInUserEmail, RemovalReasonsEnum? reason, ServiceRemovalReasonEnum? serviceRemovalReason)
-        {
-            GenericResponse genericResponse = new();
-            ServiceStatusEnum serviceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
-            DateTime? removedTime = null;
-            using var transaction = await context.Database.BeginTransactionAsync();
-            try
-            {
-                var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(p => p.Id == providerProfileId);
-                if (existingProvider != null)
-                {
-                    if (eventType == EventTypeEnum.RemoveProvider) // remove provider and all published services under it
-                    {
-                        existingProvider.RemovalReason = reason;
-                        existingProvider.ModifiedTime = DateTime.UtcNow;
-                        existingProvider.RemovalRequestTime = DateTime.UtcNow;
-                        existingProvider.ProviderStatus = ProviderStatusEnum.AwaitingRemovalConfirmation;
-
-                        var existingServices = await context.Service.Where(e => serviceIds.Contains(e.Id)
-                        && e.ProviderProfileId == providerProfileId && e.ServiceStatus == ServiceStatusEnum.Published).ToListAsync();
-                        foreach (var existingService in existingServices)
-                        {
-                            existingService.ServiceStatus = serviceStatus;
-                            existingService.ModifiedTime = DateTime.UtcNow;
-                            existingService.RemovalRequestTime = DateTime.UtcNow;
-                        }
-                    }
-                    else if (eventType == EventTypeEnum.RemoveService || eventType == EventTypeEnum.RemoveServiceRequestedByCab)
-                    {
-                        serviceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
-                        removedTime = DateTime.UtcNow;
-
-
-                        foreach (var item in serviceIds)
-                        {
-                            var service = await context.Service.Where(s => s.Id == item && s.ProviderProfileId == providerProfileId).FirstOrDefaultAsync();
-                            service.ServiceStatus = serviceStatus;
-                            service.ModifiedTime = DateTime.UtcNow;
-                            service.RemovalRequestTime = DateTime.UtcNow;
-                            service.ServiceRemovalReason = serviceRemovalReason;
-                            service.RemovedTime = removedTime;
-                        }
-
-                        if (existingProvider.Services.All(service => service.ServiceStatus == ServiceStatusEnum.Removed)) //to do : check different scenarios
-                        {
-                            existingProvider.RemovalReason = reason;
-                            existingProvider.ModifiedTime = DateTime.UtcNow;
-                            existingProvider.ProviderStatus = ProviderStatusEnum.RemovedFromRegister;
-                            existingProvider.RemovedTime = DateTime.UtcNow;
-                        }
-                    }
-                }
-
-                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RegisterManagement, loggedInUserEmail);
-                await transaction.CommitAsync();
-                genericResponse.Success = true;
-            }
-            catch (Exception ex)
-            {
-                genericResponse.Success = false;
-                await transaction.RollbackAsync();
-                logger.LogError(ex.Message);
-            }
-            return genericResponse;
-        }
+      
         public async Task<GenericResponse> UpdateProviderStatus(int providerId, ProviderStatusEnum providerStatus, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new GenericResponse();
@@ -235,11 +170,15 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         {
            return await context.Service.AsNoTracking()//Read only, so no need for tracking query
             .Include(service => service.Provider)
-            .Include(service => service.CabUser.Cab)
-            .Where(ci => ci.ServiceStatus >= ServiceStatusEnum.Published && ci.ServiceStatus != ServiceStatusEnum.Removed
-            && ci.ServiceStatus != ServiceStatusEnum.SavedAsDraft && ci.Provider.ProviderStatus !=ProviderStatusEnum.RemovedFromRegister)
+            .Include(service => service.CabUser)
+                .ThenInclude(cabUser => cabUser.Cab)
+            .Include(service => service.ServiceSupSchemeMapping)
+                .ThenInclude(ssm => ssm.SupplementaryScheme)
+            .Where(ci => ci.ServiceStatus >= ServiceStatusEnum.Published
+                         && ci.ServiceStatus != ServiceStatusEnum.Removed 
+                         && ci.ServiceStatus != ServiceStatusEnum.SavedAsDraft
+                         && ci.Provider.ProviderStatus !=ProviderStatusEnum.RemovedFromRegister)
             .ToListAsync();
         }
-
     }
 }

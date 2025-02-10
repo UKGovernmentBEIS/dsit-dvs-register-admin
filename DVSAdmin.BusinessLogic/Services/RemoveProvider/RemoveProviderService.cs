@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
@@ -7,6 +8,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.Extensions.Configuration;
+using System.Drawing;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -46,11 +48,11 @@ namespace DVSAdmin.BusinessLogic.Services
         public async Task<GenericResponse> RemoveServiceRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, ServiceRemovalReasonEnum? serviceRemovalReason)
         {
             GenericResponse genericResponse = await removeProviderRepository.RemoveServiceRequest(providerProfileId, serviceIds, loggedInUserEmail, serviceRemovalReason);
-            ProviderProfile providerProfile = new();            
-
+            ProviderProfile providerProfile = new();
+            TeamEnum requstedBy = serviceRemovalReason == ServiceRemovalReasonEnum.ProviderRequestedRemoval ? TeamEnum.Provider : TeamEnum.DSIT;
             if (genericResponse.Success)
             {
-                providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
+                providerProfile = await removeProviderRepository.GetProviderAndServices(providerProfileId);
                 // update provider status
 
                 ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
@@ -58,7 +60,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 // save token for 2i check
                 //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
 
-                TokenDetails tokenDetails = jwtService.GenerateToken();
+                TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty);
 
                 ICollection<RemoveTokenServiceMapping> removeTokenServiceMapping = [];
                 foreach (var item in serviceIds)
@@ -82,14 +84,27 @@ namespace DVSAdmin.BusinessLogic.Services
                     var filteredServiceNames = providerProfile.Services.Where(s => serviceIds.Contains(s.Id)).Select(s => s.ServiceName).ToList();
                     string serviceNames = string.Join("\r", filteredServiceNames);
                     string reasonString = ServiceRemovalReasonEnumExtensions.GetDescription(serviceRemovalReason.Value);
-                    string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
 
+                    if (requstedBy == TeamEnum.Provider)
+                    {
+                        string linkForEmailToProvider = configuration["DvsRegisterLink"] + "remove-provider/provider/provider-details?token=" + tokenDetails.Token;
+                        //37/Provider/Service removal request
+                        await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
+                        await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
+                        await emailSender.RequestToRemoveServiceNotificationToDSIT(serviceNames, providerProfile.RegisteredName, reasonString);//38/DSIT/service removal request sent
 
-                    //37/Provider/Service removal request
-                    await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
-                    await emailSender.SendRequestToRemoveServiceToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, serviceNames, reasonString, linkForEmailToProvider);
-                    await emailSender.RequestToRemoveServiceNotificationToDSIT(serviceNames, providerProfile.RegisteredName, reasonString);//38/DSIT/service removal request sent
+                    }
+                    else if( requstedBy == TeamEnum.DSIT)
+                    {
+                        string linkForEmailToDSIT = configuration["DvsRegisterLink"] + "remove-provider/dsit/provider-details?token=" + tokenDetails.Token;
+                        foreach (var email in dsitUserEmails)
+                        {
+                            await emailSender.SendServiceRemoval2iCheckToDSIT(email, linkForEmailToDSIT, serviceNames, reasonString);//52/DSIT/service removal 2i check review request
+                        }
 
+                        await emailSender.ServiceRemovalRequestCreated(loggedInUserEmail,serviceNames, reasonString);//55/DSIT/Service removal request created by DSIT
+
+                    }
 
                 }
             }
@@ -118,7 +133,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 genericResponse = await removeProviderRepository.SaveRemoveProviderToken(removeProviderToken, TeamEnum.DSIT, EventTypeEnum.RemoveProvider, loggedInUserEmail);
                 if (genericResponse.Success)
                 {
-                    ProviderProfile providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
+                    ProviderProfile providerProfile = await removeProviderRepository.GetProviderAndServices(providerProfileId);
                     string reasonString = RemovalReasonsEnumExtensions.GetDescription(reason.Value);
                     await SendEmails(serviceIds, dsitUserEmails, reasonString, requstedBy, tokenDetails, providerProfile, loggedInUserEmail);
                 }
@@ -167,17 +182,19 @@ namespace DVSAdmin.BusinessLogic.Services
                 Service service = providerProfile.Services.Where(s => s.Id == serviceIds[0]).FirstOrDefault(); // only single service removal in current release
                if (genericResponse.Success && providerStatus == ProviderStatusEnum.RemovedFromRegister)
                 {
-                    await emailSender.SendRecordRemovedToDSIT(providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
-                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.CabUser.CabEmail, providerProfile.CabUser.CabEmail, providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
-                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
-                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, providerProfile.RegisteredName, service.ServiceName, service.RemovalReasonByCab);
+                    //35/CAB + Provider/Whole record
+
+                    await emailSender.SendRecordRemovedToDSIT(providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
+                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.CabUser.CabEmail, providerProfile.CabUser.CabEmail, providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
+                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
+                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
                 }
                 else
                 {
-                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.CabUser.CabEmail, service.CabUser.CabEmail, service.ServiceName, service.RemovalReasonByCab);//41/CAB + Provider/Service removed
-                    await emailSender.ServiceRemovedToDSIT(service.ServiceName, service.RemovalReasonByCab); //42/DSIT/Service removed
-                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.Provider.PrimaryContactFullName, service.Provider.PrimaryContactEmail, service.ServiceName, service.RemovalReasonByCab);//41/CAB + Provider/Service removed
-                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.Provider.SecondaryContactFullName, service.Provider.SecondaryContactEmail, service.ServiceName, service.RemovalReasonByCab);//41/CAB + Provider/Service removed
+                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.CabUser.CabEmail, service.CabUser.CabEmail, service.ServiceName, Constants.CabHasWithdrawnCertificate);//41/CAB + Provider/Service removed
+                    await emailSender.ServiceRemovedToDSIT(service.ServiceName, Constants.CabHasWithdrawnCertificate); //42/DSIT/Service removed
+                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.Provider.PrimaryContactFullName, service.Provider.PrimaryContactEmail, service.ServiceName, Constants.CabHasWithdrawnCertificate);//41/CAB + Provider/Service removed
+                    await emailSender.ServiceRemovedConfirmedToCabOrProvider(service.Provider.SecondaryContactFullName, service.Provider.SecondaryContactEmail, service.ServiceName, Constants.CabHasWithdrawnCertificate);//41/CAB + Provider/Service removed
                 }
              
             }

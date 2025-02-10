@@ -6,6 +6,6 @@ namespace DVSAdmin.Data.Repositories
     {
         
         public Task<List<Service>> GetExpiredCertificates();
-        Task MarkAsRemoved(List<int>? serviceIds);
+        Task<bool> MarkAsRemoved(List<int>? serviceIds);
     }
 }
