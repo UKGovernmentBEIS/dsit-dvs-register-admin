@@ -1,4 +1,5 @@
 ﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @model ProviderProfileDto;
@@ -40,9 +41,11 @@
 
                                 @foreach (var item in @Model.Services)
                                 {
-                                    <div class="govuk-!-margin-bottom-1">
-                                        @item.ServiceName
-                                    </div>
+                                    if (item.ServiceStatus == ServiceStatusEnum.Published){
+                                        <div class="govuk-!-margin-bottom-1">
+                                            @item.ServiceName
+                                        </div>
+                                    }
                                 }
 
                             </td>
