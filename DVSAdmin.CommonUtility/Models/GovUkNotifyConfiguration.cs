@@ -8,7 +8,7 @@ namespace DVSAdmin.CommonUtility.Models
         public string ApiKey { get; set; }
         public string OfDiaEmailId { get; set; }
         public string LoginLink { get; set; }
-        public string PreRegLink { get; set; }
+      
 
         public PassPIPrimaryCheckTemplate PassPIPrimaryCheckTemplate { get;set; }
         public FailPIPrimaryCheckTemplate FailPIPrimaryCheckTemplate { get; set; }
