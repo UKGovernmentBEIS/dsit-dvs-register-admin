@@ -2,6 +2,7 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Data.Entities;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -46,20 +47,20 @@ namespace DVSAdmin.Controllers
                 x.Id != x?.PublicInterestCheck?.ServiceId ) ||
                 (x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview               
                 || x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)
-                 && x.PublicInterestCheck.SecondaryCheckUserId != userDto.Id).ToList();
+                 && x.PublicInterestCheck.SecondaryCheckUserId != userDto.Id).OrderBy(x => x.DaysLeftToCompletePICheck).ToList();
 
                 publicInterestCheckViewModel.SecondaryChecksList = publicinterestchecks
                 .Where(x => x.ServiceStatus != ServiceStatusEnum.Removed
                 &&  x.ServiceStatus != ServiceStatusEnum.SavedAsDraft && x.PublicInterestCheck !=null   
                 &&(x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
                 x.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
-                && x.PublicInterestCheck.PrimaryCheckUserId != userDto.Id).ToList();
+                && x.PublicInterestCheck.PrimaryCheckUserId != userDto.Id).OrderBy(x => x.DaysLeftToCompletePICheck).ToList();
 
 
                 publicInterestCheckViewModel.ArchiveList = publicinterestchecks
                 .Where(x => x.PublicInterestCheck != null && x.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                 (x.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckFailed ||
-                 x.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed)).ToList();
+                 x.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed)).OrderByDescending(x => x.PublicInterestCheck.SecondaryCheckTime).ToList();
 
                 return View(publicInterestCheckViewModel);
             }
