@@ -14,7 +14,7 @@ namespace DVSAdmin.BusinessLogic.Extensions
         {
             if (source.CreatedTime.HasValue)
             {               
-                var daysPassed = (DateTime.UtcNow.Date - source.CreatedTime.Value.Date).Days;               
+                var daysPassed = (DateTime.UtcNow.Date - source.ModifiedTime.Value.Date).Days;               
                 var daysLeft = Constants.DaysLeftToCompleteCertificateReview - daysPassed;
                 return Math.Max(0, daysLeft);
             }

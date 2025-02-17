@@ -40,7 +40,7 @@ namespace DVSAdmin.Controllers
             certificateReviewListViewModel.CertificateReviewList =  serviceList.Where(x =>
              (x.ServiceStatus == ServiceStatusEnum.Submitted && x.ServiceStatus != ServiceStatusEnum.Removed && x.ServiceStatus != ServiceStatusEnum.SavedAsDraft
               && x.Id != x?.CertificateReview?.ServiceId) || 
-            (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview )).ToList();  
+            (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview )).OrderBy(x => x.DaysLeftToComplete).ToList();  
             
             certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
             ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) 
