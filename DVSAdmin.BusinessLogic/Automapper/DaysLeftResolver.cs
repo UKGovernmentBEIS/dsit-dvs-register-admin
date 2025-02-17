@@ -12,17 +12,13 @@ namespace DVSAdmin.BusinessLogic.Extensions
     {
         public int Resolve(Service source, ServiceDto destination, int daysLeftToComplete, ResolutionContext context)
         {
-            if (source.CreatedTime.HasValue)
-            {               
-                var daysPassed = (DateTime.UtcNow.Date - source.ModifiedTime.Value.Date).Days;               
-                var daysLeft = Constants.DaysLeftToCompleteCertificateReview - daysPassed;
-                return Math.Max(0, daysLeft);
-            }
-            else
-            {
-               
+            var date = source.ModifiedTime ?? source.CreatedTime;
+            if (!date.HasValue)
                 return 0;
-            }
+
+            var daysPassed = (DateTime.UtcNow.Date - date.Value.Date).Days;
+            var daysLeft = Constants.DaysLeftToCompleteCertificateReview - daysPassed;
+            return Math.Max(0, daysLeft);
         }
     }
 
