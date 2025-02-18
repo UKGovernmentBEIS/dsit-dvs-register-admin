@@ -71,7 +71,13 @@ namespace DVSAdmin.BusinessLogic.Services
         public async Task<ProviderProfileDto> GetProviderWithServiceDetails(int providerProfileId)
         {
             var provider = await regManagementRepository.GetProviderWithServiceDetails(providerProfileId);
-            ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);           
+            ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);
+          
+            foreach (var service in providerDto.Services) 
+            {
+               var previousVersionList = providerDto.Services.Where(x => x.ServiceKey == service.ServiceKey && x.IsCurrent == false && x.ServiceStatus == ServiceStatusEnum.Published).ToList();
+               service.HasPreviousPublishedVersion = previousVersionList !=null && previousVersionList.Count > 0;
+            }
             return providerDto;
         }
 
