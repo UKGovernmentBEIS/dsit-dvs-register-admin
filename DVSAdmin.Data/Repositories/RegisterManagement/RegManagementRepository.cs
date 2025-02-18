@@ -88,6 +88,9 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                 {
                     var existingService = await context.Service.FirstOrDefaultAsync(e => e.Id == serviceId);
 
+                    var previousPublishedServiceVersionList = await context.Service.Where(s => s.ServiceKey == existingService.ServiceKey
+                    && s.ServiceStatus == ServiceStatusEnum.Published && s.IsCurrent == false).ToListAsync();
+
                     if (existingService != null)
                     {
                         existingService.ServiceStatus = serviceStatus;
@@ -95,6 +98,16 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                         if (serviceStatus == ServiceStatusEnum.Published)
                         {
                             existingService.PublishedTime = DateTime.UtcNow;
+                        }
+
+
+                        if(previousPublishedServiceVersionList != null && previousPublishedServiceVersionList.Count >0)
+                        {
+                            foreach (var version in previousPublishedServiceVersionList)
+                            {
+                                version.ServiceStatus = ServiceStatusEnum.Removed; // remove old published versions if any
+                                version.RemovedTime = DateTime.UtcNow;
+                            }
                         }
 
                     }

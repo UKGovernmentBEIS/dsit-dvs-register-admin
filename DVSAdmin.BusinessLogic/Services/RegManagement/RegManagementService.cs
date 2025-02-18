@@ -110,7 +110,7 @@ namespace DVSAdmin.BusinessLogic.Services
             if(genericResponse.Success)
             {
                 //insert provider log
-                RegisterPublishLog registerPublishLog = new RegisterPublishLog();
+                RegisterPublishLog registerPublishLog = new();
                 registerPublishLog.ProviderProfileId = providerProfileId;
                 registerPublishLog.CreatedTime = DateTime.UtcNow;
                 registerPublishLog.ProviderName = providerProfile.TradingName;
