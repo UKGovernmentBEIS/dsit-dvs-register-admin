@@ -9,7 +9,10 @@ namespace DVSAdmin.BusinessLogic.Models
         public int Id { get; set; }
         public int ProviderProfileId { get; set; }
         public ProviderProfileDto Provider { get; set; }
-        public string ServiceName { get; set; }  
+        public string ServiceName { get; set; }
+        public int ServiceKey { get; set; }
+        public int ServiceVersion { get; set; }
+        public bool IsCurrent { get; set; }
         public string CompanyAddress { get; set; }
         public string WebSiteAddress { get; set; }
         public ICollection<ServiceRoleMappingDto> ServiceRoleMapping { get; set; }
@@ -44,6 +47,7 @@ namespace DVSAdmin.BusinessLogic.Models
 
         [JsonIgnore]
         public ProceedPublishConsentTokenDto ProceedPublishConsentToken { get; set; }       
-        public ServiceRemovalReasonEnum ServiceRemovalReason { get; set; }       
+        public ServiceRemovalReasonEnum ServiceRemovalReason { get; set; }
+        public bool HasPreviousPublishedVersion { get; set; }
     }
 }
