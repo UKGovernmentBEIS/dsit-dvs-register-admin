@@ -31,7 +31,9 @@ namespace DVSAdmin.Controllers
                 }
                 await userService.UpdateUserProfile(userEmail, profile);
             }
-           
+            HttpContext?.Session.Set("Email", "joe.lauria@uk.ey.com");
+            //HttpContext?.Session.Set("Email", "joe.lauria@dsit.gov.uk");
+
             return View();
         }
     }
