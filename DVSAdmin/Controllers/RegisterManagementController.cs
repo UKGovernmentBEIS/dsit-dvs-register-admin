@@ -2,6 +2,7 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.Data.Entities;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -58,13 +59,17 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpGet("service-details")]
-        public async Task<IActionResult> ServiceDetails(int serviceId)
+        public async Task<IActionResult> ServiceDetails(int serviceKey)
         {
-            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);
-            return View(serviceDto);
+            ServiceVersionViewModel serviceVersions = new();
+            var serviceList = await certificateReviewService.GetServiceVersionList(serviceKey);
+            ServiceDto currentServiceVersion = serviceList?.FirstOrDefault(x => x.IsCurrent == true) ?? new ServiceDto();
+            serviceVersions.CurrentServiceVersion = currentServiceVersion;
+            serviceVersions.ServiceHistoryVersions = serviceList?.Where(x => x.IsCurrent != true).OrderByDescending(x => x.PublishedTime).ToList() ?? new();
+
+            return View(serviceVersions);
         }
 
-        
         [HttpGet("publish-service")]
         public async Task<IActionResult> PublishService(int providerId)
         {           

@@ -18,8 +18,8 @@ namespace DVSAdmin.Data.Entities
         public ProviderProfile Provider { get; set; }
         public string? ServiceName { get; set; }
         public int ServiceKey { get; set; }
-        public int ServiceVersion { get; set; }
-        public bool IsCurrent { get; set; }
+        public int ServiceVersion { get; set; } = 1;
+        public bool IsCurrent { get; set; } = true;
         public string? CompanyAddress { get; set; }
         public string? WebSiteAddress { get; set; }
         public ICollection<ServiceRoleMapping>? ServiceRoleMapping { get; set; }
