@@ -48,7 +48,7 @@
 
                 @foreach(var item in Model.Services)
                 {
-                    <h2 class="govuk-heading-m">Service @item.ServiceNumber: @item.ServiceName</h2>
+                    <h2 class="govuk-heading-m">Service details: @item.ServiceName</h2>
                     @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", item)                  
 
                     if (item.HasPreviousPublishedVersion)
