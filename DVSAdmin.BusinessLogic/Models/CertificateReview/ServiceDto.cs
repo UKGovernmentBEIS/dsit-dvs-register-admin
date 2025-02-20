@@ -30,7 +30,6 @@ namespace DVSAdmin.BusinessLogic.Models
         public DateTime ConformityExpiryDate { get; set; }      
         public int CabUserId { get; set; }
         public CabUserDto CabUser { get; set; }
-        public int ServiceNumber { get; set; }
         public int TrustMarkNumber { get; set; }
         public ServiceStatusEnum ServiceStatus { get; set; }
         public DateTime? CreatedTime { get; set; }

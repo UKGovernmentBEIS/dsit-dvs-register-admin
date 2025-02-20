@@ -3,10 +3,16 @@
 @using DVSAdmin.CommonUtility.Models;
 @model ServiceDto
 
-<div class="govuk-summary-card">
+<div class="govuk-summary-card @(Model.IsCurrent || Model.ServiceVersion == 1 ? "govuk-!-margin-0" : "govuk-!-margin-bottom-8")">
     <div class="govuk-summary-card__title-wrapper">
         <p class="govuk-summary-card__title">
-            Service: @Model.ServiceName
+            @if(Model.ServiceStatus == ServiceStatusEnum.Published){
+                @DateTimeExtensions.FormatDateTime(@Model.PublishedTime)
+            }
+            else
+            {
+                @DateTimeExtensions.FormatDateTime(@Model.ModifiedTime)
+            }
         </p>
     </div>
     <div class="govuk-summary-card__content">
@@ -42,6 +48,14 @@
                 </dt>
                 <dd class="govuk-summary-list__value">
                     @HtmlExtensions.ToStringWithLineBreaks(Model.CompanyAddress)
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Name of service
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.ServiceName
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -105,7 +119,7 @@
                     }
                     else
                     {
-                        <div>Not certified against GPG45</div>
+                        <div>Not certified against any identity profiles</div>
                     }
                 </dd>
             </div>
