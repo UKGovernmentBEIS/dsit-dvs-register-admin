@@ -39,7 +39,7 @@
                             <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
                             <td class="govuk-table__cell">
 
-                                @foreach (var item in @Model.Services)
+                                @foreach (var item in Model.Services.Where(s => s.IsCurrent))
                                 {
                                     if (item.ServiceStatus == ServiceStatusEnum.Published){
                                         <div class="govuk-!-margin-bottom-1">
