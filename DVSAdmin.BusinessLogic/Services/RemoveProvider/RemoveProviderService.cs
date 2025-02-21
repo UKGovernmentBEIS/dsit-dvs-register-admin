@@ -7,6 +7,7 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
+using DVSAdmin.Data.Repositories.RegisterManagement;
 using Microsoft.Extensions.Configuration;
 using System.Drawing;
 
@@ -39,11 +40,20 @@ namespace DVSAdmin.BusinessLogic.Services
         }
 
         public async Task<ProviderProfileDto> GetProviderDetails(int providerProfileId)
-        {
+        { 
             var provider = await removeProviderRepository.GetProviderDetails(providerProfileId);
             ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);
+
+            providerDto.Services = providerDto.Services.Where(s =>
+                s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
+                s.ServiceStatus == ServiceStatusEnum.Published ||
+                s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
+                s.ServiceStatus == ServiceStatusEnum.Removed ||
+                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation).ToList();
+
             return providerDto;
         }
+
 
         public async Task<GenericResponse> RemoveServiceRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> dsitUserEmails, ServiceRemovalReasonEnum? serviceRemovalReason)
         {
