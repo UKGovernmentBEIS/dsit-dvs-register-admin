@@ -34,7 +34,6 @@ namespace DVSAdmin.Data.Edit
                 }
                 else
                 {
-                    // 3. Insert new record
                     draft.ModifiedTime = DateTime.UtcNow;
                     await _context.ProviderProfileDraft.AddAsync(draft);
                     await _context.SaveChangesAsync();
@@ -53,7 +52,84 @@ namespace DVSAdmin.Data.Edit
             }
             return response;
         }
+        
+        public async Task<GenericResponse> SaveServiceDraft(ServiceDraft draft, string loggedInUserEmail)
+        {
+            var response = new GenericResponse();
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var existingDraft = await _context.ServiceDraft
+                    .FirstOrDefaultAsync(x => x.ServiceId == draft.ServiceId);
 
+                if (existingDraft != null)
+                {
+                    UpdateExistingServiceDraft(draft, existingDraft);
+                    await _context.SaveChangesAsync();
+
+                    response.InstanceId = existingDraft.Id;
+                }
+                else
+                {
+                    draft.ModifiedTime = DateTime.UtcNow;
+                    await _context.ServiceDraft.AddAsync(draft);
+                    await _context.SaveChangesAsync();
+
+                    response.InstanceId = draft.Id;
+                }
+
+                transaction.Commit();
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                response.Success = false;
+                _logger.LogError(ex, "Error in SaveServiceDraft");
+            }
+            return response;
+        }
+        
+        private void UpdateExistingServiceDraft(ServiceDraft source, ServiceDraft target)
+        {
+            target.ServiceName = source.ServiceName;
+            target.WebSiteAddress = source.WebSiteAddress;
+            target.CompanyAddress = source.CompanyAddress;
+            
+            if (target.ServiceRoleMappingDraft != null && target.ServiceRoleMappingDraft.Count > 0)
+            {
+                _context.ServiceRoleMappingDraft.RemoveRange(target.ServiceRoleMappingDraft);
+            }
+            target.ServiceRoleMappingDraft = source.ServiceRoleMappingDraft;
+
+            if (target.ServiceIdentityProfileMappingDraft != null && target.ServiceIdentityProfileMappingDraft.Count > 0)
+            {
+                _context.ServiceIdentityProfileMappingDraft.RemoveRange(target.ServiceIdentityProfileMappingDraft);
+            }
+            target.ServiceIdentityProfileMappingDraft = source.ServiceIdentityProfileMappingDraft;
+
+            if (target.ServiceQualityLevelMappingDraft != null && target.ServiceQualityLevelMappingDraft.Count > 0)
+            {
+                _context.ServiceQualityLevelMappingDraft.RemoveRange(target.ServiceQualityLevelMappingDraft);
+            }
+            target.ServiceQualityLevelMappingDraft = source.ServiceQualityLevelMappingDraft;
+
+            target.HasSupplementarySchemes = source.HasSupplementarySchemes;
+            target.HasGPG44 = source.HasGPG44;
+            target.HasGPG45 = source.HasGPG45;
+
+            if (target.ServiceSupSchemeMappingDraft != null && target.ServiceSupSchemeMappingDraft.Count > 0)
+            {
+                _context.ServiceSupSchemeMappingDraft.RemoveRange(target.ServiceSupSchemeMappingDraft);
+            }
+            target.ServiceSupSchemeMappingDraft = source.ServiceSupSchemeMappingDraft;
+
+            target.ConformityIssueDate = source.ConformityIssueDate;
+            target.ConformityExpiryDate = source.ConformityExpiryDate;
+            target.CurrentServiceStatus = source.CurrentServiceStatus;
+
+            target.ModifiedTime = DateTime.UtcNow;
+        }
         private void UpdateExistingProviderDraft(ProviderProfileDraft source, ProviderProfileDraft target)
         {
             target.ModifiedTime = DateTime.UtcNow;
