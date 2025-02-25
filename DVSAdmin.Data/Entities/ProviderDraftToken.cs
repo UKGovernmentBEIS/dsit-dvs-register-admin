@@ -16,8 +16,8 @@ namespace DVSAdmin.Data.Entities
        
         public string TokenId { get; set; }
         public string Token {  get; set; }
-        [ForeignKey("ProviderDraft")]
-        public int ProviderDraftId { get; set; }
+        [ForeignKey("ProviderProfileDraft")]
+        public int ProviderProfileDraftId { get; set; }
         public ProviderProfileDraft ProviderProfileDraft { get; set; }
         public DateTime CreatedTime { get; set; }
     }

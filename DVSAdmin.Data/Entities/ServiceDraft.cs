@@ -33,7 +33,7 @@ namespace DVSAdmin.Data.Entities
         [ForeignKey("User")]
         public int RequestedUserId{ get; set; }
         public User User { get; set; } 
-        public ServiceStatusEnum CurrentServiceStatus { get; set; }        
+        public ServiceStatusEnum PreviousServiceStatus { get; set; }        
         public DateTime ModifiedTime { get; set; }
     }
 }
