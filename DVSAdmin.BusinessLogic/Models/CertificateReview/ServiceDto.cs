@@ -16,18 +16,18 @@ namespace DVSAdmin.BusinessLogic.Models
         public string CompanyAddress { get; set; }
         public string WebSiteAddress { get; set; }
         public ICollection<ServiceRoleMappingDto> ServiceRoleMapping { get; set; }
-        public bool HasGPG44 { get; set; }     
+        public bool? HasGPG44 { get; set; }     
         public ICollection<ServiceQualityLevelMappingDto>? ServiceQualityLevelMapping { get; set; }
-        public bool HasGPG45 { get; set; }    
+        public bool? HasGPG45 { get; set; }    
         public ICollection<ServiceIdentityProfileMappingDto>? ServiceIdentityProfileMapping { get; set; }
-        public bool HasSupplementarySchemes { get; set; }   
+        public bool? HasSupplementarySchemes { get; set; }   
         public ICollection<ServiceSupSchemeMappingDto>? ServiceSupSchemeMapping { get; set; }
 
-        public string FileName { get; set; }
-        public string FileLink { get; set; }        
-        public decimal FileSizeInKb { get; set; }
-        public DateTime ConformityIssueDate { get; set; }
-        public DateTime ConformityExpiryDate { get; set; }      
+        public string? FileName { get; set; }
+        public string? FileLink { get; set; }        
+        public decimal? FileSizeInKb { get; set; }
+        public DateTime? ConformityIssueDate { get; set; }
+        public DateTime? ConformityExpiryDate { get; set; }      
         public int CabUserId { get; set; }
         public CabUserDto CabUser { get; set; }
         public int TrustMarkNumber { get; set; }

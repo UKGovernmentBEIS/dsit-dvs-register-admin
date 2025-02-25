@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
 using DVSAdmin.Data.Repositories.BackgroundJobs;
 using DVSAdmin.Data.Repositories.RemoveProvider;
+using DVSAdmin.Data.Repositories.Edit;
 
 namespace DVSAdmin
 {
@@ -131,6 +132,8 @@ namespace DVSAdmin
             services.AddScoped<ICsvDownloadService, CsvDownloadService>();
             services.AddScoped<IRemoveProviderService, RemoveProviderService>();
             services.AddScoped<IRemoveProviderRepository, RemoveProviderRepository>();
+            services.AddScoped<IEditService, EditService>();
+            services.AddScoped<IEditRepository, EditRepository>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {

@@ -8,5 +8,6 @@ namespace DVSAdmin.BusinessLogic.Services
     {
         Task<GenericResponse> SaveProviderDraft(ProviderProfileDraftDto draftDto, string loggedInUserEmail);
         Task<GenericResponse> SaveServiceDraft(ServiceDraftDto draftDto, string loggedInUserEmail);
+        public Task<ServiceDto> GetService(int serviceId);
     }
 }

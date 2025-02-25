@@ -30,6 +30,10 @@ namespace DVSAdmin.Data.Entities
         public int ServiceId { get; set; }
         public Service Service { get; set; }
         
+        [ForeignKey("ProviderProfile")]
+        public int ProviderProfileId { get; set; }
+        public ProviderProfile Provider { get; set; }
+        
         [ForeignKey("User")]
         public int RequestedUserId{ get; set; }
         public User User { get; set; } 

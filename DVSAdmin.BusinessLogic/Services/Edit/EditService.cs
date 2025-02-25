@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.Draft;
 using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.Data.Edit;
 using DVSAdmin.Data.Entities;
+using DVSAdmin.Data.Repositories;
+using DVSAdmin.Data.Repositories.Edit;
 
-namespace DVSAdmin.BusinessLogic.Services.Edit
+namespace DVSAdmin.BusinessLogic.Services
 {
     public class EditService : IEditService
     {
@@ -32,6 +34,13 @@ namespace DVSAdmin.BusinessLogic.Services.Edit
             
             var response = await _editRepository.SaveServiceDraft(draftEntity, loggedInUserEmail);
             return response;
+        }
+
+        public async Task<ServiceDto> GetService(int serviceId)
+        {
+            var serviceDetails = await _editRepository.GetService(serviceId);
+            ServiceDto serviceDto = _mapper.Map<ServiceDto>(serviceDetails);
+            return serviceDto;
         }
     }
 }
