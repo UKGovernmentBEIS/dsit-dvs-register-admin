@@ -23,7 +23,9 @@ namespace DVSAdmin.CommonUtility.Models
         [Description("Removal requested by CAB")]
         CabAwaitingRemovalConfirmation = 7,
         [Description("Saved as draft")]
-        SavedAsDraft = 8
+        SavedAsDraft = 8,
+        [Description("Updates requested")]
+        UpdatesRequested = 9
     }
 
     public static class ServiceStatusEnumExtensions

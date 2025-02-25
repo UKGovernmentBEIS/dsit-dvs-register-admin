@@ -14,7 +14,11 @@ namespace DVSAdmin.BusinessLogic.Models
         public bool? HasSupplementarySchemes { get; set; }
         public DateTime? ConformityIssueDate { get; set; }
         public DateTime? ConformityExpiryDate { get; set; }
-        public ServiceStatusEnum PreviousServiceStatus { get; set; }       
+        public ServiceStatusEnum PreviousServiceStatus { get; set; }
+        public DateTime ModifiedTime { get; set; }
+        public int ProviderProfileId { get; set; }
+        public ProviderProfileDto Provider { get; set; }
+
         public ICollection<ServiceRoleMappingDraftDto> ServiceRoleMappingDraft { get; set; } = new List<ServiceRoleMappingDraftDto>();
         public ICollection<ServiceQualityLevelMappingDraftDto> ServiceQualityLevelMappingDraft { get; set; } = new List<ServiceQualityLevelMappingDraftDto>();
         public ICollection<ServiceIdentityProfileMappingDraftDto> ServiceIdentityProfileMappingDraft { get; set; } = new List<ServiceIdentityProfileMappingDraftDto>();

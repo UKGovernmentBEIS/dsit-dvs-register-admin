@@ -3,6 +3,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -39,7 +40,9 @@ namespace DVSAdmin.Data.Repositories
             try
             {
                 var existingDraft = await _context.ProviderProfileDraft
-                    .FirstOrDefaultAsync(x => x.ProviderProfileId == draft.ProviderProfileId);
+                    .FirstOrDefaultAsync(x => x.ProviderProfileId == draft.ProviderProfileId && x.Id == draft.Id);
+
+                var provider =await  _context.ProviderProfile.Include(p=>p.Services).FirstOrDefaultAsync(x => x.Id == draft.ProviderProfileId);
 
                 if (existingDraft != null)
                 {
@@ -52,8 +55,24 @@ namespace DVSAdmin.Data.Repositories
                 {
                     draft.ModifiedTime = DateTime.UtcNow;
                     await _context.ProviderProfileDraft.AddAsync(draft);
-                    await _context.SaveChangesAsync();
+                    var publishedServices = provider?.Services?.Where(x => x.IsCurrent == true && x.ServiceStatus == ServiceStatusEnum.Published);
+                    if(publishedServices!=null && publishedServices.Count() > 0) 
+                    {
+                        foreach (var service in publishedServices)
+                        {
+                            service.ServiceStatus = ServiceStatusEnum.UpdatesRequested;
+                            service.ModifiedTime = DateTime.UtcNow;
+                            ServiceDraft serviceDraft = new()
+                            {
+                                ModifiedTime = DateTime.UtcNow,
+                                PreviousServiceStatus = service.ServiceStatus,
+                                RequestedUserId = draft.RequestedUserId,
+                                ProviderProfileId = draft.ProviderProfileId
 
+                            };
+                        }
+                    }                  
+                    await _context.SaveChangesAsync(TeamEnum.DSIT,EventTypeEnum.DSITEditProvider,loggedInUserEmail);
                     response.InstanceId = draft.Id;
                 }
 
@@ -67,30 +86,27 @@ namespace DVSAdmin.Data.Repositories
                 _logger.LogError(ex, "Error in SaveProviderDraft");
             }
             return response;
-        }
-        
+        }    
+
         public async Task<GenericResponse> SaveServiceDraft(ServiceDraft draft, string loggedInUserEmail)
         {
             var response = new GenericResponse();
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var existingDraft = await _context.ServiceDraft
-                    .FirstOrDefaultAsync(x => x.ServiceId == draft.ServiceId);
+                var existingDraft = await _context.ServiceDraft.FirstOrDefaultAsync(x => x.ServiceId == draft.ServiceId &&x.Id == draft.Id);
 
                 if (existingDraft != null)
                 {
                     UpdateExistingServiceDraft(draft, existingDraft);
                     await _context.SaveChangesAsync();
-
                     response.InstanceId = existingDraft.Id;
                 }
                 else
                 {
                     draft.ModifiedTime = DateTime.UtcNow;
                     await _context.ServiceDraft.AddAsync(draft);
-                    await _context.SaveChangesAsync();
-
+                    await _context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.DSITEditService, loggedInUserEmail);
                     response.InstanceId = draft.Id;
                 }
 
