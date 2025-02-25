@@ -2,6 +2,7 @@
 using DVSAdmin.BusinessLogic.Extensions;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
+using DVSAdmin.BusinessLogic.Models.Draft;
 using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.BusinessLogic
@@ -49,8 +50,10 @@ namespace DVSAdmin.BusinessLogic
            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services))
            .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftToPublishResolver>());
             CreateMap<ProviderProfileDto, ProviderProfile>()
-            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services));
-
+           .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services));
+            CreateMap<ProviderProfileDraft, ProviderProfileDraftDto>()
+           .ReverseMap();
+            
             CreateMap<Cab, CabDto>();
             CreateMap<CabDto, Cab>();
             CreateMap<CabUser, CabUserDto>();
@@ -78,6 +81,8 @@ namespace DVSAdmin.BusinessLogic
            .ForMember(dest => dest.CabUser, opt => opt.MapFrom(src => src.CabUser))
            .ForMember(dest => dest.Provider, opt => opt.MapFrom(src => src.Provider));
 
+            CreateMap<ServiceDraft, ServiceDraftDto>().ReverseMap();
+            
             CreateMap<PublicInterestCheck, PublicInterestCheckDto>();
             CreateMap<PublicInterestCheckDto, PublicInterestCheck>();
 
