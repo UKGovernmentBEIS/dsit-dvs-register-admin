@@ -25,6 +25,6 @@
         public string? PublicContactEmail { get; set; }
         public string? ProviderTelephoneNumber { get; set; }
         public string? ProviderWebsiteAddress { get; set; }
-        public string? CurrentProviderStatus { get; set; }
+        public string? PreviousProviderStatus { get; set; }
     }
 }

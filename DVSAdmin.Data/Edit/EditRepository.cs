@@ -126,7 +126,7 @@ namespace DVSAdmin.Data.Edit
 
             target.ConformityIssueDate = source.ConformityIssueDate;
             target.ConformityExpiryDate = source.ConformityExpiryDate;
-            target.CurrentServiceStatus = source.CurrentServiceStatus;
+            target.PreviousServiceStatus = source.PreviousServiceStatus;
 
             target.ModifiedTime = DateTime.UtcNow;
         }
@@ -152,7 +152,7 @@ namespace DVSAdmin.Data.Edit
             target.PublicContactEmail = source.PublicContactEmail;
             target.ProviderTelephoneNumber = source.ProviderTelephoneNumber;
             target.ProviderWebsiteAddress = source.ProviderWebsiteAddress;
-            target.CurrentProviderStatus = source.CurrentProviderStatus;
+            target.PreviousProviderStatus = source.PreviousProviderStatus;
         }
     }
 }

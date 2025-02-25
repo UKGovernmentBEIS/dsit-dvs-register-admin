@@ -13,7 +13,7 @@ namespace DVSAdmin.BusinessLogic.Models.Draft
         public bool? HasSupplementarySchemes { get; set; }
         public DateTime? ConformityIssueDate { get; set; }
         public DateTime? ConformityExpiryDate { get; set; }
-        public ServiceStatusEnum CurrentServiceStatus { get; set; }
+        public ServiceStatusEnum PreviousServiceStatus { get; set; }
         public DateTime ModifiedTime { get; set; }
         
         public ICollection<ServiceRoleMappingDraftDto> ServiceRoleMappingDraft { get; set; } = new List<ServiceRoleMappingDraftDto>();
