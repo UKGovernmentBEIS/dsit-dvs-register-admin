@@ -1,4 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -104,7 +105,24 @@ namespace DVSAdmin.Data.Repositories
             }
             return response;
         }
-        
+
+
+       
+
+        public async Task<bool> CheckProviderRegisteredNameExists(string registeredName, int providerId)
+        {
+            var existingProvider = await _context.ProviderProfile.FirstOrDefaultAsync(p => p.RegisteredName.ToLower() == registeredName.ToLower() && p.Id != providerId);
+
+            if (existingProvider != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void UpdateExistingServiceDraft(ServiceDraft source, ServiceDraft target)
         {
             target.ServiceName = source.ServiceName;
@@ -168,6 +186,17 @@ namespace DVSAdmin.Data.Repositories
             target.ProviderTelephoneNumber = source.ProviderTelephoneNumber;
             target.ProviderWebsiteAddress = source.ProviderWebsiteAddress;
             target.PreviousProviderStatus = source.PreviousProviderStatus;
+        }
+
+
+
+        public async Task<ProviderProfile> GetProviderDetails(int providerId)
+        {
+            ProviderProfile providerProfile = new();
+            providerProfile = await _context.ProviderProfile         
+           .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.Published && p.ProviderStatus != ProviderStatusEnum.RemovedFromRegister)
+           .OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new ProviderProfile();
+            return providerProfile;
         }
     }
 }

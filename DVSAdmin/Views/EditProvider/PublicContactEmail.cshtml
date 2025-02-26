@@ -1,0 +1,69 @@
+﻿@model ProfileSummaryViewModel
+@{
+    ViewData["Title"] = "PublicContactEmail";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+@{
+    bool hasError = false;
+}
+
+@using (Html.BeginForm("SavePublicContactEmail", "EditProvider", FormMethod.Post))
+{
+   
+    <div class="govuk-width-container">
+        <a href="@((Convert.ToBoolean(ViewBag.fromSummaryPage)) ? Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderProfileId }) : Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderProfileId, isEditPage = true }))" class="govuk-back-link">Back</a>
+        <main id="main-content" class="govuk-main-wrapper" role="main">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    @if (Html.ViewData?.ModelState.ContainsKey("PublicContactEmail") == true)
+                    {
+                        var errors = Html.ViewData?.ModelState["PublicContactEmail"]?.Errors;
+                        if (errors != null && errors.Count > 0)
+                        {
+                            hasError = true;
+                            ViewData["Title"] = "Error: " + ViewData["Title"];
+                            @await Html.PartialAsync("~/Views/PartialViews/_SpecificErrorsView.cshtml",
+                                     new Tuple<string, IEnumerable<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>>("PublicContactEmail", errors))
+                        }
+                    }
+
+                    <h1 class="govuk-heading-xl">The digital identity and attribute service provider’s Public email address</h1>
+                    <p class="govuk-body">
+                        You should ask the service provider to provide this information. The email
+                        address you enter will be publicly displayed on the register of digital identity
+                        and attribute services.
+                    </p>
+
+                    <p class="govuk-body">To make changes, type the new information and select ‘Save’. If there are no changes to make, select ‘Cancel’.</p>
+
+
+                    @{
+                        var emailViewModel = new TextBoxViewModel
+                {
+                    PropertyName = "PublicContactEmail",
+                    Label = "Public email address",
+                    Value = Model?.PublicContactEmail ?? string.Empty,
+                    TextBoxType = "email",
+                    Class = "govuk-input",
+                    Hint = "For example, sales@yourcompanyexpress.co.uk",
+                    HasError = hasError,
+                    ErrorMessage = hasError ? Html.ViewData?.ModelState["PublicContactEmail"]?.Errors[0].ErrorMessage ?? string.Empty : string.Empty,
+                };
+                    }
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_TextBoxView.cshtml", emailViewModel)
+
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="action">
+                            Save
+                        </button>
+                        <a href="@((Convert.ToBoolean(ViewBag.fromSummaryPage)) ? Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderProfileId }) : Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderProfileId, isEditPage = true }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+}
+
