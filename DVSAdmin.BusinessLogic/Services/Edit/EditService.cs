@@ -40,5 +40,18 @@ namespace DVSAdmin.BusinessLogic.Services
             ServiceDto serviceDto = _mapper.Map<ServiceDto>(serviceDetails);
             return serviceDto;
         }
+
+        public async Task<bool> CheckProviderRegisteredNameExists(string registeredName, int providerId)
+        {
+            return await _editRepository.CheckProviderRegisteredNameExists(registeredName, providerId);
+
+        }
+
+        public async Task<ProviderProfileDto> GetProviderDeatils(int providerId)
+        {
+            var provider = await _editRepository.GetProviderDetails(providerId);
+            ProviderProfileDto providerProfileDto = _mapper.Map<ProviderProfileDto>(provider);
+            return providerProfileDto;
+        }
     }
 }
