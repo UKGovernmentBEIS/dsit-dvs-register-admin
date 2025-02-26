@@ -36,7 +36,7 @@
                 </dd>
 
                 <dd class="govuk-summary-list__actions">
-                @Html.ActionLink("Change", "CompanyAddress", "EditService", null,
+                    @Html.ActionLink("Change", "CompanyAddress", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
                          new { @class = "govuk-link", @aria_label = "Change company address details" })
                 </dd>
 
@@ -50,7 +50,7 @@
                 </dd>
 
                 <dd class="govuk-summary-list__actions">
-                @Html.ActionLink("Change", "ServiceName", "#", null,
+                    @Html.ActionLink("Change", "ServiceName", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
                          new { @class = "govuk-link", @aria_label = "Change name of service" })
                 </dd>
 
@@ -67,7 +67,7 @@
                 </dd>
 
                 <dd class="govuk-summary-list__actions">
-                @Html.ActionLink("Change", "ServiceRoles", "#", null,
+                    @Html.ActionLink("Change", "ProviderRoles", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
                          new { @class = "govuk-link", @aria_label = "Change roles certified against" })
                 </dd>
 
@@ -91,7 +91,7 @@
                 </dd>
 
                 <dd class="govuk-summary-list__actions">
-                @Html.ActionLink("Change", "GPG44Quality", "#", null,
+                    @Html.ActionLink("Change", "GPG44Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
                          new { @class = "govuk-link", @aria_label = "Change GPG44 quality of authenticator" })
                 </dd>
 
@@ -114,7 +114,7 @@
                 }
                 </dd>
                 <dd class="govuk-summary-list__actions">
-                @Html.ActionLink("Change", "GPG44Protection", "#", null,
+                    @Html.ActionLink("Change", "GPG44Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
                          new { @class = "govuk-link", @aria_label = "Change GPG44 level of protection" })
                 </dd>
             </div>
@@ -137,7 +137,7 @@
                 </dd>
 
                 <dd class="govuk-summary-list__actions">
-                @Html.ActionLink("Change", "GPG45Profiles", "#", null,
+                    @Html.ActionLink("Change", "GPG45Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
                          new { @class = "govuk-link", @aria_label = "Change GPG45 identity profiles" })
                 </dd>
 
@@ -161,7 +161,7 @@
                 </dd>
 
                 <dd class="govuk-summary-list__actions">
-                @Html.ActionLink("Change", "SupplementaryCodes", "#", null,
+                    @Html.ActionLink("Change", "SupplementaryCodes", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
                          new { @class = "govuk-link", @aria_label = "Change supplementary codes" })
                 </dd>
 
@@ -183,7 +183,7 @@
                 </dd>
 
                 <dd class="govuk-summary-list__actions">
-                @Html.ActionLink("Change", "DateOfIssue", "#", null,
+                    @Html.ActionLink("Change", "DateOfIssue", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
                          new { @class = "govuk-link", @aria_label = "Change date of issue" })
                 </dd>
 
@@ -197,7 +197,7 @@
                 </dd>
 
                 <dd class="govuk-summary-list__actions">
-                @Html.ActionLink("Change", "DateOfExpiry", "#", null,
+                    @Html.ActionLink("Change", "DateOfExpiry", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
                          new { @class = "govuk-link", @aria_label = "Change date of expiry" })
                 </dd>
 

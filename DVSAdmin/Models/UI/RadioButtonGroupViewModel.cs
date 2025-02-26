@@ -7,6 +7,7 @@ namespace DVSAdmin.Models
         public string PropertyName { get; set; }
         public bool? Value { get; set; }
         public string FieldSet { get; set; }
+        public string? ParagraphText { get; set; }
         public HeadingEnum Heading { get; set; }
         public string LegendStyleClass { get; set; }
         public string Legend { get; set; }

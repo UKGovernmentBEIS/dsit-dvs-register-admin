@@ -32,6 +32,24 @@ namespace DVSAdmin.Data.Repositories
             .ThenInclude(s => s.IdentityProfile)
             .FirstOrDefaultAsync(s => s.Id == serviceId);
         }
+        public async Task<List<Role>> GetRoles()
+        {
+            return await _context.Role.OrderBy(c => c.Order).ToListAsync();
+        }
+        public async Task<List<QualityLevel>> QualityLevels()
+        {
+            return await _context.QualityLevel.ToListAsync();
+        }
+        public async Task<List<IdentityProfile>> GetIdentityProfiles()
+        {
+            return await _context.IdentityProfile.OrderBy(c => c.IdentityProfileName).ToListAsync();
+        }
+
+        public async Task<List<SupplementaryScheme>> GetSupplementarySchemes()
+        {
+            return await _context.SupplementaryScheme.OrderBy(c => c.Order).ToListAsync();
+        }
+
         public async Task<GenericResponse> SaveProviderDraft(ProviderProfileDraft draft, string loggedInUserEmail)
         {
             var response = new GenericResponse();

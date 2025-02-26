@@ -88,7 +88,7 @@
             @if (isEditable)
             {
                 <dd class="govuk-summary-list__actions">
-                    @Html.ActionLink("Change", "ServiceRoles", "EditService", new { serviceId = Model.Id },
+                    @Html.ActionLink("Change", "ProviderRoles", "EditService", new { serviceId = Model.Id },
                              new { @class = "govuk-link", @aria_label = "Change roles certified against" })
                 </dd>
             }
@@ -113,7 +113,7 @@
             @if (isEditable)
             {
                 <dd class="govuk-summary-list__actions">
-                    @Html.ActionLink("Change", "GPG44Quality", "EditService", new { serviceId = Model.Id },
+                    @Html.ActionLink("Change", "GPG44Input", "EditService", new { serviceId = Model.Id },
                              new { @class = "govuk-link", @aria_label = "Change GPG44 quality of authenticator" })
                 </dd>
             }
@@ -138,7 +138,7 @@
             @if (isEditable)
             {
                 <dd class="govuk-summary-list__actions">
-                    @Html.ActionLink("Change", "GPG44Protection", "EditService", new { serviceId = Model.Id },
+                    @Html.ActionLink("Change", "GPG44Input", "EditService", new { serviceId = Model.Id },
                              new { @class = "govuk-link", @aria_label = "Change GPG44 level of protection" })
                 </dd>
             }
@@ -163,7 +163,7 @@
             @if (isEditable)
             {
                 <dd class="govuk-summary-list__actions">
-                    @Html.ActionLink("Change", "GPG45Profiles", "EditService", new { serviceId = Model.Id },
+                    @Html.ActionLink("Change", "GPG45Input", "EditService", new { serviceId = Model.Id },
                              new { @class = "govuk-link", @aria_label = "Change GPG45 identity profiles" })
                 </dd>
             }

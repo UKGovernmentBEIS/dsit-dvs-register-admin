@@ -8,7 +8,6 @@ namespace DVSAdmin.Models
     public class ServiceSummaryViewModel
     {
         public ProviderProfileDto Provider { get; set; }
-        public int ProviderProfileId { get; set; }
 
         [Required(ErrorMessage = "Enter the service name")]
         [MaximumLength(160, ErrorMessage = "The service name must be less than 161 characters")]
