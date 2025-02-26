@@ -1,14 +1,14 @@
-﻿using DVSAdmin.Data.Entities;
+﻿
 
-namespace DVSAdmin.BusinessLogic.Models.Draft
+namespace DVSAdmin.BusinessLogic.Models
 {
     public class ServiceSupSchemeMappingDraftDto
     {
         
         public int Id { get; set; }
         public int ServiceDraftId { get; set; }
-        public ServiceDraft ServiceDraft { get; set; }
+        public ServiceDraftDto ServiceDraft { get; set; }
         public int SupplementarySchemeId { get; set; }
-        public SupplementaryScheme SupplementaryScheme { get; set; }
+        public SupplementarySchemeDto SupplementaryScheme { get; set; }
     }
 }

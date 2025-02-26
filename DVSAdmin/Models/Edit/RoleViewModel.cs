@@ -1,7 +1,7 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.Validations;
 
-namespace DVSAdmin.Models.Edit
+namespace DVSAdmin.Models
 {
     public class RoleViewModel
     {

@@ -1,7 +1,6 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.BusinessLogic.Models.Draft;
 
-namespace DVSAdmin.Models.Edit.EditService
+namespace DVSAdmin.Models
 {
     public class ServiceChangesViewModel
     {

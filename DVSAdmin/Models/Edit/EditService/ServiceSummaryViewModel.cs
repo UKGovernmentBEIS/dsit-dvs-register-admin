@@ -3,7 +3,7 @@ using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.Validations;
 using System.ComponentModel.DataAnnotations;
 
-namespace DVSAdmin.Models.Edit.EditService
+namespace DVSAdmin.Models
 {
     public class ServiceSummaryViewModel
     {

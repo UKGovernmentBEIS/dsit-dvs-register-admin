@@ -1,19 +1,17 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.BusinessLogic.Models.Draft;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
-using DVSAdmin.Data.Repositories.Edit;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
     public class EditService : IEditService
     {
-        private readonly EditRepository _editRepository;
+        private readonly IEditRepository _editRepository;
         private readonly IMapper _mapper;
 
-        public EditService(EditRepository editRepository, IMapper mapper)
+        public EditService(IEditRepository editRepository, IMapper mapper)
         {
             _editRepository = editRepository;
             _mapper = mapper;

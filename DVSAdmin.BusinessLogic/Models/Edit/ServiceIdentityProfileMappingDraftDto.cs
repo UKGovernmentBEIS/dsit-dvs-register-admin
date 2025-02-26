@@ -1,14 +1,14 @@
-﻿using DVSAdmin.Data.Entities;
+﻿
 
-namespace DVSAdmin.BusinessLogic.Models.Draft
+namespace DVSAdmin.BusinessLogic.Models
 {
     public class ServiceIdentityProfileMappingDraftDto
     {
         
         public int Id { get; set; }
         public int ServiceDraftId { get; set; }
-        public ServiceDraft ServiceDraft { get; set; }
+        public ServiceDraftDto ServiceDraft { get; set; }
         public int IdentityProfileId { get; set; }
-        public IdentityProfile IdentityProfile { get; set; }
+        public IdentityProfileDto IdentityProfile { get; set; }
     }
 }

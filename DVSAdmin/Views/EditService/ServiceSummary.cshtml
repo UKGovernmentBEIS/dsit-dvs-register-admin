@@ -1,4 +1,4 @@
-﻿@model DVSAdmin.Models.Edit.EditService.ServiceSummaryViewModel
+﻿@model DVSAdmin.Models.ServiceSummaryViewModel
 @{
     ViewData["Title"] = "Company address details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -16,7 +16,7 @@
             <div class="govuk-grid-column-full">
                 @await Html.PartialAsync("~/Views/EditService/PartialViews/_EditServiceDetailsView.cshtml", Model)
                     <div class="govuk-button-group">
-                    <a href="edit-service/summary-of-changes" class="govuk-button" role="button">
+                    <a href="summary-of-changes" class="govuk-button" role="button">
                         Continue
                     </a>
                     </div>

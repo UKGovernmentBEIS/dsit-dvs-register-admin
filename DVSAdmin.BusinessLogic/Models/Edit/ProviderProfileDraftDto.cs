@@ -1,4 +1,4 @@
-﻿namespace DVSAdmin.BusinessLogic.Models.Draft
+﻿namespace DVSAdmin.BusinessLogic.Models
 {
     public class ProviderProfileDraftDto
     {

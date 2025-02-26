@@ -1,7 +1,7 @@
 ﻿using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.Validations;
 
-namespace DVSAdmin.Models.Edit
+namespace DVSAdmin.Models
 {
     public class QualityLevelViewModel
     {

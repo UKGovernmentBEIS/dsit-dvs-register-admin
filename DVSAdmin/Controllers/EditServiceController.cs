@@ -1,11 +1,9 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
-using DVSAdmin.BusinessLogic.Models.Draft;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.Models.Edit;
-using DVSAdmin.Models.Edit.EditService;
+using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -282,7 +280,7 @@ namespace DVSAdmin.Controllers
 
             var draft = new ServiceDraftDto
             {
-                Id = existingService.Id,
+                serviceId = existingService.Id,
                 PreviousServiceStatus = existingService.ServiceStatus,
                 ProviderId = existingService.ProviderProfileId
             };

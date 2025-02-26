@@ -1,7 +1,7 @@
 ﻿using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
 
-namespace DVSAdmin.Data.Repositories.Edit
+namespace DVSAdmin.Data.Repositories
 {
     public interface IEditRepository
     {

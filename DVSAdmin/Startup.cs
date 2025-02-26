@@ -10,16 +10,15 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Cookies;
 using DVSAdmin.Data;
 using DVSAdmin.Data.Repositories;
+using DVSAdmin.Data.Repositories.BackgroundJobs;
 using DVSAdmin.Data.Repositories.RegisterManagement;
+using DVSAdmin.Data.Repositories.RemoveProvider;
 using DVSAdmin.Middleware;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
-using DVSAdmin.Data.Repositories.BackgroundJobs;
-using DVSAdmin.Data.Repositories.RemoveProvider;
-using DVSAdmin.Data.Repositories.Edit;
 
 namespace DVSAdmin
 {

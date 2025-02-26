@@ -3,7 +3,7 @@ using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace DVSAdmin.Data.Repositories.Edit
+namespace DVSAdmin.Data.Repositories
 {
     public class EditRepository : IEditRepository
     {
