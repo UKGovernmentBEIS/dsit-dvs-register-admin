@@ -1,11 +1,11 @@
 ﻿using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;       
+using Microsoft.Extensions.Logging;
 
-namespace DVSAdmin.Data.Edit
+namespace DVSAdmin.Data.Repositories
 {
-    public class EditRepository
+    public class EditRepository : IEditRepository
     {
         private readonly DVSAdminDbContext _context;
         private readonly ILogger<EditRepository> _logger;
@@ -15,7 +15,22 @@ namespace DVSAdmin.Data.Edit
             _context = context;
             _logger = logger;
         }
-        
+
+        public async Task<Service> GetService(int serviceId)
+        {
+            return await _context.Service
+            .Include(s => s.Provider)
+            .Include(s => s.CertificateReview)
+            .Include(s => s.ServiceSupSchemeMapping)
+            .ThenInclude(s => s.SupplementaryScheme)
+            .Include(s => s.ServiceRoleMapping)
+            .ThenInclude(s => s.Role)
+            .Include(s => s.ServiceQualityLevelMapping)
+            .ThenInclude(s => s.QualityLevel)
+            .Include(s => s.ServiceIdentityProfileMapping)
+            .ThenInclude(s => s.IdentityProfile)
+            .FirstOrDefaultAsync(s => s.Id == serviceId);
+        }
         public async Task<GenericResponse> SaveProviderDraft(ProviderProfileDraft draft, string loggedInUserEmail)
         {
             var response = new GenericResponse();

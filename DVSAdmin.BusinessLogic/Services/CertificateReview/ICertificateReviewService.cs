@@ -12,8 +12,7 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<CertificateReviewDto> GetCertificateReviewWithRejectionData(int reviewId);
         public Task<List<ServiceDto>> GetServiceList();
         public Task<List<ServiceDto>> GetServiceVersionList(int serviceKey);
-        public Task<ServiceDto> GetServiceDetails(int serviceId);     
-
+        public Task<ServiceDto> GetServiceDetails(int serviceId);
 
         #region save update methods
         public Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto, string loggedInUserEmail);

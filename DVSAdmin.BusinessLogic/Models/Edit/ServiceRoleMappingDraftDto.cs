@@ -1,13 +1,13 @@
-﻿using DVSAdmin.Data.Entities;
+﻿
 
-namespace DVSAdmin.BusinessLogic.Models.Draft
+namespace DVSAdmin.BusinessLogic.Models
 {
     public class ServiceRoleMappingDraftDto
     {
         public int Id { get; set; }
         public int ServiceDraftId { get; set; }
-        public ServiceDraft ServiceDraft { get; set; }
+        public ServiceDraftDto ServiceDraft { get; set; }
         public int RoleId { get; set; }
-        public Role Role { get; set; }
+        public RoleDto Role { get; set; }
     }
 }

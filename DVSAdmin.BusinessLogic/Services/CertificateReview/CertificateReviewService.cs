@@ -60,6 +60,7 @@ namespace DVSAdmin.BusinessLogic.Services
             var rejectionReasonList = await certificateReviewRepository.GetRejectionReasons();
             return automapper.Map<List<CertificateReviewRejectionReasonDto>>(rejectionReasonList);
         }
+
         public async Task<List<ServiceDto>> GetServiceList()
         {
             var serviceList = await certificateReviewRepository.GetServiceList();
