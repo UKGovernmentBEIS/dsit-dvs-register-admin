@@ -1,4 +1,6 @@
-﻿namespace DVSAdmin.BusinessLogic.Models
+﻿using DVSAdmin.CommonUtility.Models.Enums;
+
+namespace DVSAdmin.BusinessLogic.Models
 {
     public class ProviderProfileDraftDto
     {
@@ -25,6 +27,7 @@
         public string? PublicContactEmail { get; set; }
         public string? ProviderTelephoneNumber { get; set; }
         public string? ProviderWebsiteAddress { get; set; }
-        public string? PreviousProviderStatus { get; set; }
+        public ProviderStatusEnum? PreviousProviderStatus { get; set; }     
+
     }
 }

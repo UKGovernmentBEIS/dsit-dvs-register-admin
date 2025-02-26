@@ -1,6 +1,7 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
 using DVSAdmin.Validations;
@@ -9,11 +10,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
+    [ValidCognitoToken]
     [Route("edit-provider")]
     public class EditProviderController : Controller
     {
         private readonly IEditService editService;       
         private readonly IUserService userService;
+        private string userEmail => HttpContext.Session.Get<string>("Email") ?? string.Empty;
         public EditProviderController(IEditService editService, IUserService userService)
         {
             this.editService = editService;            
@@ -300,6 +303,58 @@ namespace DVSAdmin.Controllers
 
         #endregion
 
+
+
+        [HttpGet("summary-of-changes")]
+        public async Task<IActionResult> ProviderDifference()
+        {
+            ProviderChangesViewModel changesViewModel = new();
+            ProfileSummaryViewModel profileSummaryViewModel = GetProfileSummary();
+            ProviderProfileDto providerProfileDto = await editService.GetProviderDeatils(profileSummaryViewModel.ProviderProfileId);
+            ProviderProfileDraftDto providerProfileDraftDto = CreateDraft(providerProfileDto, profileSummaryViewModel);           
+            changesViewModel.DSITUserEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
+            changesViewModel.CurrentProvider = providerProfileDto;
+            changesViewModel.ChangedProvider = providerProfileDraftDto;
+            return View(changesViewModel);
+        }
+
+
+        [HttpPost("summary-of-changes")]
+        public async Task<IActionResult> SaveProviderDraft(ProviderChangesViewModel providerChangesViewModel)
+        {
+            if (providerChangesViewModel != null && providerChangesViewModel.ChangedProvider != null)
+            {
+                GenericResponse genericResponse = await editService.SaveProviderDraft(providerChangesViewModel.ChangedProvider, userEmail);
+                if(genericResponse.Success)
+                {
+                    return RedirectToAction("InformationSubmitted", new { providerId = providerChangesViewModel.ChangedProvider.ProviderProfileId });
+                }
+                else
+                {
+                    return RedirectToAction("HandleException", "Error");
+                }
+            }
+            else
+            {
+                return RedirectToAction("HandleException", "Error");
+            }          
+            
+        }
+
+        /// <summary>
+        ///Final page if save success
+        /// </summary>       
+        /// <returns></returns>
+        [HttpGet("provider-submitted")]
+        public async Task<IActionResult> InformationSubmitted(int providerId)
+        {
+            HttpContext?.Session.Remove("ProfileSummary");
+            ProviderProfileDto providerDto = await editService.GetProviderDeatils(providerId);
+            return View(providerDto);
+           
+
+        }
+
         #endregion
 
         #region Private Methods
@@ -352,6 +407,37 @@ namespace DVSAdmin.Controllers
             profileSummaryViewModel.ProviderProfileId = providerDto.Id;
             return profileSummaryViewModel;
         }
-        #endregion
-    }
+
+
+        private ProviderProfileDraftDto CreateDraft(ProviderProfileDto existingProvider, ProfileSummaryViewModel updatedService)
+        {
+           
+
+            var draft = new ProviderProfileDraftDto
+            {
+                ProviderProfileId = existingProvider.Id,
+                PreviousProviderStatus = existingProvider.ProviderStatus               
+            };
+
+            draft.RegisteredName = updatedService.RegisteredName!=existingProvider.RegisteredName? updatedService.RegisteredName:null;
+            draft.TradingName = updatedService.TradingName != existingProvider.TradingName ? updatedService.TradingName : null;
+            draft.PrimaryContactFullName = updatedService?.PrimaryContact?.PrimaryContactFullName != existingProvider.PrimaryContactFullName ? updatedService?.PrimaryContact?.PrimaryContactFullName : null;
+            draft.PrimaryContactEmail = updatedService?.PrimaryContact?.PrimaryContactEmail != existingProvider.PrimaryContactEmail ? updatedService?.PrimaryContact?.PrimaryContactEmail : null;
+            draft.PrimaryContactJobTitle = updatedService?.PrimaryContact?.PrimaryContactJobTitle != existingProvider.PrimaryContactJobTitle ? updatedService?.PrimaryContact?.PrimaryContactJobTitle: null;
+            draft.PrimaryContactTelephoneNumber = updatedService?.PrimaryContact?.PrimaryContactTelephoneNumber != existingProvider.PrimaryContactTelephoneNumber ? updatedService?.PrimaryContact?.PrimaryContactTelephoneNumber : null;
+
+            draft.SecondaryContactFullName = updatedService?.SecondaryContact?.SecondaryContactFullName != existingProvider.SecondaryContactFullName ? updatedService?.SecondaryContact?.SecondaryContactFullName : null;
+            draft.SecondaryContactEmail = updatedService?.SecondaryContact?.SecondaryContactEmail != existingProvider.SecondaryContactEmail ? updatedService?.SecondaryContact?.SecondaryContactEmail : null;
+            draft.SecondaryContactJobTitle = updatedService?.SecondaryContact?.SecondaryContactJobTitle != existingProvider.SecondaryContactJobTitle ? updatedService?.SecondaryContact?.SecondaryContactJobTitle : null;
+            draft.SecondaryContactTelephoneNumber = updatedService?.SecondaryContact?.SecondaryContactTelephoneNumber != existingProvider.SecondaryContactTelephoneNumber ? updatedService?.SecondaryContact?.SecondaryContactTelephoneNumber : null;
+
+            draft.ProviderWebsiteAddress = updatedService.ProviderWebsiteAddress != existingProvider.ProviderWebsiteAddress ? updatedService.ProviderWebsiteAddress : null;
+            draft.PublicContactEmail = updatedService.PublicContactEmail != existingProvider.PublicContactEmail ? updatedService.PublicContactEmail : null;
+            draft.ProviderTelephoneNumber = updatedService.ProviderTelephoneNumber != existingProvider.ProviderTelephoneNumber ? updatedService.ProviderTelephoneNumber : null;
+
+            
+            return draft;
+        }
+            #endregion
+        }
 }
