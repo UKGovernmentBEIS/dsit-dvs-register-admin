@@ -29,7 +29,9 @@
         RemoveProviderRemovalToken = 24, 
         RemovedByCronJob = 25,
         RemoveServiceRequestedByCab = 26,     
-        UpdateUser = 27
+        UpdateUser = 27,
+        DSITEditProvider = 28,
+        DSITEditService = 29
 
     }
 }
