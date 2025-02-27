@@ -7,6 +7,6 @@ namespace DVSAdmin.Models
         public ProviderProfileDto? CurrentProvider { get; set; }
         public ProviderProfileDraftDto? ChangedProvider { get; set; }
 
-        public List<string> DSITUserEmails { get; set; }
+        public string DSITUserEmails { get; set; }
     }
 }

@@ -56,16 +56,14 @@ namespace DVSAdmin.Data.Repositories
                 {
                     draft.ModifiedTime = DateTime.UtcNow;                    
                     await _context.ProviderProfileDraft.AddAsync(draft);
-                    var publishedServices = provider?.Services?.Where(x => x.IsCurrent == true && x.ServiceStatus == ServiceStatusEnum.Published);
+                    var servicesList = provider?.Services?.Where(x => x.IsCurrent == true && (x.ServiceStatus == ServiceStatusEnum.Published || x.ServiceStatus == ServiceStatusEnum.ReadyToPublish));
 
                     provider.ProviderStatus = ProviderStatusEnum.UpdatesRequested;
                     provider.ModifiedTime = DateTime.UtcNow;
-                    if (publishedServices!=null && publishedServices.Count() > 0) 
+                    if (servicesList != null && servicesList.Count() > 0) 
                     {
-                        foreach (var service in publishedServices)
+                        foreach (var service in servicesList)
                         {
-                            service.ServiceStatus = ServiceStatusEnum.UpdatesRequested;
-                            service.ModifiedTime = DateTime.UtcNow;
                             ServiceDraft serviceDraft = new()
                             {
                                 ModifiedTime = DateTime.UtcNow,
@@ -75,6 +73,13 @@ namespace DVSAdmin.Data.Repositories
                                 ServiceId = service.Id
 
                             };
+
+                            await _context.ServiceDraft.AddAsync(serviceDraft);
+                            service.ServiceStatus = ServiceStatusEnum.UpdatesRequested;
+                            service.ModifiedTime = DateTime.UtcNow;
+                           
+
+                          
                         }
                     }                  
                     await _context.SaveChangesAsync(TeamEnum.DSIT,EventTypeEnum.DSITEditProvider,loggedInUserEmail);
@@ -216,7 +221,7 @@ namespace DVSAdmin.Data.Repositories
         {
             ProviderProfile providerProfile = new();
             providerProfile = await _context.ProviderProfile         
-           .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.Published && p.ProviderStatus != ProviderStatusEnum.RemovedFromRegister)
+           .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.ReadyToPublish && p.ProviderStatus != ProviderStatusEnum.RemovedFromRegister)
            .OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new ProviderProfile();
             return providerProfile;
         }
