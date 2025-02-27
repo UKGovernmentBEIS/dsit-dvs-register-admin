@@ -9,8 +9,7 @@
 }
 
 
-@using (Html.BeginForm("SaveProfileSummary", "EditProvider", FormMethod.Post))
-{
+
     <div class="govuk-width-container">
         @if(isEditPage)
         {
@@ -320,13 +319,13 @@
 
             @if(!isEditPage)
             {
-                <button type="submit" data-prevent-double-click="true" class="govuk-button govuk-!-margin-top-6" data-module="govuk-button">
+
+            <a href="@(Url.Action("ProviderDifference", "EditProvider") )" class="govuk-button" role="button">Continue</a>
+             @*    <button type="submit" data-prevent-double-click="true" class="govuk-button govuk-!-margin-top-6" data-module="govuk-button">
                     Continue
-                </button>
+                </button> *@
             }
            
         </main>
     </div>
-
-}
 

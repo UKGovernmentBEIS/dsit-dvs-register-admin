@@ -38,7 +38,8 @@ namespace DVSAdmin.BusinessLogic.Services
                                 s.ServiceStatus == ServiceStatusEnum.Published ||
                                 s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
                                 s.ServiceStatus == ServiceStatusEnum.Removed ||
-                                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
+                                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation||
+                                s.ServiceStatus == ServiceStatusEnum.UpdatesRequested)
                     .ToList();
                 return providerDto;
             }).ToList();
@@ -63,7 +64,8 @@ namespace DVSAdmin.BusinessLogic.Services
                 s.ServiceStatus == ServiceStatusEnum.Published || 
                 s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation || 
                 s.ServiceStatus == ServiceStatusEnum.Removed || 
-                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation).ToList();
+                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation||
+                s.ServiceStatus == ServiceStatusEnum.UpdatesRequested).ToList();
             
             return providerDto;
         }

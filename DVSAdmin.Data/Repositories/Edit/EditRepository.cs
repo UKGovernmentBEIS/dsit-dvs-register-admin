@@ -3,7 +3,6 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -39,6 +38,8 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = _context.Database.BeginTransaction();
             try
             {
+                var user = await _context.User.FirstOrDefaultAsync(x=>x.Email == loggedInUserEmail);
+                draft.RequestedUserId = user.Id;
                 var existingDraft = await _context.ProviderProfileDraft
                     .FirstOrDefaultAsync(x => x.ProviderProfileId == draft.ProviderProfileId && x.Id == draft.Id);
 
@@ -53,10 +54,13 @@ namespace DVSAdmin.Data.Repositories
                 }
                 else
                 {
-                    draft.ModifiedTime = DateTime.UtcNow;
+                    draft.ModifiedTime = DateTime.UtcNow;                    
                     await _context.ProviderProfileDraft.AddAsync(draft);
                     var publishedServices = provider?.Services?.Where(x => x.IsCurrent == true && x.ServiceStatus == ServiceStatusEnum.Published);
-                    if(publishedServices!=null && publishedServices.Count() > 0) 
+
+                    provider.ProviderStatus = ProviderStatusEnum.UpdatesRequested;
+                    provider.ModifiedTime = DateTime.UtcNow;
+                    if (publishedServices!=null && publishedServices.Count() > 0) 
                     {
                         foreach (var service in publishedServices)
                         {
@@ -67,7 +71,8 @@ namespace DVSAdmin.Data.Repositories
                                 ModifiedTime = DateTime.UtcNow,
                                 PreviousServiceStatus = service.ServiceStatus,
                                 RequestedUserId = draft.RequestedUserId,
-                                ProviderProfileId = draft.ProviderProfileId
+                                ProviderProfileId = draft.ProviderProfileId,
+                                ServiceId = service.Id
 
                             };
                         }
@@ -202,6 +207,7 @@ namespace DVSAdmin.Data.Repositories
             target.ProviderTelephoneNumber = source.ProviderTelephoneNumber;
             target.ProviderWebsiteAddress = source.ProviderWebsiteAddress;
             target.PreviousProviderStatus = source.PreviousProviderStatus;
+            target.RequestedUserId = source.RequestedUserId;
         }
 
 
@@ -213,6 +219,34 @@ namespace DVSAdmin.Data.Repositories
            .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.Published && p.ProviderStatus != ProviderStatusEnum.RemovedFromRegister)
            .OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new ProviderProfile();
             return providerProfile;
+        }
+
+
+        public async Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail)
+        {
+            GenericResponse genericResponse = new();
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var existingEntity = await _context.RemoveProviderToken.FirstOrDefaultAsync(e => e.Token == providerDraftToken.Token && e.TokenId == providerDraftToken.TokenId);
+
+                if (existingEntity == null)
+                {
+                    await _context.ProviderDraftToken.AddAsync(providerDraftToken);
+                    await _context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.DSITEditProvider, loggedinUserEmail);
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                _logger.LogError($"Failed SaveProviderDraftToken: {ex}");
+            }
+            return genericResponse;
         }
     }
 }

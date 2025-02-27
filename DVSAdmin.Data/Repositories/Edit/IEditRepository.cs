@@ -10,6 +10,7 @@ namespace DVSAdmin.Data.Repositories
         public Task<Service> GetService(int serviceId);
         public Task<bool> CheckProviderRegisteredNameExists(string registeredName, int providerId);
         public Task<ProviderProfile> GetProviderDetails(int providerId);
+        public Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail);
 
     }
 }
