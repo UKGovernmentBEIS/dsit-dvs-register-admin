@@ -2,7 +2,6 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
 using DVSAdmin.Validations;
 using DVSRegister.Extensions;
@@ -311,8 +310,9 @@ namespace DVSAdmin.Controllers
             ProviderChangesViewModel changesViewModel = new();
             ProfileSummaryViewModel profileSummaryViewModel = GetProfileSummary();
             ProviderProfileDto providerProfileDto = await editService.GetProviderDeatils(profileSummaryViewModel.ProviderProfileId);
-            ProviderProfileDraftDto providerProfileDraftDto = CreateDraft(providerProfileDto, profileSummaryViewModel);           
-            changesViewModel.DSITUserEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
+            ProviderProfileDraftDto providerProfileDraftDto = CreateDraft(providerProfileDto, profileSummaryViewModel);
+            List<string> dsitEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
+            changesViewModel.DSITUserEmails = string.Join(",", dsitEmails);            
             changesViewModel.CurrentProvider = providerProfileDto;
             changesViewModel.ChangedProvider = providerProfileDraftDto;
             return View(changesViewModel);
@@ -322,9 +322,10 @@ namespace DVSAdmin.Controllers
         [HttpPost("summary-of-changes")]
         public async Task<IActionResult> SaveProviderDraft(ProviderChangesViewModel providerChangesViewModel)
         {
+            List<string> dsitUserEmails = providerChangesViewModel.DSITUserEmails.Split(',').ToList();
             if (providerChangesViewModel != null && providerChangesViewModel.ChangedProvider != null)
             {
-                GenericResponse genericResponse = await editService.SaveProviderDraft(providerChangesViewModel.ChangedProvider, userEmail);
+                GenericResponse genericResponse = await editService.SaveProviderDraft(providerChangesViewModel.ChangedProvider, userEmail,dsitUserEmails);
                 if(genericResponse.Success)
                 {
                     return RedirectToAction("InformationSubmitted", new { providerId = providerChangesViewModel.ChangedProvider.ProviderProfileId });
@@ -419,8 +420,10 @@ namespace DVSAdmin.Controllers
                 PreviousProviderStatus = existingProvider.ProviderStatus               
             };
 
-            draft.RegisteredName = updatedService.RegisteredName!=existingProvider.RegisteredName? updatedService.RegisteredName:null;
-            draft.TradingName = updatedService.TradingName != existingProvider.TradingName ? updatedService.TradingName : null;
+            draft.RegisteredName = updatedService.RegisteredName!=existingProvider.RegisteredName? updatedService.RegisteredName:null;           
+            draft.TradingName = updatedService.TradingName != existingProvider.TradingName
+            ? (updatedService.TradingName ??"-")
+            : null;
             draft.PrimaryContactFullName = updatedService?.PrimaryContact?.PrimaryContactFullName != existingProvider.PrimaryContactFullName ? updatedService?.PrimaryContact?.PrimaryContactFullName : null;
             draft.PrimaryContactEmail = updatedService?.PrimaryContact?.PrimaryContactEmail != existingProvider.PrimaryContactEmail ? updatedService?.PrimaryContact?.PrimaryContactEmail : null;
             draft.PrimaryContactJobTitle = updatedService?.PrimaryContact?.PrimaryContactJobTitle != existingProvider.PrimaryContactJobTitle ? updatedService?.PrimaryContact?.PrimaryContactJobTitle: null;
@@ -433,9 +436,10 @@ namespace DVSAdmin.Controllers
 
             draft.ProviderWebsiteAddress = updatedService.ProviderWebsiteAddress != existingProvider.ProviderWebsiteAddress ? updatedService.ProviderWebsiteAddress : null;
             draft.PublicContactEmail = updatedService.PublicContactEmail != existingProvider.PublicContactEmail ? updatedService.PublicContactEmail : null;
-            draft.ProviderTelephoneNumber = updatedService.ProviderTelephoneNumber != existingProvider.ProviderTelephoneNumber ? updatedService.ProviderTelephoneNumber : null;
+            draft.ProviderTelephoneNumber = updatedService.ProviderTelephoneNumber != existingProvider.ProviderTelephoneNumber
+          ? (updatedService.ProviderTelephoneNumber ?? "-")
+          : null;
 
-            
             return draft;
         }
             #endregion

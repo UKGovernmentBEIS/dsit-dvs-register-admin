@@ -5,6 +5,7 @@ using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -14,18 +15,20 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
         private readonly IJwtService _jwtService;
+        private readonly IConfiguration _configuration;
 
-        public EditService(IEditRepository editRepository, IMapper mapper, IEmailSender emailSender, IJwtService jwtService)
+        public EditService(IEditRepository editRepository, IMapper mapper, IEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
             _editRepository = editRepository;
             _mapper = mapper;
             _emailSender  = emailSender;
             _jwtService = jwtService;
+            _configuration = configuration;
 
         }
         
 
-        public async Task<GenericResponse> SaveProviderDraft(ProviderProfileDraftDto draftDto, string loggedInUserEmail)
+        public async Task<GenericResponse> SaveProviderDraft(ProviderProfileDraftDto draftDto, string loggedInUserEmail, List<string> dsitUserEmails)
         {
             var draftEntity = _mapper.Map<ProviderProfileDraft>(draftDto);            
             var response = await _editRepository.SaveProviderDraft(draftEntity, loggedInUserEmail);
@@ -41,6 +44,11 @@ namespace DVSAdmin.BusinessLogic.Services
                     CreatedTime = DateTime.UtcNow
                 };
                 response = await _editRepository.SaveProviderDraftToken(providerDraftToken, loggedInUserEmail);
+                if(response.Success)
+                {
+                    //to do email
+                }
+
 
             }
             return response;
