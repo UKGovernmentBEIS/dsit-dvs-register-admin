@@ -10,6 +10,7 @@ namespace DVSAdmin.Data
     {
         public DVSAdminDbContext(DbContextOptions<DVSAdminDbContext> options) : base(options)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
     
         public DbSet<User> User { get; set; }       

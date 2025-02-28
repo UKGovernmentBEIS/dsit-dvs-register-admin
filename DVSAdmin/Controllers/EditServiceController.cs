@@ -705,10 +705,7 @@ namespace DVSAdmin.Controllers
                 ProviderProfileId = existingService.ProviderProfileId
             };
 
-            ICollection<ServiceRoleMappingDraftDto> ServiceRoleMappingDraft  = new List<ServiceRoleMappingDraftDto>();
-            ICollection<ServiceQualityLevelMappingDraftDto> ServiceQualityLevelMappingDraft = new List<ServiceQualityLevelMappingDraftDto>();
-            ICollection<ServiceIdentityProfileMappingDraftDto> ServiceIdentityProfileMappingDraft = new List<ServiceIdentityProfileMappingDraftDto>();
-            ICollection<ServiceSupSchemeMappingDraftDto> ServiceSupSchemeMappingDraft = new List<ServiceSupSchemeMappingDraftDto>();
+            
 
             if (existingService.ServiceName != updatedService.ServiceName)
             {
