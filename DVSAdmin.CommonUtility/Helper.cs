@@ -1,4 +1,5 @@
 ﻿using QRCoder;
+using System.Text;
 
 namespace DVSAdmin.CommonUtility
 {
@@ -23,6 +24,22 @@ namespace DVSAdmin.CommonUtility
             DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(dateTimeValue, localTimeZone); // Convert to local time
             string time = localTime.ToString(format);
             return time;
+        }
+
+        public static string ConcatenateKeyValuePairs(Dictionary<string, List<string>> data)
+        {
+            var result = new StringBuilder();
+
+            foreach (var kvp in data)
+            {
+                result.Append(kvp.Key + ":");
+                foreach (var value in kvp.Value)
+                {
+                    result.AppendLine(" - " + value);
+                }
+            }
+
+            return result.ToString();
         }
     }
 }
