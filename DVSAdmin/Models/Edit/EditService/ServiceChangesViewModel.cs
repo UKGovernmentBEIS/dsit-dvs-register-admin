@@ -6,5 +6,6 @@ namespace DVSAdmin.Models
     {
         public ServiceDto? CurrentService { get; set; }
         public ServiceDraftDto? ChangedService { get; set; }
+        public string DSITUserEmails { get; set; }
     }
 }

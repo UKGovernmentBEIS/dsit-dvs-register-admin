@@ -4,8 +4,7 @@ namespace DVSAdmin.BusinessLogic.Models
 {
     public class ServiceDraftDto
     {
-        public int Id { get; set; }
-        public int ProviderId { get; set; }
+        public int Id { get; set; }      
         public int serviceId { get; set; }
         public string? ServiceName { get; set; }
         public string? CompanyAddress { get; set; }

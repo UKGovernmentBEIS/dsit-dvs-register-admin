@@ -122,8 +122,11 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = _context.Database.BeginTransaction();
             try
             {
+                var user = await _context.User.FirstOrDefaultAsync(x => x.Email == loggedInUserEmail);
+                draft.RequestedUserId = user.Id;
                 var existingDraft = await _context.ServiceDraft.FirstOrDefaultAsync(x => x.ServiceId == draft.ServiceId &&x.Id == draft.Id);
 
+                var existingService = await _context.Service.Include(p => p.Provider).FirstOrDefaultAsync(x => x.Id == draft.ServiceId);
                 if (existingDraft != null)
                 {
                     UpdateExistingServiceDraft(draft, existingDraft);
@@ -131,10 +134,15 @@ namespace DVSAdmin.Data.Repositories
                     response.InstanceId = existingDraft.Id;
                 }
                 else
-                {
+                {                    
                     draft.ModifiedTime = DateTime.UtcNow;
+                    draft.PreviousServiceStatus = existingService.ServiceStatus;
                     await _context.ServiceDraft.AddAsync(draft);
-                    await _context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.DSITEditService, loggedInUserEmail);
+
+                    existingService.ServiceStatus = ServiceStatusEnum.UpdatesRequested;
+                    existingService.ModifiedTime = DateTime.UtcNow;
+                    existingService.Provider.ModifiedTime = DateTime.UtcNow;
+                   await _context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.DSITEditService, loggedInUserEmail);
                     response.InstanceId = draft.Id;
                 }
 
@@ -251,11 +259,39 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await _context.RemoveProviderToken.FirstOrDefaultAsync(e => e.Token == providerDraftToken.Token && e.TokenId == providerDraftToken.TokenId);
+                var existingEntity = await _context.ProviderDraftToken.FirstOrDefaultAsync(e => e.Token == providerDraftToken.Token && e.TokenId == providerDraftToken.TokenId);
 
                 if (existingEntity == null)
                 {
                     await _context.ProviderDraftToken.AddAsync(providerDraftToken);
+                    await _context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.DSITEditProvider, loggedinUserEmail);
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                _logger.LogError($"Failed SaveProviderDraftToken: {ex}");
+            }
+            return genericResponse;
+        }
+
+
+        public async Task<GenericResponse> SaveServiceDraftToken(ServiceDraftToken serviceDraftToken, string loggedinUserEmail)
+        {
+            GenericResponse genericResponse = new();
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var existingEntity = await _context.ServiceDraftToken.FirstOrDefaultAsync(e => e.Token == serviceDraftToken.Token && e.TokenId == serviceDraftToken.TokenId);
+
+                if (existingEntity == null)
+                {
+                    await _context.ServiceDraftToken.AddAsync(serviceDraftToken);
                     await _context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.DSITEditProvider, loggedinUserEmail);
                     transaction.Commit();
                     genericResponse.Success = true;

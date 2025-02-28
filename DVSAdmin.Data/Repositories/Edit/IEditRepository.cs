@@ -15,6 +15,7 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<IdentityProfile>> GetIdentityProfiles();
         public Task<List<SupplementaryScheme>> GetSupplementarySchemes();
         public Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail);
+        public Task<GenericResponse> SaveServiceDraftToken(ServiceDraftToken serviceDraftToken, string loggedinUserEmail);
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿@using DVSAdmin.Extensions
 @using DVSAdmin.BusinessLogic.Models
-@model ProviderProfileDto
+@model ServiceDto
 @{
     ViewData["Title"] = "InformationSubmitted";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -17,37 +17,38 @@
                     <div class="govuk-summary-card">
                         <div class="govuk-summary-card__title-wrapper">
                             <h2 class="govuk-summary-card__title">
-                                Provider information
+                                Service: @Model.ServiceName
                             </h2>
                         </div>
                         <div class="govuk-summary-card__content">
-                            <dl class="govuk-summary-list">                              
+                            <dl class="govuk-summary-list">
 
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                       Service name
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @Model.ServiceName
+                                    </dd>
+                                </div>
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">
                                         Provider publication status
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        @HtmlExtensions.ToStyledStrongTag(Model.ProviderStatus)
+                                        @HtmlExtensions.ToStyledStrongTag(Model.ServiceStatus)
                                     </dd>
                                 </div>
 
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">
-                                        Registered name
+                                       Service provider registered name
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        @Model?.RegisteredName
+                                        @Model?.Provider.RegisteredName
                                     </dd>
                                 </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        Trading name
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @Model?.TradingName
-                                    </dd>
-                                </div>
+                               
                             </dl>
                         </div>
                     </div>
@@ -57,14 +58,14 @@
         </div>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <p class="govuk-body">The Office for Digital Identities and Attributes  will receive an email notification of the update request.</p>                
+                <p class="govuk-body">The Office for Digital Identities and Attributes  will receive an email notification of the update request.</p>
 
-                <a href="@( Url.Action("ProviderDetails", "RegisterManagement", new { providerId = Model.Id }) )" class="govuk-button" role="button">Go back to service provider</a>
-               
-                
+                <a href="@( Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }) )" class="govuk-button" role="button">Go back to service provider</a>
+
+
+
             </div>
         </div>
     </main>
 </div>
-
 

@@ -9,8 +9,11 @@
 <div class="govuk-width-container">
     @Html.ActionLink("Back", "ServiceSummary", "EditService", null, new { @class = "govuk-back-link" })
 
-    @using (Html.BeginForm("#", "EditService", FormMethod.Post))
+    @using (Html.BeginForm("SaveServiceDraft", "EditService", FormMethod.Post))
     {
+
+     
+        @Html.HiddenFor(m => m.DSITUserEmails)
         <main id="main-content" class="govuk-main-wrapper" role="main">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
@@ -181,7 +184,9 @@
                                 {
                                     <div>
                                         <strong>Issue date</strong>
-                                        <div>@Model.CurrentService.ConformityIssueDate</div>
+                                        <div>
+                                            @DateTimeExtensions.FormatDateTime(Model.CurrentService.ConformityIssueDate, "dd MMMM yyyy")                                            
+                                        </div>
 
                                     </div>
                                 }
@@ -190,7 +195,7 @@
                                     <div class="govuk-body">
                                         <strong>Expiry date</strong>
                                         <div>
-                                            @Model.CurrentService.ConformityExpiryDate
+                                            @DateTimeExtensions.FormatDateTime(Model.CurrentService.ConformityExpiryDate, "dd MMMM yyyy")                                            
                                         </div>
                                     </div>
                                 }
@@ -355,7 +360,7 @@
                                     <div class="govuk-body">
                                         <strong>Issue date</strong>
                                         <div>
-                                            @Model.ChangedService.ConformityIssueDate
+                                            @DateTimeExtensions.FormatDateTime(Model.ChangedService.ConformityIssueDate, "dd MMMM yyyy")
                                         </div>
                                     </div>
                                 }
@@ -364,7 +369,7 @@
                                     <div class="govuk-body">
                                         <strong>Expiry date</strong>
                                         <div>
-                                            @Model.ChangedService.ConformityExpiryDate
+                                            @DateTimeExtensions.FormatDateTime(Model.ChangedService.ConformityExpiryDate, "dd MMMM yyyy")
                                         </div>
                                     </div>
                                 }
@@ -375,7 +380,7 @@
                     <h2 class="govuk-heading-m govuk-!-margin-top-8">Who will receive the request</h2>
                     <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                     <dl class="govuk-summary-list">
-                        @foreach (var email in Model.CurrentService.Provider.DSITUserEmails.Split(',').ToList())
+                        @foreach (var email in Model.DSITUserEmails.Split(',').ToList())
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">

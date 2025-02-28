@@ -188,7 +188,7 @@
             @if (isEditable)
             {
                 <dd class="govuk-summary-list__actions">
-                    @Html.ActionLink("Change", "SupplementaryCodes", "EditService", null,
+                    @Html.ActionLink("Change", "SupplementarySchemesInput", "EditService", new { serviceId = Model.Id },
                              new { @class = "govuk-link", @aria_label = "Change supplementary codes" })
                 </dd>
             }
@@ -211,7 +211,7 @@
             @if (isEditable)
             {
                 <dd class="govuk-summary-list__actions">
-                    @Html.ActionLink("Change", "DateOfIssue", "EditService", new { serviceId = Model.Id },
+                    @Html.ActionLink("Change", "ConformityIssueDate", "EditService", new { serviceId = Model.Id },
                              new { @class = "govuk-link", @aria_label = "Change date of issue" })
                 </dd>
             }
@@ -226,7 +226,7 @@
             @if (isEditable)
             {
                 <dd class="govuk-summary-list__actions">
-                    @Html.ActionLink("Change", "DateOfExpiry", "EditService", new { serviceId = Model.Id },
+                    @Html.ActionLink("Change", "ConformityExpiryDate", "EditService", new { serviceId = Model.Id },
                              new { @class = "govuk-link", @aria_label = "Change date of expiry" })
                 </dd>
             }
