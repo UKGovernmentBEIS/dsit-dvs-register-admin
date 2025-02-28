@@ -703,6 +703,27 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+
+        public async Task<bool> ServiceEditRequest(string emailAddress, string recipientName, string companyName, string serviceName, string currentData, string previousData, string link)
+        {
+            var template = govUkNotifyConfig.EditServiceRequestTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.CompanyName,  companyName},
+                { template.ServiceName,  serviceName},
+                { template.RecipientName,  recipientName},
+                { template.PreviousData,  previousData},
+                { template.CurrentData,  currentData},
+                { template.ApproveLink,  link}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
         #endregion
     }
 }

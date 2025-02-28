@@ -1,4 +1,5 @@
-﻿using QRCoder;
+﻿using Newtonsoft.Json.Linq;
+using QRCoder;
 using System.Text;
 
 namespace DVSAdmin.CommonUtility
@@ -32,11 +33,18 @@ namespace DVSAdmin.CommonUtility
 
             foreach (var kvp in data)
             {
-                result.Append(kvp.Key + ":");
-                foreach (var value in kvp.Value)
+                result.Append(kvp.Key + ": ");
+                if(kvp.Value.Count > 1) 
                 {
-                    result.AppendLine(" - " + value);
+                    string values = string.Join(",", kvp.Value);
+                    result.Append(values);                   
                 }
+                else
+                {
+                    result.Append(kvp.Value[0]);
+                }
+                
+                result.AppendLine();
             }
 
             return result.ToString();

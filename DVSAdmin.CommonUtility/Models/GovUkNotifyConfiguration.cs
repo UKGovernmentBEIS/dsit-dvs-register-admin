@@ -54,6 +54,7 @@ namespace DVSAdmin.CommonUtility.Models
 
         public ServiceRemovalRequestCreated ServiceRemovalRequestCreated { get; set; }
         public EditProviderRequestTemplate EditProviderRequestTemplate { get; set; }
+        public EditServiceRequestTemplate EditServiceRequestTemplate { get; set; }
 
     }
 }

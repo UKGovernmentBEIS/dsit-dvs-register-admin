@@ -52,6 +52,7 @@
 
         //Edit
         public Task<bool> ProviderEditRequest(string emailAddress, string recipientName, string companyName, string currentData, string previousData, string link);
+        public Task<bool> ServiceEditRequest(string emailAddress, string recipientName, string companyName, string serviceName, string currentData, string previousData, string link);
 
 
 
