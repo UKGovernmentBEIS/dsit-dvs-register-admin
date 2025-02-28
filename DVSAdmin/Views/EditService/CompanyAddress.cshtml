@@ -6,10 +6,9 @@
 @{
     bool isValid = true;
 }
-@Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })
 
 <div class="govuk-width-container">
-    <<a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-back-link">Back</a>
+    <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-back-link">Back</a>
     @using (Html.BeginForm("CompanyAddress", "EditService", FormMethod.Post))
     {
         <main id="main-content" class="govuk-main-wrapper" role="main">

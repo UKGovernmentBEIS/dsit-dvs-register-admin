@@ -32,7 +32,7 @@ namespace DVSAdmin.Controllers
             if(isEditPage)
             {
                 ProviderProfileDto providerDto = await editService.GetProviderDeatils(providerId);
-                ProfileSummaryViewModel profileSummaryViewModel = MapViewModelToDto(providerDto);
+                ProfileSummaryViewModel profileSummaryViewModel = MapDtoToViewModel(providerDto);
                 HttpContext?.Session.Set("ProfileSummary", profileSummaryViewModel);
                 return View(profileSummaryViewModel);
             }
@@ -372,7 +372,7 @@ namespace DVSAdmin.Controllers
         }
 
 
-        private ProfileSummaryViewModel MapViewModelToDto(ProviderProfileDto providerDto)
+        private ProfileSummaryViewModel MapDtoToViewModel(ProviderProfileDto providerDto)
         {
             ProfileSummaryViewModel profileSummaryViewModel = new();
 

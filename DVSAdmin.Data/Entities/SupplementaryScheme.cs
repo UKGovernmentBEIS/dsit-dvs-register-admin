@@ -10,5 +10,6 @@ namespace DVSAdmin.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string SchemeName { get; set; }
+        public int Order { get; set; }
     }
 }

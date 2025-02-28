@@ -2,6 +2,7 @@
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.JWT;
+using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
@@ -54,12 +55,30 @@ namespace DVSAdmin.BusinessLogic.Services
             return response;
         }
 
-        public async Task<GenericResponse> SaveServiceDraft(ServiceDraftDto draftDto, string loggedInUserEmail)
+        public async Task<GenericResponse> SaveServiceDraft(ServiceDraftDto draftDto, string loggedInUserEmail, List<string> dsitUserEmails)
         {
             var draftEntity = _mapper.Map<ServiceDraft>(draftDto);
             
             var response = await _editRepository.SaveServiceDraft(draftEntity, loggedInUserEmail);
-            return response;
+
+            if (response.Success)
+            {
+                // to do send email
+                TokenDetails tokenDetails = _jwtService.GenerateToken("DSIT");
+                ServiceDraftToken serviceDraftToken = new()
+                {
+                    ServiceDraftId = response.InstanceId,
+                    Token = tokenDetails.Token,
+                    TokenId = tokenDetails.TokenId,
+                    CreatedTime = DateTime.UtcNow
+                };
+                response = await _editRepository.SaveServiceDraftToken(serviceDraftToken, loggedInUserEmail);
+                if (response.Success)
+                {
+                    //to do email
+                }
+            }
+                return response;
         }
 
         public async Task<ServiceDto> GetService(int serviceId)
@@ -81,5 +100,26 @@ namespace DVSAdmin.BusinessLogic.Services
             ProviderProfileDto providerProfileDto = _mapper.Map<ProviderProfileDto>(provider);
             return providerProfileDto;
         }
+        public async Task<List<RoleDto>> GetRoles()
+        {
+            var list = await _editRepository.GetRoles();
+            return _mapper.Map<List<RoleDto>>(list);
+        }
+        public async Task<List<QualityLevelDto>> GetQualitylevels()
+        {
+            var list = await _editRepository.QualityLevels();
+            return _mapper.Map<List<QualityLevelDto>>(list);
+        }
+        public async Task<List<SupplementarySchemeDto>> GetSupplementarySchemes()
+        {
+            var list = await _editRepository.GetSupplementarySchemes();
+            return _mapper.Map<List<SupplementarySchemeDto>>(list);
+        }
+        public async Task<List<IdentityProfileDto>> GetIdentityProfiles()
+        {
+            var list = await _editRepository.GetIdentityProfiles();
+            return _mapper.Map<List<IdentityProfileDto>>(list);
+        }
+
     }
 }
