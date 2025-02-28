@@ -123,10 +123,9 @@ namespace DVSAdmin.Controllers
         [HttpPost("service/publish-service-removal-reason")]
         public async Task<IActionResult> RequestServiceRemoval(ServiceDto serviceDetailsViewModel, ServiceRemovalReasonEnum serviceRemovalReason)
         {
-            List<string> dsitUserEmails = serviceDetailsViewModel.Provider.DSITUserEmails.Split(',').ToList();
             ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceDetailsViewModel.Id);
             List<int> ServiceIds = [serviceDto.Id];
-            GenericResponse genericResponse = await removeProviderService.RemoveServiceRequest(serviceDetailsViewModel.ProviderProfileId, ServiceIds, userEmail, dsitUserEmails, serviceRemovalReason);
+            GenericResponse genericResponse = await removeProviderService.RemoveServiceRequest(serviceDetailsViewModel.ProviderProfileId, ServiceIds, userEmail, serviceRemovalReason);
 
             if (genericResponse.Success)
             {
