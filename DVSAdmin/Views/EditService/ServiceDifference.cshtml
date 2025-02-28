@@ -326,9 +326,9 @@
                                     <div class="govuk-body">
                                         <strong>Supplementary Codes</strong>
                                         <div>
-                                            Not certified against any identity profiles
+                                            Not certified against any supplementary schemes
                                         </div>
-                                        }
+                                        
                                     </div>
                                 }
                                 else if (Model.ChangedService.HasSupplementarySchemes == true)
@@ -348,7 +348,7 @@
                                     {
                                         <div class="govuk-body">
                                             <strong>Supplementary Codes</strong>
-                                            @foreach (var item in Model.CurrentService.ServiceSupSchemeMapping)
+                                            @foreach (var item in Model.ChangedService.ServiceSupSchemeMappingDraft)
                                             {
                                                 <div>@item.SupplementaryScheme.SchemeName</div>
                                             }
