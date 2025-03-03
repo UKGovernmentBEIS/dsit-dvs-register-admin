@@ -53,5 +53,7 @@ namespace DVSAdmin.Models
         [RegularExpression(@"^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$", ErrorMessage = "Enter a valid website address")]
         public string? ProviderWebsiteAddress { get; set; }
         public int ProviderProfileId { get; set; }
+
+        public bool IsEditable { get; set; }
     }
 }
