@@ -86,7 +86,7 @@
                         <button type="submit" class="govuk-button govuk-!-margin-top-6" data-module="govuk-button">
                             Continue
                         </button>
-                        @Html.ActionLink("Cancel", "GPG44Input", "EditService", new { fromSummaryPage = Model.FromSummaryPage, serviceId = ViewBag.serviceId }, new { @class = "govuk-button govuk-button--secondary" })
+                        <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.serviceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
                     </div>
                 }
             </div>
