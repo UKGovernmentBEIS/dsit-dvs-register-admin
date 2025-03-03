@@ -61,6 +61,7 @@ namespace DVSAdmin.BusinessLogic.Services
                     }
 
                     //To do 59/DSIT/Update request submitted - provider// send email to loggedInUserEmail
+                    await _emailSender.ProviderEditRequestConfirmation(loggedInUserEmail, loggedInUserEmail, providerProfileDto.RegisteredName, currentData, previousData);
 
                 }
 
@@ -84,7 +85,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 currentDataDictionary.Add("Registered name", [currentData.RegisteredName]);
             }
 
-            if (currentData.RegisteredName != null)
+            if (currentData.TradingName != null)
             {
                 previousDataDictionary.Add("Trading name", [previousData.TradingName]);
                 currentDataDictionary.Add("Trading name", [currentData.TradingName]);
@@ -190,7 +191,8 @@ namespace DVSAdmin.BusinessLogic.Services
                         await _emailSender.ServiceEditRequest(email, email, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, currentData, previousData, dsit2iCheckLink);
                     }
 
-                    //To do 59/DSIT/Update request submitted - provider// send email to loggedInUserEmail
+                    //To do 58/DSIT/Update request submitted - service// send email to loggedInUserEmail
+                    await _emailSender.ServiceEditRequestConfirmation(loggedInUserEmail, loggedInUserEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, currentData, previousData);
 
                 }
             }
