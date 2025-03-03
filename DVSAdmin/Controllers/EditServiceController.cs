@@ -1,4 +1,5 @@
-﻿using DVSAdmin.BusinessLogic.Models;
+﻿using CsvHelper.Configuration.Attributes;
+using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
@@ -161,7 +162,6 @@ namespace DVSAdmin.Controllers
 
                 if (Convert.ToBoolean(serviceSummary.HasGPG44))
                 {
-                    HttpContext?.Session.Set("ServiceSummary", serviceSummary);
                     return RedirectToAction("GPG44");
                 }
                 else
@@ -196,6 +196,7 @@ namespace DVSAdmin.Controllers
 
             qualityLevelViewModel.FromSummaryPage = serviceSummary.FromSummaryPage;
             ViewBag.serviceId = serviceSummary.ServiceId;
+            ViewBag.serviceKey = serviceSummary.ServiceKey;
 
             return View(qualityLevelViewModel);
         }
@@ -209,6 +210,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> GPG44(QualityLevelViewModel qualityLevelViewModel)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            summaryViewModel.HasGPG44 = true;
             List<QualityLevelDto> availableQualityLevels = await editService.GetQualitylevels();
             qualityLevelViewModel.AvailableQualityOfAuthenticators = availableQualityLevels.Where(x => x.QualityType == QualityTypeEnum.Authentication).ToList();
             qualityLevelViewModel.SelectedQualityofAuthenticatorIds = qualityLevelViewModel.SelectedQualityofAuthenticatorIds ?? [];
@@ -262,7 +264,6 @@ namespace DVSAdmin.Controllers
 
                 if (Convert.ToBoolean(summaryViewModel.HasGPG45))
                 {
-                    HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
                     return RedirectToAction("GPG45");
 
                 }
@@ -292,6 +293,7 @@ namespace DVSAdmin.Controllers
 
             identityProfileViewModel.FromSummaryPage = summaryViewModel.FromSummaryPage;
             ViewBag.serviceId = summaryViewModel.ServiceId;
+            ViewBag.serviceKey = summaryViewModel.ServiceKey;
 
             return View(identityProfileViewModel);
         }
@@ -305,6 +307,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> GPG45(IdentityProfileViewModel identityProfileViewModel)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            summaryViewModel.HasGPG45 = true;
             List<IdentityProfileDto> availableIdentityProfiles = await editService.GetIdentityProfiles();
             identityProfileViewModel.AvailableIdentityProfiles = availableIdentityProfiles;
             identityProfileViewModel.SelectedIdentityProfileIds = identityProfileViewModel.SelectedIdentityProfileIds ?? new List<int>();
@@ -352,9 +355,7 @@ namespace DVSAdmin.Controllers
 
                 if (Convert.ToBoolean(summaryViewModel.HasSupplementarySchemes))
                 {
-                    HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
                     return RedirectToAction("SupplementarySchemes");
-
                 }
                 else
                 {
@@ -384,6 +385,7 @@ namespace DVSAdmin.Controllers
 
             supplementarySchemeViewModel.FromSummaryPage = summaryViewModel.FromSummaryPage;
             ViewBag.serviceId = summaryViewModel.ServiceId;
+            ViewBag.serviceKey = summaryViewModel.ServiceKey;
             return View(supplementarySchemeViewModel);
         }
 
@@ -391,6 +393,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> SupplementarySchemes(SupplementarySchemeViewModel supplementarySchemeViewModel)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            summaryViewModel.HasSupplementarySchemes = true;
             List<SupplementarySchemeDto> availableSupplementarySchemes = await editService.GetSupplementarySchemes();
             supplementarySchemeViewModel.AvailableSchemes = availableSupplementarySchemes;
             supplementarySchemeViewModel.SelectedSupplementarySchemeIds = supplementarySchemeViewModel.SelectedSupplementarySchemeIds ?? new List<int>();
