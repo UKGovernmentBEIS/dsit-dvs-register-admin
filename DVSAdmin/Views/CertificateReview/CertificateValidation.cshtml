@@ -26,7 +26,7 @@
                         ViewData["Title"] = "Error: " + ViewData["Title"];
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
-                    <h1 class="govuk-heading-xl">Part 1 of 2: Certificate Validation</h1>
+                    <h1 class="govuk-heading-xl">Part 1 of 2: Certificate validation</h1>
                     @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithDaysLeftView.cshtml", Model.Service)
                 </div>
 
@@ -47,19 +47,19 @@
 
                             <ol class="govuk-list govuk-list--number">
                                 <li>
-                                    Begin by downloading the ‘Provided certificate of conformity’ submitted by the CAB. Open the certificate document for your review.
+                                    begin by downloading the ‘Provided certificate of conformity’ submitted by the CAB. Open the certificate document for your review.
                                 </li>
                                 <li>
-                                    Return to this page to compare the certificate against the statements below.
+                                    return to this page to compare the certificate against the statements below.
                                 </li>
                                 <li>
-                                    For each category, pay attention to the individual items or entries to confirm their accuracy. Please select ‘Correct’ if the statement is true and ‘Incorrect’ if the statement is false for each item. You must enter comments or notes in the text area at the bottom of the page.
+                                    for each category, pay attention to the individual items or entries to confirm their accuracy. Please select ‘Correct’ if the statement is true and ‘Incorrect’ if the statement is false. You must enter comments or notes in the text area at the bottom of the page.
                                 </li>
                                 <li>
-                                    If you wish to submit your review at a later time, you can select the ‘Save as draft’ button located at the bottom of the page. You must have completed all sections before saving.
+                                    if you wish to submit your review at a later time, you can select the ‘Save as draft’ button located at the bottom of the page. You must have completed all sections before saving.
                                 </li>
                                 <li>
-                                    Once you have verified all items, scroll down to the bottom of the page and click the ‘Continue’ button to proceed to the next page where you must complete the information match.
+                                    once you have verified all items, scroll down to the bottom of the page and click the ‘Continue’ button to proceed to the next page where you must complete the information match.
                                 </li>
                             </ol>
                         </div>
@@ -452,7 +452,7 @@
                                 </label>
                             </h3>
                             <div id="comments-hint" class="govuk-hint">
-                                If you had marked any item as ‘Incorrect’, you should provide further details. If all sections are marked ‘Correct’, please provide a note to confirm below.
+                                If you have marked any item as ‘Incorrect’, you should provide further details. If all sections are marked ‘Correct’, please provide a note to confirm below.
                             </div>
                             @Html.TextAreaFor(model => model.CommentsForIncorrect, new { @class = "govuk-textarea", @id = "commentsforincorrect", @name = "comment", @rows = "5", aria_describedby = "comments-hint" })
                         </div>
@@ -483,7 +483,7 @@
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">
                             <span class="govuk-visually-hidden">Warning</span>
-                            To continue to the next step, you must complete all sections
+                            To continue to the next step, you must complete all sections.
                         </strong>
                     </div>
                 </div>
