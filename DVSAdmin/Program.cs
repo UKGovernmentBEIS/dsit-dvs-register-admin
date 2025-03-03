@@ -60,7 +60,7 @@ var jobRunner = app.Services.GetService<IRecurringJobManager>();
 jobRunner.AddOrUpdate<BackgroundJobService>(
     "Set status of expired certificates to Removed",
     service => service.RemoveExpiredCertificates(),
-    "0 0 * * *"); // 12:00AM UTC
+    "0 0 * * *"); // 12:00AM GMT
 
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseHttpsRedirection();

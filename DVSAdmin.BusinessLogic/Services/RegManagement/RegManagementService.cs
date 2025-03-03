@@ -38,7 +38,8 @@ namespace DVSAdmin.BusinessLogic.Services
                                 s.ServiceStatus == ServiceStatusEnum.Published ||
                                 s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
                                 s.ServiceStatus == ServiceStatusEnum.Removed ||
-                                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
+                                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation||
+                                s.ServiceStatus == ServiceStatusEnum.UpdatesRequested)
                     .ToList();
                 return providerDto;
             }).ToList();
@@ -63,7 +64,8 @@ namespace DVSAdmin.BusinessLogic.Services
                 s.ServiceStatus == ServiceStatusEnum.Published || 
                 s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation || 
                 s.ServiceStatus == ServiceStatusEnum.Removed || 
-                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation).ToList();
+                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation||
+                s.ServiceStatus == ServiceStatusEnum.UpdatesRequested).ToList();
             
             return providerDto;
         }
@@ -71,7 +73,13 @@ namespace DVSAdmin.BusinessLogic.Services
         public async Task<ProviderProfileDto> GetProviderWithServiceDetails(int providerProfileId)
         {
             var provider = await regManagementRepository.GetProviderWithServiceDetails(providerProfileId);
-            ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);           
+            ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);
+          
+            foreach (var service in providerDto.Services) 
+            {
+               var previousVersionList = providerDto.Services.Where(x => x.ServiceKey == service.ServiceKey && x.IsCurrent == false && x.ServiceStatus == ServiceStatusEnum.Published).ToList();
+               service.HasPreviousPublishedVersion = previousVersionList !=null && previousVersionList.Count > 0;
+            }
             return providerDto;
         }
 
@@ -110,7 +118,7 @@ namespace DVSAdmin.BusinessLogic.Services
             if(genericResponse.Success)
             {
                 //insert provider log
-                RegisterPublishLog registerPublishLog = new RegisterPublishLog();
+                RegisterPublishLog registerPublishLog = new();
                 registerPublishLog.ProviderProfileId = providerProfileId;
                 registerPublishLog.CreatedTime = DateTime.UtcNow;
                 registerPublishLog.ProviderName = providerProfile.TradingName;

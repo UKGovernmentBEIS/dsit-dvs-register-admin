@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models.PublicInterestCheck;
+﻿using DVSAdmin.CommonUtility.Models.EmailTemplates.Edit;
+using DVSAdmin.CommonUtility.Models.PublicInterestCheck;
 
 namespace DVSAdmin.CommonUtility.Models
 {
@@ -53,6 +54,10 @@ namespace DVSAdmin.CommonUtility.Models
         public RemoveService2iCheckToDSIT RemoveService2iCheckToDSIT { get; set; }
 
         public ServiceRemovalRequestCreated ServiceRemovalRequestCreated { get; set; }
+        public EditProviderRequestTemplate EditProviderRequestTemplate { get; set; }
+        public EditServiceRequestTemplate EditServiceRequestTemplate { get; set; }
+        public EditServiceRequestConfirmationTemplate EditServiceRequestConfirmationTemplate { get; set; }
+        public EditProviderRequestConfirmationTemplate EditProviderRequestConfirmationTemplate { get; set; }
 
     }
 }

@@ -60,6 +60,8 @@ namespace DVSAdmin.Extensions
                 case CertificateReviewEnum.InReview:
                 case PublicInterestCheckEnum.InPrimaryReview:
                 case PublicInterestCheckEnum.PrimaryCheckSkipped:
+                case ProviderStatusEnum.UpdatesRequested:
+                case ServiceStatusEnum.UpdatesRequested:
                     return "govuk-tag govuk-tag--yellow";
 
                 default:

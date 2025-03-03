@@ -23,7 +23,7 @@
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header">Service Provider</th>
                             <th scope="col" class="govuk-table__header">Publication status</th>
-                            <th scope="col" class="govuk-table__header">Date and time of <br /> provider agreement <br /> to publish (UTC)</th>
+                            <th scope="col" class="govuk-table__header">Date and time of <br /> provider agreement <br /> to publish (GMT)</th>
                             <th scope="col" class="govuk-table__header">Conformity <br />Assessment Body</th>
                             <th scope="col" class="govuk-table__header">Services</th>
                         </tr>
@@ -39,7 +39,7 @@
                             <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
                             <td class="govuk-table__cell">
 
-                                @foreach (var item in @Model.Services)
+                                @foreach (var item in Model.Services.Where(s => s.IsCurrent))
                                 {
                                     if (item.ServiceStatus == ServiceStatusEnum.Published){
                                         <div class="govuk-!-margin-bottom-1">

@@ -1,0 +1,428 @@
+﻿@using DVSAdmin.CommonUtility.Models
+@using DVSAdmin.Extensions
+@model DVSAdmin.Models.ServiceChangesViewModel
+@{
+    ViewData["Title"] = "Company address details";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "ServiceSummary", "EditService", null, new { @class = "govuk-back-link" })
+
+    @using (Html.BeginForm("SaveServiceDraft", "EditService", FormMethod.Post))
+    {
+
+     
+        @Html.HiddenFor(m => m.DSITUserEmails)
+        <main id="main-content" class="govuk-main-wrapper" role="main">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h1 class="govuk-heading-xl"> You are about to send a request to update information about this service</h1>
+                </div>
+                <div class="govuk-grid-column-two-thirds">
+                    <h2 class="govuk-heading-m">
+                        What information is changing
+                    </h2>
+                    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Previous information
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (Model.ChangedService.CompanyAddress != null)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Registered address</strong>
+                                        <div>@HtmlExtensions.ToStringWithLineBreaks(Model.CurrentService.CompanyAddress)</div>
+                                    </div>
+                                }
+                                @if (Model.ChangedService.ServiceName != null)
+                                {
+                                    <div class="govuk-body govuk-\!-margin-bottom-9">
+                                        <strong>Service Name</strong>
+                                        <div>@Model.CurrentService.ServiceName</div>
+                                    </div>
+                                }
+                                @if (Model.ChangedService.ServiceRoleMappingDraft.Count > 0)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Roles certified against</strong>
+                                        @foreach (var item in Model.CurrentService.ServiceRoleMapping)
+                                        {
+                                            <div>@item.Role.RoleName</div>
+                                        }
+                                    </div>
+                                }
+
+                                @if (Model.ChangedService.HasGPG44 == true)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>GPG44 level of protection</strong>
+                                        <div>Not certified against GPG44</div>
+                                    </div>
+                                    <div class="govuk-body">
+                                        <strong>GPG44 quality of authentication</strong>
+                                        <div>Not certified against GPG44</div>
+                                    </div>
+                                }
+                                else if (Model.ChangedService.HasGPG44 == false)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>GPG44 level of protection</strong>
+                                        @foreach (var item in Model.CurrentService.ServiceQualityLevelMapping.Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                                        {
+                                            <div>@item.QualityLevel.Level</div>
+                                        }
+                                    </div>
+                                    <div class="govuk-body">
+                                        <strong>GPG44 quality of authentication</strong>
+                                        @foreach (var item in Model.CurrentService.ServiceQualityLevelMapping.Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                                        {
+                                            <div>@item.QualityLevel.Level</div>
+                                        }
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    @if (Model.ChangedService.ServiceQualityLevelMappingDraft
+                                   .Any(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                                    {
+                                        <div class="govuk-body">
+                                            <strong>GPG44 level of protection</strong>
+                                            @foreach (var item in Model.CurrentService.ServiceQualityLevelMapping.Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                                            {
+                                                <div>@item.QualityLevel.Level</div>
+                                            }
+                                        </div>
+                                    }
+
+                                    @if (Model.ChangedService.ServiceQualityLevelMappingDraft
+                                   .Any(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                                    {
+                                        <div class="govuk-body">
+                                            <strong>GPG44 quality of authentication</strong>
+                                            @foreach (var item in Model.CurrentService.ServiceQualityLevelMapping.Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                                            {
+                                                <div>@item.QualityLevel.Level</div>
+                                            }
+                                        </div>
+                                    }
+                                }
+                                @if (Model.ChangedService.HasGPG45 == true)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>GPG45 identity profiles</strong>
+                                        <div>
+                                            Not certified against any identity profiles
+                                        </div>
+                                    </div>
+
+                                }
+                                else if (Model.ChangedService.HasGPG45 == false)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>GPG45 identity profiles</strong>
+                                        @foreach (var item in Model.CurrentService.ServiceIdentityProfileMapping)
+                                        {
+                                            <div>@item.IdentityProfile.IdentityProfileName</div>
+                                        }
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    @if (Model.ChangedService.ServiceIdentityProfileMappingDraft.Any())
+                                    {
+                                        <div class="govuk-body">
+                                            <strong>GPG45 identity profiles</strong>
+                                            @foreach (var item in Model.CurrentService.ServiceIdentityProfileMapping)
+                                            {
+                                                <div>@item.IdentityProfile.IdentityProfileName</div>
+                                            }
+                                        </div>
+                                    }
+
+                                }
+                                @if (Model.ChangedService.HasSupplementarySchemes == true)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Supplementary codes</strong>
+                                        <div>
+                                            Not certified against any supplementary codes
+                                        </div>
+
+                                    </div>
+                                }
+                                else if (Model.ChangedService.HasSupplementarySchemes == false)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Supplementary Codes</strong>
+                                        @foreach (var item in Model.CurrentService.ServiceSupSchemeMapping)
+                                        {
+                                            <div>@item.SupplementaryScheme.SchemeName</div>
+                                        }
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    @if (Model.ChangedService.ServiceSupSchemeMappingDraft.Any())
+                                    {
+                                        <div class="govuk-body">
+                                            <strong>Supplementary Codes</strong>
+                                            @foreach (var item in Model.CurrentService.ServiceSupSchemeMapping)
+                                            {
+                                                <div>@item.SupplementaryScheme.SchemeName</div>
+                                            }
+                                        </div>
+                                    }
+                                }
+
+                                @if (Model.ChangedService.ConformityIssueDate != null)
+                                {
+                                    <div>
+                                        <strong>Issue date</strong>
+                                        <div>
+                                            @DateTimeExtensions.FormatDateTime(Model.CurrentService.ConformityIssueDate, "dd MMMM yyyy")                                            
+                                        </div>
+
+                                    </div>
+                                }
+                                @if (Model.ChangedService.ConformityExpiryDate != null)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Expiry date</strong>
+                                        <div>
+                                            @DateTimeExtensions.FormatDateTime(Model.CurrentService.ConformityExpiryDate, "dd MMMM yyyy")                                            
+                                        </div>
+                                    </div>
+                                }
+
+
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                New information
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (Model.ChangedService.CompanyAddress != null)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Registered address</strong>
+                                        <div>@HtmlExtensions.ToStringWithLineBreaks(Model.ChangedService.CompanyAddress)</div>
+                                    </div>
+                                }
+                                @if (Model.ChangedService.ServiceName != null)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Service Name</strong>
+                                        <div>@Model.ChangedService.ServiceName</div>
+                                    </div>
+                                }
+                                @if (Model.ChangedService.ServiceRoleMappingDraft.Count > 0)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Roles certified against</strong>
+                                        @foreach (var item in Model.ChangedService.ServiceRoleMappingDraft)
+                                        {
+                                            <div>@item.Role.RoleName</div>
+                                        }
+                                    </div>
+                                }
+
+                                @if (Model.ChangedService.HasGPG44 == false)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>GPG44 level of protection</strong>
+                                        <div>Not certified against GPG44</div>
+                                    </div>
+                                    <div class="govuk-body">
+                                        <strong>GPG44 quality of authentication</strong>
+                                        <div>Not certified against GPG44</div>
+                                    </div>
+                                }
+                                else if (Model.ChangedService.HasGPG44 == true)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>GPG44 level of protection</strong>
+                                        @foreach (var item in Model.ChangedService.ServiceQualityLevelMappingDraft.Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                                        {
+                                            <div>@item.QualityLevel.Level</div>
+                                        }
+                                    </div>
+                                    <div class="govuk-body">
+                                        <strong>GPG44 quality of authentication</strong>
+                                        @foreach (var item in Model.ChangedService.ServiceQualityLevelMappingDraft.Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                                        {
+                                            <div>@item.QualityLevel.Level</div>
+                                        }
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    @if (Model.ChangedService.ServiceQualityLevelMappingDraft
+                                   .Any(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                                    {
+                                        <div class="govuk-body">
+                                            <strong>GPG44 level of protection</strong>
+                                            @foreach (var item in Model.ChangedService.ServiceQualityLevelMappingDraft.Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                                            {
+                                                <div>@item.QualityLevel.Level</div>
+                                            }
+                                        </div>
+                                    }
+
+                                    @if (Model.ChangedService.ServiceQualityLevelMappingDraft
+                                   .Any(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                                    {
+                                        <div class="govuk-body">
+                                            <strong>GPG44 quality of authentication</strong>
+                                            @foreach (var item in Model.ChangedService.ServiceQualityLevelMappingDraft.Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                                            {
+                                                <div>@item.QualityLevel.Level</div>
+                                            }
+                                        </div>
+                                    }
+                                }
+                                @if (Model.ChangedService.HasGPG45 == false)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>GPG45 identity profiles</strong>
+                                        <div>Not certified against any identity profiles</div>
+                                    </div>
+
+                                }
+                                else if (Model.ChangedService.HasGPG45 == true)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>GPG45 identity profiles</strong>
+                                        @foreach (var item in Model.ChangedService.ServiceIdentityProfileMappingDraft)
+                                        {
+                                            <div>@item.IdentityProfile.IdentityProfileName</div>
+                                        }
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    @if (Model.ChangedService.ServiceIdentityProfileMappingDraft.Any())
+                                    {
+                                        <div class="govuk-body">
+                                            <strong>GPG45 identity profiles</strong>
+                                            @foreach (var item in Model.ChangedService.ServiceIdentityProfileMappingDraft)
+                                            {
+                                                <div>@item.IdentityProfile.IdentityProfileName</div>
+                                            }
+                                        </div>
+                                    }
+
+                                }
+                                @if (Model.ChangedService.HasSupplementarySchemes == false)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Supplementary Codes</strong>
+                                        <div>
+                                            Not certified against any supplementary schemes
+                                        </div>
+                                        
+                                    </div>
+                                }
+                                else if (Model.ChangedService.HasSupplementarySchemes == true)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Supplementary Codes</strong>
+                                        @foreach (var item in Model.ChangedService.ServiceSupSchemeMappingDraft)
+                                        {
+                                            <div>@item.SupplementaryScheme.SchemeName</div>
+                                        }
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    @if (Model.ChangedService.ServiceSupSchemeMappingDraft.Any())
+                                    {
+                                        <div class="govuk-body">
+                                            <strong>Supplementary Codes</strong>
+                                            @foreach (var item in Model.ChangedService.ServiceSupSchemeMappingDraft)
+                                            {
+                                                <div>@item.SupplementaryScheme.SchemeName</div>
+                                            }
+                                        </div>
+                                    }
+                                }
+                                @if (Model.ChangedService.ConformityIssueDate != null)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Issue date</strong>
+                                        <div>
+                                            @DateTimeExtensions.FormatDateTime(Model.ChangedService.ConformityIssueDate, "dd MMMM yyyy")
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.ChangedService.ConformityExpiryDate != null)
+                                {
+                                    <div class="govuk-body">
+                                        <strong>Expiry date</strong>
+                                        <div>
+                                            @DateTimeExtensions.FormatDateTime(Model.ChangedService.ConformityExpiryDate, "dd MMMM yyyy")
+                                        </div>
+                                    </div>
+                                }
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <h2 class="govuk-heading-m govuk-!-margin-top-8">Who will receive the request</h2>
+                    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                    <dl class="govuk-summary-list">
+                        @foreach (var email in Model.DSITUserEmails.Split(',').ToList())
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Email address of <br /> DSIT user
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @email
+                                </dd>
+                            </div>
+                        }
+                    </dl>
+
+                    <h2 class="govuk-heading-m govuk-!-margin-top-8">What will happen next</h2>
+                    <p class="govuk-body">
+                        The users above will be sent an email asking them to review the request to update information for this service. Once they accept the update, you will be notified by email.
+                    </p>
+                    <p class="govuk-body">
+                        To publish the updates on the register, accept the update request and then return to register management and publish the service.
+                    </p>
+                    <p class="govuk-body">
+                        The service provider and Conformity Assessment Body will receive an email confirmation once the details are published.
+                    </p>
+
+                    <div class="govuk-warning-text govuk-!-margin-top-8">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            Once you send the update request, the action can't be undone.
+                        </strong>
+                    </div>
+
+                    <div class="govuk-button-group govuk-!-margin-top-8">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="action">
+                            Submit update request
+                        </button>
+                        <a href="check-your-answers" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+    }
+</div>

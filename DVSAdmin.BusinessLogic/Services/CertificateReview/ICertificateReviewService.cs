@@ -1,5 +1,6 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -10,8 +11,8 @@ namespace DVSAdmin.BusinessLogic.Services
         public  Task<CertificateReviewDto> GetCertificateReview(int reviewId);
         public Task<CertificateReviewDto> GetCertificateReviewWithRejectionData(int reviewId);
         public Task<List<ServiceDto>> GetServiceList();
-        public Task<ServiceDto> GetServiceDetails(int serviceId);     
-
+        public Task<List<ServiceDto>> GetServiceVersionList(int serviceKey);
+        public Task<ServiceDto> GetServiceDetails(int serviceId);
 
         #region save update methods
         public Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto, string loggedInUserEmail);

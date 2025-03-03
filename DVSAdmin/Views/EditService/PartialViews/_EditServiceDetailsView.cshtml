@@ -1,0 +1,207 @@
+﻿@using DVSAdmin.Extensions;
+@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models;
+@model DVSAdmin.Models.ServiceSummaryViewModel
+
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <p class="govuk-summary-card__title">
+            Service details
+        </p>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Registered name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @Model.Provider.RegisteredName
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Trading names
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @(string.IsNullOrEmpty(Model.Provider.TradingName) ? "N/A" : Model.Provider.TradingName)
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Company address details
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @HtmlExtensions.ToStringWithLineBreaks(Model.CompanyAddress)
+                </dd>
+
+                <dd class="govuk-summary-list__actions">
+                    @Html.ActionLink("Change", "CompanyAddress", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                         new { @class = "govuk-link", @aria_label = "Change company address details" })
+                </dd>
+
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Name of service
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @Model.ServiceName
+                </dd>
+
+                <dd class="govuk-summary-list__actions">
+                    @Html.ActionLink("Change", "ServiceName", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                         new { @class = "govuk-link", @aria_label = "Change name of service" })
+                </dd>
+
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Roles certified against
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @foreach (var item in Model.RoleViewModel.SelectedRoles)
+                {
+                        <div>@item.RoleName</div>
+                }
+                </dd>
+
+                <dd class="govuk-summary-list__actions">
+                    @Html.ActionLink("Change", "ProviderRoles", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                         new { @class = "govuk-link", @aria_label = "Change roles certified against" })
+                </dd>
+
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    GPG44 quality of authenticator
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @if (Model.QualityLevelViewModel.SelectedQualityofAuthenticators.Count > 0)
+                {
+                    @foreach (var item in Model.QualityLevelViewModel.SelectedQualityofAuthenticators)
+                    {
+                            <div>@item.Level</div>
+                    }
+                }
+                else
+                {
+                        <div>Not certified against GPG44</div>
+                }
+                </dd>
+
+                <dd class="govuk-summary-list__actions">
+                    @Html.ActionLink("Change", "GPG44Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                         new { @class = "govuk-link", @aria_label = "Change GPG44 quality of authenticator" })
+                </dd>
+
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    GPG44 level of protection
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @if (Model.QualityLevelViewModel.SelectedLevelOfProtections.Count > 0)
+                {
+                    @foreach (var item in Model.QualityLevelViewModel.SelectedLevelOfProtections)
+                    {
+                            <div>@item.Level</div>
+                    }
+                }
+                else
+                {
+                        <div>Not certified against GPG44</div>
+                }
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    @Html.ActionLink("Change", "GPG44Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                         new { @class = "govuk-link", @aria_label = "Change GPG44 level of protection" })
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    GPG45 identity profiles
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @if (Model.IdentityProfileViewModel.SelectedIdentityProfiles.Count > 0)
+                {
+                    @foreach (var item in Model.IdentityProfileViewModel.SelectedIdentityProfiles)
+                    {
+                            <div>@item.IdentityProfileName</div>
+                    }
+                }
+                else
+                {
+                        <div>Not certified against any identity profiles</div>
+                }
+                </dd>
+
+                <dd class="govuk-summary-list__actions">
+                    @Html.ActionLink("Change", "GPG45Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                         new { @class = "govuk-link", @aria_label = "Change GPG45 identity profiles" })
+                </dd>
+
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Supplementary codes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @if (Model.SupplementarySchemeViewModel.SelectedSupplementarySchemes.Count > 0)
+                {
+                    @foreach (var item in Model.SupplementarySchemeViewModel.SelectedSupplementarySchemes)
+                    {
+                            <div>@item.SchemeName</div>
+                    }
+                }
+                else
+                {
+                        <div>Not certified against any supplementary codes</div>
+                }
+                </dd>
+
+                <dd class="govuk-summary-list__actions">
+                    @Html.ActionLink("Change", "SupplementarySchemesInput", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                         new { @class = "govuk-link", @aria_label = "Change supplementary codes" })
+                </dd>
+
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Certificate of conformity
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @Model.FileName
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Date of issue
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @DateTimeExtensions.FormatDateTime(@Model.ConformityIssueDate, "dd MMMM yyyy")
+                </dd>
+
+                <dd class="govuk-summary-list__actions">
+                    @Html.ActionLink("Change", "ConformityIssueDate", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                         new { @class = "govuk-link", @aria_label = "Change date of issue" })
+                </dd>
+
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Date of expiry
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @DateTimeExtensions.FormatDateTime(@Model.ConformityExpiryDate, "dd MMMM yyyy")
+                </dd>
+
+                <dd class="govuk-summary-list__actions">
+                    @Html.ActionLink("Change", "ConformityExpiryDate", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                         new { @class = "govuk-link", @aria_label = "Change date of expiry" })
+                </dd>
+
+            </div>
+        </dl>
+    </div>
+</div>

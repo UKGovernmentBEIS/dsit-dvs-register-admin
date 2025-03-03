@@ -679,6 +679,91 @@ namespace DVSAdmin.CommonUtility.Email
             };
             return await SendEmail(emailModel);
         }
+
+
+        #endregion
+
+        #region Edit
+        public async Task<bool> ProviderEditRequest(string emailAddress,string recipientName, string companyName, string currentData, string previousData, string link)
+        {
+            var template = govUkNotifyConfig.EditProviderRequestTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.CompanyName,  companyName},
+                { template.RecipientName,  recipientName},
+                { template.PreviousData,  previousData},
+                { template.CurrentData,  currentData},
+                { template.ApproveLink,  link}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> ServiceEditRequest(string emailAddress, string recipientName, string companyName, string serviceName, string currentData, string previousData, string link)
+        {
+            var template = govUkNotifyConfig.EditServiceRequestTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.CompanyName,  companyName},
+                { template.ServiceName,  serviceName},
+                { template.RecipientName,  recipientName},
+                { template.PreviousData,  previousData},
+                { template.CurrentData,  currentData},
+                { template.ApproveLink,  link}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> ProviderEditRequestConfirmation(string loggedInUser, string recipientName, string companyName, string currentData, string previousData)
+        {
+            var template = govUkNotifyConfig.EditProviderRequestConfirmationTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.CompanyName,  companyName},
+                { template.RecipientName,  recipientName},
+                { template.PreviousData,  previousData},
+                { template.CurrentData,  currentData}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = loggedInUser,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
+        public async Task<bool> ServiceEditRequestConfirmation(string loggedInUser, string recipientName, string companyName, string serviceName, string currentData, string previousData)
+        {
+            var template = govUkNotifyConfig.EditServiceRequestConfirmationTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.CompanyName,  companyName},
+                { template.ServiceName,  serviceName},
+                { template.RecipientName,  recipientName},
+                { template.PreviousData,  previousData},
+                { template.CurrentData,  currentData}
+             };
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = loggedInUser,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
+
         #endregion
     }
 }

@@ -1,0 +1,55 @@
+﻿@model DVSAdmin.Models.PrimaryContactViewModel
+@{
+    ViewData["Title"] = "PrimaryContact";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+@using (Html.BeginForm("SavePrimaryContact", "EditProvider", FormMethod.Post))
+{
+   
+    <div class="govuk-width-container">
+
+        <a href="@((Convert.ToBoolean(ViewBag.fromSummaryPage)) ? Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderId }) : Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderId, isEditPage = true }))" class="govuk-back-link">Back</a>
+
+        <main id="main-content" class="govuk-main-wrapper" role="main">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                    }
+
+
+                    <h1 class="govuk-heading-xl form-title">The digital identity and attribute service provider’s primary contact</h1>
+
+                    <p class="govuk-body">
+                        You should ask the service provider to provide this information. The contact provided will be contacted to confirm the provider’s agreement to proceed with the application.
+                    </p>
+
+                    <p class="govuk-body">To make changes, type the new information and select ‘Save’. If there are no changes to make, select ‘Cancel’.</p>
+
+                    @await Html.PartialAsync("~/Views/EditProvider/PartialViews/_PrimaryContactView.cshtml", Model)
+
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            If you select ‘Save’ your changes will need to be approved by another OfDIA user. Do not select ‘Save’ unless you have made changes.
+                        </strong>
+                    </div>
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="action">
+                            Save
+                        </button>
+                        <a href="@((Convert.ToBoolean(ViewBag.fromSummaryPage)) ? Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderId }) : Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderId, isEditPage = true }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+}
+
