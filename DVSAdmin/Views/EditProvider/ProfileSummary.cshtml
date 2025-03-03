@@ -51,12 +51,17 @@
                                         @Model.RegisteredName
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
+
+                                     @if(Model.IsEditable)
+                                    {
                                         @Html.ActionLink("Change", "RegisteredName", "EditProvider", new { fromSummaryPage = !isEditPage },
-                                                 new
-                                                 {
-                                                     @class = "govuk-link",
-                                                     @aria_label = "Change digital identity and attribute service provider’s registered company name"
-                                                 })
+                                            new
+                                            {
+                                                @class = "govuk-link",
+                                                @aria_label = "Change digital identity and attribute service provider’s registered company name"
+                                            })
+                                    }
+                              
                                     </dd>
                                 </div>
                                 <div class="govuk-summary-list__row">
@@ -67,12 +72,16 @@
                                         @Model.TradingName
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
+                                    @if (Model.IsEditable)
+                                    {
                                         @Html.ActionLink("Change", "TradingName", "EditProvider", new { fromSummaryPage = !isEditPage },
                                                  new
                                                  {
                                                      @class = "govuk-link",
                                                      @aria_label = "Change digital identity and attribute service provider’s trading name"
-                                                 })
+                                                  })
+                                    }
+                                   
                                     </dd>
                                 </div>
 
@@ -158,11 +167,16 @@
                             <ul class="govuk-summary-card__actions">
 
                                 <li class="govuk-summary-card__action">
+
+                                @if (Model.IsEditable)
+                                {
                                     @Html.ActionLink("Change", "PrimaryContact", "EditProvider", new { fromSummaryPage = !isEditPage }, new
                                         {
                                             @class = "govuk-link",
                                             @aria_label = "Change primary contact details"
                                         })
+                                }
+                               
 
                                 </li>
                             </ul>
@@ -215,11 +229,15 @@
                             <ul class="govuk-summary-card__actions">
 
                                 <li class="govuk-summary-card__action">
+                                    @if(Model.IsEditable)
+                                {
                                     @Html.ActionLink("Change", "SecondaryContact", "EditProvider", new { fromSummaryPage = !isEditPage }, new
                                         {
                                             @class = "govuk-link",
                                             @aria_label = "Change secondary contact details"
                                         })
+                                }
+                                
                                 </li>
                             </ul>
                         </div>
@@ -279,8 +297,13 @@
                                         @Model.PublicContactEmail
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
+
+                                        @if(Model.IsEditable)
+                                    {
                                         @Html.ActionLink("Change", "PublicContactEmail", "EditProvider", new { fromSummaryPage = !isEditPage },
                                                  new { @class = "govuk-link", @aria_label = "Change digital identity and attribute service provider’s Public email address" })
+                                    }
+                                    
                                     </dd>
                                 </div>
                                 <div class="govuk-summary-list__row">
@@ -291,8 +314,13 @@
                                         @Model.ProviderTelephoneNumber
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
+
+                                        @if(Model.IsEditable)
+                                    {
                                         @Html.ActionLink("Change", "TelephoneNumber", "EditProvider", new { fromSummaryPage = !isEditPage },
                                                  new { @class = "govuk-link", @aria_label = "Change digital identity and attribute service provider’s telephone number" })
+                                    }
+                                 
                                     </dd>
                                 </div>
 
@@ -304,8 +332,13 @@
                                         @Model.ProviderWebsiteAddress
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
+
+                                        @if(Model.IsEditable)
+                                    {
                                         @Html.ActionLink("Change", "WebsiteAddress", "EditProvider", new { fromSummaryPage = !isEditPage },
                                                  new { @class = "govuk-link", @aria_label = "Change digital identity and attribute service provider’s website address" })
+                                    }
+                                   
                                     </dd>
                                 </div>
 
@@ -321,9 +354,7 @@
             {
 
             <a href="@(Url.Action("ProviderDifference", "EditProvider") )" class="govuk-button" role="button">Continue</a>
-             @*    <button type="submit" data-prevent-double-click="true" class="govuk-button govuk-!-margin-top-6" data-module="govuk-button">
-                    Continue
-                </button> *@
+            
             }
            
         </main>

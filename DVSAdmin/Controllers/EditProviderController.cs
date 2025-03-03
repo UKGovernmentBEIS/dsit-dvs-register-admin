@@ -6,6 +6,7 @@ using DVSAdmin.Models;
 using DVSAdmin.Validations;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.Controllers
 {
@@ -406,6 +407,8 @@ namespace DVSAdmin.Controllers
             profileSummaryViewModel.ProviderTelephoneNumber = providerDto.ProviderTelephoneNumber;
             profileSummaryViewModel.ProviderWebsiteAddress = providerDto.ProviderWebsiteAddress;
             profileSummaryViewModel.ProviderProfileId = providerDto.Id;
+            profileSummaryViewModel.IsEditable  = providerDto.ProviderStatus == ProviderStatusEnum.ReadyToPublish || providerDto.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext || 
+                providerDto.ProviderStatus == ProviderStatusEnum.Published;
             return profileSummaryViewModel;
         }
 
