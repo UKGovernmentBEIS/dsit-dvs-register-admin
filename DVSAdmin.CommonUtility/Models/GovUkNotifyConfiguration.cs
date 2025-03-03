@@ -8,7 +8,7 @@ namespace DVSAdmin.CommonUtility.Models
         public string ApiKey { get; set; }
         public string OfDiaEmailId { get; set; }
         public string LoginLink { get; set; }
-        public string PreRegLink { get; set; }
+      
 
         public PassPIPrimaryCheckTemplate PassPIPrimaryCheckTemplate { get;set; }
         public FailPIPrimaryCheckTemplate FailPIPrimaryCheckTemplate { get; set; }
@@ -32,7 +32,27 @@ namespace DVSAdmin.CommonUtility.Models
         public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }
         public ServicePublishedCABTemplate ServicePublishedCABTemplate { get; set; }
         public ServicePublishedDSITTemplate ServicePublishedDSITTemplate { get;set; }
-        public ProceedApplicationConsentToDIPTemplate ProceedApplicationConsentToDIPTemplate { get; set; }       
+        public ProceedApplicationConsentToDIPTemplate ProceedApplicationConsentToDIPTemplate { get; set; } 
+        
+        public RequestToRemoveRecordToProvider RequestToRemoveRecordToProvider { get; set; }
+        public Removal2iCheckToDSITTemplate Removal2iCheckToDSITTemplate { get; set; }
+        public RecordRemovalRequestSentConfirmationToDSIT RecordRemovalRequestSentConfirmationToDSIT { get; set; }
+
+        public RequestToRemoveServiceToProvider RequestToRemoveServiceToProvider { get;set; }
+
+        public RemovalRequestForApprovalToDSIT RemovalRequestForApprovalToDSIT { get; set; }
+
+        public RequestToRemoveServiceNotificationToDSIT RequestToRemoveServiceNotificationToDSIT { get; set; }
+
+        public ServiceRemovedConfirmedToCabOrProvider ServiceRemovedConfirmedToCabOrProvider { get; set; }
+        public ServiceRemovedToDSIT ServiceRemovedToDSIT { get; set; }
+
+        public RecordRemovedToDSIT RecordRemovedToDSIT { get; set; }
+        public RecordRemovedConfirmedToCabOrProvider RecordRemovedConfirmedToCabOrProvider { get; set; }
+
+        public RemoveService2iCheckToDSIT RemoveService2iCheckToDSIT { get; set; }
+
+        public ServiceRemovalRequestCreated ServiceRemovalRequestCreated { get; set; }
 
     }
 }

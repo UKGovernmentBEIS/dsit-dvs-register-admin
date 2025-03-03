@@ -22,7 +22,7 @@ namespace DVSAdmin.CommonUtility.JWT
             this.logger = logger;
         }
 
-        public TokenDetails GenerateToken()
+        public TokenDetails GenerateToken(string audience = "")
         {
             TokenDetails tokenDetails = new TokenDetails();
             tokenDetails.TokenId  = Guid.NewGuid().ToString();
@@ -41,7 +41,7 @@ namespace DVSAdmin.CommonUtility.JWT
                 Expires = DateTime.UtcNow.AddMinutes(jwtSettings.ExpiryMinutes),
                 SigningCredentials = credentials,
                 Issuer = jwtSettings.Issuer,
-                Audience = jwtSettings.Audience
+                Audience = string.IsNullOrEmpty(audience)?jwtSettings.Audience: "DSIT"
             };
             var token = handler.CreateToken(tokenDescriptor);
             tokenDetails.Token = token;

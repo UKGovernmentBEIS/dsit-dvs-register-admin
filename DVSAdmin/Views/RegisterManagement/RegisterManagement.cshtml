@@ -1,5 +1,7 @@
 ﻿@model DVSAdmin.Models.RegManagement.ProviderListViewModel;
+@using DVSAdmin.CommonUtility.Models
 @using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.Extensions
 @{
     ViewData["Title"] = "Register Management";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -20,27 +22,45 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full govuk-!-padding-bottom-5">
                 <h1 class="govuk-heading-xl">Register management</h1>
-                <div class="govuk-tabs" data-module="govuk-tabs">
-                    <ul class="govuk-tabs__list">
-                        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                            <a class="govuk-tabs__tab" href="#action-required">
-                                Action required
-                            </a>
-                        </li>
-                        <li class="govuk-tabs__list-item">
-                            <a class="govuk-tabs__tab" href="#publications-complete">
-                                Publication complete
-                            </a>
-                        </li>
-                    </ul>
-
-                    <div class="govuk-tabs__panel" id="action-required">
-                        @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ActionRequiredView.cshtml", Model)
-                    </div>
-                    <div class="govuk-tabs__panel" id="publications-complete">
-                        @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_PublicationCompleteView.cshtml", Model)
-                    </div>
-                </div>
+                <a href="@Url.Action("DownloadRegister", "RegisterManagement")" class="govuk-button govuk-button--secondary">
+                    Download Register CSV
+                </a>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Service provider</th>
+                            <th scope="col" class="govuk-table__header">Publication status</th>
+                            <th scope="col" class="govuk-table__header">Date and time of last activity (GMT)</th>
+                            <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
+                            <th scope="col" class="govuk-table__header">Services</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @if (Model.AllStatusesList != null)
+                        {
+                            @foreach (var item in Model.AllStatusesList)
+                            {
+                                @if (item.Services != null && item.Services.Count() > 0)
+                                {
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell"> @Html.ActionLink(@item.RegisteredName, "ProviderDetails", "RegisterManagement", new { @providerId = item.Id }, new { @class = "govuk-link" })</td>
+                                        <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@item.ProviderStatus) </td>
+                                        <td class="govuk-table__cell">@(item.PublishedTime != null ? DateTimeExtensions.FormatDateTime(item.PublishedTime) : string.Empty)</td>
+                                        <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
+                                        <td class="govuk-table__cell">
+                                            @foreach (var item1 in item.Services)
+                                            {
+                                                <div class="govuk-!-margin-bottom-1">
+                                                    @item1.ServiceName
+                                                </div>                    
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>

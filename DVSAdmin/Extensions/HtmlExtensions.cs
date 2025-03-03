@@ -16,14 +16,14 @@ namespace DVSAdmin.Extensions
             
             switch (value)
             {
-                case ApplicationReviewStatusEnum.Received: 
-                case ProviderStatusEnum.Published:
+                case ApplicationReviewStatusEnum.Received:
                 case ServiceStatusEnum.Submitted:
-                case ServiceStatusEnum.Published:
+            
                 case ServiceStatusEnum.Received:
                 return "govuk-tag govuk-tag--blue";
 
-
+                case ServiceStatusEnum.Published:
+                case ProviderStatusEnum.Published:
                 case ApplicationReviewStatusEnum.PrimaryCheckPassed:                        
                 case ApplicationReviewStatusEnum.ApplicationApproved:
                 case CertificateReviewEnum.Approved:
@@ -36,19 +36,27 @@ namespace DVSAdmin.Extensions
                 case ApplicationReviewStatusEnum.ApplicationRejected: 
                               
              
-                case ProviderStatusEnum.RemovedFromRegister:
+                
                 case CertificateReviewEnum.Rejected:
                 case PublicInterestCheckEnum.PublicInterestCheckFailed:
                 case PublicInterestCheckEnum.PrimaryCheckFailed:
                 case PublicInterestCheckEnum.SentBackBySecondReviewer:
-                return "govuk-tag govuk-tag--red";
+                case ServiceStatusEnum.CabAwaitingRemovalConfirmation:
+                case ProviderStatusEnum.CabAwaitingRemovalConfirmation:
+                    return "govuk-tag govuk-tag--red";
 
+
+                case ProviderStatusEnum.RemovedFromRegister:
+                case ServiceStatusEnum.Removed:
+                    return "govuk-tag govuk-tag--grey";
 
 
                 case ApplicationReviewStatusEnum.InPrimaryReview: 
-                case ProviderStatusEnum.ActionRequired:
-                case ProviderStatusEnum.PublishedActionRequired:
+                case ProviderStatusEnum.ReadyToPublish:
+                case ProviderStatusEnum.ReadyToPublishNext:
+                case ProviderStatusEnum.AwaitingRemovalConfirmation:
                 case ServiceStatusEnum.ReadyToPublish:
+                case ServiceStatusEnum.AwaitingRemovalConfirmation:
                 case CertificateReviewEnum.InReview:
                 case PublicInterestCheckEnum.InPrimaryReview:
                 case PublicInterestCheckEnum.PrimaryCheckSkipped:

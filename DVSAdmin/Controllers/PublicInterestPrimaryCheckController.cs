@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
-    [ValidCognitoToken]
+   [ValidCognitoToken]
     [Route("public-interest-primary-check")]
     public class PublicInterestPrimaryCheckController : Controller
     {
@@ -49,6 +49,10 @@ namespace DVSAdmin.Controllers
                     if (userDto.Id>0)
                     {
                         ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
+                        if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft )
+                        {
+                            return RedirectToAction(Constants.ErrorPath);
+                        }
                         publicInterestPrimaryCheckViewModel = MapDtoToViewModel(serviceDto);
                         publicInterestPrimaryCheckViewModel.PrimaryCheckUserId = userDto.Id;
                     }

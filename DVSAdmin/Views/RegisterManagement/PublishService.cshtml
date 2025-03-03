@@ -32,6 +32,7 @@
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Model.ProviderTelephoneNumber
+                            @(!string.IsNullOrEmpty(Model.ProviderTelephoneNumber) ? Model.ProviderTelephoneNumber : "N/A")
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">

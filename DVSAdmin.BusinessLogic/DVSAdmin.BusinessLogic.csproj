@@ -7,15 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\RegisterManagement\**" />
+    <EmbeddedResource Remove="Models\RegisterManagement\**" />
+    <None Remove="Models\RegisterManagement\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Extensions\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.17" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.17" />
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.20.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DVSAdmin.Data\DVSAdmin.Data.csproj" />
   </ItemGroup>
-
 </Project>

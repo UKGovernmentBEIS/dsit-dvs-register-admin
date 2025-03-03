@@ -31,7 +31,11 @@
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell"> @Model.RegisteredName </td>
                             <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@Model.ProviderStatus) </td>
-                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.PublishedTime)</td>
+                            <td class="govuk-table__cell">
+                                @(Model.PublishedTime != null
+                                ? DateTimeExtensions.FormatDateTime(Model.PublishedTime)
+                                : string.Empty)
+                            </td>
                             <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
                             <td class="govuk-table__cell">
                             @foreach (var item in Model.Services)
@@ -49,7 +53,7 @@
         </div>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">The service provider, the Conformity Assessment Body and DSIT will receive an email notification of the publication within 20 minutes.</p>
+                <p class="govuk-body">The service provider, the Conformity Assessment Body and OfDIA will receive an email notification of the publication within 20 minutes.</p>
 
                 <div class="govuk-button-group" id="submitvalidation">
                     <a href="register-management-list" type="submit" class="govuk-button" data-module="govuk-button" name="goBack" value="approve">
