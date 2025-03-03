@@ -1,4 +1,6 @@
-﻿using QRCoder;
+﻿using Newtonsoft.Json.Linq;
+using QRCoder;
+using System.Text;
 
 namespace DVSAdmin.CommonUtility
 {
@@ -23,6 +25,29 @@ namespace DVSAdmin.CommonUtility
             DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(dateTimeValue, localTimeZone); // Convert to local time
             string time = localTime.ToString(format);
             return time;
+        }
+
+        public static string ConcatenateKeyValuePairs(Dictionary<string, List<string>> data)
+        {
+            var result = new StringBuilder();
+
+            foreach (var kvp in data)
+            {
+                result.Append(kvp.Key + ": ");
+                if(kvp.Value.Count > 1) 
+                {
+                    string values = string.Join(",", kvp.Value);
+                    result.Append(values);                   
+                }
+                else
+                {
+                    result.Append(kvp.Value[0]);
+                }
+                
+                result.AppendLine();
+            }
+
+            return result.ToString();
         }
     }
 }

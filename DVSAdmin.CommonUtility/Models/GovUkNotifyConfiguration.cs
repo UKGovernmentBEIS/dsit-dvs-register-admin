@@ -53,6 +53,8 @@ namespace DVSAdmin.CommonUtility.Models
         public RemoveService2iCheckToDSIT RemoveService2iCheckToDSIT { get; set; }
 
         public ServiceRemovalRequestCreated ServiceRemovalRequestCreated { get; set; }
+        public EditProviderRequestTemplate EditProviderRequestTemplate { get; set; }
+        public EditServiceRequestTemplate EditServiceRequestTemplate { get; set; }
 
     }
 }
