@@ -14,7 +14,7 @@
 }
 
 <div class="govuk-width-container">
-    <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.ServiceKey }))" class="govuk-back-link">Back</a>
+    <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.serviceKey }))" class="govuk-back-link">Back</a> 
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -82,7 +82,7 @@
 
                     <div class="govuk-button-group">
                         <button type="submit" class="govuk-button govuk-!-margin-top-2">Continue</button>
-                        <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.ServiceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+                        <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.serviceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
                     </div>
                 }
             </div>
