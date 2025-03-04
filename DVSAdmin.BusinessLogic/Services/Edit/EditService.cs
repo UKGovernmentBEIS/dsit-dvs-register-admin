@@ -8,20 +8,24 @@ using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.Extensions.Configuration;
 using DVSAdmin.CommonUtility;
+using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Data.Repositories.RemoveProvider;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
     public class EditService : IEditService
     {
         private readonly IEditRepository _editRepository;
+        private readonly IRemoveProviderRepository _removeProviderRepository;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
         private readonly IJwtService _jwtService;
         private readonly IConfiguration _configuration;
 
-        public EditService(IEditRepository editRepository, IMapper mapper, IEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
+        public EditService(IEditRepository editRepository, IRemoveProviderRepository removeProviderRepository, IMapper mapper, IEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
             _editRepository = editRepository;
+            _removeProviderRepository = removeProviderRepository;
             _mapper = mapper;
             _emailSender  = emailSender;
             _jwtService = jwtService;
@@ -163,6 +167,10 @@ namespace DVSAdmin.BusinessLogic.Services
             var draftEntity = _mapper.Map<ServiceDraft>(draftDto);
             
             var response = await _editRepository.SaveServiceDraft(draftEntity, loggedInUserEmail);
+            ProviderProfile providerProfile = await _removeProviderRepository.GetProviderAndServices(draftDto.ProviderProfileId);
+            // update provider status
+            ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
+            GenericResponse genericResponse = await _removeProviderRepository.UpdateProviderStatus(providerProfile.Id, providerStatus, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
 
             if (response.Success)
             {
