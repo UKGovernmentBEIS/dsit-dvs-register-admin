@@ -431,11 +431,10 @@ namespace DVSAdmin.Controllers
                 dateViewModel = GetDayMonthYear(summaryViewModel.ConformityIssueDate);
             }
             dateViewModel.FromSummaryPage = fromSummaryPage;
-            ViewBag.serviceId = serviceId;
+            ViewBag.serviceKey = summaryViewModel.ServiceKey;
+
             return View(dateViewModel);
         }
-
-
 
         /// <summary>
         /// Updates confirmity issue date variable in session 
@@ -478,7 +477,7 @@ namespace DVSAdmin.Controllers
                 dateViewModel = GetDayMonthYear(summaryViewModel.ConformityExpiryDate);
             }
             dateViewModel.FromSummaryPage = fromSummaryPage;
-            ViewBag.serviceId = serviceId;
+            ViewBag.serviceKey = summaryViewModel.ServiceKey;
             return View(dateViewModel);
         }
 
