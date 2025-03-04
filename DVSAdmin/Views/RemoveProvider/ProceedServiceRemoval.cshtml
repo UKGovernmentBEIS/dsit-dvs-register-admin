@@ -8,7 +8,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ServiceRemovalReason", "RemoveProvider", new { providerId = Model.Provider.Id, serviceId = Model.Id }, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "ServiceRemovalReason", "RemoveProvider", new { providerId = Model.Provider.Id, serviceId = Model.Id, serviceRemovalReason = Model.ServiceRemovalReason }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
             You are about to send a request to remove a service from the register
@@ -131,9 +131,10 @@
                         </button>
 
                         <a class="govuk-button govuk-button--secondary"
-                           href="service-removal-reason?providerId=@Model.Provider.Id&serviceId=@Model.Id">
+                           href="service-removal-reason?providerId=@Model.Provider.Id&serviceId=@Model.Id&serviceRemovalReason=@Model.ServiceRemovalReason">
                             Cancel
                         </a>
+
                     </div>
                 }
             </div>
