@@ -1,0 +1,76 @@
+﻿@model DVSAdmin.Models.ServiceSummaryViewModel
+@{
+    ViewData["Title"] = "Company address details";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+@{
+    bool isValid = true;
+}
+
+<div class="govuk-width-container">
+    <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-back-link">Back</a>
+    @using (Html.BeginForm("CompanyAddress", "EditService", FormMethod.Post))
+    {
+        <main id="main-content" class="govuk-main-wrapper" role="main">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-xl"> Company address details </h1>
+                    @if (Html.ViewData?.ModelState.ContainsKey("CompanyAddress") == true && Html.ViewData.ModelState["CompanyAddress"].Errors.Count > 0)
+                    {
+                        isValid = false;
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_SpecificErrorsView.cshtml",
+                                 new Tuple<string, IEnumerable<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>>("CompanyAddress", Html.ViewData.ModelState["CompanyAddress"]?.Errors))
+                    }
+                    <p class="govuk-body">This address must match the address that appears on the certificate of conformity.</p>
+                    <p class="govuk-body">To make changes, type the new information and select ‘Save’. If there are no changes to make, select ‘Cancel’.</p>
+
+
+                    @if (!isValid)
+                    {
+                        <div class="govuk-form-group govuk-form-group--error">
+                            <label class="govuk-label govuk-label--s" for="address">
+                                Company address details
+                            </label>
+                            <div id="company-address-hint" class="govuk-hint">
+                                Enter the company address as shown on the certificate of conformity
+                            </div>
+                            <p id="address-error" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span> @Html.ValidationMessageFor(m => m.CompanyAddress, "", new { @class = "govuk-error-message" })
+                            </p>
+                            @Html.TextAreaFor(m => m.CompanyAddress, 5, 20, new { @class = "govuk-textarea govuk-textarea--error", id = "address", name = "address-name", aria_describedby = "company-address-hint address-error" })
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="govuk-form-group">
+                            <label class="govuk-label govuk-label--s" for="address">
+                                Company address details
+                            </label>
+                            <div id="company-address-hint" class="govuk-hint">
+                                Enter the company address as shown on the certificate of conformity
+                            </div>
+                            @Html.TextAreaFor(m => m.CompanyAddress, 5, 20, new { @class = "govuk-textarea", id = "address", name = "address-name", aria_describedby = "company-address-hint" })
+                        </div>
+                    }
+
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            If you select ‘Save’ your changes will need to be approved by another OfDIA user. Do not select ‘Save’ unless you have made changes.
+                        </strong>
+                    </div>
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="action">
+                            Save
+                        </button>
+                        <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    }
+</div>

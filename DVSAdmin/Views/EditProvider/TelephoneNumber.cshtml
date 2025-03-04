@@ -1,0 +1,70 @@
+﻿@model ProfileSummaryViewModel
+@{
+    ViewData["Title"] = "TelephoneNumber";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+@{
+    bool hasError = false;
+}
+@using (Html.BeginForm("SaveTelephoneNumber", "EditProvider", FormMethod.Post))
+{
+   
+    <div class="govuk-width-container">
+        <a href="@((Convert.ToBoolean(ViewBag.fromSummaryPage)) ? Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderProfileId }) : Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderProfileId, isEditPage = true }))" class="govuk-back-link">Back</a>
+        <main id="main-content" class="govuk-main-wrapper" role="main">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    @if (Html.ViewData?.ModelState.ContainsKey("ProviderTelephoneNumber") == true)
+                    {
+                        var errors = Html.ViewData?.ModelState["ProviderTelephoneNumber"]?.Errors;
+                        if (errors != null && errors.Count > 0)
+                        {
+                            hasError = true;
+                            ViewData["Title"] = "Error: " + ViewData["Title"];
+                            @await Html.PartialAsync("~/Views/PartialViews/_SpecificErrorsView.cshtml",
+                                     new Tuple<string, IEnumerable<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>>("ProviderTelephoneNumber", errors))
+                        }
+                    }
+
+                    <h1 class="govuk-heading-xl">The digital identity and attribute service provider’s public telephone number</h1>
+
+                    <p class="govuk-body">
+                        You should ask the service provider to provide this information. The
+                        telephone number you enter will be publicly displayed on the register of
+                        digital identity and attribute services. If the provider doesn't have a public telephone number, you should leave this field blank and select Continue.
+                    </p>
+                    <p class="govuk-body">To make changes, type the new information and select ‘Save’. If there are no changes to make, select ‘Cancel’.</p>
+
+                    @{
+                      var telephoneNumberViewModel = new TextBoxViewModel
+                        {
+                            PropertyName = "ProviderTelephoneNumber",
+                            Label = "Public telephone number (optional)",
+                            Value = Model?.ProviderTelephoneNumber ?? string.Empty,
+                            Class = "govuk-input",
+                            Hint = "For international numbers include the country code",
+                            HasError = hasError,
+                            ErrorMessage = hasError ? Html.ViewData?.ModelState["ProviderTelephoneNumber"]?.Errors[0].ErrorMessage ?? string.Empty : string.Empty,
+                        };
+                    }
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_TextBoxView.cshtml", telephoneNumberViewModel)
+
+
+
+
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="action">
+                            Save
+                        </button>
+                        <a href="@((Convert.ToBoolean(ViewBag.fromSummaryPage)) ? Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderProfileId }) : Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderProfileId, isEditPage = true }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+}
+

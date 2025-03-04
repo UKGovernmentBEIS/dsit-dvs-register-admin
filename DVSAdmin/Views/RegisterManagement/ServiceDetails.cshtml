@@ -1,43 +1,71 @@
 ﻿@using DVSAdmin.BusinessLogic.Models;
-@model ServiceDto;
+@model DVSAdmin.Models.RegManagement.ServiceVersionViewModel
 @{
     ViewData["Title"] = "Service details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { @providerId = Model.ProviderProfileId }, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { @providerId = Model.CurrentServiceVersion.ProviderProfileId}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
 
             <div class="govuk-grid-column-full">
-                <h1 class="govuk-heading-xl">Service @Model.ServiceNumber details: @Model.ServiceName </h1>
-                @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model)
+                <h1 class="govuk-heading-xl">Service details: @Model.CurrentServiceVersion.ServiceName </h1>
+                <div class="govuk-tabs" data-module="govuk-tabs">
+                    <ul class="govuk-tabs__list">
+                        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                            <a class="govuk-tabs__tab" href="#latest-submission">
+                                Latest submission
+                            </a>
+                        </li>
+                        <li class="govuk-tabs__list-item">
+                            <a class="govuk-tabs__tab" href="#previously-submitted">
+                                Previously submitted
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="govuk-tabs__panel govuk-!-padding-0" id="latest-submission">
+                        @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ServiceDetailsView.cshtml", Model.CurrentServiceVersion)
+                        <div class="govuk-grid-column-two-thirds govuk-!-margin-top-9 govuk-!-padding-0">
+                            <h2 class="govuk-heading-m">Provided certificate of conformity</h2>
+                            <p class="govuk-body-l govuk-!-margin-bottom-2">
+                                @Model.CurrentServiceVersion.FileName
+                            </p>
+                            <p class="govuk-body govuk-!-margin-bottom-2">
+                                <span class="govuk-hint">
+                                    PDF, @Model.CurrentServiceVersion.FileSizeInKb KB, 1 page
+                                </span>
+                            </p>
+                            <p class="govuk-body">
+                                <span class="govuk-hint">
+                                    This file may not be suitable for users of assistive technology.
+                                </span>
+                            </p>
 
+                            <a href="/register-management/download-certificate?key=@Model.CurrentServiceVersion.FileLink&filename=@Model.CurrentServiceVersion.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
+                                Download certificate of conformity (Opens in a new tab)
+                            </a>
+                        </div>
+                    </div>
+                        
+                    <div class="govuk-tabs__panel govuk-tabs__panel--hidden govuk-!-padding-0" id="previously-submitted">
+                        @if (Model.ServiceHistoryVersions.Count() < 1)
+                        {
+                            <p class="govuk-body govuk-!-padding-7">You don't have any previous submissions for this service</p>
+                        }
+                        else
+                        {
+                            @foreach (var serviceDto in Model.ServiceHistoryVersions)
+                            {
+                                @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ServiceDetailsView.cshtml", serviceDto)
+                            }
+                        }
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">Provided certificate of conformity</h2>
-                <p class="govuk-body-l govuk-!-margin-bottom-2">
-                    @Model.FileName
-                </p>
-                <p class="govuk-body govuk-!-margin-bottom-2">
-                    <span class="govuk-hint">
-                        PDF, @Model.FileSizeInKb KB, 1 page
-                    </span>
-                </p>
-                <p class="govuk-body">
-                    <span class="govuk-hint">
-                        This file may not be suitable for users of assistive technology.
-                    </span>
-                </p>
-
-                <a href="/register-management/download-certificate?key=@Model.FileLink&filename=@Model.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
-                    Download certificate of conformity (Opens in a new tab)
-                </a>
-            </div>
-        </div>
+        
     </main>
 </div>
 

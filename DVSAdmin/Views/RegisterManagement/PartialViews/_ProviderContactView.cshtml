@@ -1,10 +1,24 @@
 ﻿@model DVSAdmin.BusinessLogic.Models.ProviderProfileDto
-
+@{
+    bool showViewDetailsLink = Convert.ToBoolean(ViewBag.showViewDetailsLink);
+}
 <div class="govuk-summary-card">
     <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
-            Basic information
+            Provider information
         </h2>
+
+        @if(showViewDetailsLink)
+        {
+            <ul class="govuk-summary-card__actions">
+                <li class="govuk-summary-card__action">
+                    <a class="govuk-link" href="/edit-provider/change-provider-details?providerId=@Model.Id&isEditPage=true">View provider details<span class="govuk-visually-hidden"> of @Model.RegisteredName</span></a>
+                </li>
+              
+            </ul>
+        }
+
+
     </div>
     <div class="govuk-summary-card__content">
         <dl class="govuk-summary-list">

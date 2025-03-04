@@ -1,4 +1,5 @@
 ﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models;
 @model ProviderProfileDto;
 @{
     ViewData["Title"] = "You are publishing the following service provider on the register";
@@ -47,10 +48,20 @@
 
                 @foreach(var item in Model.Services)
                 {
-                    <h2 class="govuk-heading-m">Service @item.ServiceNumber: @item.ServiceName</h2>
-                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", item)
-                  
-                    
+                    <h2 class="govuk-heading-m">Service details: @item.ServiceName</h2>
+                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", item)                  
+
+                    if (item.HasPreviousPublishedVersion)
+                    {
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                <span class="govuk-visually-hidden">Warning</span>
+                                If you proceed with publication, any information currently published on the register for this service will be replaced by the details shown above
+                            </strong>
+                        </div>
+                    }
+
                 }
 
                 <div class="govuk-button-group">

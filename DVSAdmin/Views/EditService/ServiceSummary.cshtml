@@ -1,0 +1,26 @@
+﻿@model DVSAdmin.Models.ServiceSummaryViewModel
+@{
+    ViewData["Title"] = "Company address details";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "#", "EditService", null, new { @class = "govuk-back-link" })
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl"> Check your answers before submitting your request to update information</h1>
+            </div>
+            <div class="govuk-grid-column-full">
+                @await Html.PartialAsync("~/Views/EditService/PartialViews/_EditServiceDetailsView.cshtml", Model)
+                <div class="govuk-button-group">
+                    <a href="summary-of-changes" class="govuk-button" role="button">
+                        Continue
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+

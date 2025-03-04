@@ -16,7 +16,10 @@ namespace DVSAdmin.Data.Entities
         [ForeignKey("ProviderProfile")]
         public int ProviderProfileId { get; set; }
         public ProviderProfile Provider { get; set; }
-        public string? ServiceName { get; set; }     
+        public string? ServiceName { get; set; }
+        public int ServiceKey { get; set; }
+        public int ServiceVersion { get; set; } = 1;
+        public bool IsCurrent { get; set; } = true;
         public string? CompanyAddress { get; set; }
         public string? WebSiteAddress { get; set; }
         public ICollection<ServiceRoleMapping>? ServiceRoleMapping { get; set; }
@@ -37,10 +40,8 @@ namespace DVSAdmin.Data.Entities
 
         [ForeignKey("CabUser")]
         public int CabUserId { get; set; }
-        public CabUser CabUser { get; set; }
-        public int ServiceNumber { get;set; }      
-        public ServiceStatusEnum ServiceStatus { get; set; }
-    
+        public CabUser CabUser { get; set; }    
+        public ServiceStatusEnum ServiceStatus { get; set; }   
 
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }

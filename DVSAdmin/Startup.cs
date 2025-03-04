@@ -10,15 +10,15 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Cookies;
 using DVSAdmin.Data;
 using DVSAdmin.Data.Repositories;
+using DVSAdmin.Data.Repositories.BackgroundJobs;
 using DVSAdmin.Data.Repositories.RegisterManagement;
+using DVSAdmin.Data.Repositories.RemoveProvider;
 using DVSAdmin.Middleware;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
-using DVSAdmin.Data.Repositories.BackgroundJobs;
-using DVSAdmin.Data.Repositories.RemoveProvider;
 
 namespace DVSAdmin
 {
@@ -131,6 +131,8 @@ namespace DVSAdmin
             services.AddScoped<ICsvDownloadService, CsvDownloadService>();
             services.AddScoped<IRemoveProviderService, RemoveProviderService>();
             services.AddScoped<IRemoveProviderRepository, RemoveProviderRepository>();
+            services.AddScoped<IEditService, EditService>();
+            services.AddScoped<IEditRepository, EditRepository>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {

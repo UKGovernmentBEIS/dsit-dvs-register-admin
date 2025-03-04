@@ -10,6 +10,7 @@ namespace DVSAdmin.Data
     {
         public DVSAdminDbContext(DbContextOptions<DVSAdminDbContext> options) : base(options)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
     
         public DbSet<User> User { get; set; }       
@@ -22,12 +23,21 @@ namespace DVSAdmin.Data
         public DbSet<Cab> Cab { get; set; }
         public DbSet<CabUser> CabUser { get; set; }
         public DbSet<ProviderProfile> ProviderProfile { get; set; }
+        public DbSet<ProviderProfileDraft> ProviderProfileDraft { get; set; }
+        public DbSet<ProviderDraftToken> ProviderDraftToken { get; set; }
+
         public DbSet<Service> Service { get; set; }
+        public DbSet<ServiceDraft> ServiceDraft { get; set; }
+        public DbSet<ServiceDraftToken> ServiceDraftToken { get; set; }
         public DbSet<QualityLevel> QualityLevel { get; set; }
         public DbSet<ServiceQualityLevelMapping> ServiceQualityLevelMapping { get; set; }
+        public DbSet<ServiceQualityLevelMappingDraft> ServiceQualityLevelMappingDraft { get; set; }
         public DbSet<ServiceIdentityProfileMapping> ServiceIdentityProfileMapping { get; set; }
+        public DbSet<ServiceIdentityProfileMappingDraft> ServiceIdentityProfileMappingDraft { get; set; }
         public DbSet<ServiceRoleMapping> ServiceRoleMapping { get; set; }
+        public DbSet<ServiceRoleMappingDraft> ServiceRoleMappingDraft { get; set; }
         public DbSet<ServiceSupSchemeMapping> ServiceSupSchemeMapping { get; set; }
+        public DbSet<ServiceSupSchemeMappingDraft> ServiceSupSchemeMappingDraft { get; set; }
         public DbSet<CertificateReview> CertificateReview { get; set; }
         public DbSet<CertificateReviewRejectionReasonMapping> CertificateReviewRejectionReasonMapping { get; set; }
         public DbSet<ProceedApplicationConsentToken> ProceedApplicationConsentToken { get; set; }

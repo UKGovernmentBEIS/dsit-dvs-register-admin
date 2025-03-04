@@ -31,7 +31,7 @@ namespace DVSAdmin.Controllers
                 }
                 await userService.UpdateUserProfile(userEmail, profile);
             }
-           
+
             return View();
         }
     }

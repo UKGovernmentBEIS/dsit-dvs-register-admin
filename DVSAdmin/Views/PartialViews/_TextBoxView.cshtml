@@ -3,6 +3,7 @@
 @{
     string hintId = @Model.PropertyName.ToLower() + "-hint";
     string errorId = @Model.PropertyName.ToLower() + "-error";
+    string textBoxType = string.IsNullOrEmpty(Model.TextBoxType) ? "text" : Model.TextBoxType;
     string ariaDescribedbyValue = "";
     if (Model.HasError && !string.IsNullOrEmpty(Model.Hint))
     {
@@ -40,23 +41,25 @@
 
     @if (Model.HasError || !string.IsNullOrEmpty(Model.Hint))
     {
-        @Html.TextBox(Model.PropertyName, Model.Value,
-        new
-        {
-            @id = Model.PropertyName.ToLower(),
-            @class = Model.HasError ? Model.Class + " govuk-input--error" : Model.Class,
-            @aria_describedby = @ariaDescribedbyValue
-        })
+        @Html.TextBox(Model.PropertyName, textBoxType == "file" ? Model.File : Model.Value,
+                new
+                {
+                    @id = Model.PropertyName.ToLower(),
+                    @type = textBoxType,
+                    @class = Model.HasError ? Model.Class + " govuk-input--error" : Model.Class,
+                    @aria_describedby = @ariaDescribedbyValue
+                })
     }
 
     else
     {
-        @Html.TextBox(Model.PropertyName,Model.Value,
-        new
-        {
-            @id = Model.PropertyName.ToLower(),
-            @class = Model.HasError ? Model.Class + " govuk-input--error" : Model.Class
-        })
+        @Html.TextBox(Model.PropertyName, textBoxType == "file" ? Model.File : Model.Value,
+                new
+                {
+                    @id = Model.PropertyName.ToLower(),
+                    @type = textBoxType,
+                    @class = Model.HasError ? Model.Class + " govuk-input--error" : Model.Class
+                })
     }
 
 </div>
