@@ -15,8 +15,7 @@ namespace DVSAdmin.BusinessLogic
                     {
                         ServiceStatusEnum.CabAwaitingRemovalConfirmation,
                         ServiceStatusEnum.ReadyToPublish,
-                        ServiceStatusEnum.UpdatesRequested,
-                        ServiceStatusEnum.AwaitingRemovalConfirmation,                        
+                        ServiceStatusEnum.AwaitingRemovalConfirmation,
                         ServiceStatusEnum.Published,
                         ServiceStatusEnum.Removed
                     };
@@ -37,8 +36,6 @@ namespace DVSAdmin.BusinessLogic
                         return hasPublishedServices ? ProviderStatusEnum.ReadyToPublishNext : ProviderStatusEnum.ReadyToPublish;
                     case ServiceStatusEnum.AwaitingRemovalConfirmation:
                         return ProviderStatusEnum.AwaitingRemovalConfirmation;
-                    case ServiceStatusEnum.UpdatesRequested:
-                        return ProviderStatusEnum.UpdatesRequested;
                     case ServiceStatusEnum.Published:
                         return ProviderStatusEnum.Published;
                     case ServiceStatusEnum.Removed:
