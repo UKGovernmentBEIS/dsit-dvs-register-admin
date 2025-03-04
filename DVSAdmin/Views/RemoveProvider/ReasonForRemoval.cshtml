@@ -53,14 +53,14 @@
                                         if (!reason.RequiresAdditionalInfo())
                                         {
                                             <div class="govuk-radios__item">
-                                                @Html.RadioButton("RemovalReason", (int)reason, false, new { @id = radioId, @class = "govuk-radios__input" })
+                                                @Html.RadioButton("RemovalReason", reason, Model.RemovalReason == reason, new { @id = radioId, @class = "govuk-radios__input" })
                                                 <label class="govuk-label govuk-radios__label" for="@radioId">@description</label>
                                             </div>
                                         }
                                         else
                                         {
                                             <div class="govuk-radios__item">
-                                                @Html.RadioButton("RemovalReason", (int)reason, false, new { @id = radioId, @class = "govuk-radios__input", @data_aria_controls = ariaControls })
+                                                @Html.RadioButton("RemovalReason", reason, Model.RemovalReason == reason, new { @id = radioId, @class = "govuk-radios__input", @data_aria_controls = ariaControls })
                                                 <label class="govuk-label govuk-radios__label" for="@radioId">@description</label>
                                             </div>
                                             <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="@ariaControls">

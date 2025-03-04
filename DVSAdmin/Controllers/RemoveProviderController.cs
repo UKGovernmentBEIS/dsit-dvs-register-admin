@@ -32,9 +32,13 @@ namespace DVSAdmin.Controllers
         #region Remove Provider
 
         [HttpGet("provider/reason-for-removal")]
-        public async Task<IActionResult> ReasonForRemoval(int providerId)
+        public async Task<IActionResult> ReasonForRemoval(int providerId, RemovalReasonsEnum? removalReason)
         {
             ProviderProfileDto providerDto = await removeProviderService.GetProviderDetails(providerId);
+            if (removalReason.HasValue)
+            {
+                providerDto.RemovalReason = removalReason.Value;
+            }
             return View(providerDto);
         }
 
@@ -90,10 +94,11 @@ namespace DVSAdmin.Controllers
 
         #region Remove Service
         [HttpGet("service/service-removal-reason")]
-        public IActionResult ServiceRemovalReason(int providerId, int serviceId)
+        public IActionResult ServiceRemovalReason(int providerId, int serviceId, ServiceRemovalReasonEnum? serviceRemovalReason)
         {
             ViewBag.ProviderId = providerId;
             ViewBag.ServiceId = serviceId;
+            ViewBag.ServiceRemovalReason = serviceRemovalReason;
             return View();
         }
 
@@ -112,6 +117,7 @@ namespace DVSAdmin.Controllers
             {
                 ViewBag.ProviderId = providerProfileDto.Id;
                 ViewBag.ServiceId = serviceDto.Id;
+                ViewBag.ServiceRemovalReason = serviceRemovalReason;
                 return View("ServiceRemovalReason");
             }
 
