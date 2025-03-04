@@ -17,8 +17,8 @@
                 <h1 class="govuk-heading-xl">Select a reason for removing this service</h1>
                 @using (Html.BeginForm("ProceedWithServiceRemoval", "RemoveProvider", FormMethod.Post))
                 {
-                     <input type="hidden" name="providerId" value="@ViewBag.ProviderId" />
-                     <input type="hidden" name="serviceId" value="@ViewBag.ServiceId" />
+                    <input type="hidden" name="providerId" value="@ViewBag.ProviderId" />
+                    <input type="hidden" name="serviceId" value="@ViewBag.ServiceId" />
 
                     @if (ViewData.ModelState["ServiceRemovalReason"] != null && ViewData.ModelState["ServiceRemovalReason"].Errors.Count > 0)
                     {
@@ -39,15 +39,17 @@
 
                             <div class="govuk-radios" data-module="govuk-radios">
                                 @{
+
                                     var reasons = Enum.GetValues(typeof(ServiceRemovalReasonEnum)).Cast<ServiceRemovalReasonEnum>().ToList();
                                     for (int i = 1; i < reasons.Count; i++)
                                     {
                                         var reason = reasons[i];
                                         var radioId = "radio" + +(int)reason;
                                         var description = reason.GetDescription();
-                                        
+                                        bool isChecked = ViewBag.ServiceRemovalReason == reason;
+
                                         <div class="govuk-radios__item">
-                                            @Html.RadioButton("ServiceRemovalReason", (int)reason, false, new { @id = radioId, @class = "govuk-radios__input" })
+                                            @Html.RadioButton("ServiceRemovalReason", reason, isChecked, new { @id = radioId, @class = "govuk-radios__input" })
                                             <label class="govuk-label govuk-radios__label" for="@radioId">@description</label>
                                         </div>
                                     }
