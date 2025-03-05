@@ -438,7 +438,9 @@ namespace DVSAdmin.Controllers
             draft.SecondaryContactTelephoneNumber = updatedService?.SecondaryContact?.SecondaryContactTelephoneNumber != existingProvider.SecondaryContactTelephoneNumber ? updatedService?.SecondaryContact?.SecondaryContactTelephoneNumber : null;
 
             draft.ProviderWebsiteAddress = updatedService.ProviderWebsiteAddress != existingProvider.ProviderWebsiteAddress ? updatedService.ProviderWebsiteAddress : null;
-            draft.PublicContactEmail = updatedService.PublicContactEmail != existingProvider.PublicContactEmail ? updatedService.PublicContactEmail : null;
+            draft.PublicContactEmail = updatedService.PublicContactEmail != existingProvider.PublicContactEmail
+            ? (updatedService.PublicContactEmail ?? "-")
+            : null;
             draft.ProviderTelephoneNumber = updatedService.ProviderTelephoneNumber != existingProvider.ProviderTelephoneNumber
           ? (updatedService.ProviderTelephoneNumber ?? "-")
           : null;
