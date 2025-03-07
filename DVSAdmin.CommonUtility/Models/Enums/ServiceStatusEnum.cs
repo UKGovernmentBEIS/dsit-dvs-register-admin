@@ -16,7 +16,7 @@ namespace DVSAdmin.CommonUtility.Models
         ReadyToPublish = 3,
         [Description("Published")]
         Published = 4,
-        [Description("Removed")]
+        [Description("Removed from register")]
         Removed = 5,
         [Description("Awaiting removal confirmation")]
         AwaitingRemovalConfirmation = 6,
