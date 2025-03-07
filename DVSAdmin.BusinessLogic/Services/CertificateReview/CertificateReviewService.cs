@@ -67,12 +67,7 @@ namespace DVSAdmin.BusinessLogic.Services
             return automapper.Map<List<ServiceDto>>(serviceList);
         }
 
-        public async Task<List<ServiceDto>> GetServiceVersionList(int serviceKey)
-        {
-            var serviceList = await certificateReviewRepository.GetServiceVersionList(serviceKey);
-            return automapper.Map<List<ServiceDto>>(serviceList);
-
-        }
+      
 
         public async Task<ServiceDto> GetServiceDetails(int serviceId)
         {

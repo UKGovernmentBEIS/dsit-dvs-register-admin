@@ -73,22 +73,7 @@ namespace DVSAdmin.Data.Repositories
             .ToListAsync();
         }
 
-        public async Task<List<Service>> GetServiceVersionList(int serviceKey)
-        {
-            return await context.Service
-            .Include(s => s.Provider)
-            .Include(s => s.CertificateReview)
-            .Include(s => s.ServiceSupSchemeMapping)
-            .ThenInclude(s => s.SupplementaryScheme)
-            .Include(s => s.ServiceRoleMapping)
-            .ThenInclude(s => s.Role)
-            .Include(s => s.ServiceQualityLevelMapping)
-            .ThenInclude(s => s.QualityLevel)
-            .Include(s => s.ServiceIdentityProfileMapping)
-            .ThenInclude(s => s.IdentityProfile)
-            .Where(s => s.ServiceKey == serviceKey)
-            .ToListAsync();
-        }
+     
 
 
 

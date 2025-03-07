@@ -74,7 +74,7 @@ namespace DVSAdmin.Data.Repositories
                 {
                     draft.ModifiedTime = DateTime.UtcNow;                    
                     await _context.ProviderProfileDraft.AddAsync(draft);
-                    var servicesList = provider?.Services?.Where(x => x.IsCurrent == true && (x.ServiceStatus == ServiceStatusEnum.Published || x.ServiceStatus == ServiceStatusEnum.ReadyToPublish));
+                    var servicesList = provider?.Services?.Where(x => x.ServiceStatus == ServiceStatusEnum.Published || x.ServiceStatus == ServiceStatusEnum.ReadyToPublish);
 
                     provider.ProviderStatus = ProviderStatusEnum.UpdatesRequested;
                     provider.ModifiedTime = DateTime.UtcNow;

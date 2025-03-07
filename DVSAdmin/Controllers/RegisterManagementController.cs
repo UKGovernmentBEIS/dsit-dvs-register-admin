@@ -2,7 +2,6 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.Data.Entities;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -19,22 +18,19 @@ namespace DVSAdmin.Controllers
     //with button or ahref actions in .cshtml
     public class RegisterManagementController : Controller
     {       
-        private readonly IRegManagementService regManagementService;
-        private readonly ICertificateReviewService certificateReviewService;      
+        private readonly IRegManagementService regManagementService;  
         private readonly IBucketService bucketService;
         private readonly ICsvDownloadService csvDownloadService;
         private readonly ILogger<RegisterManagementController> logger;
         private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;       
         public RegisterManagementController(
-            IRegManagementService regManagementService,
-            ICertificateReviewService certificateReviewService,
+            IRegManagementService regManagementService,            
             IBucketService bucketService,
             ICsvDownloadService csvDownloadService,
             ILogger<RegisterManagementController> logger)
         {
            
-            this.regManagementService = regManagementService;
-            this.certificateReviewService = certificateReviewService;           
+            this.regManagementService = regManagementService;               
             this.bucketService = bucketService;
             this.csvDownloadService = csvDownloadService;
             this.logger = logger;
@@ -62,10 +58,10 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ServiceDetails(int serviceKey)
         {
             ServiceVersionViewModel serviceVersions = new();
-            var serviceList = await certificateReviewService.GetServiceVersionList(serviceKey);
-            ServiceDto currentServiceVersion = serviceList?.FirstOrDefault(x => x.IsCurrent == true) ?? new ServiceDto();
+            var serviceList = await regManagementService.GetServiceVersionList(serviceKey);
+            ServiceDto currentServiceVersion = serviceList.OrderByDescending(x => x.ModifiedTime).FirstOrDefault() ?? new ServiceDto(); //Latest submission has latest date
+            serviceVersions.ServiceHistoryVersions = serviceList.Where(x => x != currentServiceVersion).ToList() ?? new List<ServiceDto>();
             serviceVersions.CurrentServiceVersion = currentServiceVersion;
-            serviceVersions.ServiceHistoryVersions = serviceList?.Where(x => x.IsCurrent != true).OrderByDescending(x => x.PublishedTime).ToList() ?? new();
 
             return View(serviceVersions);
         }

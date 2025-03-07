@@ -23,7 +23,7 @@
             <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
             <td class="govuk-table__cell">
 
-                @foreach (var item in @Model.Services.Where(s=> s.IsCurrent))
+                @foreach (var item in @Model.Services)
                 {
                     <div class="govuk-!-margin-bottom-1">
                         @item.ServiceName

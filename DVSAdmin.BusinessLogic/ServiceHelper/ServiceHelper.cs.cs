@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models;
+﻿using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 
@@ -49,5 +50,47 @@ namespace DVSAdmin.BusinessLogic
             }
             return providerStatus;
         }
+
+
+        public static List<ServiceDto> FilterByServiceStatus(List<ServiceDto> services)
+        {
+            List<ServiceDto> filteredServices = [];
+            if (services != null && services.Count > 0)
+            {
+                filteredServices = services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
+                                    s.ServiceStatus == ServiceStatusEnum.Published ||
+                                    s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
+                                    s.ServiceStatus == ServiceStatusEnum.Removed ||
+                                    s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation ||
+                                    s.ServiceStatus == ServiceStatusEnum.UpdatesRequested).ToList();
+               
+
+            }
+            return filteredServices;
+        }
+
+        public static List<ServiceDto> FilterByServiceStatusAndLatestModifiedDate(List<ServiceDto> services)
+        {
+            List<ServiceDto> filteredServices = [];
+            List<ServiceDto> filteredServicesByDate = [];
+            if (services != null && services.Count > 0)
+            {
+                filteredServices = services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
+                                    s.ServiceStatus == ServiceStatusEnum.Published ||
+                                    s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
+                                    s.ServiceStatus == ServiceStatusEnum.Removed ||
+                                    s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation ||
+                                    s.ServiceStatus == ServiceStatusEnum.UpdatesRequested).ToList();
+
+
+                filteredServicesByDate = filteredServices.GroupBy(s => s.ServiceKey) // Group by ServiceKey
+                .Select(g => g.OrderByDescending(s => s.ModifiedTime).FirstOrDefault()).Where(s=>s!=null) // Filter out null values // Select the latest modified date
+                .ToList();
+             
+            }
+            return filteredServicesByDate;
+        }
+
+
     }
 }
