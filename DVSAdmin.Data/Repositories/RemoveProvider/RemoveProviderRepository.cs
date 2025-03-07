@@ -118,7 +118,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                     existingProvider.ProviderStatus = ProviderStatusEnum.AwaitingRemovalConfirmation;
 
                     var existingServices = await context.Service.Where(e => serviceIds.Contains(e.Id)
-                    && e.ProviderProfileId == providerProfileId && e.ServiceStatus == ServiceStatusEnum.Published).ToListAsync();
+                    && e.ProviderProfileId == providerProfileId && (e.ServiceStatus == ServiceStatusEnum.Published || e.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)).ToListAsync();
                     foreach (var existingService in existingServices)
                     {
                         existingService.ServiceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;

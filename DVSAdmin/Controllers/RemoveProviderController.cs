@@ -67,7 +67,10 @@ namespace DVSAdmin.Controllers
         {
             List<string> dsitUserEmails = providerDetailsViewModel.DSITUserEmails.Split(',').ToList();
             ProviderProfileDto providerProfileDto = await removeProviderService.GetProviderDetails(providerDetailsViewModel.Id);
-            List<int> ServiceIds = providerProfileDto.Services.Where(item => item.ServiceStatus == ServiceStatusEnum.Published).Select(item => item.Id).ToList();
+            List<int> ServiceIds = providerProfileDto.Services
+               .Where(item => item.ServiceStatus == ServiceStatusEnum.Published || item.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
+               .Select(item => item.Id)
+               .ToList();
             GenericResponse genericResponse = await removeProviderService.RemoveProviderRequest(providerProfileDto.Id, ServiceIds, userEmail, dsitUserEmails, removalReason);
 
             if (genericResponse.Success)
