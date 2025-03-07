@@ -2,6 +2,7 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,33 +33,32 @@ namespace DVSAdmin.Controllers
         #region Remove Provider
 
         [HttpGet("provider/reason-for-removal")]
-        public async Task<IActionResult> ReasonForRemoval(int providerId, RemovalReasonsEnum? removalReason)
+        public IActionResult ReasonForRemoval(int providerId, RemovalReasonsEnum? removalReason)
         {
-            ProviderProfileDto providerDto = await removeProviderService.GetProviderDetails(providerId);
+            ProviderRemovalViewModel providerRemovalViewModel = new() { ProviderId = providerId };
             if (removalReason.HasValue)
             {
-                providerDto.RemovalReason = removalReason.Value;
+                providerRemovalViewModel.RemovalReason = removalReason.Value;
             }
-            return View(providerDto);
+            return View(providerRemovalViewModel);
         }
 
         [HttpPost("provider/proceed-with-removal")]
-        public async Task<IActionResult> ProceedWithRemoval(int providerId, RemovalReasonsEnum? removalReason)
+        public async Task<IActionResult> ProceedWithRemoval(ProviderRemovalViewModel providerRemovalViewModel)
         {
-            ProviderProfileDto providerProfileDto = await removeProviderService.GetProviderDetails(providerId);
-            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
-            if (removalReason == null)
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("RemovalReason", "Select a reason for removal");
+                ProviderProfileDto providerProfileDto = await removeProviderService.GetProviderDetails(providerRemovalViewModel.ProviderId);
+                var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
+                providerProfileDto.DSITUserEmails = string.Join(",", userEmails);
+                providerProfileDto.RemovalReason = providerRemovalViewModel.RemovalReason;
+                return View("ProceedRemoval", providerProfileDto);
+                
             }
-            if (!ModelState.IsValid)
+            else
             {
-                return View("ReasonForRemoval", providerProfileDto);
-            }
-
-            providerProfileDto.DSITUserEmails = string.Join(",", userEmails);
-            providerProfileDto.RemovalReason = removalReason.Value;
-            return View("ProceedRemoval", providerProfileDto);
+                return View("ReasonForRemoval", providerRemovalViewModel);
+            }           
         }
 
 
@@ -97,36 +97,30 @@ namespace DVSAdmin.Controllers
 
         #region Remove Service
         [HttpGet("service/service-removal-reason")]
-        public IActionResult ServiceRemovalReason(int providerId, int serviceId, ServiceRemovalReasonEnum? serviceRemovalReason)
+        public IActionResult ServiceRemovalReason(int providerId, int serviceId, ServiceRemovalReasonEnum serviceRemovalReason)
         {
-            ViewBag.ProviderId = providerId;
-            ViewBag.ServiceId = serviceId;
-            ViewBag.ServiceRemovalReason = serviceRemovalReason;
-            return View();
+            ServiceRemovalViewModel serviceRemovalViewModel = new ()
+            {
+                ProviderId = providerId,
+                ServiceId = serviceId,
+                ServiceRemovalReason = serviceRemovalReason
+            };
+            return View(serviceRemovalViewModel);
         }
 
         [HttpPost("service/proceed-with-service-removal")]
-        public async Task<IActionResult> ProceedWithServiceRemoval(int providerId, int serviceId, ServiceRemovalReasonEnum? serviceRemovalReason)
+        public async Task<IActionResult> ProceedWithServiceRemoval(ServiceRemovalViewModel serviceRemovalViewModel)
         {
-            ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceId);
-            ProviderProfileDto providerProfileDto = await removeProviderService.GetProviderDetails(providerId);
-            serviceDto.Provider = providerProfileDto;
-            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
-            if (serviceRemovalReason == null)
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("ServiceRemovalReason", "Select a service reason for removal");
+                ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceRemovalViewModel.ServiceId);
+                serviceDto.ServiceRemovalReason = serviceRemovalViewModel.ServiceRemovalReason;
+                return View("ProceedServiceRemoval", serviceDto);
             }
-            if (!ModelState.IsValid)
+            else
             {
-                ViewBag.ProviderId = providerProfileDto.Id;
-                ViewBag.ServiceId = serviceDto.Id;
-                ViewBag.ServiceRemovalReason = serviceRemovalReason;
-                return View("ServiceRemovalReason");
-            }
-
-            providerProfileDto.DSITUserEmails = string.Join(",", userEmails);
-            serviceDto.ServiceRemovalReason = serviceRemovalReason.Value;
-            return View("ProceedServiceRemoval", serviceDto);
+                return View("ServiceRemovalReason", serviceRemovalViewModel);
+            }           
         }
 
         [HttpPost("service/publish-service-removal-reason")]

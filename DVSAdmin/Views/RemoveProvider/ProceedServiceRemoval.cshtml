@@ -119,8 +119,7 @@
 
                 @using (Html.BeginForm("RequestServiceRemoval", "RemoveProvider", FormMethod.Post))
                 {
-                    @Html.HiddenFor(v => v.Id)
-                    @Html.HiddenFor(u => u.Provider.DSITUserEmails)
+                    @Html.HiddenFor(v => v.Id)                    
                     @Html.HiddenFor(m => m.ProviderProfileId)
                     <input type="hidden" name="ServiceRemovalReason" value="@Model.ServiceRemovalReason" />
                     <div class="govuk-button-group govuk-!-margin-top-8 govuk-!-margin-bottom-8">
