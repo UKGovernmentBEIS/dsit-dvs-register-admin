@@ -18,7 +18,7 @@
             </td>
             <td class="govuk-table__cell">
 
-                @(Model.ProviderStatus == ProviderStatusEnum.Published ? DateTimeExtensions.FormatDateTime(Model.PublishedTime) : DateTimeExtensions.FormatDateTime(Model.ModifiedTime))
+                @(DateTimeExtensions.FormatDateTime(Model.ModifiedTime))
               
             </td>
             <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
