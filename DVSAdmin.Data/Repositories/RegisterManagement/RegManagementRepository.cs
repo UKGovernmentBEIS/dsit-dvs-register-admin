@@ -33,7 +33,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                 .Include(p => p.Services)
                 .Include(x => x.CabUser).ThenInclude(x => x.Cab)
                 .OrderBy(c => priorityOrder.IndexOf(c.ProviderStatus))
-                .ThenByDescending(c => c.PublishedTime)
+                .ThenByDescending(c => c.ModifiedTime)
                 .Where(c => c.ProviderStatus > ProviderStatusEnum.Unpublished)
                 .ToListAsync();
         }
