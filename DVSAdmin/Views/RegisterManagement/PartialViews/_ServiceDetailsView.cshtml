@@ -4,19 +4,12 @@
 @model ServiceDto
 
 @{
-    bool isEditable = Model.IsCurrent && (Model.ServiceStatus == ServiceStatusEnum.Published || Model.ServiceStatus == ServiceStatusEnum.ReadyToPublish);
+    bool isEditable = !Convert.ToBoolean(ViewBag.IsPrevious);
 }
 
 <div class="govuk-summary-card__title-wrapper">
     <p class="govuk-summary-card__title">
-        @if (Model.ServiceStatus == ServiceStatusEnum.Published)
-        {
-            @DateTimeExtensions.FormatDateTime(@Model.PublishedTime)
-        }
-        else
-        {
-            @DateTimeExtensions.FormatDateTime(@Model.ModifiedTime)
-        }
+        @DateTimeExtensions.FormatDateTime(@Model.ModifiedTime)
     </p>
 </div>
 <div class="govuk-summary-card__content">

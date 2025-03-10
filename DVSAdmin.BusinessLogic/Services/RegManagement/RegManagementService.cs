@@ -29,20 +29,18 @@ namespace DVSAdmin.BusinessLogic.Services
         public async Task<List<ProviderProfileDto>> GetProviders()
         {
             var providers = await regManagementRepository.GetProviders();
+
             List<ProviderProfileDto> providersList = automapper.Map<List<ProviderProfileDto>>(providers);
 
-            providersList = providersList.Select(providerDto =>
+            if(providersList!=null && providersList.Count()>0)
             {
-                providerDto.Services = providerDto.Services
-                    .Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
-                                s.ServiceStatus == ServiceStatusEnum.Published ||
-                                s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
-                                s.ServiceStatus == ServiceStatusEnum.Removed ||
-                                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation||
-                                s.ServiceStatus == ServiceStatusEnum.UpdatesRequested)
-                    .ToList();
-                return providerDto;
-            }).ToList();
+                providersList = providersList.Select(providerDto =>
+                {
+                    providerDto.Services = ServiceHelper.FilterByServiceStatusAndLatestModifiedDate(providerDto.Services);                    
+                    return providerDto;
+                }).ToList();
+            }
+          
 
             return providersList;
         }
@@ -56,17 +54,9 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<ProviderProfileDto> GetProviderDetails(int providerProfileId)
         {
-            var provider = await regManagementRepository.GetProviderDetails(providerProfileId);
-            
+            var provider = await regManagementRepository.GetProviderDetails(providerProfileId);            
             ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);
-            providerDto.Services = providerDto.Services.
-                Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish || 
-                s.ServiceStatus == ServiceStatusEnum.Published || 
-                s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation || 
-                s.ServiceStatus == ServiceStatusEnum.Removed || 
-                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation||
-                s.ServiceStatus == ServiceStatusEnum.UpdatesRequested).ToList();
-            
+            providerDto.Services = ServiceHelper.FilterByServiceStatusAndLatestModifiedDate(providerDto.Services);
             return providerDto;
         }
 
@@ -142,8 +132,14 @@ namespace DVSAdmin.BusinessLogic.Services
 
             return genericResponse;
         }
-        
-    
-    
+
+        public async Task<List<ServiceDto>> GetServiceVersionList(int serviceKey)
+        {
+            var serviceList = await regManagementRepository.GetServiceVersionList(serviceKey);
+            List<ServiceDto> services =  automapper.Map<List<ServiceDto>>(serviceList);
+            return ServiceHelper.FilterByServiceStatus(services);
+
+        }
+
     }
 }

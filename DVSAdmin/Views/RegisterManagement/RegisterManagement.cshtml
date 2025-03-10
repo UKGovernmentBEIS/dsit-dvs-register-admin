@@ -45,10 +45,10 @@
                                     <tr class="govuk-table__row">
                                         <td class="govuk-table__cell"> @Html.ActionLink(@item.RegisteredName, "ProviderDetails", "RegisterManagement", new { @providerId = item.Id }, new { @class = "govuk-link" })</td>
                                         <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@item.ProviderStatus) </td>
-                                        <td class="govuk-table__cell">@(item.ProviderStatus == ProviderStatusEnum.Published ? DateTimeExtensions.FormatDateTime(item.PublishedTime) : DateTimeExtensions.FormatDateTime(item.ModifiedTime))</td>
+                                        <td class="govuk-table__cell">@(DateTimeExtensions.FormatDateTime(item.ModifiedTime))</td>
                                         <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
                                         <td class="govuk-table__cell">
-                                            @foreach (var item1 in item.Services.Where(s=> s.IsCurrent))
+                                            @foreach (var item1 in item.Services)
                                             {
                                                 <div class="govuk-!-margin-bottom-1">
                                                     @item1.ServiceName

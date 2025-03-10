@@ -36,7 +36,7 @@
                             <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.PublishedTime)</td>
                             <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
                             <td class="govuk-table__cell">
-                                @foreach (var item in Model.Services.Where(s => s.IsCurrent && s.ServiceStatus == ServiceStatusEnum.Published))
+                                @foreach (var item in Model.Services.Where(s => s.ServiceStatus == ServiceStatusEnum.Published))
                                 {
                                     <div class="govuk-!-margin-bottom-1">@item.ServiceName</div>
                                 }

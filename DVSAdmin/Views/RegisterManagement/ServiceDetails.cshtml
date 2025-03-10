@@ -58,6 +58,7 @@
                         {
                             @foreach (var serviceDto in Model.ServiceHistoryVersions)
                             {
+                                ViewBag.IsPrevious = true;
                                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ServiceDetailsView.cshtml", serviceDto)
                             }
                         }
