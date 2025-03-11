@@ -9,6 +9,7 @@ using DVSAdmin.Models;
 using DVSAdmin.Models.Edit;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 
 namespace DVSAdmin.Controllers
@@ -524,15 +525,14 @@ namespace DVSAdmin.Controllers
             ServiceChangesViewModel changesViewModel = new();
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
 
-            ServiceDto serviceDto = await editService.GetService(summaryViewModel.ServiceId);
+            ServiceDto previousData = await editService.GetService(summaryViewModel.ServiceId);
             changesViewModel.DSITUserEmails = string.Join(",", userEmails);
 
-            ServiceDraftDto serviceDraftDto = CreateDraft(serviceDto, summaryViewModel);
+            ServiceDraftDto currentData = MapToDraft(previousData, summaryViewModel);
 
-            HttpContext?.Session.Set("ChangedServiceData", serviceDraftDto);
+            (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = editService.GetServiceKeyValue(currentData, previousData);
 
-            changesViewModel.CurrentService = serviceDto;
-            changesViewModel.ChangedService = serviceDraftDto;
+            changesViewModel.ChangedService = currentData;
 
             return View(changesViewModel);
         }
@@ -543,7 +543,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> SaveServiceDraft(ServiceChangesViewModel serviceChangesViewModel)
         {
             List<string> dsitUserEmails = serviceChangesViewModel.DSITUserEmails.Split(',').ToList();
-            ServiceDraftDto serviceDraft = HttpContext.Session.Get<ServiceDraftDto>("ChangedServiceData");
+            ServiceDraftDto? serviceDraft = serviceChangesViewModel.ChangedService;
             if (serviceDraft != null)
             {
 
@@ -561,8 +561,6 @@ namespace DVSAdmin.Controllers
             {
                 return RedirectToAction("HandleException", "Error");
             }
-          
-
         }
 
 
@@ -677,7 +675,7 @@ namespace DVSAdmin.Controllers
             HttpContext?.Session.Set("ServiceSummary", serviceSummary);
         }
 
-        private ServiceDraftDto CreateDraft(ServiceDto existingService, ServiceSummaryViewModel updatedService)
+        private ServiceDraftDto MapToDraft(ServiceDto existingService, ServiceSummaryViewModel updatedService)
         {
             var existingRoleIds = existingService.ServiceRoleMapping.Select(m => m.RoleId).ToList();
             var updatedRoleIds = updatedService.RoleViewModel.SelectedRoles.Select(m => m.Id).ToList(); ;
@@ -707,7 +705,7 @@ namespace DVSAdmin.Controllers
                 ProviderProfileId = existingService.ProviderProfileId
             };
 
-            
+
 
             if (existingService.ServiceName != updatedService.ServiceName)
             {
@@ -748,15 +746,15 @@ namespace DVSAdmin.Controllers
             {
                 foreach (var item in updatedService.RoleViewModel.SelectedRoles)
                 {
-                    draft.ServiceRoleMappingDraft.Add(new ServiceRoleMappingDraftDto { RoleId = item.Id , Role = item});
-                    
+                    draft.ServiceRoleMappingDraft.Add(new ServiceRoleMappingDraftDto { RoleId = item.Id, Role = item });
+
                 }
             }
             if (!existingProtectionIds.OrderBy(id => id).SequenceEqual(updatedProtectionIds.OrderBy(id => id)))
             {
                 foreach (var item in updatedService.QualityLevelViewModel.SelectedLevelOfProtections)
                 {
-                    draft.ServiceQualityLevelMappingDraft.Add(new ServiceQualityLevelMappingDraftDto { QualityLevelId = item.Id, QualityLevel = item});
+                    draft.ServiceQualityLevelMappingDraft.Add(new ServiceQualityLevelMappingDraftDto { QualityLevelId = item.Id, QualityLevel = item });
                 }
             }
 
@@ -772,7 +770,7 @@ namespace DVSAdmin.Controllers
             {
                 foreach (var item in updatedService.IdentityProfileViewModel.SelectedIdentityProfiles)
                 {
-                    draft.ServiceIdentityProfileMappingDraft.Add(new ServiceIdentityProfileMappingDraftDto {IdentityProfileId = item.Id,  IdentityProfile = item}); 
+                    draft.ServiceIdentityProfileMappingDraft.Add(new ServiceIdentityProfileMappingDraftDto { IdentityProfileId = item.Id, IdentityProfile = item });
                 }
             }
 
@@ -780,12 +778,13 @@ namespace DVSAdmin.Controllers
             {
                 foreach (var item in updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes)
                 {
-                    draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto {  SupplementarySchemeId = item.Id, SupplementaryScheme = item});
+                    draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto { SupplementarySchemeId = item.Id, SupplementaryScheme = item });
                 }
             }
 
             return (draft);
         }
+        
 
         private DateViewModel GetDayMonthYear(DateTime? dateTime)
         {

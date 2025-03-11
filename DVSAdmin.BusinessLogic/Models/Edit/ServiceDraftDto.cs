@@ -14,7 +14,6 @@ namespace DVSAdmin.BusinessLogic.Models
         public DateTime? ConformityIssueDate { get; set; }
         public DateTime? ConformityExpiryDate { get; set; }
         public ServiceStatusEnum PreviousServiceStatus { get; set; }
-        public DateTime ModifiedTime { get; set; }
         public int ProviderProfileId { get; set; }
         public ProviderProfileDto Provider { get; set; }
 
