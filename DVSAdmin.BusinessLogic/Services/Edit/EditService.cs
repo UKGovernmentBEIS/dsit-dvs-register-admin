@@ -277,71 +277,40 @@ namespace DVSAdmin.BusinessLogic.Services
 
 
             }
+            var protectionExists = currentData.ServiceQualityLevelMappingDraft.Any(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection);
+            var authenticationExists = currentData.ServiceQualityLevelMappingDraft.Any(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication);
 
-
-            if (currentData.ServiceQualityLevelMappingDraft.Count > 0 || currentData.HasGPG44 == false )
+            if (protectionExists || currentData.HasGPG44 == false)
             {
                 var protectionLevels = previousData.ServiceQualityLevelMapping?
-                   .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection)
-                   .Select(item => item.QualityLevel.Level)
-                   .ToList();
+                    .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection)
+                    .Select(item => item.QualityLevel.Level)
+                    .ToList();
 
                 var currentProtectionLevels = currentData.ServiceQualityLevelMappingDraft?
-                  .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection)
-                  .Select(item => item.QualityLevel.Level)
-                  .ToList();
+                    .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection)
+                    .Select(item => item.QualityLevel.Level)
+                    .ToList();
 
+                previousDataDictionary.Add("GPG44 level of protection", protectionLevels != null && protectionLevels.Count > 0 ? protectionLevels : new List<string> { "Not certified against GPG44" });
+                currentDataDictionary.Add("GPG44 level of protection", currentProtectionLevels != null && currentProtectionLevels.Count > 0 ? currentProtectionLevels : new List<string> { "Not certified against GPG44" });
+            }
 
-                if (protectionLevels != null && protectionLevels.Count > 0)
-                {
-                    previousDataDictionary.Add("GPG44 level of protection", protectionLevels);                  
-                   
-                }
-                else
-                {
-                    previousDataDictionary.Add("GPG44 level of protection", ["Not certified against GPG44"]);
-                }
-
-                if (currentProtectionLevels != null && currentProtectionLevels.Count > 0)
-                {
-                    currentDataDictionary.Add("GPG44 level of protection", currentProtectionLevels);
-                }
-                else
-                {
-                    currentDataDictionary.Add("GPG44 level of protection", ["Not certified against GPG44"]);
-                }
-
+            if (authenticationExists || currentData.HasGPG44 == false)
+            {
                 var authenticationLevels = previousData.ServiceQualityLevelMapping?
                     .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication)
                     .Select(item => item.QualityLevel.Level)
                     .ToList();
 
                 var currentAuthenticationLevels = currentData.ServiceQualityLevelMappingDraft?
-                   .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication)
-                   .Select(item => item.QualityLevel.Level)
-                   .ToList();
+                    .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication)
+                    .Select(item => item.QualityLevel.Level)
+                    .ToList();
 
-                if (authenticationLevels != null && authenticationLevels.Count > 0)
-                {
-                    previousDataDictionary.Add("GPG44 quality of authentication", authenticationLevels);
-                   
-                }
-                else
-                {
-                    previousDataDictionary.Add("GPG44 quality of authentication", ["Not certified against GPG44"]);
-                }
-
-                if (currentAuthenticationLevels != null && currentAuthenticationLevels.Count > 0)
-                {
-                    currentDataDictionary.Add("GPG44 quality of authentication", currentAuthenticationLevels);
-                }
-                else
-                {
-                    currentDataDictionary.Add("GPG44 level of authentication", ["Not certified against GPG44"]);
-                }
+                previousDataDictionary.Add("GPG44 quality of authentication", authenticationLevels != null && authenticationLevels.Count > 0 ? authenticationLevels : new List<string> { "Not certified against GPG44" });
+                currentDataDictionary.Add("GPG44 quality of authentication", currentAuthenticationLevels != null && currentAuthenticationLevels.Count > 0 ? currentAuthenticationLevels : new List<string> { "Not certified against GPG44" });
             }
-          
-
 
             #region GPG45 Identity profile
             if (currentData.ServiceIdentityProfileMappingDraft.Count > 0 || currentData.HasGPG45 == false)
