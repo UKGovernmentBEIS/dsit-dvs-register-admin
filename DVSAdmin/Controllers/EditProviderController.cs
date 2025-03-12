@@ -10,7 +10,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.Controllers
 {
-    [ValidCognitoToken]
+  
     [Route("edit-provider")]
     public class EditProviderController : BaseController
     {

@@ -5,12 +5,9 @@ using System.Security.Claims;
 
 namespace DVSAdmin.Controllers
 {
-    [ValidCognitoToken]
-    public class DigitalIdentityController : Controller
+    public class DigitalIdentityController : BaseController
     {
-        private readonly IUserService userService;
-        private string userEmail => HttpContext.Session.Get<string>("Email") ?? string.Empty;
-        private string userprofile => HttpContext.Session.Get<string>("Profile") ?? string.Empty;
+        private readonly IUserService userService;           
         public DigitalIdentityController(IUserService userService)
         {
             this.userService = userService;
@@ -19,7 +16,7 @@ namespace DVSAdmin.Controllers
         [Route("home")]
         public async Task<IActionResult> LandingPage()
         {
-            if(string.IsNullOrEmpty(userprofile))
+            if(string.IsNullOrEmpty(UserProfile))
             {
                 string profile = string.Empty;
                 var identity = HttpContext?.User.Identity as ClaimsIdentity;
@@ -29,7 +26,7 @@ namespace DVSAdmin.Controllers
                     profile = profileClaim.Value;
                     HttpContext?.Session.Set("Profile", profile);
                 }
-                await userService.UpdateUserProfile(userEmail, profile);
+                await userService.UpdateUserProfile(UserEmail, profile);
             }
 
             return View();

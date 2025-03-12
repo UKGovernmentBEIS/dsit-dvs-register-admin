@@ -10,8 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
-    [Route("edit-service")]
-    [ValidCognitoToken]
+    [Route("edit-service")]   
     public class EditServiceController : BaseController
     {
         private readonly IEditService editService;
@@ -481,8 +480,7 @@ namespace DVSAdmin.Controllers
         [HttpGet("summary-of-changes")]
         public async Task<IActionResult> ServiceDifference()
         {
-            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);
-            //SetRefererURL();
+            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);          
             ServiceChangesViewModel changesViewModel = new();
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
 
