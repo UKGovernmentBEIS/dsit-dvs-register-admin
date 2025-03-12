@@ -12,11 +12,11 @@ namespace DVSAdmin.Controllers
 {
     [ValidCognitoToken]
     [Route("edit-provider")]
-    public class EditProviderController : Controller
+    public class EditProviderController : BaseController
     {
         private readonly IEditService editService;       
         private readonly IUserService userService;
-        private string userEmail => HttpContext.Session.Get<string>("Email") ?? string.Empty;
+      
         public EditProviderController(IEditService editService, IUserService userService)
         {
             this.editService = editService;            
@@ -29,8 +29,9 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ProfileSummary(int providerId, bool isEditPage)
         {
             ViewBag.isEditPage = isEditPage;
-           
-            if(isEditPage)
+            SetRefererURL();
+
+            if (isEditPage)
             {
                 ProviderProfileDto providerDto = await editService.GetProviderDeatils(providerId);
                 ProfileSummaryViewModel profileSummaryViewModel = MapDtoToViewModel(providerDto);
@@ -39,11 +40,11 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                
+
                 ProfileSummaryViewModel profileSummaryViewModel = GetProfileSummary();
                 return View(profileSummaryViewModel);
             }
-        }
+        }       
 
 
 
@@ -312,7 +313,7 @@ namespace DVSAdmin.Controllers
             ProfileSummaryViewModel profileSummaryViewModel = GetProfileSummary();
             ProviderProfileDto providerProfileDto = await editService.GetProviderDeatils(profileSummaryViewModel.ProviderProfileId);
             ProviderProfileDraftDto providerProfileDraftDto = CreateDraft(providerProfileDto, profileSummaryViewModel);
-            List<string> dsitEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
+            List<string> dsitEmails = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);
             changesViewModel.DSITUserEmails = string.Join(",", dsitEmails);            
             changesViewModel.CurrentProvider = providerProfileDto;
             changesViewModel.ChangedProvider = providerProfileDraftDto;
@@ -326,7 +327,7 @@ namespace DVSAdmin.Controllers
             List<string> dsitUserEmails = providerChangesViewModel.DSITUserEmails.Split(',').ToList();
             if (providerChangesViewModel != null && providerChangesViewModel.ChangedProvider != null)
             {
-                GenericResponse genericResponse = await editService.SaveProviderDraft(providerChangesViewModel.ChangedProvider, userEmail,dsitUserEmails);
+                GenericResponse genericResponse = await editService.SaveProviderDraft(providerChangesViewModel.ChangedProvider, UserEmail,dsitUserEmails);
                 if(genericResponse.Success)
                 {
                     return RedirectToAction("InformationSubmitted", new { providerId = providerChangesViewModel.ChangedProvider.ProviderProfileId });
