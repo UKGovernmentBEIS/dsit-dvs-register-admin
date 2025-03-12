@@ -429,12 +429,13 @@
                         <div class="govuk-form-group govuk-form-group--error">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="commentsforincorrect">
-                                    Add a comment
+                                    Record the reasons for your decision
                                 </label>
 
                             </h3>
                            <div id="comments-hint" class="govuk-hint">
-                               If you had marked any item as ‘Incorrect’, you should provide further details. If all sections are marked ‘Correct’, please provide a note to confirm below.
+                              This information will only be visible to OfDIA users. If you have marked any item as 'Incorrect', you should provide further details. 
+                              If all sections are marked 'Correct', please add a comment to confirm below.
                            </div>
                             <p id="commentsforincorrect-error" class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.CommentsForIncorrect)
@@ -448,11 +449,12 @@
                         <div class="govuk-form-group">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="commentsforincorrect">
-                                    Add a comment
+                                    Record the reasons for your decision
                                 </label>
                             </h3>
                             <div id="comments-hint" class="govuk-hint">
-                                If you have marked any item as ‘Incorrect’, you should provide further details. If all sections are marked ‘Correct’, please provide a note to confirm below.
+                                This information will only be visible to OfDIA users. If you have marked any item as 'Incorrect', you should provide further details.
+                                If all sections are marked 'Correct', please add a comment to confirm below.
                             </div>
                             @Html.TextAreaFor(model => model.CommentsForIncorrect, new { @class = "govuk-textarea", @id = "commentsforincorrect", @name = "comment", @rows = "5", aria_describedby = "comments-hint" })
                         </div>
