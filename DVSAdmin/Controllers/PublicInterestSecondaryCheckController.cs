@@ -33,10 +33,10 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                string loggedinUserEmail = HttpContext?.Session.Get<string>("Email");
-                if (!string.IsNullOrEmpty(loggedinUserEmail))
+                
+                if (!string.IsNullOrEmpty(UserEmail))
                 {
-                    UserDto userDto = await userService.GetUser(loggedinUserEmail);
+                    UserDto userDto = await userService.GetUser(UserEmail);
                     if (userDto.Id > 0)
                     {
 
