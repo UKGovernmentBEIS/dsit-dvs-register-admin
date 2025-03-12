@@ -7,6 +7,7 @@ using DVSAdmin.Models;
 using DVSAdmin.Models.Edit;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace DVSAdmin.Controllers
 {
@@ -491,7 +492,7 @@ namespace DVSAdmin.Controllers
 
             (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = editService.GetServiceKeyValue(currentData, previousData);
 
-            changesViewModel.ChangedService = currentData;
+            TempData["changedService"] = JsonConvert.SerializeObject(currentData);
 
             return View(changesViewModel);
         }
@@ -501,12 +502,14 @@ namespace DVSAdmin.Controllers
         [HttpPost("summary-of-changes")]
         public async Task<IActionResult> SaveServiceDraft(ServiceChangesViewModel serviceChangesViewModel)
         {
-            List<string> dsitUserEmails = serviceChangesViewModel.DSITUserEmails.Split(',').ToList();
-            ServiceDraftDto? serviceDraft = serviceChangesViewModel.ChangedService;
-            if (serviceDraft != null)
-            {
+            var serializedData = TempData["changedService"] as string;
 
+            if (serializedData != null)
+            {
+                ServiceDraftDto? serviceDraft = JsonConvert.DeserializeObject<ServiceDraftDto>(serializedData);
+                List<string> dsitUserEmails = serviceChangesViewModel.DSITUserEmails.Split(',').ToList();
                 GenericResponse genericResponse = await editService.SaveServiceDraft(serviceDraft, UserEmail, dsitUserEmails);
+
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("InformationSubmitted", new { serviceId = serviceDraft.serviceId });

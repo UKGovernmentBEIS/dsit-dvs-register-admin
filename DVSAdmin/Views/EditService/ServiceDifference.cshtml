@@ -12,49 +12,6 @@
     @using (Html.BeginForm("SaveServiceDraft", "EditService", FormMethod.Post))
     {
         @Html.HiddenFor(m => m.DSITUserEmails)
-        @Html.HiddenFor(m => m.ChangedService.Id)
-        @Html.HiddenFor(m => m.ChangedService.serviceId)
-        @Html.HiddenFor(m => m.ChangedService.ServiceName)
-        @Html.HiddenFor(m => m.ChangedService.CompanyAddress)
-        @Html.HiddenFor(m => m.ChangedService.HasGPG44)
-        @Html.HiddenFor(m => m.ChangedService.HasGPG45)
-        @Html.HiddenFor(m => m.ChangedService.HasSupplementarySchemes)
-        @Html.HiddenFor(m => m.ChangedService.ConformityIssueDate)
-        @Html.HiddenFor(m => m.ChangedService.ConformityExpiryDate)
-        @Html.HiddenFor(m => m.ChangedService.PreviousServiceStatus)
-        @Html.HiddenFor(m => m.ChangedService.ProviderProfileId)
-        if (Model.ChangedService.ServiceRoleMappingDraft != null)
-        {
-            foreach (var roleMapping in Model.ChangedService.ServiceRoleMappingDraft)
-            {
-                @Html.HiddenFor(m => roleMapping.Role)
-            }
-        }
-
-        if (Model.ChangedService.ServiceQualityLevelMappingDraft != null)
-        {
-            foreach (var qualityLevelMapping in Model.ChangedService.ServiceQualityLevelMappingDraft)
-            {
-                @Html.HiddenFor(m => qualityLevelMapping.QualityLevel)
-            }
-        }
-
-        if (Model.ChangedService.ServiceIdentityProfileMappingDraft != null)
-        {
-            foreach (var identityProfileMapping in Model.ChangedService.ServiceIdentityProfileMappingDraft)
-            {
-                @Html.HiddenFor(m => identityProfileMapping.IdentityProfile)
-            }
-        }
-
-        if (Model.ChangedService.ServiceSupSchemeMappingDraft != null)
-        {
-            foreach (var supSchemeMapping in Model.ChangedService.ServiceSupSchemeMappingDraft)
-            {
-                @Html.HiddenFor(m => supSchemeMapping.SupplementaryScheme)
-            }
-        }
-
         <main id="main-content" class="govuk-main-wrapper" role="main">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
