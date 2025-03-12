@@ -2,6 +2,8 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.Data.Entities;
+using DVSAdmin.Models;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -59,7 +61,9 @@ namespace DVSAdmin.Controllers
         {
             ServiceVersionViewModel serviceVersions = new();
             var serviceList = await regManagementService.GetServiceVersionList(serviceKey);
-            ServiceDto currentServiceVersion = serviceList.OrderByDescending(x => x.ModifiedTime).FirstOrDefault() ?? new ServiceDto(); //Latest submission has latest date
+            ServiceDto currentServiceVersion = serviceList.OrderByDescending(x => x.ModifiedTime).FirstOrDefault() ?? new ServiceDto(); //Latest submission has latest date          
+            SetServiceDataToSession(currentServiceVersion);
+            
             serviceVersions.ServiceHistoryVersions = serviceList.Where(x => x != currentServiceVersion).ToList() ?? new List<ServiceDto>();
             serviceVersions.CurrentServiceVersion = currentServiceVersion;
 
@@ -191,5 +195,87 @@ namespace DVSAdmin.Controllers
             }
         }
 
+        #region private methods
+        private void SetServiceDataToSession(ServiceDto serviceDto)
+        {
+            RoleViewModel roleViewModel = new()
+            {
+                SelectedRoles = [],
+            };
+            QualityLevelViewModel qualityLevelViewModel = new()
+            {
+                SelectedLevelOfProtections = [],
+                SelectedQualityofAuthenticators = []
+            };
+
+            IdentityProfileViewModel identityProfileViewModel = new()
+            {
+                SelectedIdentityProfiles = []
+            };
+
+            SupplementarySchemeViewModel supplementarySchemeViewModel = new()
+            {
+                SelectedSupplementarySchemes = []
+            };
+
+            if (serviceDto.ServiceRoleMapping != null && serviceDto.ServiceRoleMapping.Count > 0)
+            {
+                roleViewModel.SelectedRoles = serviceDto.ServiceRoleMapping.Select(mapping => mapping.Role).ToList();
+            }
+
+            if (serviceDto.ServiceQualityLevelMapping != null && serviceDto.ServiceQualityLevelMapping.Count > 0)
+            {
+                var protectionLevels = serviceDto.ServiceQualityLevelMapping
+                    .Where(item => item.QualityLevel.QualityType == QualityTypeEnum.Protection)
+                    .ToList();
+
+                foreach (var item in protectionLevels)
+                {
+                    qualityLevelViewModel.SelectedLevelOfProtections.Add(item.QualityLevel);
+                }
+
+                var authenticatorLevels = serviceDto.ServiceQualityLevelMapping
+                    .Where(item => item.QualityLevel.QualityType == QualityTypeEnum.Authentication)
+                    .ToList();
+
+                foreach (var item in authenticatorLevels)
+                {
+                    qualityLevelViewModel.SelectedQualityofAuthenticators.Add(item.QualityLevel);
+                }
+            }
+
+            if (serviceDto.ServiceIdentityProfileMapping != null && serviceDto.ServiceIdentityProfileMapping.Count > 0)
+            {
+                identityProfileViewModel.SelectedIdentityProfiles = serviceDto.ServiceIdentityProfileMapping.Select(mapping => mapping.IdentityProfile).ToList();
+            }
+            if (serviceDto.ServiceSupSchemeMapping != null && serviceDto.ServiceSupSchemeMapping.Count > 0)
+            {
+                supplementarySchemeViewModel.SelectedSupplementarySchemes = serviceDto.ServiceSupSchemeMapping.Select(mapping => mapping.SupplementaryScheme).ToList();
+            }
+
+
+            ServiceSummaryViewModel serviceSummary = new()
+            {
+                ServiceName = serviceDto.ServiceName,
+                ServiceURL = serviceDto.WebSiteAddress,
+                CompanyAddress = serviceDto.CompanyAddress,
+                RoleViewModel = roleViewModel,
+                IdentityProfileViewModel = identityProfileViewModel,
+                QualityLevelViewModel = qualityLevelViewModel,
+                HasSupplementarySchemes = serviceDto.HasSupplementarySchemes,
+                HasGPG44 = serviceDto.HasGPG44,
+                HasGPG45 = serviceDto.HasGPG45,
+                FileName = serviceDto.FileName,
+                SupplementarySchemeViewModel = supplementarySchemeViewModel,
+                ConformityIssueDate = serviceDto.ConformityIssueDate == DateTime.MinValue ? null : serviceDto.ConformityIssueDate,
+                ConformityExpiryDate = serviceDto.ConformityExpiryDate == DateTime.MinValue ? null : serviceDto.ConformityExpiryDate,
+                ServiceId = serviceDto.Id,
+                Provider = serviceDto.Provider,
+                CabUserId = serviceDto.CabUserId,
+                ServiceKey = serviceDto.ServiceKey
+            };
+            HttpContext?.Session.Set("ServiceSummary", serviceSummary);
+        }
+        #endregion
     }
 }
