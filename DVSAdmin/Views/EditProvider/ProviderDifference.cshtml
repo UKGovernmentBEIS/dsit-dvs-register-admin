@@ -5,7 +5,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ProviderSummary", "EditProvider", new {providerId =Model?.CurrentProvider?.Id}, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "ProfileSummary", "EditProvider", new { providerId = Model?.CurrentProvider?.Id }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">

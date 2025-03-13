@@ -2,7 +2,6 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.Data.Entities;
 using DVSAdmin.Models;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
@@ -11,20 +10,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
-    [ValidCognitoToken]
+
     [Route("register-management")]
     //Methods/Actions/Views for publishing services
     //Session is used only in PublishService method to keep published service ids
     //as there are no user input fields in other methods
     //Any change in the controller routes to be verified
     //with button or ahref actions in .cshtml
-    public class RegisterManagementController : Controller
+    public class RegisterManagementController : BaseController
     {       
         private readonly IRegManagementService regManagementService;  
         private readonly IBucketService bucketService;
         private readonly ICsvDownloadService csvDownloadService;
         private readonly ILogger<RegisterManagementController> logger;
-        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;       
+              
         public RegisterManagementController(
             IRegManagementService regManagementService,            
             IBucketService bucketService,
@@ -107,7 +106,7 @@ namespace DVSAdmin.Controllers
                 List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
                 if (serviceids != null && serviceids.Any())
                 {
-                    GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,userEmail);
+                    GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,UserEmail);
                     if (genericResponse.Success)
                     {
                         return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Id });

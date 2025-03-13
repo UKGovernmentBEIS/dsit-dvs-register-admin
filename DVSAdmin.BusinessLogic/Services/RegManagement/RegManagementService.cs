@@ -5,8 +5,6 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -82,27 +80,11 @@ namespace DVSAdmin.BusinessLogic.Services
             List<Service> serviceList = await certificateReviewRepository.GetServiceListByProvider(providerProfileId);        
             string verifiedCab = providerProfile.CabUser.CabEmail;
             string services = string.Join("\r", serviceList.Where(item => serviceIds.Contains(item.Id)).Select(x => x.ServiceName.ToString()).ToArray())??string.Empty;
-            //If no service is currently published AND one service status = Ready to publish:
-            //Then provider status = Action required            
-            if (serviceList.All(item => item.ServiceStatus == ServiceStatusEnum.ReadyToPublish))
-            {
-                providerStatus = ProviderStatusEnum.ReadyToPublish;
-            }
-            //If all service status = Published:
-            //Then provider status = Published
-            if (serviceList.All(item => item.ServiceStatus == ServiceStatusEnum.Published))
-            {
-                providerStatus = ProviderStatusEnum.Published;
-            }
+            
 
-            //If at least one service status = Published AND one service status = Ready to publish:
-            //Then provider = Published – action required.
-            if (serviceList.Any(item => item.ServiceStatus == ServiceStatusEnum.Published)  &&
-             serviceList.Any(item => item.ServiceStatus == ServiceStatusEnum.ReadyToPublish))
-            {
-                providerStatus = ProviderStatusEnum.ReadyToPublishNext;
-            }
 
+            // update provider status based on priority
+            providerStatus  = ServiceHelper.GetProviderStatus(providerProfile.Services, currentStatus);
             genericResponse = await regManagementRepository.UpdateProviderStatus(providerProfileId,  providerStatus, loggedInUserEmail);
          
             if(genericResponse.Success)
@@ -113,15 +95,8 @@ namespace DVSAdmin.BusinessLogic.Services
                 registerPublishLog.CreatedTime = DateTime.UtcNow;
                 registerPublishLog.ProviderName = providerProfile.TradingName;
                 registerPublishLog.Services = services;
-                if (currentStatus == ProviderStatusEnum.ReadyToPublish) //Action required will be the status just before publishing provider for first time - which is updated through consent
-                {
-                    registerPublishLog.Description = "First published";
-                }
-                else // else status will be Published- Action Required 
-                {
-                    registerPublishLog.Description = serviceIds.Count +  " new services included";
-                }
-                 await regManagementRepository.SavePublishRegisterLog(registerPublishLog,  loggedInUserEmail);  
+              
+                 await regManagementRepository.SavePublishRegisterLog(registerPublishLog,  loggedInUserEmail, serviceIds);  
 
               
                 await emailSender.SendServicePublishedToDIP(providerProfile.PrimaryContactFullName, services, providerProfile.RegisteredName, providerProfile.PrimaryContactEmail);

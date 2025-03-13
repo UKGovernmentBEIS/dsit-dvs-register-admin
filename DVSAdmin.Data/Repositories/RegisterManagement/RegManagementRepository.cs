@@ -176,12 +176,23 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return genericResponse;
         }
 
-        public async Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail)
+        public async Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail, List<int> serviceIds)
         {
-            GenericResponse genericResponse = new GenericResponse();
+            GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();
             try
             {
+
+                var existingProviderEntry = await context.RegisterPublishLog.FirstOrDefaultAsync(e => e.ProviderProfileId == registerPublishLog.ProviderProfileId);
+                if (existingProviderEntry == null) {
+                    registerPublishLog.Description = "First published";
+                }
+                else
+                {          
+                    
+                    registerPublishLog.Description = serviceIds.Count + " new services included";
+                }                
+
                 await context.RegisterPublishLog.AddAsync(registerPublishLog);
                 await context.SaveChangesAsync();
                 transaction.Commit();

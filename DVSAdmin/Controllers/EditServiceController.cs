@@ -1,28 +1,24 @@
-﻿using CsvHelper.Configuration.Attributes;
-using DVSAdmin.BusinessLogic.Models;
+﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.Data.Entities;
 using DVSAdmin.Models;
 using DVSAdmin.Models.Edit;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
 
 namespace DVSAdmin.Controllers
 {
-    [Route("edit-service")]
-    [ValidCognitoToken]
-    public class EditServiceController : Controller
+    [Route("edit-service")]   
+    public class EditServiceController : BaseController
     {
         private readonly IEditService editService;
         private readonly IBucketService bucketService;
         private readonly IUserService userService;
 
-        private string userEmail => HttpContext.Session.Get<string>("Email") ?? string.Empty;
+  
         public EditServiceController(IEditService editService, IBucketService bucketService, IUserService userService)
         {
             this.editService = editService;
@@ -33,8 +29,8 @@ namespace DVSAdmin.Controllers
 
            
         #region Service Name
-            [HttpGet("name-of-service")]
-        public async Task<IActionResult> ServiceName(bool fromSummaryPage, int serviceId)
+        [HttpGet("name-of-service")]
+        public IActionResult ServiceName(bool fromSummaryPage)
         {          
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
 
@@ -59,7 +55,7 @@ namespace DVSAdmin.Controllers
 
         #region Company Address
         [HttpGet("company-address")]
-        public async Task<IActionResult> CompanyAddress(bool fromSummaryPage, int serviceId)
+        public IActionResult CompanyAddress(bool fromSummaryPage)
         {
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
 
@@ -83,7 +79,7 @@ namespace DVSAdmin.Controllers
 
         #region Role
         [HttpGet("provider-roles")]
-        public async Task<IActionResult> ProviderRoles(bool fromSummaryPage, int serviceId)
+        public async Task<IActionResult> ProviderRoles(bool fromSummaryPage)
         {
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
             RoleViewModel roleViewModel = new RoleViewModel();
@@ -103,7 +99,7 @@ namespace DVSAdmin.Controllers
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             List<RoleDto> availableRoles = await editService.GetRoles();
             roleViewModel.AvailableRoles = availableRoles;
-            roleViewModel.SelectedRoleIds = roleViewModel.SelectedRoleIds ?? new List<int>();
+            roleViewModel.SelectedRoleIds = roleViewModel.SelectedRoleIds ?? [];
             if (roleViewModel.SelectedRoleIds.Count > 0)
                 summaryViewModel.RoleViewModel.SelectedRoles = availableRoles.Where(c => roleViewModel.SelectedRoleIds.Contains(c.Id)).ToList();
 
@@ -123,7 +119,7 @@ namespace DVSAdmin.Controllers
         #region GPG44 - input
 
         [HttpGet("gpg44-input")]
-        public async Task<IActionResult> GPG44Input(bool fromSummaryPage, int serviceId)
+        public  IActionResult GPG44Input(bool fromSummaryPage)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             summaryViewModel.FromSummaryPage = fromSummaryPage;
@@ -133,7 +129,7 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("gpg44-input")]
-        public async Task<IActionResult> GPG44Input(ServiceSummaryViewModel serviceSummaryViewModel)
+        public  IActionResult GPG44Input(ServiceSummaryViewModel serviceSummaryViewModel)
         {            
             ServiceSummaryViewModel serviceSummary = GetServiceSummary();
             if (ModelState["HasGPG44"].Errors.Count == 0)
@@ -220,7 +216,7 @@ namespace DVSAdmin.Controllers
         #region GPG45 - input
 
         [HttpGet("gpg45-input")]
-        public async Task<IActionResult> GPG45Input(bool fromSummaryPage, int serviceId)
+        public IActionResult GPG45Input(bool fromSummaryPage)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             summaryViewModel.FromSummaryPage = fromSummaryPage;
@@ -230,7 +226,7 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("gpg45-input")]
-        public async Task<IActionResult> GPG45Input(ServiceSummaryViewModel serviceSummaryViewModel)
+        public IActionResult GPG45Input(ServiceSummaryViewModel serviceSummaryViewModel)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             if (ModelState["HasGPG45"].Errors.Count == 0)
@@ -306,7 +302,7 @@ namespace DVSAdmin.Controllers
         #region Supplemetary schemes - input
 
         [HttpGet("supplementary-schemes-input")]
-        public async Task<IActionResult> SupplementarySchemesInput(bool fromSummaryPage, int serviceId)
+        public IActionResult SupplementarySchemesInput(bool fromSummaryPage)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             summaryViewModel.FromSummaryPage = fromSummaryPage;
@@ -316,7 +312,7 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("supplementary-schemes-input")]
-        public async Task<IActionResult> SupplementarySchemesInput(ServiceSummaryViewModel viewModel)
+        public IActionResult SupplementarySchemesInput(ServiceSummaryViewModel viewModel)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             if (ModelState["HasSupplementarySchemes"].Errors.Count == 0)
@@ -367,7 +363,7 @@ namespace DVSAdmin.Controllers
             summaryViewModel.HasSupplementarySchemes = true;
             List<SupplementarySchemeDto> availableSupplementarySchemes = await editService.GetSupplementarySchemes();
             supplementarySchemeViewModel.AvailableSchemes = availableSupplementarySchemes;
-            supplementarySchemeViewModel.SelectedSupplementarySchemeIds = supplementarySchemeViewModel.SelectedSupplementarySchemeIds ?? new List<int>();
+            supplementarySchemeViewModel.SelectedSupplementarySchemeIds = supplementarySchemeViewModel.SelectedSupplementarySchemeIds ?? [];
             if (supplementarySchemeViewModel.SelectedSupplementarySchemeIds.Count > 0)
                 summaryViewModel.SupplementarySchemeViewModel.SelectedSupplementarySchemes = availableSupplementarySchemes.Where(c => supplementarySchemeViewModel.SelectedSupplementarySchemeIds.Contains(c.Id)).ToList();
             summaryViewModel.SupplementarySchemeViewModel.FromSummaryPage = false;
@@ -387,11 +383,13 @@ namespace DVSAdmin.Controllers
 
         #region Conformity Issue date
         [HttpGet("issue-date")]
-        public async Task<IActionResult> ConformityIssueDate(bool fromSummaryPage, int serviceId)
+        public IActionResult ConformityIssueDate(bool fromSummaryPage)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-            DateViewModel dateViewModel = new DateViewModel();
-            dateViewModel.PropertyName = "ConformityIssueDate";
+            DateViewModel dateViewModel = new()
+            {
+                PropertyName = "ConformityIssueDate"
+            };
             if (summaryViewModel.ConformityIssueDate != null)
             {
                 dateViewModel = GetDayMonthYear(summaryViewModel.ConformityIssueDate);
@@ -408,7 +406,7 @@ namespace DVSAdmin.Controllers
         /// <param name="viewModel"></param>
         /// <returns></returns>
         [HttpPost("issue-date")]
-        public async Task<IActionResult> ConformityIssueDate(DateViewModel dateViewModel)
+        public IActionResult ConformityIssueDate(DateViewModel dateViewModel)
         {
             dateViewModel.PropertyName = "ConformityIssueDate";
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
@@ -428,11 +426,13 @@ namespace DVSAdmin.Controllers
 
         #region Conformity Expiry date
         [HttpGet("expiry-date")]
-        public async Task<IActionResult> ConformityExpiryDate(bool fromSummaryPage, int serviceId)
+        public IActionResult ConformityExpiryDate(bool fromSummaryPage)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-            DateViewModel dateViewModel = new DateViewModel();
-            dateViewModel.PropertyName = "ConformityExpiryDate";
+            DateViewModel dateViewModel = new()
+            {
+                PropertyName = "ConformityExpiryDate"
+            };
             if (summaryViewModel.ConformityExpiryDate != null)
             {
                 dateViewModel = GetDayMonthYear(summaryViewModel.ConformityExpiryDate);
@@ -449,7 +449,7 @@ namespace DVSAdmin.Controllers
         /// <param name="viewModel"></param>
         /// <returns></returns>
         [HttpPost("expiry-date")]
-        public async Task<IActionResult> ConformityExpiryDate(DateViewModel dateViewModel, string action)
+        public  IActionResult ConformityExpiryDate(DateViewModel dateViewModel)
         {
             dateViewModel.PropertyName = "ConformityExpiryDate";
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
@@ -473,6 +473,7 @@ namespace DVSAdmin.Controllers
         [HttpGet("check-your-answers")]
         public IActionResult ServiceSummary()
         {
+            SetRefererURL();
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             return View(summaryViewModel);
         }
@@ -480,8 +481,7 @@ namespace DVSAdmin.Controllers
         [HttpGet("summary-of-changes")]
         public async Task<IActionResult> ServiceDifference()
         {
-            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
-
+            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);          
             ServiceChangesViewModel changesViewModel = new();
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
 
@@ -492,7 +492,7 @@ namespace DVSAdmin.Controllers
 
             (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = editService.GetServiceKeyValue(currentData, previousData);
 
-            changesViewModel.ChangedService = currentData;
+            TempData["changedService"] = JsonConvert.SerializeObject(currentData);
 
             return View(changesViewModel);
         }
@@ -502,12 +502,14 @@ namespace DVSAdmin.Controllers
         [HttpPost("summary-of-changes")]
         public async Task<IActionResult> SaveServiceDraft(ServiceChangesViewModel serviceChangesViewModel)
         {
-            List<string> dsitUserEmails = serviceChangesViewModel.DSITUserEmails.Split(',').ToList();
-            ServiceDraftDto? serviceDraft = serviceChangesViewModel.ChangedService;
-            if (serviceDraft != null)
-            {
+            var serializedData = TempData["changedService"] as string;
 
-                GenericResponse genericResponse = await editService.SaveServiceDraft(serviceDraft, userEmail, dsitUserEmails);
+            if (serializedData != null)
+            {
+                ServiceDraftDto? serviceDraft = JsonConvert.DeserializeObject<ServiceDraftDto>(serializedData);
+                List<string> dsitUserEmails = serviceChangesViewModel.DSITUserEmails.Split(',').ToList();
+                GenericResponse genericResponse = await editService.SaveServiceDraft(serviceDraft, UserEmail, dsitUserEmails);
+
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("InformationSubmitted", new { serviceId = serviceDraft.serviceId });
