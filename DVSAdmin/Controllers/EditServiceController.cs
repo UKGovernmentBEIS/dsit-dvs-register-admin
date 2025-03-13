@@ -1,27 +1,24 @@
-﻿using CsvHelper.Configuration.Attributes;
-using DVSAdmin.BusinessLogic.Models;
+﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.Data.Entities;
 using DVSAdmin.Models;
 using DVSAdmin.Models.Edit;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using Newtonsoft.Json;
 
 namespace DVSAdmin.Controllers
 {
-    [Route("edit-service")]
-    [ValidCognitoToken]
-    public class EditServiceController : Controller
+    [Route("edit-service")]   
+    public class EditServiceController : BaseController
     {
         private readonly IEditService editService;
         private readonly IBucketService bucketService;
         private readonly IUserService userService;
 
-        private string userEmail => HttpContext.Session.Get<string>("Email") ?? string.Empty;
+  
         public EditServiceController(IEditService editService, IBucketService bucketService, IUserService userService)
         {
             this.editService = editService;
@@ -32,14 +29,9 @@ namespace DVSAdmin.Controllers
 
            
         #region Service Name
-            [HttpGet("name-of-service")]
-        public async Task<IActionResult> ServiceName(bool fromSummaryPage, int serviceId)
-        {
-            if (!fromSummaryPage)
-            {
-                ServiceDto serviceDto = await editService.GetService(serviceId);
-                SetServiceDataToSession(serviceDto);
-            }
+        [HttpGet("name-of-service")]
+        public IActionResult ServiceName(bool fromSummaryPage)
+        {          
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
 
             serviceSummaryViewModel.FromSummaryPage = fromSummaryPage;
@@ -63,13 +55,8 @@ namespace DVSAdmin.Controllers
 
         #region Company Address
         [HttpGet("company-address")]
-        public async Task<IActionResult> CompanyAddress(bool fromSummaryPage, int serviceId)
+        public IActionResult CompanyAddress(bool fromSummaryPage)
         {
-            if (!fromSummaryPage)
-            {
-                ServiceDto serviceDto = await editService.GetService(serviceId);
-                SetServiceDataToSession(serviceDto);
-            }
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
 
             serviceSummaryViewModel.FromSummaryPage = fromSummaryPage;
@@ -92,13 +79,8 @@ namespace DVSAdmin.Controllers
 
         #region Role
         [HttpGet("provider-roles")]
-        public async Task<IActionResult> ProviderRoles(bool fromSummaryPage, int serviceId)
+        public async Task<IActionResult> ProviderRoles(bool fromSummaryPage)
         {
-            if (!fromSummaryPage)
-            {
-                ServiceDto serviceDto = await editService.GetService(serviceId);
-                SetServiceDataToSession(serviceDto);
-            }
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
             RoleViewModel roleViewModel = new RoleViewModel();
             roleViewModel.SelectedRoleIds = serviceSummaryViewModel?.RoleViewModel?.SelectedRoles?.Select(c => c.Id).ToList();
@@ -117,7 +99,7 @@ namespace DVSAdmin.Controllers
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             List<RoleDto> availableRoles = await editService.GetRoles();
             roleViewModel.AvailableRoles = availableRoles;
-            roleViewModel.SelectedRoleIds = roleViewModel.SelectedRoleIds ?? new List<int>();
+            roleViewModel.SelectedRoleIds = roleViewModel.SelectedRoleIds ?? [];
             if (roleViewModel.SelectedRoleIds.Count > 0)
                 summaryViewModel.RoleViewModel.SelectedRoles = availableRoles.Where(c => roleViewModel.SelectedRoleIds.Contains(c.Id)).ToList();
 
@@ -137,13 +119,8 @@ namespace DVSAdmin.Controllers
         #region GPG44 - input
 
         [HttpGet("gpg44-input")]
-        public async Task<IActionResult> GPG44Input(bool fromSummaryPage, int serviceId)
+        public  IActionResult GPG44Input(bool fromSummaryPage)
         {
-            if (!fromSummaryPage)
-            {
-                ServiceDto serviceDto = await editService.GetService(serviceId);
-                SetServiceDataToSession(serviceDto);
-            }
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             summaryViewModel.FromSummaryPage = fromSummaryPage;
             HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
@@ -152,7 +129,7 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("gpg44-input")]
-        public async Task<IActionResult> GPG44Input(ServiceSummaryViewModel serviceSummaryViewModel)
+        public  IActionResult GPG44Input(ServiceSummaryViewModel serviceSummaryViewModel)
         {            
             ServiceSummaryViewModel serviceSummary = GetServiceSummary();
             if (ModelState["HasGPG44"].Errors.Count == 0)
@@ -239,13 +216,8 @@ namespace DVSAdmin.Controllers
         #region GPG45 - input
 
         [HttpGet("gpg45-input")]
-        public async Task<IActionResult> GPG45Input(bool fromSummaryPage, int serviceId)
+        public IActionResult GPG45Input(bool fromSummaryPage)
         {
-            if (!fromSummaryPage)
-            {
-                ServiceDto serviceDto = await editService.GetService(serviceId);
-                SetServiceDataToSession(serviceDto);
-            }
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             summaryViewModel.FromSummaryPage = fromSummaryPage;
             HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
@@ -254,7 +226,7 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("gpg45-input")]
-        public async Task<IActionResult> GPG45Input(ServiceSummaryViewModel serviceSummaryViewModel)
+        public IActionResult GPG45Input(ServiceSummaryViewModel serviceSummaryViewModel)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             if (ModelState["HasGPG45"].Errors.Count == 0)
@@ -330,13 +302,8 @@ namespace DVSAdmin.Controllers
         #region Supplemetary schemes - input
 
         [HttpGet("supplementary-schemes-input")]
-        public async Task<IActionResult> SupplementarySchemesInput(bool fromSummaryPage, int serviceId)
+        public IActionResult SupplementarySchemesInput(bool fromSummaryPage)
         {
-            if (!fromSummaryPage)
-            {
-                ServiceDto serviceDto = await editService.GetService(serviceId);
-                SetServiceDataToSession(serviceDto);
-            }
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             summaryViewModel.FromSummaryPage = fromSummaryPage;
             HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
@@ -345,7 +312,7 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("supplementary-schemes-input")]
-        public async Task<IActionResult> SupplementarySchemesInput(ServiceSummaryViewModel viewModel)
+        public IActionResult SupplementarySchemesInput(ServiceSummaryViewModel viewModel)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             if (ModelState["HasSupplementarySchemes"].Errors.Count == 0)
@@ -396,7 +363,7 @@ namespace DVSAdmin.Controllers
             summaryViewModel.HasSupplementarySchemes = true;
             List<SupplementarySchemeDto> availableSupplementarySchemes = await editService.GetSupplementarySchemes();
             supplementarySchemeViewModel.AvailableSchemes = availableSupplementarySchemes;
-            supplementarySchemeViewModel.SelectedSupplementarySchemeIds = supplementarySchemeViewModel.SelectedSupplementarySchemeIds ?? new List<int>();
+            supplementarySchemeViewModel.SelectedSupplementarySchemeIds = supplementarySchemeViewModel.SelectedSupplementarySchemeIds ?? [];
             if (supplementarySchemeViewModel.SelectedSupplementarySchemeIds.Count > 0)
                 summaryViewModel.SupplementarySchemeViewModel.SelectedSupplementarySchemes = availableSupplementarySchemes.Where(c => supplementarySchemeViewModel.SelectedSupplementarySchemeIds.Contains(c.Id)).ToList();
             summaryViewModel.SupplementarySchemeViewModel.FromSummaryPage = false;
@@ -416,16 +383,13 @@ namespace DVSAdmin.Controllers
 
         #region Conformity Issue date
         [HttpGet("issue-date")]
-        public async Task<IActionResult> ConformityIssueDate(bool fromSummaryPage, int serviceId)
+        public IActionResult ConformityIssueDate(bool fromSummaryPage)
         {
-            if (!fromSummaryPage)
-            {
-                ServiceDto serviceDto = await editService.GetService(serviceId);
-                SetServiceDataToSession(serviceDto);
-            }
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-            DateViewModel dateViewModel = new DateViewModel();
-            dateViewModel.PropertyName = "ConformityIssueDate";
+            DateViewModel dateViewModel = new()
+            {
+                PropertyName = "ConformityIssueDate"
+            };
             if (summaryViewModel.ConformityIssueDate != null)
             {
                 dateViewModel = GetDayMonthYear(summaryViewModel.ConformityIssueDate);
@@ -442,7 +406,7 @@ namespace DVSAdmin.Controllers
         /// <param name="viewModel"></param>
         /// <returns></returns>
         [HttpPost("issue-date")]
-        public async Task<IActionResult> ConformityIssueDate(DateViewModel dateViewModel)
+        public IActionResult ConformityIssueDate(DateViewModel dateViewModel)
         {
             dateViewModel.PropertyName = "ConformityIssueDate";
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
@@ -462,16 +426,13 @@ namespace DVSAdmin.Controllers
 
         #region Conformity Expiry date
         [HttpGet("expiry-date")]
-        public async Task<IActionResult> ConformityExpiryDate(bool fromSummaryPage, int serviceId)
+        public IActionResult ConformityExpiryDate(bool fromSummaryPage)
         {
-            if (!fromSummaryPage)
-            {
-                ServiceDto serviceDto = await editService.GetService(serviceId);
-                SetServiceDataToSession(serviceDto);
-            }
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-            DateViewModel dateViewModel = new DateViewModel();
-            dateViewModel.PropertyName = "ConformityExpiryDate";
+            DateViewModel dateViewModel = new()
+            {
+                PropertyName = "ConformityExpiryDate"
+            };
             if (summaryViewModel.ConformityExpiryDate != null)
             {
                 dateViewModel = GetDayMonthYear(summaryViewModel.ConformityExpiryDate);
@@ -488,7 +449,7 @@ namespace DVSAdmin.Controllers
         /// <param name="viewModel"></param>
         /// <returns></returns>
         [HttpPost("expiry-date")]
-        public async Task<IActionResult> ConformityExpiryDate(DateViewModel dateViewModel, string action)
+        public  IActionResult ConformityExpiryDate(DateViewModel dateViewModel)
         {
             dateViewModel.PropertyName = "ConformityExpiryDate";
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
@@ -512,6 +473,7 @@ namespace DVSAdmin.Controllers
         [HttpGet("check-your-answers")]
         public IActionResult ServiceSummary()
         {
+            SetRefererURL();
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             return View(summaryViewModel);
         }
@@ -519,20 +481,18 @@ namespace DVSAdmin.Controllers
         [HttpGet("summary-of-changes")]
         public async Task<IActionResult> ServiceDifference()
         {
-            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(userEmail);
-
+            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);          
             ServiceChangesViewModel changesViewModel = new();
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
 
-            ServiceDto serviceDto = await editService.GetService(summaryViewModel.ServiceId);
+            ServiceDto previousData = await editService.GetService(summaryViewModel.ServiceId);
             changesViewModel.DSITUserEmails = string.Join(",", userEmails);
 
-            ServiceDraftDto serviceDraftDto = CreateDraft(serviceDto, summaryViewModel);
+            ServiceDraftDto currentData = MapToDraft(previousData, summaryViewModel);
 
-            HttpContext?.Session.Set("ChangedServiceData", serviceDraftDto);
+            (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = editService.GetServiceKeyValue(currentData, previousData);
 
-            changesViewModel.CurrentService = serviceDto;
-            changesViewModel.ChangedService = serviceDraftDto;
+            TempData["changedService"] = JsonConvert.SerializeObject(currentData);
 
             return View(changesViewModel);
         }
@@ -542,12 +502,14 @@ namespace DVSAdmin.Controllers
         [HttpPost("summary-of-changes")]
         public async Task<IActionResult> SaveServiceDraft(ServiceChangesViewModel serviceChangesViewModel)
         {
-            List<string> dsitUserEmails = serviceChangesViewModel.DSITUserEmails.Split(',').ToList();
-            ServiceDraftDto serviceDraft = HttpContext.Session.Get<ServiceDraftDto>("ChangedServiceData");
-            if (serviceDraft != null)
-            {
+            var serializedData = TempData["changedService"] as string;
 
-                GenericResponse genericResponse = await editService.SaveServiceDraft(serviceDraft, userEmail, dsitUserEmails);
+            if (serializedData != null)
+            {
+                ServiceDraftDto? serviceDraft = JsonConvert.DeserializeObject<ServiceDraftDto>(serializedData);
+                List<string> dsitUserEmails = serviceChangesViewModel.DSITUserEmails.Split(',').ToList();
+                GenericResponse genericResponse = await editService.SaveServiceDraft(serviceDraft, UserEmail, dsitUserEmails);
+
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("InformationSubmitted", new { serviceId = serviceDraft.serviceId });
@@ -561,8 +523,6 @@ namespace DVSAdmin.Controllers
             {
                 return RedirectToAction("HandleException", "Error");
             }
-          
-
         }
 
 
@@ -593,91 +553,9 @@ namespace DVSAdmin.Controllers
                 SupplementarySchemeViewModel = new SupplementarySchemeViewModel { SelectedSupplementarySchemes = new List<SupplementarySchemeDto> { } }
             };
             return model;
-        }
+        }        
 
-
-        private void SetServiceDataToSession(ServiceDto serviceDto)
-        {
-            RoleViewModel roleViewModel = new()
-            {
-                SelectedRoles = [],
-            };
-            QualityLevelViewModel qualityLevelViewModel = new()
-            {
-                SelectedLevelOfProtections = [],
-                SelectedQualityofAuthenticators = []
-            };
-
-            IdentityProfileViewModel identityProfileViewModel = new()
-            {
-                SelectedIdentityProfiles = []
-            };
-
-            SupplementarySchemeViewModel supplementarySchemeViewModel = new()
-            {
-                SelectedSupplementarySchemes = []
-            };
-
-            if (serviceDto.ServiceRoleMapping != null && serviceDto.ServiceRoleMapping.Count > 0)
-            {
-                roleViewModel.SelectedRoles = serviceDto.ServiceRoleMapping.Select(mapping => mapping.Role).ToList();
-            }
-
-            if (serviceDto.ServiceQualityLevelMapping != null && serviceDto.ServiceQualityLevelMapping.Count > 0)
-            {
-                var protectionLevels = serviceDto.ServiceQualityLevelMapping
-                    .Where(item => item.QualityLevel.QualityType == QualityTypeEnum.Protection)
-                    .ToList();
-
-                foreach (var item in protectionLevels)
-                {
-                    qualityLevelViewModel.SelectedLevelOfProtections.Add(item.QualityLevel);
-                }
-
-                var authenticatorLevels = serviceDto.ServiceQualityLevelMapping
-                    .Where(item => item.QualityLevel.QualityType == QualityTypeEnum.Authentication)
-                    .ToList();
-
-                foreach (var item in authenticatorLevels)
-                {
-                    qualityLevelViewModel.SelectedQualityofAuthenticators.Add(item.QualityLevel);
-                }
-            }
-
-            if (serviceDto.ServiceIdentityProfileMapping != null && serviceDto.ServiceIdentityProfileMapping.Count > 0)
-            {
-                identityProfileViewModel.SelectedIdentityProfiles = serviceDto.ServiceIdentityProfileMapping.Select(mapping => mapping.IdentityProfile).ToList();
-            }
-            if (serviceDto.ServiceSupSchemeMapping != null && serviceDto.ServiceSupSchemeMapping.Count > 0)
-            {
-                supplementarySchemeViewModel.SelectedSupplementarySchemes = serviceDto.ServiceSupSchemeMapping.Select(mapping => mapping.SupplementaryScheme).ToList();
-            }
-
-
-            ServiceSummaryViewModel serviceSummary = new()
-            {
-                ServiceName = serviceDto.ServiceName,
-                ServiceURL = serviceDto.WebSiteAddress,
-                CompanyAddress = serviceDto.CompanyAddress,
-                RoleViewModel = roleViewModel,
-                IdentityProfileViewModel = identityProfileViewModel,
-                QualityLevelViewModel = qualityLevelViewModel,
-                HasSupplementarySchemes = serviceDto.HasSupplementarySchemes,
-                HasGPG44 = serviceDto.HasGPG44,
-                HasGPG45 = serviceDto.HasGPG45,
-                FileName = serviceDto.FileName,
-                SupplementarySchemeViewModel = supplementarySchemeViewModel,               
-                ConformityIssueDate = serviceDto.ConformityIssueDate == DateTime.MinValue ? null : serviceDto.ConformityIssueDate,
-                ConformityExpiryDate = serviceDto.ConformityExpiryDate == DateTime.MinValue ? null : serviceDto.ConformityExpiryDate,
-                ServiceId = serviceDto.Id,
-                Provider = serviceDto.Provider,
-                CabUserId = serviceDto.CabUserId,
-                ServiceKey = serviceDto.ServiceKey
-            };
-            HttpContext?.Session.Set("ServiceSummary", serviceSummary);
-        }
-
-        private ServiceDraftDto CreateDraft(ServiceDto existingService, ServiceSummaryViewModel updatedService)
+        private ServiceDraftDto MapToDraft(ServiceDto existingService, ServiceSummaryViewModel updatedService)
         {
             var existingRoleIds = existingService.ServiceRoleMapping.Select(m => m.RoleId).ToList();
             var updatedRoleIds = updatedService.RoleViewModel.SelectedRoles.Select(m => m.Id).ToList(); ;
@@ -707,7 +585,7 @@ namespace DVSAdmin.Controllers
                 ProviderProfileId = existingService.ProviderProfileId
             };
 
-            
+
 
             if (existingService.ServiceName != updatedService.ServiceName)
             {
@@ -748,15 +626,15 @@ namespace DVSAdmin.Controllers
             {
                 foreach (var item in updatedService.RoleViewModel.SelectedRoles)
                 {
-                    draft.ServiceRoleMappingDraft.Add(new ServiceRoleMappingDraftDto { RoleId = item.Id , Role = item});
-                    
+                    draft.ServiceRoleMappingDraft.Add(new ServiceRoleMappingDraftDto { RoleId = item.Id, Role = item });
+
                 }
             }
             if (!existingProtectionIds.OrderBy(id => id).SequenceEqual(updatedProtectionIds.OrderBy(id => id)))
             {
                 foreach (var item in updatedService.QualityLevelViewModel.SelectedLevelOfProtections)
                 {
-                    draft.ServiceQualityLevelMappingDraft.Add(new ServiceQualityLevelMappingDraftDto { QualityLevelId = item.Id, QualityLevel = item});
+                    draft.ServiceQualityLevelMappingDraft.Add(new ServiceQualityLevelMappingDraftDto { QualityLevelId = item.Id, QualityLevel = item });
                 }
             }
 
@@ -772,7 +650,7 @@ namespace DVSAdmin.Controllers
             {
                 foreach (var item in updatedService.IdentityProfileViewModel.SelectedIdentityProfiles)
                 {
-                    draft.ServiceIdentityProfileMappingDraft.Add(new ServiceIdentityProfileMappingDraftDto {IdentityProfileId = item.Id,  IdentityProfile = item}); 
+                    draft.ServiceIdentityProfileMappingDraft.Add(new ServiceIdentityProfileMappingDraftDto { IdentityProfileId = item.Id, IdentityProfile = item });
                 }
             }
 
@@ -780,12 +658,13 @@ namespace DVSAdmin.Controllers
             {
                 foreach (var item in updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes)
                 {
-                    draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto {  SupplementarySchemeId = item.Id, SupplementaryScheme = item});
+                    draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto { SupplementarySchemeId = item.Id, SupplementaryScheme = item });
                 }
             }
 
             return (draft);
         }
+        
 
         private DateViewModel GetDayMonthYear(DateTime? dateTime)
         {

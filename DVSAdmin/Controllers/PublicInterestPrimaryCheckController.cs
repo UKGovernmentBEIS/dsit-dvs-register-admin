@@ -10,14 +10,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
-   [ValidCognitoToken]
+  
     [Route("public-interest-primary-check")]
-    public class PublicInterestPrimaryCheckController : Controller
+    public class PublicInterestPrimaryCheckController : BaseController
     {
 
         private readonly IPublicInterestCheckService publicInterestCheckService;
         private readonly IUserService userService;
-        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
+      
         public PublicInterestPrimaryCheckController(IPublicInterestCheckService publicInterestCheckService, IUserService userService)
         {
             this.publicInterestCheckService = publicInterestCheckService;
@@ -42,9 +42,9 @@ namespace DVSAdmin.Controllers
             else
             {
               
-                if (!string.IsNullOrEmpty(userEmail))
+                if (!string.IsNullOrEmpty(UserEmail))
                 {
-                    UserDto userDto = await userService.GetUser(userEmail);
+                    UserDto userDto = await userService.GetUser(UserEmail);
 
                     if (userDto.Id>0)
                     {
@@ -96,7 +96,7 @@ namespace DVSAdmin.Controllers
             {
                 if (ModelState["SubmitValidation"]?.Errors == null)
                 {
-                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, userEmail);
+                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
                     if (genericResponse.Success)
                     {
                         return RedirectToAction("PrimaryCheckReview", new { serviceId = publicInterestPrimaryCheckViewModel.Service.Id });
@@ -176,7 +176,7 @@ namespace DVSAdmin.Controllers
                     {
                         PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
                         publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckPassed;
-                        GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, userEmail);
+                        GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
                         if (genericResponse.Success)
                         {
                             return RedirectToAction("PrimaryCheckPassedConfirmation", "PublicInterestPrimaryCheck");
@@ -253,7 +253,7 @@ namespace DVSAdmin.Controllers
                 {
                     PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
                     publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckFailed;
-                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, userEmail);
+                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
                     if (genericResponse.Success)
                     {
                         return RedirectToAction("PrimaryCheckFailedConfirmation", "PublicInterestPrimaryCheck");

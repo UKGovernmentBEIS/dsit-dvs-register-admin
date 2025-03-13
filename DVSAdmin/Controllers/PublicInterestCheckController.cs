@@ -2,23 +2,20 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
-using DVSAdmin.Data.Entities;
 using DVSAdmin.Models;
-using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
 
     [Route("public-interest-check")]
-    [ValidCognitoToken]
-    public class PublicInterestCheckController : Controller
+    
+    public class PublicInterestCheckController : BaseController
     {
         private readonly ILogger<PublicInterestCheckController> logger;
         private readonly IPublicInterestCheckService publicInterestCheckService;
         private readonly IUserService userService;
-        private readonly IConfiguration configuration;
-        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;
+        private readonly IConfiguration configuration;    
 
         public PublicInterestCheckController(ILogger<PublicInterestCheckController> logger, IPublicInterestCheckService publicInterestCheckService,
         IUserService userService, IConfiguration configuration)
@@ -34,9 +31,9 @@ namespace DVSAdmin.Controllers
         {
            
 
-            if (!string.IsNullOrEmpty(userEmail))
+            if (!string.IsNullOrEmpty(UserEmail))
             {
-                UserDto userDto = await userService.GetUser(userEmail);
+                UserDto userDto = await userService.GetUser(UserEmail);
                 PublicInterestCheckViewModel publicInterestCheckViewModel = new PublicInterestCheckViewModel();
 
                 var publicinterestchecks = await publicInterestCheckService.GetPICheckList();

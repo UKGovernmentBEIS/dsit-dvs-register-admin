@@ -2,7 +2,7 @@
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.Data.Entities;
+using DVSAdmin.Models;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -10,31 +10,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
-    [ValidCognitoToken]
+
     [Route("register-management")]
     //Methods/Actions/Views for publishing services
     //Session is used only in PublishService method to keep published service ids
     //as there are no user input fields in other methods
     //Any change in the controller routes to be verified
     //with button or ahref actions in .cshtml
-    public class RegisterManagementController : Controller
+    public class RegisterManagementController : BaseController
     {       
-        private readonly IRegManagementService regManagementService;
-        private readonly ICertificateReviewService certificateReviewService;      
+        private readonly IRegManagementService regManagementService;  
         private readonly IBucketService bucketService;
         private readonly ICsvDownloadService csvDownloadService;
         private readonly ILogger<RegisterManagementController> logger;
-        private string userEmail => HttpContext.Session.Get<string>("Email")??string.Empty;       
+              
         public RegisterManagementController(
-            IRegManagementService regManagementService,
-            ICertificateReviewService certificateReviewService,
+            IRegManagementService regManagementService,            
             IBucketService bucketService,
             ICsvDownloadService csvDownloadService,
             ILogger<RegisterManagementController> logger)
         {
            
-            this.regManagementService = regManagementService;
-            this.certificateReviewService = certificateReviewService;           
+            this.regManagementService = regManagementService;               
             this.bucketService = bucketService;
             this.csvDownloadService = csvDownloadService;
             this.logger = logger;
@@ -62,10 +59,12 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ServiceDetails(int serviceKey)
         {
             ServiceVersionViewModel serviceVersions = new();
-            var serviceList = await certificateReviewService.GetServiceVersionList(serviceKey);
-            ServiceDto currentServiceVersion = serviceList?.FirstOrDefault(x => x.IsCurrent == true) ?? new ServiceDto();
+            var serviceList = await regManagementService.GetServiceVersionList(serviceKey);
+            ServiceDto currentServiceVersion = serviceList.OrderByDescending(x => x.ModifiedTime).FirstOrDefault() ?? new ServiceDto(); //Latest submission has latest date          
+            SetServiceDataToSession(currentServiceVersion);
+            
+            serviceVersions.ServiceHistoryVersions = serviceList.Where(x => x != currentServiceVersion).ToList() ?? new List<ServiceDto>();
             serviceVersions.CurrentServiceVersion = currentServiceVersion;
-            serviceVersions.ServiceHistoryVersions = serviceList?.Where(x => x.IsCurrent != true).OrderByDescending(x => x.PublishedTime).ToList() ?? new();
 
             return View(serviceVersions);
         }
@@ -107,7 +106,7 @@ namespace DVSAdmin.Controllers
                 List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
                 if (serviceids != null && serviceids.Any())
                 {
-                    GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,userEmail);
+                    GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,UserEmail);
                     if (genericResponse.Success)
                     {
                         return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Id });
@@ -195,5 +194,87 @@ namespace DVSAdmin.Controllers
             }
         }
 
+        #region private methods
+        private void SetServiceDataToSession(ServiceDto serviceDto)
+        {
+            RoleViewModel roleViewModel = new()
+            {
+                SelectedRoles = [],
+            };
+            QualityLevelViewModel qualityLevelViewModel = new()
+            {
+                SelectedLevelOfProtections = [],
+                SelectedQualityofAuthenticators = []
+            };
+
+            IdentityProfileViewModel identityProfileViewModel = new()
+            {
+                SelectedIdentityProfiles = []
+            };
+
+            SupplementarySchemeViewModel supplementarySchemeViewModel = new()
+            {
+                SelectedSupplementarySchemes = []
+            };
+
+            if (serviceDto.ServiceRoleMapping != null && serviceDto.ServiceRoleMapping.Count > 0)
+            {
+                roleViewModel.SelectedRoles = serviceDto.ServiceRoleMapping.Select(mapping => mapping.Role).ToList();
+            }
+
+            if (serviceDto.ServiceQualityLevelMapping != null && serviceDto.ServiceQualityLevelMapping.Count > 0)
+            {
+                var protectionLevels = serviceDto.ServiceQualityLevelMapping
+                    .Where(item => item.QualityLevel.QualityType == QualityTypeEnum.Protection)
+                    .ToList();
+
+                foreach (var item in protectionLevels)
+                {
+                    qualityLevelViewModel.SelectedLevelOfProtections.Add(item.QualityLevel);
+                }
+
+                var authenticatorLevels = serviceDto.ServiceQualityLevelMapping
+                    .Where(item => item.QualityLevel.QualityType == QualityTypeEnum.Authentication)
+                    .ToList();
+
+                foreach (var item in authenticatorLevels)
+                {
+                    qualityLevelViewModel.SelectedQualityofAuthenticators.Add(item.QualityLevel);
+                }
+            }
+
+            if (serviceDto.ServiceIdentityProfileMapping != null && serviceDto.ServiceIdentityProfileMapping.Count > 0)
+            {
+                identityProfileViewModel.SelectedIdentityProfiles = serviceDto.ServiceIdentityProfileMapping.Select(mapping => mapping.IdentityProfile).ToList();
+            }
+            if (serviceDto.ServiceSupSchemeMapping != null && serviceDto.ServiceSupSchemeMapping.Count > 0)
+            {
+                supplementarySchemeViewModel.SelectedSupplementarySchemes = serviceDto.ServiceSupSchemeMapping.Select(mapping => mapping.SupplementaryScheme).ToList();
+            }
+
+
+            ServiceSummaryViewModel serviceSummary = new()
+            {
+                ServiceName = serviceDto.ServiceName,
+                ServiceURL = serviceDto.WebSiteAddress,
+                CompanyAddress = serviceDto.CompanyAddress,
+                RoleViewModel = roleViewModel,
+                IdentityProfileViewModel = identityProfileViewModel,
+                QualityLevelViewModel = qualityLevelViewModel,
+                HasSupplementarySchemes = serviceDto.HasSupplementarySchemes,
+                HasGPG44 = serviceDto.HasGPG44,
+                HasGPG45 = serviceDto.HasGPG45,
+                FileName = serviceDto.FileName,
+                SupplementarySchemeViewModel = supplementarySchemeViewModel,
+                ConformityIssueDate = serviceDto.ConformityIssueDate == DateTime.MinValue ? null : serviceDto.ConformityIssueDate,
+                ConformityExpiryDate = serviceDto.ConformityExpiryDate == DateTime.MinValue ? null : serviceDto.ConformityExpiryDate,
+                ServiceId = serviceDto.Id,
+                Provider = serviceDto.Provider,
+                CabUserId = serviceDto.CabUserId,
+                ServiceKey = serviceDto.ServiceKey
+            };
+            HttpContext?.Session.Set("ServiceSummary", serviceSummary);
+        }
+        #endregion
     }
 }

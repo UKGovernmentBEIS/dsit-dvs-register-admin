@@ -27,7 +27,7 @@
                 @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
                 @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ProviderContactView.cshtml", Model)
 
-                @foreach (var item in Model.Services.Where(s=> s.IsCurrent))
+                @foreach (var item in Model.Services)
                 {
                     <div class="govuk-summary-card">
                         <div class="govuk-summary-card__title-wrapper">
@@ -97,7 +97,9 @@
                         </a>
                     }
 
-                    @if (Model.Services.Any(service => service.ServiceStatus == ServiceStatusEnum.Published))
+                    @if (Model.Services.Any(service =>
+                    service.ServiceStatus == ServiceStatusEnum.Published ||
+                    service.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation))
                     {
                         <a href="/remove/provider/reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
                             Remove provider from register

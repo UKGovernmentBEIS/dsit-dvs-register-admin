@@ -35,7 +35,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
 
         public async Task<Service> GetServiceDetails(int serviceId)
         {
-            return await context.Service.Include(s=>s.Provider).Include(s=>s.CabUser).Where(s => s.Id == serviceId).FirstOrDefaultAsync() ?? new Service(); ;
+            return await context.Service.Include(s=>s.Provider).Include(s=>s.CabUser).ThenInclude(s=>s.Cab). Where(s => s.Id == serviceId).FirstOrDefaultAsync() ?? new Service(); ;
 
         }
         public async Task<GenericResponse> UpdateProviderStatus(int providerProfileId, ProviderStatusEnum providerStatus, string loggedInUserEmail, EventTypeEnum eventType, TeamEnum team = TeamEnum.DSIT)
@@ -118,7 +118,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                     existingProvider.ProviderStatus = ProviderStatusEnum.AwaitingRemovalConfirmation;
 
                     var existingServices = await context.Service.Where(e => serviceIds.Contains(e.Id)
-                    && e.ProviderProfileId == providerProfileId && e.ServiceStatus == ServiceStatusEnum.Published).ToListAsync();
+                    && e.ProviderProfileId == providerProfileId && (e.ServiceStatus == ServiceStatusEnum.Published || e.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)).ToListAsync();
                     foreach (var existingService in existingServices)
                     {
                         existingService.ServiceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;

@@ -43,14 +43,7 @@ namespace DVSAdmin.BusinessLogic.Services
         { 
             var provider = await removeProviderRepository.GetProviderDetails(providerProfileId);
             ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);
-
-            providerDto.Services = providerDto.Services.Where(s =>
-                s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
-                s.ServiceStatus == ServiceStatusEnum.Published ||
-                s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
-                s.ServiceStatus == ServiceStatusEnum.Removed ||
-                s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation).ToList();
-
+            providerDto.Services = ServiceHelper.FilterByServiceStatusAndLatestModifiedDate(providerDto.Services);
             return providerDto;
         }
 

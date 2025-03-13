@@ -3,10 +3,14 @@
     ViewData["Title"] = "Company address details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
-
+@{
+    string refererUrl = Convert.ToString(ViewBag.RefererUrl);
+}
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "#", "EditService", null, new { @class = "govuk-back-link" })
+    <a href="@refererUrl" class="govuk-back-link">
+        Back
+    </a>
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
