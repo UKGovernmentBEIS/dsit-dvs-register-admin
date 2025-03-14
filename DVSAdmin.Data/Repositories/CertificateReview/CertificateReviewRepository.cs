@@ -256,6 +256,40 @@ namespace DVSAdmin.Data.Repositories
             return genericResponse;
         }
 
+        //// Part 2 of 2: Information match Send back to CAB flow
+        public async Task<GenericResponse> UpdateCertificateSentBack(CertificateReview cetificateReview, string loggedInUserEmail)
+        {
+            GenericResponse genericResponse = new();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId && e.ProviProviderProfileId == cetificateReview.ProviProviderProfileId);
+
+                if (existingEntity != null)
+                {
+                    existingEntity.Comments = cetificateReview.Comments;
+                    existingEntity.InformationMatched = cetificateReview.InformationMatched;
+                    existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
+                    existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
+                    existingEntity.Amendments = cetificateReview.Amendments;
+                    existingEntity.ModifiedDate = DateTime.UtcNow;
+                    genericResponse.InstanceId = existingEntity.Id;
+                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
+                    transaction.Commit();
+                    genericResponse.Success = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
 
         //Restore from archive tab
         public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail)

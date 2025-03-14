@@ -127,7 +127,23 @@ namespace DVSAdmin.BusinessLogic.Services
 
             return genericResponse;
         }
-       
+
+        public async Task<GenericResponse> UpdateCertificateSentBack(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail)
+        {
+            CertificateReview certificateReview = new CertificateReview();
+            automapper.Map(cetificateReviewDto, certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateSentBack(certificateReview, loggedInUserEmail);
+
+
+            if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Rejected)
+            {
+                // send emails about being sent back to cab
+
+            }
+
+            return genericResponse;
+        }
+
 
         public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail)
         {

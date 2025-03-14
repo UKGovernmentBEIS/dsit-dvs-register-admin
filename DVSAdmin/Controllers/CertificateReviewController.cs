@@ -5,8 +5,10 @@ using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
+using DVSAdmin.Models.CertificateReview;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 
 namespace DVSAdmin.Controllers
@@ -181,6 +183,9 @@ namespace DVSAdmin.Controllers
 
                     case "approve":
                         return HandleApproveReview(certificateReviewViewModel, certificateReviewDto);
+                    
+                    case "send-back":
+                        return HandleSendBackToCab(certificateReviewViewModel, certificateReviewDto);
 
                     default:
                         return RedirectToAction(Constants.ErrorPath);
@@ -444,6 +449,90 @@ namespace DVSAdmin.Controllers
 
         #endregion
 
+        #region Send Back Flow
+
+        [HttpGet("send-back")]
+        public IActionResult SendBackToCab()
+        {
+            CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData") ?? new CertificateValidationViewModel();
+            CertificateReviewViewModel certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData") ?? new CertificateReviewViewModel();
+            SendBackViewModel? sendBackViewModel = HttpContext?.Session.Get<SendBackViewModel>("SendBackViewModel") ?? new SendBackViewModel();
+
+            if (sendBackViewModel.Reason != null && sendBackViewModel.CertificateValidation != null)
+            {
+                return View(sendBackViewModel);
+            }
+            else
+            {
+                sendBackViewModel = new SendBackViewModel
+                {
+                    Reason = string.Empty,
+                    CommentFromReview = certificateReviewViewModel.Comments,
+                    CertificateValidation = certificateValidationViewModel,
+                    CertificateReview = certificateReviewViewModel
+                };
+
+                HttpContext?.Session.Set("SendBackViewModel", sendBackViewModel);
+
+                return View(sendBackViewModel);
+            }
+        }
+
+        [HttpPost("proceed-return")]
+        public async Task<ActionResult> ProceedReturn(string action, SendBackViewModel model)
+        {
+            if (action == "return")
+            {
+                CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData") ?? new CertificateValidationViewModel();
+                CertificateReviewViewModel certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData") ?? new CertificateReviewViewModel();
+
+                model.CertificateValidation = certificateValidationViewModel;
+                model.CertificateReview = certificateReviewViewModel;
+                model.CommentFromReview = certificateReviewViewModel.Comments;
+
+                if (ModelState.IsValid)
+                {           
+                    CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
+                    certificateReviewDto.Amendments = model.Reason;
+                    certificateReviewDto.CertificateReviewStatus = CertificateReviewEnum.ReturnToCab;
+
+
+                    GenericResponse genericResponse = await certificateReviewService.UpdateCertificateSentBack(certificateReviewDto, certificateValidationViewModel.Service, UserEmail);
+                    if (genericResponse.Success)
+                    {
+                        return RedirectToAction("SendBackToCabConfirmation");
+                    }
+                    else
+                    {
+                        return RedirectToAction(Constants.ErrorPath);
+                    }
+                }
+                else
+                {
+                    return View("SendBackToCab", model);
+                }
+            }
+            else if (action == "cancel")
+            {
+                return RedirectToAction("CertificateReview");
+            }
+            else
+            {
+                return RedirectToAction(Constants.ErrorPath);
+            }
+        }
+
+
+        [HttpGet("send-back-confirmation")]
+        public async Task<ActionResult> SendBackToCabConfirmation()
+        {
+            CertificateValidationViewModel certificateValidationViewModel = await GetUpdatedCertificateDetails();
+            ClearSessionVariables();
+            return View(certificateValidationViewModel);
+        }
+
+        #endregion
+
         /// <summary>
         /// Download from s3
         /// </summary>
@@ -514,6 +603,19 @@ namespace DVSAdmin.Controllers
             }
         }
 
+        private ActionResult HandleSendBackToCab(CertificateReviewViewModel certificateReviewViewModel, CertificateReviewDto certificateReviewDto)
+        {
+            if (ModelState.IsValid)
+            {
+                HttpContext?.Session.Set("CertificateReviewDto", certificateReviewDto);
+                return RedirectToAction("SendBackToCab");
+            }
+            else
+            {
+                return View("CertificateReview", certificateReviewViewModel);
+            }
+        }
+
         private async Task<CertificateValidationViewModel> GetUpdatedCertificateDetails()
         {
             CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
@@ -528,6 +630,7 @@ namespace DVSAdmin.Controllers
             HttpContext.Session.Remove("CertificateValidationData");
             HttpContext.Session.Remove("CertificateReviewDto");
             HttpContext.Session.Remove("CertficateRejectionData");
+            HttpContext.Session.Remove("SendBackViewModel");
         }
 
         private CertificateReviewEnum GetCertificateReviewStatus(string reviewAction)
@@ -607,9 +710,13 @@ namespace DVSAdmin.Controllers
             {
                 ModelState.AddModelError("SubmitValidation", "You cannot reject an application that has passed all certificate validation and information match checks");
             }
+            else if (isValidationsCorrect && isInformationMatch && reviewAction == "send-back")
+            {
+                ModelState.AddModelError("SubmitValidation", "You cannot send an application back to CAB that has passed all certificate validation and information match checks");
+            }
+
 
         }
-
         private CertificateValidationViewModel MapDtoToViewModel(ServiceDto serviceDto)
         {
 

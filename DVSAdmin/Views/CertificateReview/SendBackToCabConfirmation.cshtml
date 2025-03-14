@@ -1,0 +1,33 @@
+﻿@model DVSAdmin.Models.CertificateValidationViewModel;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.Models.CertificateReview
+
+@{
+    ViewData["Title"] = "Part 2 of 2: Information match";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full govuk-!-padding-bottom-5">
+                <h1 class="govuk-heading-xl">Resubmission request sent successfully</h1>
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithDaysLeftView.cshtml", Model.Service)
+            </div>
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-!-padding-bottom-7">
+                    <p class="govuk-body">
+                        The Conformity Assessment Body and OfDIA will receive an email notification of the resubmission request within 20 minutes.
+                    </p>
+                </div>
+
+                <div class="govuk-button-group">
+                    <a href="/certificate-review/certificate-review-list" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                        Go back to certificate review
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
