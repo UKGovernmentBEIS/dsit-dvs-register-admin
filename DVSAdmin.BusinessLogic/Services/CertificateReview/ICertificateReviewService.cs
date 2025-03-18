@@ -16,7 +16,8 @@ namespace DVSAdmin.BusinessLogic.Services
         #region save update methods
         public Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto, string loggedInUserEmail);
         public Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail);
-        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons, string loggedInUserEmail);      
+        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons, string loggedInUserEmail);
+        public Task<GenericResponse> UpdateCertificateSentBack(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail);
         public Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail);
         #endregion
     }

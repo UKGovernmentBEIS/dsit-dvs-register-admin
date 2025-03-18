@@ -1,0 +1,131 @@
+﻿@model SendBackViewModel;
+@using DVSAdmin.Extensions;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.Models.CertificateReview
+
+@{
+    ViewData["Title"] = "Part 2 of 2: Information match";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+    ViewData["HidePublishStatus"] = true;// setting variable to hide status field in partial view
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", null, new { @class = "govuk-back-link" })
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+
+        <div class="govuk-grid-row">
+            @using (Html.BeginForm("ProceedReturn", "CertificateReview", FormMethod.Post))
+            {
+                <div class="govuk-grid-column-full govuk-!-padding-bottom-5">
+
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                    }
+                    <h1 class="govuk-heading-xl">Send back to the Conformity Assessment Body for resubmission</h1>
+                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithDaysLeftView.cshtml", Model.CertificateReview.Service)
+                </div>
+                <div class="govuk-grid-column-two-thirds">
+                    <div class="govuk-body">
+                        <h2 class="govuk-heading-l">
+                            Where amendments are needed
+                        </h2>
+                        <hr class="govuk-section-break govuk-section-break--visible">
+                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",
+                        new ReviewFiledsViewModel{CertificateValidation = Model.CertificateValidation,
+                        InformationMatched = Model.CertificateReview .InformationMatched,
+                        IsRejectFlow = false,
+                        TextForIncorrectField = "Amendments needed"})
+                    </div>
+                    <div class="govuk-body govuk-!-padding-bottom-3">
+                        <h2 class="govuk-heading-m">
+                            Comments
+                        </h2>
+                        <p>
+                            @Model.CommentFromReview
+                        </p>
+                    </div>
+                    @if (Html.ViewData.ModelState.ContainsKey("Reason") && Html.ViewData.ModelState["Reason"].Errors.Count > 0)
+                    {
+                        <div class="govuk-form-group govuk-form-group--error">
+                            <h2 class="govuk-label-wrapper">
+                                <label class="govuk-label govuk-label--l" for="reason">
+                                    Tell the CAB what amendments they need to make
+                                </label>
+                            </h2>
+                            <div id="reason-hint" class="govuk-hint">
+                                The details below will be sent to the Conformity Assessment Body as guidance on what they should amend before resubmission.
+                            </div>
+                            <p class="govuk-body"></p>
+                            <p id="reason-error" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Reason)
+                            </p>
+                            @Html.TextAreaFor(model => model.Reason, new 
+                                { 
+                                    @class = "govuk-textarea govuk-textarea--error",
+                                    @id = "reason", 
+                                    @name = "reason",
+                                    @rows = "5",
+                                    aria_describedby = "reason-hint reason-error" })
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div class="govuk-form-group">
+                            <h2 class="govuk-label-wrapper">
+                                <label class="govuk-label govuk-label--l" for="reason">
+                                    Tell the CAB what amendments they need to make
+                                </label>
+                            </h2>
+                            <div id="reason-hint" class="govuk-hint">
+                                The details below will be sent to the Conformity Assessment Body as guidance on what they should amend before resubmission.
+                            </div>
+
+                            @Html.TextAreaFor(model => model.Reason, new
+                                {
+                                    @class = "govuk-textarea",
+                                    @id = "reason",
+                                    @name = "reason",
+                                    @rows = "5",
+                                    aria_describedby = "reason-hint"
+                                })
+                        </div>
+
+                    }
+                
+
+
+                    <h3 class="govuk-heading-m">
+                        What will happen once you send back to the CAB
+                    </h3>
+                    <p class="govuk-body">
+                        Once you select ‘Return to CAB’, the CAB who made the submission will
+                        receive a notification to amend and resubmit it. You will receive a notification
+                        once the resubmission has been made.
+                    </p>
+
+
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            The information you enter above will  be included in the notification sent to the CAB.
+                        </strong>
+                    </div>
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="action" value="return">
+                            Return to CAB
+                        </button>
+                        <a href="/certificate-review/certificate-review" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            }
+
+
+        </div>
+    </main>
+</div>

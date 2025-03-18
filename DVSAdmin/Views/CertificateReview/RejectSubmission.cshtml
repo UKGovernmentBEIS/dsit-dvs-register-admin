@@ -74,7 +74,14 @@
 
                     <hr class="govuk-section-break govuk-section-break--visible">
 
-                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml", Model)
+                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",
+                     new ReviewFiledsViewModel
+                    {
+                        CertificateValidation = Model.CertificateValidation,
+                        InformationMatched = Model.CertificateReview.InformationMatched,
+                        IsRejectFlow = true,
+                        TextForIncorrectField = "Incorrect"
+                     })
 
                 </div>
                 <div class="govuk-grid-column-two-thirds">

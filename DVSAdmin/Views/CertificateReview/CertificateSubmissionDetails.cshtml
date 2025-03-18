@@ -121,10 +121,18 @@
                     {
                         @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
 
-                        <h2 class="govuk-heading-l">What was rejected</h2>
-                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml", Model.CertficateRejection)
+                        <h2 class="govuk-heading-l">What was rejected</h2>                      
 
 
+
+                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",
+                         new ReviewFiledsViewModel
+                        {
+                            CertificateValidation = Model.CertficateRejection.CertificateValidation,
+                            InformationMatched = Model.CertificateReview.InformationMatched,
+                            IsRejectFlow = true,
+                            TextForIncorrectField = "Incorrect"
+                        })
 
                         <h3 class="govuk-heading-m">Comments</h3>
                         <p class="govuk-body">
