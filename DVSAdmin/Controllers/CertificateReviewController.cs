@@ -494,7 +494,7 @@ namespace DVSAdmin.Controllers
                 {           
                     CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
                     certificateReviewDto.Amendments = model.Reason;
-                    certificateReviewDto.CertificateReviewStatus = CertificateReviewEnum.ReturnToCab;
+                    certificateReviewDto.CertificateReviewStatus = CertificateReviewEnum.AmendmentsRequired;
 
 
                     GenericResponse genericResponse = await certificateReviewService.UpdateCertificateSentBack(certificateReviewDto, certificateValidationViewModel.Service, UserEmail);

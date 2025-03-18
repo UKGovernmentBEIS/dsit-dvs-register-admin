@@ -25,7 +25,9 @@ namespace DVSAdmin.CommonUtility.Models
         [Description("Saved as draft")]
         SavedAsDraft = 8,
         [Description("Updates requested")]
-        UpdatesRequested = 9
+        UpdatesRequested = 9,
+        [Description("Sent back to CAB")]
+        AmendmentsRequired = 10
     }
 
     public static class ServiceStatusEnumExtensions

@@ -263,7 +263,8 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId && e.ProviProviderProfileId == cetificateReview.ProviProviderProfileId);
+                var existingEntity = await context.CertificateReview
+                    .FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId && e.ProviProviderProfileId == cetificateReview.ProviProviderProfileId);
 
                 if (existingEntity != null)
                 {
@@ -274,11 +275,20 @@ namespace DVSAdmin.Data.Repositories
                     existingEntity.Amendments = cetificateReview.Amendments;
                     existingEntity.ModifiedDate = DateTime.UtcNow;
                     genericResponse.InstanceId = existingEntity.Id;
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
-                    transaction.Commit();
-                    genericResponse.Success = true;
                 }
 
+                var existingService = await context.Service
+                    .FirstOrDefaultAsync(e => e.Id == cetificateReview.ServiceId);
+
+                if (existingService != null)
+                {
+                    existingService.ServiceStatus = ServiceStatusEnum.AmendmentsRequired;
+                    existingService.ModifiedTime = DateTime.UtcNow;
+                }
+
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
+                transaction.Commit();
+                genericResponse.Success = true;
             }
             catch (Exception ex)
             {
