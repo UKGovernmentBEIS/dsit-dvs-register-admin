@@ -32,7 +32,11 @@
                             Where amendments are needed
                         </h2>
                         <hr class="govuk-section-break govuk-section-break--visible">
-                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml", Model)
+                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",
+                        new ReviewFiledsViewModel{CertificateValidation = Model.CertificateValidation,
+                        InformationMatched = Model.CertificateReview .InformationMatched,
+                        IsRejectFlow = false,
+                        TextForIncorrectField = "Amendments needed"})
                     </div>
                     <div class="govuk-body govuk-!-padding-bottom-3">
                         <h2 class="govuk-heading-m">

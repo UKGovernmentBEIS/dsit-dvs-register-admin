@@ -1,5 +1,4 @@
-﻿using DVSAdmin.BusinessLogic.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DVSAdmin.Models.CertificateReview
 {
