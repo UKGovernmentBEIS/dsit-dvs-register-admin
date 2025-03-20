@@ -7,6 +7,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.Extensions.Configuration;
+using System.Net.Mail;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -135,9 +136,10 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateSentBack(certificateReview, loggedInUserEmail);
 
 
-            if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Rejected)
+            if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
             {
-                // send emails about being sent back to cab
+                await emailSender.SendCertificateBackToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, serviceDto.CabUser.CabEmail, certificateReview.Amendments);
+                await emailSender.SendCertificateBackDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName, certificateReview.Amendments);
 
             }
 
