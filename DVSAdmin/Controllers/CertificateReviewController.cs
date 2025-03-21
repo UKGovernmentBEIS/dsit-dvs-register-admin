@@ -8,7 +8,6 @@ using DVSAdmin.Models;
 using DVSAdmin.Models.CertificateReview;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 
 namespace DVSAdmin.Controllers
@@ -38,11 +37,18 @@ namespace DVSAdmin.Controllers
             CertificateReviewListViewModel certificateReviewListViewModel = new ();
             var serviceList = await certificateReviewService.GetServiceList();
 
-            certificateReviewListViewModel.CertificateReviewList =  serviceList.Where(x =>
-             (x.ServiceStatus == ServiceStatusEnum.Submitted && x.ServiceStatus != ServiceStatusEnum.Removed && x.ServiceStatus != ServiceStatusEnum.SavedAsDraft
-              && x.Id != x?.CertificateReview?.ServiceId) || 
-            (x.CertificateReview !=null && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview )).OrderBy(x => x.DaysLeftToComplete).ToList();  
-            
+            certificateReviewListViewModel.CertificateReviewList = serviceList
+                .Where(x =>
+                    (x.ServiceStatus == ServiceStatusEnum.Submitted &&
+                     x.ServiceStatus != ServiceStatusEnum.Removed &&
+                     x.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
+                     x.Id != x?.CertificateReview?.ServiceId) ||
+                        (x.CertificateReview != null &&
+                        (x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview ||
+                         x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)))
+                .OrderBy(x => x.DaysLeftToComplete)
+                .ToList();
+
             certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
             ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) 
             || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)).OrderByDescending(x => x.CertificateReview.ModifiedDate).ToList();
@@ -52,6 +58,7 @@ namespace DVSAdmin.Controllers
         [HttpGet("certificate-submission-details")]
         public async Task<ActionResult> CertificateSubmissionDetails(int certificateInfoId)
         {
+            SetRefererURL();
             CertificateDetailsViewModel certificateDetailsViewModel = new();
             ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateInfoId);            
         
@@ -72,9 +79,14 @@ namespace DVSAdmin.Controllers
             certficateRejectionViewModel.CertificateReview = certificateReviewViewModel;
             certficateRejectionViewModel.Comments = serviceDto?.CertificateReview?.RejectionComments;
 
+            SendBackViewModel sendBackViewModel = new();
+            sendBackViewModel.Reason = serviceDto.CertificateReview.Amendments;
+
             certificateDetailsViewModel.CertficateRejection = certficateRejectionViewModel;
             certificateDetailsViewModel.CertificateValidation = certificateValidationViewModel;
             certificateDetailsViewModel.CertificateReview = certificateReviewViewModel;
+            certificateDetailsViewModel.SendBackViewModel = sendBackViewModel;
+            
             return View(certificateDetailsViewModel);
         }
 

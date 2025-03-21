@@ -6,7 +6,7 @@
         public bool? InformationMatched { get; set; }
 
         public bool IsRejectFlow { get; set; }
-
         public string? TextForIncorrectField { get; set; }
+        public string? ReviewComments { get; set; }
     }
 }
