@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Notify.Client;
 using Notify.Exceptions;
 using System.Drawing;
+using System.Net.Mail;
 
 namespace DVSAdmin.CommonUtility.Email
 {
@@ -19,7 +20,6 @@ namespace DVSAdmin.CommonUtility.Email
             client = new NotificationClient(govUkNotifyConfig.ApiKey);
             this.logger = logger;           
         }
-
 
         private async Task<bool> SendEmail(GovUkNotifyEmailModel emailModel)
         {
@@ -70,7 +70,16 @@ namespace DVSAdmin.CommonUtility.Email
                 return false;
             }
         }
-
+        private async Task<bool> CreateAndSend(string emailAddress, dynamic template, Dictionary<string, object> personalisation)
+        {
+            var emailModel = new GovUkNotifyEmailModel
+            {
+                EmailAddress = emailAddress,
+                TemplateId = template.Id,
+                Personalisation = personalisation
+            };
+            return await SendEmail(emailModel);
+        }
 
         #region Common
         public async Task<bool> SendAccountCreatedConfirmation(string recipientName, string emailAddress)
@@ -83,13 +92,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.RecipientName,  recipientName},
                 { template.LoginLink, govUkNotifyConfig.LoginLink }
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> SendFailedLoginAttempt(string timestamp, string emailAddress)
@@ -101,13 +104,8 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.TimeStamp,  timestamp}  ,
                 { template.Email,  emailAddress}
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+           
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
         #endregion
 
@@ -123,13 +121,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ServiceName,  serviceName},
                 { template.LoginLink, govUkNotifyConfig.LoginLink }
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> SendPrimaryCheckFailConfirmationToDSIT(string companyName, string serviceName, string expirationDate)
@@ -142,14 +134,8 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.CompanyName,  companyName},
                 { template.ServiceName,  serviceName},
                 { template.LoginLink, govUkNotifyConfig.LoginLink }
-            };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            };           
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> SendPrimaryCheckRoundTwoConfirmationToDSIT(string companyName, string serviceName, string expirationDate)
@@ -162,14 +148,8 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.CompanyName,  companyName},
                 { template.ServiceName,  serviceName},
                 { template.LoginLink, govUkNotifyConfig.LoginLink }
-            };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            };            
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> SendApplicationRejectedToDIP(string recipientName, string emailAddress)
@@ -180,13 +160,7 @@ namespace DVSAdmin.CommonUtility.Email
             {
                 { template.RecipientName,  recipientName}
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> SendApplicationRejectedConfirmationToDSIT(string companyName, string serviceName)
@@ -198,13 +172,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ServiceName,  serviceName},
                 { template.CompanyName, companyName}
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> SendApplicationApprovedToDSIT(string companyName, string serviceName)
@@ -216,13 +184,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.CompanyName,  companyName},
                 { template.ServiceName,  serviceName}
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         #endregion
@@ -240,13 +202,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.CompanyName,  companyName}
             
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+           return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> SendCertificateInfoApprovedToDSIT(string companyName, string serviceName)
@@ -259,13 +215,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.CompanyName,  companyName}
 
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> SendCertificateInfoRejectedToCab(string recipientName, string companyName, string serviceName, string rejectionCategory, string rejectionComments, string emailAddress)
@@ -281,13 +231,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.RejectionComments,  rejectionComments}
 
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> SendCertificateInfoRejectedToDSIT(string companyName, string serviceName, string rejectionCategory, string rejectionComments)
@@ -303,13 +247,7 @@ namespace DVSAdmin.CommonUtility.Email
 
 
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> SendApplicationRestroredToDSIT()
@@ -320,13 +258,7 @@ namespace DVSAdmin.CommonUtility.Email
             {
                 { template.LoginLink,  govUkNotifyConfig.LoginLink}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> SendCertificateBackToCab(string recipientName, string companyName, string serviceName, string emailAddress, string amendmentsNeeded)
@@ -341,13 +273,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ResubmissionFeedback,  amendmentsNeeded}
 
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> SendCertificateBackDSIT(string companyName, string serviceName, string amendmentsNeeded)
@@ -361,13 +287,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ResubmissionFeedback,  amendmentsNeeded}
 
             };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         #endregion
@@ -425,19 +345,9 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.RecipientName,  recipientName},
                 { template.ConsentLink,  consentLink}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
-        }
-     
-
-     
+            return await CreateAndSend(emailAddress, template, personalisation);
+        }     
         #endregion
-
 
         #region Register Management
         public async Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName,string companyName, string emailAddress)
@@ -449,13 +359,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.RecipientName,  recipientName},
                 { template.CompanyName,  companyName}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> SendServicePublishedToCAB(string recipientName, string serviceName, string companyName, string emailAddress)
@@ -467,13 +371,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.RecipientName,  recipientName},
                 { template.CompanyName,  companyName}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> SendServicePublishedToDSIT(string companyName, string serviceName)
@@ -485,13 +383,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.CompanyName,  companyName}
 
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress =  govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         #endregion
@@ -506,13 +398,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ConfirmationLink,  confirmationLink}
 
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> SendRemoval2iCheckToDSIT(string recipientName, string emailAddress, string removalLink, string companyName, string serviceName, string reasonForRemoval)
@@ -527,13 +413,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ReasonForRemoval,reasonForRemoval}
 
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> SendRecordRemovalRequestConfirmationToDSIT(string companyName, string serviceName)
@@ -546,13 +426,7 @@ namespace DVSAdmin.CommonUtility.Email
              
 
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> SendRequestToRemoveServiceToProvider(string recipientName, string emailAddress, string serviceName, string reason, string removalLink)
@@ -565,13 +439,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ReasonForRemoval,  reason},
                 { template.RemovalLink,  removalLink}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> RemovalRequestForApprovalToDSIT(string emailAddress, string serviceName, string companyName, string reason)
@@ -584,13 +452,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ServiceName,  serviceName},
                 { template.ReasonForRemoval,  reason}            
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> RequestToRemoveServiceNotificationToDSIT(string serviceName, string companyName, string reason)
@@ -603,13 +465,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ServiceName,  serviceName},
                 { template.ReasonForRemoval,  reason}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> ServiceRemovedConfirmedToCabOrProvider(string recipientName, string emailAddress, string serviceName, string reasonForRemoval)
@@ -621,13 +477,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ServiceName,  serviceName},
                 { template.ReasonForRemoval,  reasonForRemoval},
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> ServiceRemovedToDSIT(string serviceName, string reasonForRemoval)
@@ -639,13 +489,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ServiceName,  serviceName},
                 { template.ReasonForRemoval,  reasonForRemoval},
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> RecordRemovedConfirmedToCabOrProvider(string recipientName, string emailAddress, string companyName, string serviceName, string reasonForRemoval)
@@ -659,13 +503,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ServiceName,  serviceName},
                 { template.ReasonForRemoval,  reasonForRemoval},
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> SendRecordRemovedToDSIT(string companyName, string serviceName, string reasonForRemoval)
@@ -677,13 +515,8 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ServiceName,  serviceName},
                 { template.ReasonForRemoval,  reasonForRemoval},
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = govUkNotifyConfig.OfDiaEmailId,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+
+            return await CreateAndSend(govUkNotifyConfig.OfDiaEmailId, template, personalisation);
         }
 
         public async Task<bool> SendServiceRemoval2iCheckToDSIT(string emailAddress, string removalLink, string serviceName, string reasonForRemoval)
@@ -695,13 +528,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ReasonForRemoval,  reasonForRemoval},
                 { template.RemovalLink,  removalLink}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> ServiceRemovalRequestCreated(string emailAddress, string serviceName, string reasonForRemoval)
@@ -712,13 +539,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.ServiceName,  serviceName},
                 { template.ReasonForRemoval,  reasonForRemoval}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
 
@@ -736,13 +557,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.CurrentData,  currentData},
                 { template.ApproveLink,  link}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> ServiceEditRequest(string emailAddress, string recipientName, string companyName, string serviceName, string currentData, string previousData, string link)
@@ -757,13 +572,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.CurrentData,  currentData},
                 { template.ApproveLink,  link}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(emailAddress, template, personalisation);
         }
 
         public async Task<bool> ProviderEditRequestConfirmation(string loggedInUser, string recipientName, string companyName, string currentData, string previousData)
@@ -776,13 +585,8 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.PreviousData,  previousData},
                 { template.CurrentData,  currentData}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = loggedInUser,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            
+            return await CreateAndSend(loggedInUser, template, personalisation);
         }
 
         public async Task<bool> ServiceEditRequestConfirmation(string loggedInUser, string recipientName, string companyName, string serviceName, string currentData, string previousData)
@@ -796,13 +600,7 @@ namespace DVSAdmin.CommonUtility.Email
                 { template.PreviousData,  previousData},
                 { template.CurrentData,  currentData}
              };
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailAddress = loggedInUser,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
+            return await CreateAndSend(loggedInUser, template, personalisation);
         }
 
         #endregion
