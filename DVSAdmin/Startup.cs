@@ -61,9 +61,9 @@ namespace DVSAdmin
             
             ConfigureDatabaseContext(services);
             ConfigureSession(services);
-            ConfigureDvsRegisterServices(services);
-            ConfigureAutomapperServices(services);
             ConfigureGovUkNotify(services);
+            ConfigureDvsRegisterServices(services);
+            ConfigureAutomapperServices(services);           
             ConfigureJwtServices(services);
             ConfigureCookieService(services);
             ConfigureS3Client(services);
@@ -133,6 +133,12 @@ namespace DVSAdmin
             services.AddScoped<IRemoveProviderRepository, RemoveProviderRepository>();
             services.AddScoped<IEditService, EditService>();
             services.AddScoped<IEditRepository, EditRepository>();
+            services.AddTransient<LoginEmailSender>();
+            services.AddTransient<CertificateReviewEmailSender>();
+            services.AddTransient<PICheckEmailSender>();
+            services.AddTransient<RegManagementEmailSender>();
+            services.AddTransient<RemoveProviderEmailSender>();
+            services.AddTransient<EditEmailSender>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {
@@ -140,7 +146,7 @@ namespace DVSAdmin
         }
         private void ConfigureGovUkNotify(IServiceCollection services)
         {
-            services.AddScoped<IEmailSender, GovUkNotifyApi>();
+            services.AddSingleton<GovUkNotifyApi>();
             services.Configure<GovUkNotifyConfiguration>(
                 configuration.GetSection(GovUkNotifyConfiguration.ConfigSection));
         }

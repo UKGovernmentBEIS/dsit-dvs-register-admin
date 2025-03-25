@@ -7,7 +7,6 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.Extensions.Configuration;
-using System.Net.Mail;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -16,12 +15,12 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly ICertificateReviewRepository certificateReviewRepository;
         private readonly IConsentRepository consentRepository;
         private readonly IMapper automapper;       
-        private readonly IEmailSender emailSender;
+        private readonly CertificateReviewEmailSender emailSender;
         private readonly IJwtService jwtService;
         private readonly IConfiguration configuration;
 
         public CertificateReviewService(ICertificateReviewRepository certificateReviewRepository, IMapper automapper,
-          IEmailSender emailSender, IConsentRepository consentRepository, IJwtService jwtService, IConfiguration configuration)
+          CertificateReviewEmailSender emailSender, IConsentRepository consentRepository, IJwtService jwtService, IConfiguration configuration)
         {
             this.certificateReviewRepository = certificateReviewRepository;
             this.automapper = automapper;            

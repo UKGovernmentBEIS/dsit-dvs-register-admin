@@ -13,11 +13,11 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly IRegManagementRepository regManagementRepository;
         private readonly ICertificateReviewRepository certificateReviewRepository;
         private readonly IMapper automapper;       
-        private readonly IEmailSender emailSender;
+        private readonly RegManagementEmailSender emailSender;
       
 
         public RegManagementService(IRegManagementRepository regManagementRepository, IMapper automapper,
-          IEmailSender emailSender, ICertificateReviewRepository certificateReviewRepository)
+          RegManagementEmailSender emailSender, ICertificateReviewRepository certificateReviewRepository)
         {
             this.regManagementRepository = regManagementRepository;
             this.automapper = automapper;
