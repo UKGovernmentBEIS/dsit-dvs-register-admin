@@ -39,7 +39,7 @@ namespace DVSAdmin.Controllers
 
             certificateReviewListViewModel.CertificateReviewList = serviceList
                 .Where(x =>
-                    (x.ServiceStatus == ServiceStatusEnum.Submitted &&
+                    ((x.ServiceStatus == ServiceStatusEnum.Submitted || x.ServiceStatus == ServiceStatusEnum.Resubmitted) &&
                      x.ServiceStatus != ServiceStatusEnum.Removed &&
                      x.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                      x.Id != x?.CertificateReview?.ServiceId) ||
@@ -62,7 +62,7 @@ namespace DVSAdmin.Controllers
             CertificateDetailsViewModel certificateDetailsViewModel = new();
             ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateInfoId);            
         
-            if (serviceDto.ProceedApplicationConsentToken != null &serviceDto.ServiceStatus == ServiceStatusEnum.Submitted && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
+            if (serviceDto.ProceedApplicationConsentToken != null & (serviceDto.ServiceStatus == ServiceStatusEnum.Submitted || serviceDto.ServiceStatus == ServiceStatusEnum.Resubmitted) && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
             {
                 ViewBag.OpeningTheLoopLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
             }

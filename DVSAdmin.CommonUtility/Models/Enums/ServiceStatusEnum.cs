@@ -27,7 +27,9 @@ namespace DVSAdmin.CommonUtility.Models
         [Description("Updates requested")]
         UpdatesRequested = 9,
         [Description("Sent back to CAB")]
-        AmendmentsRequired = 10
+        AmendmentsRequired = 10,
+        [Description("Received")]
+        Resubmitted = 11
     }
 
     public static class ServiceStatusEnumExtensions
