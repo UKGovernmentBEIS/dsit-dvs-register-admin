@@ -48,5 +48,6 @@ namespace DVSAdmin.BusinessLogic.Models
         public ProceedPublishConsentTokenDto ProceedPublishConsentToken { get; set; }       
         public ServiceRemovalReasonEnum ServiceRemovalReason { get; set; }
         public bool HasPreviousPublishedVersion { get; set; }
+        public DateTime? ResubmissionTime { get; set; }
     }
 }

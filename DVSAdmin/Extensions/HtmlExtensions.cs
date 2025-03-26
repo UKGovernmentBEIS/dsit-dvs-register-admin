@@ -20,7 +20,8 @@ namespace DVSAdmin.Extensions
                 case ServiceStatusEnum.Submitted:
             
                 case ServiceStatusEnum.Received:
-                return "govuk-tag govuk-tag--blue";
+                case ServiceStatusEnum.Resubmitted:
+                    return "govuk-tag govuk-tag--blue";
 
                 case ServiceStatusEnum.Published:
                 case ProviderStatusEnum.Published:
