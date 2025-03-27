@@ -7,9 +7,7 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
-using DVSAdmin.Data.Repositories.RegisterManagement;
 using Microsoft.Extensions.Configuration;
-using System.Drawing;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -17,14 +15,14 @@ namespace DVSAdmin.BusinessLogic.Services
     {
         private readonly IRemoveProviderRepository removeProviderRepository;
         private readonly IMapper automapper;
-        private readonly IEmailSender emailSender;
+        private readonly RemoveProviderEmailSender emailSender;
         private readonly IJwtService jwtService;
         private readonly IConfiguration configuration;
 
 
 
         public RemoveProviderService(IRemoveProviderRepository removeProviderRepository, IMapper automapper,
-          IEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
+          RemoveProviderEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
             this.removeProviderRepository = removeProviderRepository;
             this.automapper = automapper;
