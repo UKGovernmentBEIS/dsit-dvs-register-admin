@@ -18,14 +18,18 @@ namespace DVSAdmin.CommonUtility.Models
         Published = 4,
         [Description("Removed from register")]
         Removed = 5,
-        [Description("Awaiting removal confirmation")]
+        [Description("Removal request sent")]
         AwaitingRemovalConfirmation = 6,
         [Description("Removal requested by CAB")]
         CabAwaitingRemovalConfirmation = 7,
         [Description("Saved as draft")]
         SavedAsDraft = 8,
         [Description("Updates requested")]
-        UpdatesRequested = 9
+        UpdatesRequested = 9,
+        [Description("Sent back to CAB")]
+        AmendmentsRequired = 10,
+        [Description("Received")]
+        Resubmitted = 11
     }
 
     public static class ServiceStatusEnumExtensions

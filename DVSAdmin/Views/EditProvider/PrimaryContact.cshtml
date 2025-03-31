@@ -6,7 +6,7 @@
 
 @using (Html.BeginForm("SavePrimaryContact", "EditProvider", FormMethod.Post))
 {
-   
+   @Html.HiddenFor(m=>m.ProviderId)
     <div class="govuk-width-container">
 
         <a href="@((Convert.ToBoolean(ViewBag.fromSummaryPage)) ? Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderId }) : Url.Action("ProfileSummary", "EditProvider", new { providerId = Model.ProviderId, isEditPage = true }))" class="govuk-back-link">Back</a>

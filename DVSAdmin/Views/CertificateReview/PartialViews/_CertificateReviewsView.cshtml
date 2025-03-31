@@ -1,50 +1,67 @@
 ﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using DVSAdmin.Extensions;
 @model DVSAdmin.Models.CertificateReviewListViewModel;
 
 <h2 class="govuk-heading-l">Certificate submissions</h2>
-        <table class="govuk-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Service provider</th>
-                    <th scope="col" class="govuk-table__header">Service name</th>
-                    <th scope="col" class="govuk-table__header">Conformity Assessment <br /> Body</th>
-                    <th scope="col" class="govuk-table__header">Role type</th>
-                    <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
-                    <th scope="col" class="govuk-table__header">Review status</th>
-                    <th scope="col" class="govuk-table__header">Days left to <br />complete review</th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body">
+            <th scope="col" class="govuk-table__header">Service name</th>
+            <th scope="col" class="govuk-table__header">Conformity Assessment <br /> Body</th>
+            <th scope="col" class="govuk-table__header">Role type</th>
+            <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
+            <th scope="col" class="govuk-table__header">Review status</th>
+            <th scope="col" class="govuk-table__header">Days left to <br />complete review</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
 
-                @foreach (var item in Model.CertificateReviewList)
+        @foreach (var item in Model.CertificateReviewList)
+        {
+            <tr class="govuk-table__row">
+                @if (item.ServiceStatus == ServiceStatusEnum.AmendmentsRequired)
                 {
-                    <tr class="govuk-table__row">
-                <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateValidation", "CertificateReview", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>
-                <td class="govuk-table__cell"> @item.ServiceName</td>              
+                    <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateSubmissionDetails", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
+                }
+                else
+                {
+                    <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateValidation", "CertificateReview", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>
+                }
+                <td class="govuk-table__cell"> @item.ServiceName</td>
 
-              
+
                 <td class="govuk-table__cell"> @item.CabUser.Cab.CabName</td>
-                     <td class="govuk-table__cell">
-                       @foreach(var role in item.ServiceRoleMapping)
-                        {
-                                RoleEnum enumValue = (RoleEnum)role.RoleId;
-                                <div> @Enum.GetName(enumValue) </div>
-                        }
-                        </td>
-                    <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedTime)</td>
-                        @if (@item.CertificateReview == null)
-                        {
-                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
-                        }
-                        else
-                        {
-                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateReviewStatus)</td>
-                        }
-              
-                        <td class="govuk-table__cell">@item.DaysLeftToComplete days</td>
-                    </tr>
-                }              
-            </tbody>
+                <td class="govuk-table__cell">
+                    @foreach (var role in item.ServiceRoleMapping)
+                    {
+                        RoleEnum enumValue = (RoleEnum)role.RoleId;
+                        <div> @Enum.GetName(enumValue) </div>
+                    }
+                </td>
+                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedTime)</td>
+                @if (@item.CertificateReview == null)
+                {
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
+                }
+                else
+                {
+                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.CertificateReview.CertificateReviewStatus)</td>
+                }
+
+                @if (item.ServiceStatus == ServiceStatusEnum.AmendmentsRequired)
+                {
+                    <td class="govuk-table__cell">0</td>
+                }
+                else
+                {
+                    <td class="govuk-table__cell">@item.DaysLeftToComplete days</td>
+                }
+
+                
+            </tr>
+        }
+    </tbody>
 </table>

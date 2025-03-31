@@ -54,5 +54,6 @@ namespace DVSAdmin.Data.Entities
         public ServiceRemovalReasonEnum? ServiceRemovalReason { get; set; }
         public DateTime? RemovalRequestTime { get; set; }
         public DateTime? RemovedTime { get; set; }
+        public DateTime? ResubmissionTime { get; set; }
     }
 }

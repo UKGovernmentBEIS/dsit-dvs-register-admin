@@ -6,7 +6,7 @@
 
 @{
     bool isEditPage = Convert.ToBoolean(ViewBag.isEditPage); // else summary spage
-    string refererUrl = Convert.ToString(ViewBag.RefererUrl);
+    string refererUrl = isEditPage ? "/register-management/provider-details?providerId=" + Model.ProviderProfileId : Convert.ToString(ViewBag.RefererUrl);
 }
 
 

@@ -17,11 +17,11 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly IEditRepository _editRepository;
         private readonly IRemoveProviderRepository _removeProviderRepository;
         private readonly IMapper _mapper;
-        private readonly IEmailSender _emailSender;
+        private readonly EditEmailSender _emailSender;
         private readonly IJwtService _jwtService;
         private readonly IConfiguration _configuration;
 
-        public EditService(IEditRepository editRepository, IRemoveProviderRepository removeProviderRepository, IMapper mapper, IEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
+        public EditService(IEditRepository editRepository, IRemoveProviderRepository removeProviderRepository, IMapper mapper, EditEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
             _removeProviderRepository = removeProviderRepository;
             _editRepository = editRepository;

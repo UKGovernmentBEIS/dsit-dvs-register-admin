@@ -81,7 +81,7 @@
                     </div>
 
                     <a href="/certificate-review/download-certificate?key=@Model.Service.FileLink&filename=@Model.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
-                        Download certificate of conformity (Opens in a new tab)
+                        Download certificate of conformity 
                     </a>
 
                     <hr class="govuk-section-break govuk-section-break--m">
@@ -172,6 +172,9 @@
                             </button>
                             <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
                                 Reject submission
+                            </button>
+                            <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="send-back">
+                                Return to CAB
                             </button>
                             <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
                                 Save as draft

@@ -28,6 +28,8 @@ namespace DVSAdmin.CommonUtility.Models
         public CertificateInfoRejectedToCabTemplate CertificateInfoRejectedToCabTemplate { get; set; }
         public CertificateInfoRejectedToDSITTemplate CertificateInfoRejectedToDSITTemplate { get; set; }
         public CertificateReviewRestoredToDSITTemplate CertificateReviewRestoredToDSITTemplate { get; set; }
+        public CertificateSentBackToCabTemplate CertificateSentBackToCabTemplate { get; set; }
+        public CertificateSentBackDSITTemplate CertificateSentBackDSITTemplate { get; set; }
         public DIPConsentToPublishTemplate DIPConsentToPublishTemplate { get; set; }      
      
         public ServicePublishedDIPTemplate ServicePublishedDIPTemplate { get; set; }

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DVSAdmin.BusinessLogic.Extensions;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.Data.Entities;
@@ -68,7 +67,8 @@ namespace DVSAdmin.BusinessLogic
             .ForMember(dest => dest.PublicInterestCheck, opt => opt.MapFrom(src => src.PublicInterestCheck))
             .ForMember(dest => dest.CabUser, opt => opt.MapFrom(src => src.CabUser))
             .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftResolverCertificateReview>())
-            .ForMember(dest => dest.DaysLeftToCompletePICheck, opt => opt.MapFrom<DaysLeftResolverPICheck>());
+            .ForMember(dest => dest.DaysLeftToCompletePICheck, opt => opt.MapFrom<DaysLeftResolverPICheck>())
+            .ForMember(dest => dest.CreatedTime, opt => opt.MapFrom<CreatedTimeResolver>());
 
             CreateMap<ServiceDto, Service>()
            .ForMember(dest => dest.ServiceQualityLevelMapping, opt => opt.MapFrom(src => src.ServiceQualityLevelMapping))
