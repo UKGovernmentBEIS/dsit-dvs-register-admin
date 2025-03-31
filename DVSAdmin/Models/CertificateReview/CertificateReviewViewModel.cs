@@ -8,7 +8,7 @@ namespace DVSAdmin.Models
         public int CertificateReviewId { get; set; }
         public ServiceDto? Service { get; set; }      
 
-        [Required(ErrorMessage = "Enter a comment")]
+        [Required(ErrorMessage = "Enter the reasons for your decision")]
         public string? Comments { get; set; }
 
         [Required (ErrorMessage =  "Select an option")]
