@@ -18,7 +18,7 @@ namespace DVSAdmin.CommonUtility.Models
         Published = 4,
         [Description("Removed from register")]
         Removed = 5,
-        [Description("Awaiting removal confirmation")]
+        [Description("Removal request sent")]
         AwaitingRemovalConfirmation = 6,
         [Description("Removal requested by CAB")]
         CabAwaitingRemovalConfirmation = 7,
