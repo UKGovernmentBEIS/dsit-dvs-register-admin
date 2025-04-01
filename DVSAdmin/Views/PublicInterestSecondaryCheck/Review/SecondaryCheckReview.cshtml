@@ -1,4 +1,5 @@
 ﻿@model DVSAdmin.Models.PublicInterestSecondaryCheckViewModel;
+@using DVSAdmin.CommonUtility
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using Newtonsoft.Json
@@ -129,7 +130,7 @@
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Trading name</dt>
-                            <dd class="govuk-summary-list__value">@Model.Service.Provider.TradingName</dd>
+                            <dd class="govuk-summary-list__value">@Html.DisplayFor(model => model.Service.Provider.TradingName)</dd>
                         </div>
                         @if (Model.Service.Provider.HasRegistrationNumber)
                         {
@@ -142,7 +143,7 @@
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Companies House or charity registration number</dt>
-                                <dd class="govuk-summary-list__value">NA</dd>
+                                <dd class="govuk-summary-list__value">@Constants.NullFieldsDisplay</dd>
                             </div>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Dun & Bradstreet or D-U-N-S number</dt>
@@ -163,11 +164,11 @@
                         }
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Public contact email</dt>
-                            <dd class="govuk-summary-list__value">@Model.Service.Provider.PublicContactEmail</dd>
+                            <dd class="govuk-summary-list__value">@Html.DisplayFor(model => model.Service.Provider.PublicContactEmail)</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Public telephone number</dt>
-                            <dd class="govuk-summary-list__value">@Model.Service.Provider.ProviderTelephoneNumber</dd>
+                            <dd class="govuk-summary-list__value">@Html.DisplayFor(model => model.Service.Provider.ProviderTelephoneNumber)</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Website address</dt>

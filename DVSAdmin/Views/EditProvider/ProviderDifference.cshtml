@@ -35,7 +35,7 @@
                                Trading name
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model?.CurrentProvider?.TradingName
+                                    @Html.DisplayFor(model => model.CurrentProvider.TradingName)
                             </dd>
                         </div>                       
                     </dl>

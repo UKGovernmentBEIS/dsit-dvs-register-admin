@@ -1,4 +1,5 @@
-﻿@using DVSAdmin.Extensions;
+﻿@using DVSAdmin.CommonUtility
+@using DVSAdmin.Extensions;
 @using DVSAdmin.BusinessLogic.Models;
 @using DVSAdmin.CommonUtility.Models;
 @model ServiceDto
@@ -35,7 +36,7 @@
                 Trading names
             </dt>
             <dd class="govuk-summary-list__value">
-                @(string.IsNullOrEmpty(Model.Provider.TradingName) ? "N/A" : Model.Provider.TradingName)
+                @Html.DisplayFor(model => model.Provider.TradingName)
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -100,7 +101,7 @@
                 }
                 else
                 {
-                    <div>Not certified against GPG44</div>
+                    <div>@Constants.NullFieldsDisplay</div>
                 }
             </dd>
             @if (isEditable)
@@ -125,7 +126,7 @@
                 }
                 else
                 {
-                    <div>Not certified against GPG44</div>
+                    <div>@Constants.NullFieldsDisplay</div>
                 }
             </dd>
             @if (isEditable)
@@ -150,7 +151,7 @@
                 }
                 else
                 {
-                    <div>Not certified against any identity profiles</div>
+                    <div>@Constants.NullFieldsDisplay</div>
                 }
             </dd>
             @if (isEditable)
@@ -175,7 +176,7 @@
                 }
                 else
                 {
-                    <div>Not certified against any supplementary codes</div>
+                    <div>@Constants.NullFieldsDisplay</div>
                 }
             </dd>
             @if (isEditable)
