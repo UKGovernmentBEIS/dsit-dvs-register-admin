@@ -17,8 +17,6 @@
               
             </ul>
         }
-
-
     </div>
     <div class="govuk-summary-card__content">
         <dl class="govuk-summary-list">
@@ -27,14 +25,7 @@
                     Public contact email
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @if (!string.IsNullOrEmpty(Model.PublicContactEmail))
-                    {
-                        <div> @Model.PublicContactEmail </div>
-                    }
-                    else
-                    {
-                        <div>No public email address</div>
-                    }
+                    <div> @Html.DisplayFor(model => model.PublicContactEmail) </div>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -42,14 +33,7 @@
                     Public telephone number
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @if (!string.IsNullOrEmpty(Model.ProviderTelephoneNumber))
-                    {
-                        <div> @Model.ProviderTelephoneNumber </div>
-                    }
-                    else
-                    {
-                        <div>No public telephone number</div>
-                    }
+                    <div> @Html.DisplayFor(model => model.ProviderTelephoneNumber) </div>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">

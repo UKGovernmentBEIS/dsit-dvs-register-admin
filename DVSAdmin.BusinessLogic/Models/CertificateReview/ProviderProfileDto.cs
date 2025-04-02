@@ -1,5 +1,6 @@
-﻿using DVSAdmin.CommonUtility.Models.Enums;
-using DVSAdmin.Data.Entities;
+﻿using DVSAdmin.CommonUtility;
+using DVSAdmin.CommonUtility.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
@@ -8,6 +9,8 @@ namespace DVSAdmin.BusinessLogic.Models
     {
         public int Id { get; set; }
         public string RegisteredName { get; set; }
+
+        [DisplayFormat(NullDisplayText = @Constants.NullFieldsDisplay, ConvertEmptyStringToNull = true)]
         public string TradingName { get; set; }
         public bool HasRegistrationNumber { get; set; }
         public string? CompanyRegistrationNumber { get; set; }
@@ -23,7 +26,11 @@ namespace DVSAdmin.BusinessLogic.Models
         public string SecondaryContactJobTitle { get; set; }
         public string SecondaryContactEmail { get; set; }
         public string SecondaryContactTelephoneNumber { get; set; }
+
+        [DisplayFormat(NullDisplayText = @Constants.NullFieldsDisplay, ConvertEmptyStringToNull = true)]
         public string PublicContactEmail { get; set; }
+
+        [DisplayFormat(NullDisplayText = @Constants.NullFieldsDisplay, ConvertEmptyStringToNull = true)]
         public string? ProviderTelephoneNumber { get; set; }
         public string ProviderWebsiteAddress { get; set; }
         public RemovalReasonsEnum RemovalReason { get; set; }

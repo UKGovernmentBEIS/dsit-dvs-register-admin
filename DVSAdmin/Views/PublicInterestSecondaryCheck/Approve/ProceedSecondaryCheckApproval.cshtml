@@ -1,4 +1,6 @@
-﻿@using DVSAdmin.Extensions;
+﻿@using DVSAdmin.CommonUtility
+@using DVSAdmin.CommonUtility.Models
+@using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @model DVSAdmin.BusinessLogic.Models.ServiceDto
 @{
@@ -15,24 +17,24 @@
                 <p class="govuk-body">
                     You are about to confirm that the following application has passed all required checks:
                 </p>
-             
-                 
 
-                    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
 
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">Service provider</th>
-                                <th scope="col" class="govuk-table__header">Service name</th>
-                                <th scope="col" class="govuk-table__header">Conformity Assessment<br />Body</th>
-                                <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
-                                <th scope="col" class="govuk-table__header">Review status</th>
-                                <th scope="col" class="govuk-table__header">Days left to<br />complete review</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
+
+                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Service provider</th>
+                            <th scope="col" class="govuk-table__header">Service name</th>
+                            <th scope="col" class="govuk-table__header">Conformity Assessment<br />Body</th>
+                            <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
+                            <th scope="col" class="govuk-table__header">Review status</th>
+                            <th scope="col" class="govuk-table__header">Days left to<br />complete review</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
                                 <td class="govuk-table__cell">@Model.ServiceName</td>
@@ -41,92 +43,130 @@
                                 <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.PublicInterestCheck.PublicInterestCheckStatus)</td>
                                 <td class="govuk-table__cell">@Model.DaysLeftToCompletePICheck  days</td>
                             </tr>
-                        </tbody>
-                    </table>
+                    </tbody>
+                </table>
 
-                    <h2 class="govuk-heading-l">What will happen once you approve</h2>
-                    <p class="govuk-body">
-                        Once you approve the application, you are confirming that this application has passed all required checks. The provider will receive an email asking for their agreement to publish the service on the register.
-                    </p>
-                    <h3 class="govuk-heading-m">Who will receive the notification</h3>
+                <h2 class="govuk-heading-l">What will happen once you approve</h2>
+                <p class="govuk-body">
+                    Once you approve the application, you are confirming that this application has passed all required checks. The provider will receive an email asking for their agreement to publish the service on the register.
+                </p>
+                <h3 class="govuk-heading-m">Who will receive the notification</h3>
 
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Email address of primary contact</dt>
-                            <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactEmail</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Email address of secondary contact</dt>
-                            <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactEmail</dd>
-                        </div>
-                    </dl>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Email address of primary contact</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactEmail</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Email address of secondary contact</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactEmail</dd>
+                    </div>
+                </dl>
 
-                    <h3 class="govuk-heading-m">Service information that will be sent to the provider</h3>
+                <h3 class="govuk-heading-m">Service information that will be sent to the provider</h3>
 
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Basic information</dt>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Public contact email</dt>
-                            <dd class="govuk-summary-list__value">@Model.Provider.PublicContactEmail</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Public telephone number</dt>
-                              <dd class="govuk-summary-list__value">@Model.Provider.ProviderTelephoneNumber</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Website address</dt>
-                            <dd class="govuk-summary-list__value">@Model.Provider.ProviderWebsiteAddress</dd>
-                        </div>
-                        </dl>
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Service details: @Model.ServiceName</dt>
-                            
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Registered name</dt>
-                            <dd class="govuk-summary-list__value">@Model.Provider.RegisteredName</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Trading names</dt>
-                            <dd class="govuk-summary-list__value">@Model.Provider.TradingName</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Company address details</dt>
-                            <dd class="govuk-summary-list__value">   @HtmlExtensions.ToStringWithLineBreaks(Model.CompanyAddress)</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Name of service</dt>
-                            <dd class="govuk-summary-list__value">@Model.ServiceName</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Roles certified against</dt>
-                            <dd class="govuk-summary-list__value">
-                                @foreach (var item in Model.ServiceRoleMapping)
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Basic information</dt>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Public contact email</dt>
+                        <dd class="govuk-summary-list__value">@Html.DisplayFor(model => model.Provider.PublicContactEmail)</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Public telephone number</dt>
+                        <dd class="govuk-summary-list__value">@Html.DisplayFor(model => model.Provider.ProviderTelephoneNumber)</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Website address</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.ProviderWebsiteAddress</dd>
+                    </div>
+                </dl>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Service details: @Model.ServiceName</dt>
+
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Registered name</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.RegisteredName</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Trading names</dt>
+                        <dd class="govuk-summary-list__value">@Html.DisplayFor(model => model.Provider.TradingName)</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Company address details</dt>
+                        <dd class="govuk-summary-list__value">@HtmlExtensions.ToStringWithLineBreaks(Model.CompanyAddress)</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Name of service</dt>
+                        <dd class="govuk-summary-list__value">@Model.ServiceName</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Roles certified against</dt>
+                        <dd class="govuk-summary-list__value">
+                            @foreach (var item in Model.ServiceRoleMapping)
+                            {
+                                <div>@item.Role.RoleName</div>
+                            }
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            GPG44 quality of authenticator
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @if (Model.ServiceQualityLevelMapping.Any(x => x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                            {
+                                @foreach (var item in Model.ServiceQualityLevelMapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
                                 {
-                                    <div>@item.Role.RoleName</div>
+                                    <div>@item.QualityLevel.Level</div>
                                 }
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Identity profiles</dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (Model.ServiceIdentityProfileMapping!=null)
+                            }
+                            else
+                            {
+                                <div>@Constants.NullFieldsDisplay</div>
+                            }
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            GPG44 level of protection
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @if (Model.ServiceQualityLevelMapping.Any(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                            {
+                                @foreach (var item in Model.ServiceQualityLevelMapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
                                 {
-                                    @foreach (var item in Model.ServiceIdentityProfileMapping)
-                                    {
-                                        <div>@item.IdentityProfile.IdentityProfileName</div>
-                                    }
+                                    <div>@item.QualityLevel.Level</div>
                                 }
-                               
-                            </dd>
-                        </div>
+                            }
+                            else
+                            {
+                                <div>@Constants.NullFieldsDisplay</div>
+                            }
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Identity profiles</dt>
+                        <dd class="govuk-summary-list__value">
+                            @if (Model.ServiceIdentityProfileMapping!=null)
+                            {
+                                @foreach (var item in Model.ServiceIdentityProfileMapping)
+                                {
+                                    <div>@item.IdentityProfile.IdentityProfileName</div>
+                                }
+                            }
+                            else
+                            {
+                                <div>@Constants.NullFieldsDisplay</div>
+                            }
+                        </dd>
+                     </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Supplementary codes</dt>
                             <dd class="govuk-summary-list__value">
-
                                 @if(Model.ServiceSupSchemeMapping!=null)
                                 {
                                     @foreach (var item in Model.ServiceSupSchemeMapping)
@@ -134,8 +174,11 @@
                                         <div>@item.SupplementaryScheme.SchemeName</div>
                                     }
                                 }
-                               
-                            </dd>
+                                else
+                                {
+                                    <div>@Constants.NullFieldsDisplay</div>
+                                }
+                        </dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Certificate of conformity</dt>
