@@ -5,7 +5,8 @@
 @model ServiceDto
 
 @{
-    bool isEditable = !Convert.ToBoolean(ViewBag.IsPrevious);
+    bool isEditable = !Convert.ToBoolean(ViewBag.IsPrevious) && 
+    (Model.ServiceStatus == ServiceStatusEnum.ReadyToPublish || Model.ServiceStatus == ServiceStatusEnum.Published);
 }
 
 <div class="govuk-summary-card__title-wrapper">
