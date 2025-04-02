@@ -166,6 +166,7 @@ namespace DVSAdmin.Controllers
                 certificateReviewViewModel.CertificateReviewId = reviewId;
                 certificateReviewViewModel.Comments = certificateReviewDto.Comments;               
                 certificateReviewViewModel.InformationMatched = certificateReviewDto.InformationMatched;
+                certificateReviewViewModel.Service.CertificateReview = certificateReviewDto;
             }
             return View(certificateReviewViewModel);
         }

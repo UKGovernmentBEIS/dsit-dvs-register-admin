@@ -247,7 +247,7 @@ namespace DVSAdmin.Data.Repositories
         {
             ProviderProfile providerProfile = new();
             providerProfile = await _context.ProviderProfile         
-           .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.ReadyToPublish && p.ProviderStatus != ProviderStatusEnum.RemovedFromRegister)
+           .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.ReadyToPublish )
            .OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new ProviderProfile();
             return providerProfile;
         }

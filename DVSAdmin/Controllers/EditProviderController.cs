@@ -33,7 +33,7 @@ namespace DVSAdmin.Controllers
 
             if (isEditPage)
             {
-                ProviderProfileDto providerDto = await editService.GetProviderDeatils(providerId);
+                ProviderProfileDto providerDto = await editService.GetProviderDetails(providerId);
                 ProfileSummaryViewModel profileSummaryViewModel = MapDtoToViewModel(providerDto);
                 HttpContext?.Session.Set("ProfileSummary", profileSummaryViewModel);
                 return View(profileSummaryViewModel);
@@ -311,7 +311,7 @@ namespace DVSAdmin.Controllers
         {
             ProviderChangesViewModel changesViewModel = new();
             ProfileSummaryViewModel profileSummaryViewModel = GetProfileSummary();
-            ProviderProfileDto providerProfileDto = await editService.GetProviderDeatils(profileSummaryViewModel.ProviderProfileId);
+            ProviderProfileDto providerProfileDto = await editService.GetProviderDetails(profileSummaryViewModel.ProviderProfileId);
             ProviderProfileDraftDto providerProfileDraftDto = CreateDraft(providerProfileDto, profileSummaryViewModel);
             List<string> dsitEmails = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);
             changesViewModel.DSITUserEmails = string.Join(",", dsitEmails);            
@@ -352,7 +352,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> InformationSubmitted(int providerId)
         {
             HttpContext?.Session.Remove("ProfileSummary");
-            ProviderProfileDto providerDto = await editService.GetProviderDeatils(providerId);
+            ProviderProfileDto providerDto = await editService.GetProviderDetails(providerId);
             return View(providerDto);
            
 
