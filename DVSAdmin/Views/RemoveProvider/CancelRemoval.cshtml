@@ -1,0 +1,91 @@
+﻿@using DVSAdmin.BusinessLogic.Models
+@using DVSAdmin.Extensions
+@model ServiceDto
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "#", "#", new { providerId = Model.Id }, new { @class = "govuk-back-link" })
+
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
+            You are about to cancel a removal request for this service
+        </h1>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-summary-card govuk-!-margin-top-6">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Service: @Model.ServiceName
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Service Name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.ServiceName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Service publication status
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @HtmlExtensions.ToStyledStrongTag(Model.ServiceStatus)
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Provider registered name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Provider.RegisteredName
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-m govuk-!-margin-top-6">What will happen once you cancel the removal request</h2>
+                <p class="govuk-body">
+                    Review the information above and select ‘Confirm’ to cancel the removal
+                    request. Once the removal request has been cancelled, any removal requests
+                    sent for this service will no longer be valid.                    
+                </p>
+                <p class="govuk-body">
+                    If you need to remove this service, you will need to create a new removal 
+                    request.
+                </p>
+
+
+                <div class="govuk-warning-text govuk-!-margin-top-6">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-visually-hidden">Warning</span>
+                        Once you cancel the removal request, the action can't be undone.
+                    </strong>
+                </div>
+
+                @using (Html.BeginForm("ProceedRemovalCancellation", "RemoveProvider", FormMethod.Post))
+                {
+                    @Html.Hidden("serviceId", Model.Id)
+                    @Html.Hidden("providerId", Model.ProviderProfileId)
+                    <div class="govuk-button-group govuk-!-margin-top-8 govuk-!-margin-bottom-8">
+                        <button type="submit" class="govuk-button" data-module="govuk-button">
+                            Confirm
+                        </button>
+                        <a class="govuk-button govuk-button--secondary" href="#">
+                            Cancel
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+</div>

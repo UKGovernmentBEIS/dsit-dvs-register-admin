@@ -204,6 +204,33 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             }
             return genericResponse;
         }
+
+        public async Task<GenericResponse> CancelRemoveServiceRequest(int providerProfileId, int serviceId, string loggedInUserEmail)
+        {
+            GenericResponse genericResponse = new();
+
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                var service = await context.Service.Where(s => s.Id == serviceId && s.ProviderProfileId == providerProfileId).FirstOrDefaultAsync();
+
+                service.ModifiedTime = DateTime.UtcNow;
+                service.ServiceStatus = ServiceStatusEnum.Published;
+                service.RemovalRequestTime = null;
+                service.ServiceRemovalReason = null;
+
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
+                await transaction.CommitAsync();
+                genericResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                genericResponse.Success = false;
+                await transaction.RollbackAsync();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
     }
 }
 
