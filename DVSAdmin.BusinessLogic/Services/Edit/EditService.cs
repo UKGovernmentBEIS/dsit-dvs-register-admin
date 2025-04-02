@@ -219,7 +219,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
         }
 
-        public async Task<ProviderProfileDto> GetProviderDeatils(int providerId)
+        public async Task<ProviderProfileDto> GetProviderDetails(int providerId)
         {
             var provider = await _editRepository.GetProviderDetails(providerId);
             ProviderProfileDto providerProfileDto = _mapper.Map<ProviderProfileDto>(provider);
