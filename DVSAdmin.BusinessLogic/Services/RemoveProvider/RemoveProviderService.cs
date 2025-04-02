@@ -187,7 +187,23 @@ namespace DVSAdmin.BusinessLogic.Services
             return genericResponse;
         }
 
+        public async Task<GenericResponse> CancelRemoveServiceRequest(int providerProfileId, int serviceId, string loggedInUserEmail)
+        {
+            GenericResponse genericResponse = await removeProviderRepository.CancelRemoveServiceRequest(providerProfileId, serviceId, loggedInUserEmail);
 
-       
+            if (genericResponse.Success)
+            {
+                ProviderProfile providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
+                ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
+                genericResponse = await removeProviderRepository.UpdateProviderStatus(providerProfileId, providerStatus, loggedInUserEmail, EventTypeEnum.RemoveServiceRequestedByCab);
+
+                if (genericResponse.Success)
+                {
+                    // send emails
+                }
+            }
+
+            return genericResponse;
+        }
     }
 }

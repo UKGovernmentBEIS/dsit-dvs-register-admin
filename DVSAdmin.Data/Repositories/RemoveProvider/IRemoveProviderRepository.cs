@@ -15,6 +15,7 @@ namespace DVSAdmin.Data.Repositories
         public Task<GenericResponse> RemoveProviderRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, RemovalReasonsEnum? reason);
         public Task<GenericResponse> RemoveServiceRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, ServiceRemovalReasonEnum? serviceRemovalReason);
         public Task<ProviderProfile> GetProviderAndServices(int providerId);
+        public Task<GenericResponse> CancelRemoveServiceRequest(int providerProfileId, int serviceId, string loggedInUserEmail);
 
     }
 }
