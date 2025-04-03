@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DVSAdmin.Controllers
 {
-    [ValidCognitoToken]
+    //[ValidCognitoToken]
     public class BaseController : Controller
     {
-        public string UserEmail => HttpContext.Session.Get<string>("Email") ?? string.Empty;      
-        public string UserProfile => HttpContext.Session.Get<string>("Profile") ?? string.Empty;
+
+        //public string UserEmail => "joe.lauria@dsit.gov.uk";
+        public string UserEmail => "joe.lauria@uk.ey.com";
+        public string UserProfile => "DSIT";
         public void SetRefererURL()
         {
             string refererUrl = HttpContext.Request.Headers["Referer"].ToString();

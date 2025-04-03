@@ -165,6 +165,29 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendNotification(emailAddress, template, personalisation);
         }
 
+        public async Task<bool> CancelServiceRemovalRequestToDSIT(string companyName, string serviceName)
+        {
+            var template = govUkNotifyConfig.CancelServiceRemovalRequestToDSIT;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.CompanyName,  companyName},
+                { template.ServiceName,  serviceName}
+
+             };
+            return await SendNotificationToOfDiaCommonMailBox(template, personalisation);
+        }
+
+        public async Task<bool> CancelServiceRemovalRequestToProvider(string recipientName, string emailAddress, string serviceName)
+        {
+            var template = govUkNotifyConfig.CancelServiceRemovalRequestToProvider;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.RecipientName,  recipientName},
+                { template.ServiceName,  serviceName}
+             };
+            return await SendNotification(emailAddress, template, personalisation);
+        }
+
 
         #endregion
     }
