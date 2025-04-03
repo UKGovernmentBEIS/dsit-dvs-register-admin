@@ -292,8 +292,8 @@ namespace DVSAdmin.BusinessLogic.Services
                     .Select(item => item.QualityLevel.Level)
                     .ToList();
 
-                previousDataDictionary.Add("GPG44 level of protection", protectionLevels != null && protectionLevels.Count > 0 ? protectionLevels : new List<string> { "Not certified against GPG44" });
-                currentDataDictionary.Add("GPG44 level of protection", currentProtectionLevels != null && currentProtectionLevels.Count > 0 ? currentProtectionLevels : new List<string> { "Not certified against GPG44" });
+                previousDataDictionary.Add("GPG44 level of protection", protectionLevels != null && protectionLevels.Count > 0 ? protectionLevels : new List<string> { @Constants.NullFieldsDisplay });
+                currentDataDictionary.Add("GPG44 level of protection", currentProtectionLevels != null && currentProtectionLevels.Count > 0 ? currentProtectionLevels : new List<string> { @Constants.NullFieldsDisplay });
             }
 
             if (authenticationExists || currentData.HasGPG44 == false)
@@ -308,8 +308,8 @@ namespace DVSAdmin.BusinessLogic.Services
                     .Select(item => item.QualityLevel.Level)
                     .ToList();
 
-                previousDataDictionary.Add("GPG44 quality of authentication", authenticationLevels != null && authenticationLevels.Count > 0 ? authenticationLevels : new List<string> { "Not certified against GPG44" });
-                currentDataDictionary.Add("GPG44 quality of authentication", currentAuthenticationLevels != null && currentAuthenticationLevels.Count > 0 ? currentAuthenticationLevels : new List<string> { "Not certified against GPG44" });
+                previousDataDictionary.Add("GPG44 quality of authentication", authenticationLevels != null && authenticationLevels.Count > 0 ? authenticationLevels : new List<string> { @Constants.NullFieldsDisplay });
+                currentDataDictionary.Add("GPG44 quality of authentication", currentAuthenticationLevels != null && currentAuthenticationLevels.Count > 0 ? currentAuthenticationLevels : new List<string> { @Constants.NullFieldsDisplay });
             }
 
             #region GPG45 Identity profile
@@ -324,7 +324,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 }
                 else
                 {
-                    previousDataDictionary.Add("GPG45 identity profiles", ["Not certified against any identity profiles"]);
+                    previousDataDictionary.Add("GPG45 identity profiles", [@Constants.NullFieldsDisplay]);
                 }
 
                 if (currentIdentityProfiles != null && currentIdentityProfiles.Count > 0)
@@ -333,7 +333,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 }
                 else
                 {
-                    currentDataDictionary.Add("GPG45 identity profiles", ["Not certified against any identity profiles"]);
+                    currentDataDictionary.Add("GPG45 identity profiles", [@Constants.NullFieldsDisplay]);
                 }
             }
            
@@ -352,7 +352,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 }
                 else
                 {
-                    previousDataDictionary.Add("Supplementary Codes", ["Not certified against any supplementary schemes"]);
+                    previousDataDictionary.Add("Supplementary Codes", [@Constants.NullFieldsDisplay]);
                 }
 
                 if (currentSupplementarySchemes != null && currentSupplementarySchemes.Count > 0)
@@ -361,7 +361,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 }
                 else
                 {
-                    currentDataDictionary.Add("Supplementary Codes", ["Not certified against any supplementary schemes"]);
+                    currentDataDictionary.Add("Supplementary Codes", [@Constants.NullFieldsDisplay]);
                 }
             }
          
