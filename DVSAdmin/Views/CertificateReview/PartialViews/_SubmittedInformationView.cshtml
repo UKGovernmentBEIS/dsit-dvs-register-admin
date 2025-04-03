@@ -1,4 +1,5 @@
-﻿@using DVSAdmin.Extensions;
+﻿@using DVSAdmin.CommonUtility
+@using DVSAdmin.Extensions;
 @using DVSAdmin.BusinessLogic.Models;
 @using DVSAdmin.CommonUtility.Models;
 
@@ -101,7 +102,7 @@
             }
             else
             {
-                <div>Not certified against GPG44</div>
+                <div>@Constants.NullFieldsDisplay</div>
             }
         </dd>
     </div>
@@ -117,7 +118,7 @@
             }
             else
             {
-                <div>Not certified against GPG44</div>
+                <div>@Constants.NullFieldsDisplay</div>
             }
         </dd>
     </div>
@@ -133,7 +134,7 @@
             }
             else
             {
-                <div>Not certified against GPG45</div>
+                <div>@Constants.NullFieldsDisplay</div>
             }
         </dd>
     </div>
@@ -149,7 +150,7 @@
             }
             else
             {
-                <div>Not certified against any supplementary codes</div>
+                <div>@Constants.NullFieldsDisplay</div>
             }
         </dd>
     </div>
