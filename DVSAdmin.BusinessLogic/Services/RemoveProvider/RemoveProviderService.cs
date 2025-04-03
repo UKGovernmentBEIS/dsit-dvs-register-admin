@@ -199,7 +199,10 @@ namespace DVSAdmin.BusinessLogic.Services
 
                 if (genericResponse.Success)
                 {
-                    // send emails
+                    var service = providerProfile.Services.FirstOrDefault(s => s.Id == serviceId);
+                    await emailSender.CancelServiceRemovalRequestToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, service.ServiceName);
+                    await emailSender.CancelServiceRemovalRequestToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, service.ServiceName);                    
+                    await emailSender.CancelServiceRemovalRequestToDSIT(providerProfile.RegisteredName, service.ServiceName);
                 }
             }
 

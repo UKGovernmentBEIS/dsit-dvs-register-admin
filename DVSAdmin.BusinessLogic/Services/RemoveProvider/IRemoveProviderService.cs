@@ -1,7 +1,6 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
-using System.Threading.Tasks;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
