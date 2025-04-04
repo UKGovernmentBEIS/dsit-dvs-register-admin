@@ -22,15 +22,28 @@ namespace DVSAdmin.CommonUtility.JWT
             this.logger = logger;
         }
 
-        public TokenDetails GenerateToken(string audience = "")
+        public TokenDetails GenerateToken(string audience = "", int providerId = 0, List<int>? serviceIds = null)
         {
             TokenDetails tokenDetails = new TokenDetails();
             tokenDetails.TokenId  = Guid.NewGuid().ToString();
-            var claims = new[]
+            var claims = new List<Claim>()
             {
-                new Claim(JwtRegisteredClaimNames.Website,configuration["ReviewPortalLink"]),
-                new Claim(JwtRegisteredClaimNames.Jti,   tokenDetails.TokenId)
+                new(JwtRegisteredClaimNames.Website,configuration["ReviewPortalLink"]),
+                new(JwtRegisteredClaimNames.Jti,   tokenDetails.TokenId)
             };
+
+            if (providerId > 0)
+            {
+                claims.Add(new Claim("ProviderProfileId", providerId.ToString()));
+            }
+
+            if (serviceIds != null && serviceIds.Count > 0)
+            {
+                foreach (var serviceId in serviceIds)
+                {
+                    claims.Add(new Claim("serviceId", serviceId.ToString()));
+                }
+            }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
