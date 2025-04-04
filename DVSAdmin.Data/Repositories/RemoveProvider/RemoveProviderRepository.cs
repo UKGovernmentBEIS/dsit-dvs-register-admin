@@ -30,12 +30,12 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
 
         public async Task<ProviderProfile> GetProviderAndServices(int providerId)
         {
-           return await context.ProviderProfile.Include(p => p.Services).Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();
+            return await context.ProviderProfile.Include(p => p.Services).Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
         public async Task<Service> GetServiceDetails(int serviceId)
         {
-            return await context.Service.Include(s=>s.Provider).Include(s=>s.CabUser).ThenInclude(s=>s.Cab). Where(s => s.Id == serviceId).FirstOrDefaultAsync() ?? new Service(); ;
+            return await context.Service.Include(s => s.Provider).Include(s => s.CabUser).ThenInclude(s => s.Cab).Where(s => s.Id == serviceId).FirstOrDefaultAsync() ?? new Service(); ;
 
         }
         public async Task<GenericResponse> UpdateProviderStatus(int providerProfileId, ProviderStatusEnum providerStatus, string loggedInUserEmail, EventTypeEnum eventType, TeamEnum team = TeamEnum.DSIT)
@@ -102,7 +102,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
         }
 
 
-       
+
         public async Task<GenericResponse> RemoveProviderRequest(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, RemovalReasonsEnum? reason)
         {
             GenericResponse genericResponse = new();
@@ -190,7 +190,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                         service.ServiceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
                     }
                     service.ModifiedTime = DateTime.UtcNow;
-                    service.RemovalRequestTime = DateTime.UtcNow;                  
+                    service.RemovalRequestTime = DateTime.UtcNow;
                 }
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
                 await transaction.CommitAsync();
@@ -207,23 +207,42 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
 
         public async Task<GenericResponse> CancelRemoveServiceRequest(int providerProfileId, int serviceId, string loggedInUserEmail)
         {
-            GenericResponse genericResponse = new();
+            var genericResponse = new GenericResponse();
 
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var service = await context.Service.Where(s => s.Id == serviceId && s.ProviderProfileId == providerProfileId).FirstOrDefaultAsync();
-               // var provider = await context.ProviderProfile.Include(p=>p.RemoveProviderToken).ThenInclude(p=>p.RemoveTokenServiceMapping). Where(p=>p.Id == providerProfileId).FirstOrDefaultAsync();                                
+                var service = await context.Service
+                    .FirstOrDefaultAsync(s => s.Id == serviceId && s.ProviderProfileId == providerProfileId);
+
+                var provider = await context.ProviderProfile
+                    .Include(p => p.Services)
+                    .Include(p => p.RemoveProviderToken)
+                        .ThenInclude(p => p.RemoveTokenServiceMapping)
+                    .FirstOrDefaultAsync(p => p.Id == providerProfileId);
 
                 service.ModifiedTime = DateTime.UtcNow;
                 service.ServiceStatus = ServiceStatusEnum.Published;
                 service.RemovalRequestTime = null;
                 service.ServiceRemovalReason = null;
-                //Uncomment the provider fetch
-                //Remove toke from RemoveTokenServiceMapping   where serviceId = serviceId
-                //Check if RemoveTokenServiceMapping has any more provider profile id = providerProfileId 
-                //if not remove entry from RemoveProviderToken as well , other wise dont remove
-                // To do : update the enum column              
+
+                var serviceToken = await context.RemoveTokenServiceMapping
+                    .FirstOrDefaultAsync(r => r.ServiceId == serviceId);
+
+                if (serviceToken != null)
+                {
+                    var providerToken = await context.RemoveProviderToken
+                        .FirstOrDefaultAsync(r => r.Id == serviceToken.RemoveProviderTokenId);
+
+                    context.RemoveTokenServiceMapping.Remove(serviceToken);
+                    context.RemoveProviderToken.Remove(providerToken);
+                }
+                else if (!provider.Services.Any(s => s.Id != serviceId && s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation))
+                {
+                    context.RemoveProviderToken.Remove(provider.RemoveProviderToken); 
+                }
+
+                // set cancelled enum for the specific service you have just cancelled the removal request for?
 
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CancelRemovalRequest, loggedInUserEmail);
                 await transaction.CommitAsync();
