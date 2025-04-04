@@ -213,13 +213,19 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             try
             {
                 var service = await context.Service.Where(s => s.Id == serviceId && s.ProviderProfileId == providerProfileId).FirstOrDefaultAsync();
+               // var provider = await context.ProviderProfile.Include(p=>p.RemoveProviderToken).ThenInclude(p=>p.RemoveTokenServiceMapping). Where(p=>p.Id == providerProfileId).FirstOrDefaultAsync();                                
 
                 service.ModifiedTime = DateTime.UtcNow;
                 service.ServiceStatus = ServiceStatusEnum.Published;
                 service.RemovalRequestTime = null;
                 service.ServiceRemovalReason = null;
+                //Uncomment the provider fetch
+                //Remove toke from RemoveTokenServiceMapping   where serviceId = serviceId
+                //Check if RemoveTokenServiceMapping has any more provider profile id = providerProfileId 
+                //if not remove entry from RemoveProviderToken as well , other wise dont remove
+                // To do : update the enum column              
 
-                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CancelRemovalRequest, loggedInUserEmail);
                 await transaction.CommitAsync();
                 genericResponse.Success = true;
             }
