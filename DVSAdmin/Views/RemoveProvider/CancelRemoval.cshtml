@@ -3,7 +3,7 @@
 @model ServiceDto
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "#", "#", new { providerId = Model.Id }, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { providerId = Model.ProviderProfileId }, new { @class = "govuk-back-link" })
 
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
@@ -80,7 +80,7 @@
                         <button type="submit" class="govuk-button" data-module="govuk-button">
                             Confirm
                         </button>
-                        <a class="govuk-button govuk-button--secondary" href="#">
+                        <a class="govuk-button govuk-button--secondary" href="/register-management/provider-details?providerId=@Model.ProviderProfileId">
                             Cancel
                         </a>
                     </div>
