@@ -31,7 +31,8 @@
         RemoveServiceRequestedByCab = 26,     
         UpdateUser = 27,
         DSITEditProvider = 28,
-        DSITEditService = 29
+        DSITEditService = 29,
+        CancelRemovalRequest = 30
 
     }
 }
