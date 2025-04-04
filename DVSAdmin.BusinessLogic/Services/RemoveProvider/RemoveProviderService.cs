@@ -61,7 +61,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 // save token for 2i check
                 //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
 
-                TokenDetails tokenDetails = jwtService.GenerateToken(string.Empty);
+                TokenDetails tokenDetails = jwtService.GenerateToken(string.Empty, providerProfileId, serviceIds);
 
                 ICollection<RemoveTokenServiceMapping> removeTokenServiceMapping = [];
                 foreach (var item in serviceIds)
@@ -107,7 +107,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 // save token for 2i check
                 //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
 
-                TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty);
+                TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty, providerProfileId, serviceIds);
                 RemoveProviderToken removeProviderToken = new()
                 {
                     ProviderProfileId = providerProfileId,

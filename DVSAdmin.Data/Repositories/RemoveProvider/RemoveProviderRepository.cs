@@ -87,6 +87,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                     service.ModifiedTime = DateTime.UtcNow;
                     service.RemovalRequestTime = DateTime.UtcNow;
                     service.ServiceRemovalReason = serviceRemovalReason;
+                    service.RemovalTokenStatus = TokenStatusEnum.Requested;
                 }
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
                 await transaction.CommitAsync();
@@ -124,6 +125,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                         existingService.ServiceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
                         existingService.ModifiedTime = DateTime.UtcNow;
                         existingService.RemovalRequestTime = DateTime.UtcNow;
+                        existingService.RemovalTokenStatus = TokenStatusEnum.Requested;
                     }
                 }
 
@@ -242,7 +244,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                     context.RemoveProviderToken.Remove(provider.RemoveProviderToken); 
                 }
 
-                // set cancelled enum for the specific service you have just cancelled the removal request for?
+                service.RemovalTokenStatus = TokenStatusEnum.AdminCancelled;
 
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CancelRemovalRequest, loggedInUserEmail);
                 await transaction.CommitAsync();
