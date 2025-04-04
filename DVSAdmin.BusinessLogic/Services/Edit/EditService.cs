@@ -17,11 +17,11 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly IEditRepository _editRepository;
         private readonly IRemoveProviderRepository _removeProviderRepository;
         private readonly IMapper _mapper;
-        private readonly IEmailSender _emailSender;
+        private readonly EditEmailSender _emailSender;
         private readonly IJwtService _jwtService;
         private readonly IConfiguration _configuration;
 
-        public EditService(IEditRepository editRepository, IRemoveProviderRepository removeProviderRepository, IMapper mapper, IEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
+        public EditService(IEditRepository editRepository, IRemoveProviderRepository removeProviderRepository, IMapper mapper, EditEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
             _removeProviderRepository = removeProviderRepository;
             _editRepository = editRepository;
@@ -219,7 +219,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
         }
 
-        public async Task<ProviderProfileDto> GetProviderDeatils(int providerId)
+        public async Task<ProviderProfileDto> GetProviderDetails(int providerId)
         {
             var provider = await _editRepository.GetProviderDetails(providerId);
             ProviderProfileDto providerProfileDto = _mapper.Map<ProviderProfileDto>(provider);
@@ -277,71 +277,40 @@ namespace DVSAdmin.BusinessLogic.Services
 
 
             }
+            var protectionExists = currentData.ServiceQualityLevelMappingDraft.Any(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection);
+            var authenticationExists = currentData.ServiceQualityLevelMappingDraft.Any(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication);
 
-
-            if (currentData.ServiceQualityLevelMappingDraft.Count > 0 || currentData.HasGPG44 == false )
+            if (protectionExists || currentData.HasGPG44 == false)
             {
                 var protectionLevels = previousData.ServiceQualityLevelMapping?
-                   .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection)
-                   .Select(item => item.QualityLevel.Level)
-                   .ToList();
+                    .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection)
+                    .Select(item => item.QualityLevel.Level)
+                    .ToList();
 
                 var currentProtectionLevels = currentData.ServiceQualityLevelMappingDraft?
-                  .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection)
-                  .Select(item => item.QualityLevel.Level)
-                  .ToList();
+                    .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection)
+                    .Select(item => item.QualityLevel.Level)
+                    .ToList();
 
+                previousDataDictionary.Add("GPG44 level of protection", protectionLevels != null && protectionLevels.Count > 0 ? protectionLevels : new List<string> { @Constants.NullFieldsDisplay });
+                currentDataDictionary.Add("GPG44 level of protection", currentProtectionLevels != null && currentProtectionLevels.Count > 0 ? currentProtectionLevels : new List<string> { @Constants.NullFieldsDisplay });
+            }
 
-                if (protectionLevels != null && protectionLevels.Count > 0)
-                {
-                    previousDataDictionary.Add("GPG44 level of protection", protectionLevels);                  
-                   
-                }
-                else
-                {
-                    previousDataDictionary.Add("GPG44 level of protection", ["Not certified against GPG44"]);
-                }
-
-                if (currentProtectionLevels != null && currentProtectionLevels.Count > 0)
-                {
-                    currentDataDictionary.Add("GPG44 level of protection", currentProtectionLevels);
-                }
-                else
-                {
-                    currentDataDictionary.Add("GPG44 level of protection", ["Not certified against GPG44"]);
-                }
-
+            if (authenticationExists || currentData.HasGPG44 == false)
+            {
                 var authenticationLevels = previousData.ServiceQualityLevelMapping?
                     .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication)
                     .Select(item => item.QualityLevel.Level)
                     .ToList();
 
                 var currentAuthenticationLevels = currentData.ServiceQualityLevelMappingDraft?
-                   .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication)
-                   .Select(item => item.QualityLevel.Level)
-                   .ToList();
+                    .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication)
+                    .Select(item => item.QualityLevel.Level)
+                    .ToList();
 
-                if (authenticationLevels != null && authenticationLevels.Count > 0)
-                {
-                    previousDataDictionary.Add("GPG44 quality of authentication", authenticationLevels);
-                   
-                }
-                else
-                {
-                    previousDataDictionary.Add("GPG44 quality of authentication", ["Not certified against GPG44"]);
-                }
-
-                if (currentAuthenticationLevels != null && currentAuthenticationLevels.Count > 0)
-                {
-                    currentDataDictionary.Add("GPG44 quality of authentication", currentAuthenticationLevels);
-                }
-                else
-                {
-                    currentDataDictionary.Add("GPG44 level of authentication", ["Not certified against GPG44"]);
-                }
+                previousDataDictionary.Add("GPG44 quality of authentication", authenticationLevels != null && authenticationLevels.Count > 0 ? authenticationLevels : new List<string> { @Constants.NullFieldsDisplay });
+                currentDataDictionary.Add("GPG44 quality of authentication", currentAuthenticationLevels != null && currentAuthenticationLevels.Count > 0 ? currentAuthenticationLevels : new List<string> { @Constants.NullFieldsDisplay });
             }
-          
-
 
             #region GPG45 Identity profile
             if (currentData.ServiceIdentityProfileMappingDraft.Count > 0 || currentData.HasGPG45 == false)
@@ -355,7 +324,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 }
                 else
                 {
-                    previousDataDictionary.Add("GPG45 identity profiles", ["Not certified against any identity profiles"]);
+                    previousDataDictionary.Add("GPG45 identity profiles", [@Constants.NullFieldsDisplay]);
                 }
 
                 if (currentIdentityProfiles != null && currentIdentityProfiles.Count > 0)
@@ -364,7 +333,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 }
                 else
                 {
-                    currentDataDictionary.Add("GPG45 identity profiles", ["Not certified against any identity profiles"]);
+                    currentDataDictionary.Add("GPG45 identity profiles", [@Constants.NullFieldsDisplay]);
                 }
             }
            
@@ -383,7 +352,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 }
                 else
                 {
-                    previousDataDictionary.Add("Supplementary Codes", ["Not certified against any supplementary schemes"]);
+                    previousDataDictionary.Add("Supplementary Codes", [@Constants.NullFieldsDisplay]);
                 }
 
                 if (currentSupplementarySchemes != null && currentSupplementarySchemes.Count > 0)
@@ -392,7 +361,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 }
                 else
                 {
-                    currentDataDictionary.Add("Supplementary Codes", ["Not certified against any supplementary schemes"]);
+                    currentDataDictionary.Add("Supplementary Codes", [@Constants.NullFieldsDisplay]);
                 }
             }
          

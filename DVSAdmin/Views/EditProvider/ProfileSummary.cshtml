@@ -1,4 +1,5 @@
-﻿@model ProfileSummaryViewModel
+﻿@using DVSAdmin.CommonUtility
+@model ProfileSummaryViewModel
 @{
     ViewData["Title"] = "ProfileSummary";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -6,16 +7,13 @@
 
 @{
     bool isEditPage = Convert.ToBoolean(ViewBag.isEditPage); // else summary spage
+    string refererUrl = isEditPage ? "/register-management/provider-details?providerId=" + Model.ProviderProfileId : Convert.ToString(ViewBag.RefererUrl);
 }
 
-
-
     <div class="govuk-width-container">
-        @if(isEditPage)
-        {
-        @Html.ActionLink("Back", "ProviderDetails", "RegisterManagement", new { providerId = Model.ProviderProfileId }, new { @class = "govuk-back-link" })
-
-        }
+    <a href="@refererUrl" class="govuk-back-link">
+        Back
+    </a>
         
         <main id="main-content" class="govuk-main-wrapper" role="main">
             <div class="govuk-grid-row">
@@ -69,7 +67,7 @@
                                         Trading name
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        @Model.TradingName
+                                    @Html.DisplayFor(model => model.TradingName)
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
                                     @if (Model.IsEditable)
@@ -109,7 +107,7 @@
                                             registration number
                                         </dt>
                                         <dd class="govuk-summary-list__value">
-                                            No
+                                            @Constants.NullFieldsDisplay
                                         </dd>
                                       
                                     </div>
@@ -294,7 +292,7 @@
                                         Contact email
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        @Model.PublicContactEmail
+                                    @(string.IsNullOrEmpty(Model.PublicContactEmail) ? Constants.NullFieldsDisplay : Model.PublicContactEmail)
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
 
@@ -311,7 +309,7 @@
                                         Telephone number
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        @Model.ProviderTelephoneNumber
+                                    @Html.DisplayFor(model => model.ProviderTelephoneNumber)
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
 

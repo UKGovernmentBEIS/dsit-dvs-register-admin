@@ -54,7 +54,7 @@ namespace DVSAdmin.Models
         [Required(ErrorMessage = "Select correct if the certificate contains valid authenticity verification")]
         public bool? IsAuthenticyVerifiedCorrect { get; set; }
 
-        [Required(ErrorMessage = "Enter a comment")]
+        [Required(ErrorMessage = "Enter the reasons for your decision")]
         public string? CommentsForIncorrect { get; set; }
 
     }

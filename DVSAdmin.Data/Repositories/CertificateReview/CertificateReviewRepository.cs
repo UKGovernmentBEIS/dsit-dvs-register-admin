@@ -73,22 +73,7 @@ namespace DVSAdmin.Data.Repositories
             .ToListAsync();
         }
 
-        public async Task<List<Service>> GetServiceVersionList(int serviceKey)
-        {
-            return await context.Service
-            .Include(s => s.Provider)
-            .Include(s => s.CertificateReview)
-            .Include(s => s.ServiceSupSchemeMapping)
-            .ThenInclude(s => s.SupplementaryScheme)
-            .Include(s => s.ServiceRoleMapping)
-            .ThenInclude(s => s.Role)
-            .Include(s => s.ServiceQualityLevelMapping)
-            .ThenInclude(s => s.QualityLevel)
-            .Include(s => s.ServiceIdentityProfileMapping)
-            .ThenInclude(s => s.IdentityProfile)
-            .Where(s => s.ServiceKey == serviceKey)
-            .ToListAsync();
-        }
+     
 
 
 
@@ -260,6 +245,50 @@ namespace DVSAdmin.Data.Repositories
                     genericResponse.Success = true;
                 }
 
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError(ex.Message);
+            }
+            return genericResponse;
+        }
+
+        //// Part 2 of 2: Information match Send back to CAB flow
+        public async Task<GenericResponse> UpdateCertificateSentBack(CertificateReview cetificateReview, string loggedInUserEmail)
+        {
+            GenericResponse genericResponse = new();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                var existingEntity = await context.CertificateReview
+                    .FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId && e.ProviProviderProfileId == cetificateReview.ProviProviderProfileId);
+
+                if (existingEntity != null)
+                {
+                    existingEntity.Comments = cetificateReview.Comments;
+                    existingEntity.InformationMatched = cetificateReview.InformationMatched;
+                    existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
+                    existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
+                    existingEntity.Amendments = cetificateReview.Amendments;
+                    existingEntity.ModifiedDate = DateTime.UtcNow;
+                    genericResponse.InstanceId = existingEntity.Id;
+                }
+
+                var existingService = await context.Service
+                    .FirstOrDefaultAsync(e => e.Id == cetificateReview.ServiceId);
+
+                if (existingService != null)
+                {
+                    existingService.ServiceStatus = ServiceStatusEnum.AmendmentsRequired;
+                    existingService.ModifiedTime = DateTime.UtcNow;
+                }
+
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
+                transaction.Commit();
+                genericResponse.Success = true;
             }
             catch (Exception ex)
             {

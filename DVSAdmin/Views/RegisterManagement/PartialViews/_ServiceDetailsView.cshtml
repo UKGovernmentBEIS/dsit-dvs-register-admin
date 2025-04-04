@@ -1,22 +1,17 @@
-﻿@using DVSAdmin.Extensions;
+﻿@using DVSAdmin.CommonUtility
+@using DVSAdmin.Extensions;
 @using DVSAdmin.BusinessLogic.Models;
 @using DVSAdmin.CommonUtility.Models;
 @model ServiceDto
 
 @{
-    bool isEditable = Model.IsCurrent && (Model.ServiceStatus == ServiceStatusEnum.Published || Model.ServiceStatus == ServiceStatusEnum.ReadyToPublish);
+    bool isEditable = !Convert.ToBoolean(ViewBag.IsPrevious) && 
+    (Model.ServiceStatus == ServiceStatusEnum.ReadyToPublish || Model.ServiceStatus == ServiceStatusEnum.Published);
 }
 
 <div class="govuk-summary-card__title-wrapper">
     <p class="govuk-summary-card__title">
-        @if (Model.ServiceStatus == ServiceStatusEnum.Published)
-        {
-            @DateTimeExtensions.FormatDateTime(@Model.PublishedTime)
-        }
-        else
-        {
-            @DateTimeExtensions.FormatDateTime(@Model.ModifiedTime)
-        }
+        @DateTimeExtensions.FormatDateTime(@Model.ModifiedTime)
     </p>
 </div>
 <div class="govuk-summary-card__content">
@@ -42,7 +37,7 @@
                 Trading names
             </dt>
             <dd class="govuk-summary-list__value">
-                @(string.IsNullOrEmpty(Model.Provider.TradingName) ? "N/A" : Model.Provider.TradingName)
+                @Html.DisplayFor(model => model.Provider.TradingName)
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -107,7 +102,7 @@
                 }
                 else
                 {
-                    <div>Not certified against GPG44</div>
+                    <div>@Constants.NullFieldsDisplay</div>
                 }
             </dd>
             @if (isEditable)
@@ -132,7 +127,7 @@
                 }
                 else
                 {
-                    <div>Not certified against GPG44</div>
+                    <div>@Constants.NullFieldsDisplay</div>
                 }
             </dd>
             @if (isEditable)
@@ -157,7 +152,7 @@
                 }
                 else
                 {
-                    <div>Not certified against any identity profiles</div>
+                    <div>@Constants.NullFieldsDisplay</div>
                 }
             </dd>
             @if (isEditable)
@@ -182,7 +177,7 @@
                 }
                 else
                 {
-                    <div>Not certified against any supplementary codes</div>
+                    <div>@Constants.NullFieldsDisplay</div>
                 }
             </dd>
             @if (isEditable)

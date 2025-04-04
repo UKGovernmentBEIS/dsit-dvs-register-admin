@@ -38,6 +38,8 @@ namespace DVSAdmin.Data.Entities
         public bool? InformationMatched { get; set; }
         public string? CommentsForIncorrect { get; set; }
         public string? RejectionComments { get; set; }
+        public string? Amendments { get; set; }
+
         [ForeignKey("User")]
         public int VerifiedUser { get; set; }
 

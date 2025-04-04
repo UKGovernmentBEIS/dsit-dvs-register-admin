@@ -81,7 +81,7 @@
                     </div>
 
                     <a href="/certificate-review/download-certificate?key=@Model.Service.FileLink&filename=@Model.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
-                        Download certificate of conformity (Opens in a new tab)
+                        Download certificate of conformity 
                     </a>
 
                     <hr class="govuk-section-break govuk-section-break--m">
@@ -120,12 +120,14 @@
                         <div class="govuk-form-group govuk-form-group--error">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="comments">
-                                    Comment required
+                                    Record the reasons for your decision
                                 </label>
 
                             </h3>
                             <div id="comments-hint" class="govuk-hint">
-                                If you have selected ‘No, it does not match’, you should provide further details. If all the information matches the certificate, please provide a note to confirm below.
+                                This information will only be visible to OfDIA users. If you selected 'No, it does
+                                not match', you should provide further details. If all the information matches the
+                                certificate, please provide a note to confirm this.
                             </div>
                             <p class="govuk-body"></p>
                             <p id="comments-error" class="govuk-error-message">
@@ -140,11 +142,13 @@
                         <div class="govuk-form-group">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--s" for="comments">
-                                    Add a comment
+                                    Record the reasons for your decision 
                                 </label>
                             </h3>
                             <div id="comments-hint" class="govuk-hint">
-                                If you had selected ‘No, it does not match’, you should provide further details. If all the information matches the certificate, please provide a note to confirm below.
+                                This information will only be visible to OfDIA users. If you selected 'No, it does
+                                not match', you should provide further details. If all the information matches the
+                                certificate, please provide a note to confirm this.
                             </div>
 
                             @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5",
@@ -168,6 +172,9 @@
                             </button>
                             <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
                                 Reject submission
+                            </button>
+                            <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="send-back">
+                                Return to CAB
                             </button>
                             <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
                                 Save as draft

@@ -33,7 +33,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                 .Include(p => p.Services)
                 .Include(x => x.CabUser).ThenInclude(x => x.Cab)
                 .OrderBy(c => priorityOrder.IndexOf(c.ProviderStatus))
-                .ThenByDescending(c => c.PublishedTime)
+                .ThenByDescending(c => c.ModifiedTime)
                 .Where(c => c.ProviderStatus > ProviderStatusEnum.Unpublished)
                 .ToListAsync();
         }
@@ -63,6 +63,22 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                 .FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
+        public async Task<List<Service>> GetServiceVersionList(int serviceKey)
+        {
+            return await context.Service
+            .Include(s => s.Provider)
+            .Include(s => s.CertificateReview)
+            .Include(s => s.ServiceSupSchemeMapping)
+            .ThenInclude(s => s.SupplementaryScheme)
+            .Include(s => s.ServiceRoleMapping)
+            .ThenInclude(s => s.Role)
+            .Include(s => s.ServiceQualityLevelMapping)
+            .ThenInclude(s => s.QualityLevel)
+            .Include(s => s.ServiceIdentityProfileMapping)
+            .ThenInclude(s => s.IdentityProfile)
+            .Where(s => s.ServiceKey == serviceKey)
+            .ToListAsync();
+        }
 
         public async Task<Service> GetServiceDetails(int serviceId)
         {
@@ -160,12 +176,23 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return genericResponse;
         }
 
-        public async Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail)
+        public async Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail, List<int> serviceIds)
         {
-            GenericResponse genericResponse = new GenericResponse();
+            GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();
             try
             {
+
+                var existingProviderEntry = await context.RegisterPublishLog.FirstOrDefaultAsync(e => e.ProviderProfileId == registerPublishLog.ProviderProfileId);
+                if (existingProviderEntry == null) {
+                    registerPublishLog.Description = "First published";
+                }
+                else
+                {          
+                    
+                    registerPublishLog.Description = serviceIds.Count + " new services included";
+                }                
+
                 await context.RegisterPublishLog.AddAsync(registerPublishLog);
                 await context.SaveChangesAsync();
                 transaction.Commit();

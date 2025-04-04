@@ -15,12 +15,12 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly ICertificateReviewRepository certificateReviewRepository;
         private readonly IConsentRepository consentRepository;
         private readonly IMapper automapper;       
-        private readonly IEmailSender emailSender;
+        private readonly CertificateReviewEmailSender emailSender;
         private readonly IJwtService jwtService;
         private readonly IConfiguration configuration;
 
         public CertificateReviewService(ICertificateReviewRepository certificateReviewRepository, IMapper automapper,
-          IEmailSender emailSender, IConsentRepository consentRepository, IJwtService jwtService, IConfiguration configuration)
+          CertificateReviewEmailSender emailSender, IConsentRepository consentRepository, IJwtService jwtService, IConfiguration configuration)
         {
             this.certificateReviewRepository = certificateReviewRepository;
             this.automapper = automapper;            
@@ -67,12 +67,7 @@ namespace DVSAdmin.BusinessLogic.Services
             return automapper.Map<List<ServiceDto>>(serviceList);
         }
 
-        public async Task<List<ServiceDto>> GetServiceVersionList(int serviceKey)
-        {
-            var serviceList = await certificateReviewRepository.GetServiceVersionList(serviceKey);
-            return automapper.Map<List<ServiceDto>>(serviceList);
-
-        }
+      
 
         public async Task<ServiceDto> GetServiceDetails(int serviceId)
         {
@@ -132,7 +127,24 @@ namespace DVSAdmin.BusinessLogic.Services
 
             return genericResponse;
         }
-       
+
+        public async Task<GenericResponse> UpdateCertificateSentBack(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail)
+        {
+            CertificateReview certificateReview = new CertificateReview();
+            automapper.Map(cetificateReviewDto, certificateReview);
+            GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateSentBack(certificateReview, loggedInUserEmail);
+
+
+            if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
+            {
+                await emailSender.SendCertificateBackToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, serviceDto.CabUser.CabEmail, certificateReview.Amendments);
+                await emailSender.SendCertificateBackDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName, certificateReview.Amendments);
+
+            }
+
+            return genericResponse;
+        }
+
 
         public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail)
         {

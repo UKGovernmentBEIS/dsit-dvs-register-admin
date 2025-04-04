@@ -1,6 +1,11 @@
-﻿@model CertficateRejectionViewModel
+﻿@using DVSAdmin.Extensions
+@model ReviewFiledsViewModel
+
 <dl class="govuk-summary-list">
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsCabLogoCorrect))
+
+
+
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsCabLogoCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -8,12 +13,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsCabDetailsCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsCabDetailsCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -21,12 +26,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsProviderDetailsCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsProviderDetailsCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -34,12 +39,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsServiceNameCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsServiceNameCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -47,12 +52,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsRolesCertifiedCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsRolesCertifiedCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -60,12 +65,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsCertificationScopeCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsCertificationScopeCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -73,12 +78,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsServiceSummaryCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsServiceSummaryCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -86,12 +91,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsURLLinkToServiceCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsURLLinkToServiceCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -99,12 +104,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsGPG45Correct))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsGPG45Correct))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -112,12 +117,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsGPG44Correct))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsGPG44Correct))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -125,12 +130,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsServiceProvisionCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsServiceProvisionCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -138,12 +143,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsLocationCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsLocationCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -151,12 +156,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsDateOfIssueCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsDateOfIssueCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -164,12 +169,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsDateOfExpiryCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsDateOfExpiryCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -177,12 +182,12 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
-    @if (!Convert.ToBoolean(Model?.CertificateValidation.IsAuthenticyVerifiedCorrect))
+    @if (!Convert.ToBoolean(Model.CertificateValidation.IsAuthenticyVerifiedCorrect))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -190,27 +195,36 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 <strong class="govuk-tag govuk-tag--red">
-                    Incorrect
+                    @Model.TextForIncorrectField
                 </strong>
             </dd>
         </div>
     }
 
-    @if (!Convert.ToBoolean(Model?.CertificateReview?.InformationMatched))
+    @if (!Convert.ToBoolean(Model.InformationMatched))
     {
-       
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Information match
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    <strong class="govuk-tag govuk-tag--red">
-                        No, it does not match
-                    </strong>
-                </dd>
-            </div>
-        
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Information match
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <strong class="govuk-tag govuk-tag--red">
+                    @Model.TextForIncorrectField
+                </strong>
+            </dd>
+        </div>
     }
 
+    @if (!String.IsNullOrEmpty(Model.ReviewComments))
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Review comments
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @HtmlExtensions.ToStringWithLineBreaks(Model.ReviewComments)
+            </dd>
+        </div>
+    }
 
 </dl>

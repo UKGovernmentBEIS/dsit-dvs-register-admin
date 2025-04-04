@@ -17,13 +17,13 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly IPublicInterestCheckRepository publicInterestCheckRepository;        
         private readonly IConsentRepository consentRepository;
         private readonly IMapper automapper;
-        private readonly IEmailSender emailSender;
+        private readonly PICheckEmailSender emailSender;
         private readonly IJwtService jwtService;
         private readonly IConfiguration configuration;
 
 
         public PublicInterestService(IPublicInterestCheckRepository publicInterestCheckRepository, IMapper automapper,
-          IEmailSender emailSender, IConsentRepository consentRepository, IJwtService jwtService, IConfiguration configuration)
+          PICheckEmailSender emailSender, IConsentRepository consentRepository, IJwtService jwtService, IConfiguration configuration)
         {
             this.publicInterestCheckRepository = publicInterestCheckRepository;
             this.automapper = automapper;

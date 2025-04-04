@@ -11,9 +11,9 @@ namespace DVSAdmin.BusinessLogic.Services
 	{
         private CognitoClient _cognitoClient;
         private readonly IUserRepository _userRepository;
-        private readonly IEmailSender _emailSender;
+        private readonly LoginEmailSender _emailSender;
 
-        public SignUpService(CognitoClient cognitoClient, IUserRepository userRepository, IEmailSender emailSender)
+        public SignUpService(CognitoClient cognitoClient, IUserRepository userRepository, LoginEmailSender emailSender)
         {
             _userRepository = userRepository;
             _cognitoClient = cognitoClient;
