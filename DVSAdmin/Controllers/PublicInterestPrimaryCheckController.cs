@@ -41,34 +41,24 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-              
-                if (!string.IsNullOrEmpty(UserEmail))
-                {
-                    UserDto userDto = await userService.GetUser(UserEmail);
+                if (string.IsNullOrEmpty(UserEmail))
+                    throw new InvalidOperationException("User email is missing.");
+                
+                UserDto userDto = await userService.GetUser(UserEmail);
 
-                    if (userDto.Id>0)
-                    {
-                        ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
-                        if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft )
-                        {
-                            return RedirectToAction(Constants.ErrorPath);
-                        }
-                        publicInterestPrimaryCheckViewModel = MapDtoToViewModel(serviceDto);
-                        publicInterestPrimaryCheckViewModel.PrimaryCheckUserId = userDto.Id;
-                    }
-                    else
-                    {
-                        return RedirectToAction(Constants.ErrorPath);
-                    }
-
-                }
-                else
-                {
-                    return RedirectToAction(Constants.ErrorPath);
-                }
+                if (userDto.Id<=0)
+                    throw new InvalidOperationException("User is not valid.");
+                
+                ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
+                
+                if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft ) 
+                    throw new InvalidOperationException("Service is not in a valid status for primary check review.");
+                
+                publicInterestPrimaryCheckViewModel = MapDtoToViewModel(serviceDto);
+                publicInterestPrimaryCheckViewModel.PrimaryCheckUserId = userDto.Id;
             }
+            
             return View(publicInterestPrimaryCheckViewModel);
-
         }
 
 
@@ -103,7 +93,7 @@ namespace DVSAdmin.Controllers
                     }
                     else
                     { 
-                        return RedirectToAction("HandleException", "Error");
+                        throw new InvalidOperationException("Failed to save primary check review in draft state.");
                     }
                 }
                 else
@@ -139,7 +129,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                return RedirectToAction("HandleException", "Error");
+                throw new InvalidOperationException("Unexpected review status.");
             }
 
         }
@@ -167,48 +157,41 @@ namespace DVSAdmin.Controllers
         {
 
             PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckView = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
-            if (publicInterestPrimaryCheckView != null)
-            {
+            
+            if (publicInterestPrimaryCheckView == null)
+                throw new InvalidOperationException("Primary check session data is missing.");
 
-                if (saveReview == "save")
+            if (saveReview == "save")
+            {
+                if (publicInterestPrimaryCheckView.ServiceId <= 0)
                 {
-                    if (publicInterestPrimaryCheckView != null && publicInterestPrimaryCheckView.ServiceId > 0)
-                    {
-                        PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
-                        publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckPassed;
-                        GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
-                        if (genericResponse.Success)
-                        {
-                            return RedirectToAction("PrimaryCheckPassedConfirmation", "PublicInterestPrimaryCheck");
-                        }
-                        else
-                        {
-                            HttpContext.Session.Remove("PrimaryCheckData");
-                            return RedirectToAction("HandleException", "Error");
-                        }
-                    }
-                    else
-                    {
-                        HttpContext.Session.Remove("PrimaryCheckData");
-                        return RedirectToAction("HandleException", "Error");
-                    }
+                    HttpContext.Session.Remove("PrimaryCheckData");
+                    throw new InvalidOperationException("Invalid service ID in primary check view.");
                 }
-                else if (saveReview == "cancel") // on cancel click go back to previous page with curent data
+                
+                PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
+                publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckPassed;
+                GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
+                
+                if (genericResponse.Success)
                 {
-                    return RedirectToAction("PrimaryCheckReview", "PublicInterestPrimaryCheck");
+                    return RedirectToAction("PrimaryCheckPassedConfirmation", "PublicInterestPrimaryCheck");
                 }
                 else
                 {
                     HttpContext.Session.Remove("PrimaryCheckData");
-                    return RedirectToAction("HandleException", "Error");
+                    throw new InvalidOperationException("Failed to save primary check as passed.");
                 }
+            }
+            else if (saveReview == "cancel") // on cancel click go back to previous page with curent data
+            {
+                return RedirectToAction("PrimaryCheckReview", "PublicInterestPrimaryCheck");
             }
             else
             {
                 HttpContext.Session.Remove("PrimaryCheckData");
-                return RedirectToAction("HandleException", "Error");
+                throw new InvalidOperationException("Invalid review action for primary check approval.");
             }
-
         }
 
 
@@ -249,26 +232,24 @@ namespace DVSAdmin.Controllers
             PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckView = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
             if (saveReview == "save")
             {
-                if (publicInterestPrimaryCheckView != null && publicInterestPrimaryCheckView.ServiceId > 0)
+                if (publicInterestPrimaryCheckView == null || publicInterestPrimaryCheckView.ServiceId <= 0)
                 {
-                    PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
-                    publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckFailed;
-                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
-                    if (genericResponse.Success)
-                    {
-                        return RedirectToAction("PrimaryCheckFailedConfirmation", "PublicInterestPrimaryCheck");
-                    }
-                    else
-                    {
-                        HttpContext.Session.Remove("PrimaryCheckData");
-                        return RedirectToAction("HandleException", "Error");
-                    }
-                   
+                    HttpContext.Session.Remove("PrimaryCheckData");
+                    throw new InvalidOperationException("Primary check session data is missing or contains an invalid service ID.");
+                }
+                
+                PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
+                publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckFailed;
+                GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
+                
+                if (genericResponse.Success)
+                {
+                    return RedirectToAction("PrimaryCheckFailedConfirmation", "PublicInterestPrimaryCheck");
                 }
                 else
                 {
                     HttpContext.Session.Remove("PrimaryCheckData");
-                    return RedirectToAction("HandleException", "Error");
+                    throw new InvalidOperationException("Failed to save primary check as failed.");
                 }
             }
             else if (saveReview == "cancel")
@@ -278,7 +259,7 @@ namespace DVSAdmin.Controllers
             else
             {
                 HttpContext.Session.Remove("PrimaryCheckData");
-                return RedirectToAction("HandleException", "Error");
+                throw new InvalidOperationException("Invalid review action for primary check rejection.");
             }          
 
         }

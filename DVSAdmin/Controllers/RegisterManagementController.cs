@@ -22,19 +22,15 @@ namespace DVSAdmin.Controllers
         private readonly IRegManagementService regManagementService;  
         private readonly IBucketService bucketService;
         private readonly ICsvDownloadService csvDownloadService;
-        private readonly ILogger<RegisterManagementController> logger;
               
         public RegisterManagementController(
             IRegManagementService regManagementService,            
             IBucketService bucketService,
-            ICsvDownloadService csvDownloadService,
-            ILogger<RegisterManagementController> logger)
+            ICsvDownloadService csvDownloadService)
         {
-           
             this.regManagementService = regManagementService;               
             this.bucketService = bucketService;
             this.csvDownloadService = csvDownloadService;
-            this.logger = logger;
         }
 
         [HttpGet("register-management-list")]
@@ -104,22 +100,17 @@ namespace DVSAdmin.Controllers
             {
               
                 List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
-                if (serviceids != null && serviceids.Any())
+                if (serviceids == null && !serviceids.Any())
+                    throw new InvalidOperationException("No service IDs found in session to publish.");
+                
+                GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,UserEmail);
+                if (genericResponse.Success)
                 {
-                    GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,UserEmail);
-                    if (genericResponse.Success)
-                    {
-                        return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Id });
-
-                    }
-                    else
-                    {
-                        return RedirectToAction(Constants.ErrorPath);
-                    }
+                    return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Id });
                 }
                 else
                 {
-                    return RedirectToAction(Constants.ErrorPath);
+                    throw new InvalidOperationException("Failed to update service status during publication.");
                 }
             }
             else if(action == "cancel")
@@ -128,7 +119,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                return RedirectToAction(Constants.ErrorPath);
+                throw new InvalidOperationException("Invalid action received during service publication.");
             }           
          
         }
@@ -157,15 +148,14 @@ namespace DVSAdmin.Controllers
                 byte[]? fileContent = await bucketService.DownloadFileAsync(key);
 
                 if (fileContent == null || fileContent.Length == 0)
-                {
-                    return RedirectToAction(Constants.ErrorPath);
-                }
+                    throw new InvalidOperationException($"Failed to download certificate: Empty or null content for key.");
+
                 string contentType = "application/octet-stream";
                 return File(fileContent, contentType, filename);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return RedirectToAction(Constants.ErrorPath);
+                throw new InvalidOperationException("Exception occurred while downloading certificate with key.", ex);
             }
         }
 
@@ -184,13 +174,11 @@ namespace DVSAdmin.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                logger.LogWarning(ex, "No data available for download");
-                return RedirectToAction(Constants.ErrorPath);
+                throw new InvalidOperationException("No data available for download", ex);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Download failed");
-                return RedirectToAction(Constants.ErrorPath);
+                throw new InvalidOperationException("An error occurred while attempting to download the register.", ex);
             }
         }
 

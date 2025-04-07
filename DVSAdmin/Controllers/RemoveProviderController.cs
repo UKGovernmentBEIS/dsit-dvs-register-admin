@@ -18,8 +18,6 @@ namespace DVSAdmin.Controllers
     {
         private readonly IRemoveProviderService removeProviderService;
         private readonly IUserService userService;
-
-
       
         public RemoveProviderController(IRemoveProviderService removeProviderService, IUserService userService)
         {
