@@ -22,7 +22,7 @@ namespace DVSAdmin.CommonUtility.JWT
             this.logger = logger;
         }
 
-        public TokenDetails GenerateToken(string audience = "", int providerId = 0, List<int>? serviceIds = null)
+        public TokenDetails GenerateToken(string audience = "", int providerId = 0, string serviceIds = "")
         {
             TokenDetails tokenDetails = new TokenDetails();
             tokenDetails.TokenId  = Guid.NewGuid().ToString();
@@ -37,12 +37,9 @@ namespace DVSAdmin.CommonUtility.JWT
                 claims.Add(new Claim("ProviderProfileId", providerId.ToString()));
             }
 
-            if (serviceIds != null && serviceIds.Count > 0)
+            if (serviceIds != null )
             {
-                foreach (var serviceId in serviceIds)
-                {
-                    claims.Add(new Claim("ServiceId", serviceId.ToString()));
-                }
+                claims.Add(new Claim("ServiceId", serviceIds));
             }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);

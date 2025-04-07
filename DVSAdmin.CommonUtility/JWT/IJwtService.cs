@@ -4,6 +4,6 @@ namespace DVSAdmin.CommonUtility.JWT
 {
     public interface IJwtService
     {
-        public TokenDetails GenerateToken(string audience = "", int providerId = 0, List<int>? serviceIds = null); 
+        public TokenDetails GenerateToken(string audience = "", int providerId = 0, string serviceIds = ""); 
     }
 }
