@@ -41,7 +41,7 @@ namespace DVSAdmin.CommonUtility.JWT
             {
                 foreach (var serviceId in serviceIds)
                 {
-                    claims.Add(new Claim("serviceId", serviceId.ToString()));
+                    claims.Add(new Claim("ServiceId", serviceId.ToString()));
                 }
             }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
@@ -61,57 +61,6 @@ namespace DVSAdmin.CommonUtility.JWT
             return tokenDetails;
         }
 
-        public async Task<TokenDetails> ValidateToken(string token)
-        {
-          
-            TokenDetails tokenDetails = new TokenDetails();
-            var tokenHandler = new JsonWebTokenHandler();
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = false,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings.Issuer,
-                ValidAudience = jwtSettings.Audience,
-                RequireExpirationTime = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
-            };
-
-            try
-            {
-                var claimsPrincipal = await tokenHandler.ValidateTokenAsync(token, validationParameters);
-                if (claimsPrincipal != null && claimsPrincipal.ClaimsIdentity!= null && claimsPrincipal.ClaimsIdentity.IsAuthenticated)
-                {
-                    
-                    var jti = Convert.ToString(claimsPrincipal.Claims.First(claim => claim.Key == JwtRegisteredClaimNames.Jti).Value)??string.Empty;
-                    tokenDetails.IsAuthorised = true;
-                    tokenDetails.TokenId = jti;
-                    tokenDetails.Token = token;
-                }
-                else
-                {
-                    if(claimsPrincipal!=null && claimsPrincipal.Exception !=null)
-                    {
-                        logger.LogError($"Claims principal exception: {claimsPrincipal.Exception}");
-                    }
-                    tokenDetails.IsAuthorised = false;
-                }               
-               
-            }
-            catch (Exception ex)
-            {
-                tokenDetails.IsAuthorised = false;
-
-                logger.LogError($"Validate token error: {ex}");
-                logger.LogError($"Stacktrace: {ex.StackTrace}");
-                if (ex.InnerException != null)
-                {
-                    Console.Write("Inner Exception");
-                    Console.Write(String.Concat(ex.InnerException.StackTrace, ex.InnerException.Message));
-                }
-            }
-            return tokenDetails;
-        }
+        
     }
 }
