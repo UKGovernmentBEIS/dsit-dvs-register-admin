@@ -37,7 +37,7 @@ namespace DVSAdmin.CommonUtility.JWT
                 claims.Add(new Claim("ProviderProfileId", providerId.ToString()));
             }
 
-            if (serviceIds != null )
+            if (!string.IsNullOrEmpty(serviceIds) )
             {
                 claims.Add(new Claim("ServiceId", serviceIds));
             }
