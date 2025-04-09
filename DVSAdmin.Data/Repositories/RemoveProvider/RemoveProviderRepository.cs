@@ -58,6 +58,10 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                     {
                         existingProvider.RemovalRequestTime = DateTime.UtcNow;
                     }
+                    else if (providerStatus == ProviderStatusEnum.Published)
+                    {
+                        existingProvider.PublishedTime = DateTime.UtcNow;
+                    }
                 }
                 await context.SaveChangesAsync(team, eventType, loggedInUserEmail);
                 await transaction.CommitAsync();
