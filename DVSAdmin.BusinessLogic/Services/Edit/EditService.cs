@@ -15,15 +15,15 @@ namespace DVSAdmin.BusinessLogic.Services
     public class EditService : IEditService
     {
         private readonly IEditRepository _editRepository;
-        private readonly IRemoveProviderRepository _removeProviderRepository;
+        private readonly IRemoveProviderService _removeProviderService;
         private readonly IMapper _mapper;
         private readonly EditEmailSender _emailSender;
         private readonly IJwtService _jwtService;
         private readonly IConfiguration _configuration;
 
-        public EditService(IEditRepository editRepository, IRemoveProviderRepository removeProviderRepository, IMapper mapper, EditEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
+        public EditService(IEditRepository editRepository, IRemoveProviderService removeProviderService, IMapper mapper, EditEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
-            _removeProviderRepository = removeProviderRepository;
+            _removeProviderService = removeProviderService;
             _editRepository = editRepository;
             _mapper = mapper;
             _emailSender  = emailSender;
@@ -166,10 +166,7 @@ namespace DVSAdmin.BusinessLogic.Services
             var draftEntity = _mapper.Map<ServiceDraft>(draftDto);
             
             var response = await _editRepository.SaveServiceDraft(draftEntity, loggedInUserEmail);
-            ProviderProfile providerProfile = await _removeProviderRepository.GetProviderAndServices(draftDto.ProviderProfileId);
-            // update provider status
-            ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
-            GenericResponse genericResponse = await _removeProviderRepository.UpdateProviderStatus(providerProfile.Id, providerStatus, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
+            GenericResponse genericResponse = await _removeProviderService.UpdateProviderStatus(draftDto.ProviderProfileId, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
 
             if (response.Success)
             {

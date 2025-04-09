@@ -12,7 +12,6 @@ namespace DVSAdmin.Data.Repositories
         public Task<Service> GetServiceDetails(int serviceId);
         public Task<ProviderProfile> GetProviderWithServiceDetails(int providerId);
         public Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, ServiceStatusEnum serviceStatus, string loggedInUserEmail);
-        public Task<GenericResponse> UpdateProviderStatus(int providerId, ProviderStatusEnum providerStatus,string loggedInUserEmail);
         public Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail, List<int> serviceIds);       
         public Task<List<Service>> GetPublishedServices();
         public Task<List<Service>> GetServiceVersionList(int serviceKey);

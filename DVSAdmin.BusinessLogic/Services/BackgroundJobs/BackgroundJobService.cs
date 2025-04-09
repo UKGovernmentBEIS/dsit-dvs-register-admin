@@ -8,13 +8,13 @@ namespace DVSAdmin.BusinessLogic.Services
     public class BackgroundJobService : IBackgroundJobService
     {
         private readonly IBackgroundJobRepository backgroundJobRepository;
-        private readonly IRemoveProviderRepository removeProviderRepository;
+        private readonly IRemoveProviderService removeProviderService;
 
         
-        public BackgroundJobService(IBackgroundJobRepository backgroundJobRepository, IRemoveProviderRepository removeProviderRepository)
+        public BackgroundJobService(IBackgroundJobRepository backgroundJobRepository, IRemoveProviderService removeProviderService)
         {
             this.backgroundJobRepository = backgroundJobRepository ?? throw new ArgumentNullException(nameof(backgroundJobRepository));
-            this.removeProviderRepository = removeProviderRepository ?? throw new ArgumentNullException();
+            this.removeProviderService = removeProviderService ?? throw new ArgumentNullException();
         }
 
         public async Task RemoveExpiredCertificates()
@@ -33,14 +33,11 @@ namespace DVSAdmin.BusinessLogic.Services
                     {
                         Console.WriteLine($"Service: {service.ServiceName} has an expired certificate and has been removed from the Register");
                         if (success)
-                        {
-                            ProviderProfile providerProfile = await removeProviderRepository.GetProviderAndServices(service.ProviderProfileId);
-                            // update provider status
-                            ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
-                            GenericResponse genericResponse = await removeProviderRepository.UpdateProviderStatus(providerProfile.Id, providerStatus, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
+                        {                          
+                            GenericResponse genericResponse = await removeProviderService.UpdateProviderStatus(service.ProviderProfileId, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
                             if (genericResponse.Success)
                             {
-                                Console.WriteLine($"Provider: {providerProfile.RegisteredName} has no valid services and been removed from the Register");
+                                Console.WriteLine($"Provider: {service.Provider.RegisteredName} status updated by priority");
                             }
 
                         }
