@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DVSAdmin.Controllers
 {
-    //[ValidCognitoToken]
+    [ValidCognitoToken]
     public class BaseController : Controller
     {
         public string UserEmail => HttpContext.Session.Get<string>("Email") ?? string.Empty;      
