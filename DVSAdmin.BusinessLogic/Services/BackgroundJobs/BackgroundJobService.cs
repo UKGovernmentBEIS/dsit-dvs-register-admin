@@ -37,7 +37,7 @@ namespace DVSAdmin.BusinessLogic.Services
                             GenericResponse genericResponse = await removeProviderService.UpdateProviderStatus(service.ProviderProfileId, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
                             if (genericResponse.Success)
                             {
-                                Console.WriteLine($"Provider: {service.Provider.RegisteredName} has no valid services and been removed from the Register");
+                                Console.WriteLine($"Provider: {service.Provider.RegisteredName} status updated by priority");
                             }
 
                         }
