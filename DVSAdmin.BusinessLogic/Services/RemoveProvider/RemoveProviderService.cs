@@ -61,7 +61,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 // save token for 2i check
                 //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
 
-                TokenDetails tokenDetails = jwtService.GenerateToken(string.Empty);
+                TokenDetails tokenDetails = jwtService.GenerateToken(string.Empty, providerProfileId, string.Join(",", serviceIds));
 
                 ICollection<RemoveTokenServiceMapping> removeTokenServiceMapping = [];
                 foreach (var item in serviceIds)
@@ -107,7 +107,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 // save token for 2i check
                 //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
 
-                TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty);
+                TokenDetails tokenDetails = jwtService.GenerateToken(requstedBy == TeamEnum.DSIT ? "DSIT" : string.Empty, providerProfileId, string.Join(",", serviceIds));
                 RemoveProviderToken removeProviderToken = new()
                 {
                     ProviderProfileId = providerProfileId,
@@ -187,7 +187,26 @@ namespace DVSAdmin.BusinessLogic.Services
             return genericResponse;
         }
 
+        public async Task<GenericResponse> CancelRemoveServiceRequest(int providerProfileId, int serviceId, string loggedInUserEmail)
+        {
+            GenericResponse genericResponse = await removeProviderRepository.CancelRemoveServiceRequest(providerProfileId, serviceId, loggedInUserEmail);
 
-       
+            if (genericResponse.Success)
+            {
+                ProviderProfile providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
+                ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
+                genericResponse = await removeProviderRepository.UpdateProviderStatus(providerProfileId, providerStatus, loggedInUserEmail, EventTypeEnum.RemoveServiceRequestedByCab);
+
+                if (genericResponse.Success)
+                {
+                    var service = providerProfile.Services.FirstOrDefault(s => s.Id == serviceId);
+                    await emailSender.CancelServiceRemovalRequestToProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, service.ServiceName);
+                    await emailSender.CancelServiceRemovalRequestToProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, service.ServiceName);                    
+                    await emailSender.CancelServiceRemovalRequestToDSIT(providerProfile.RegisteredName, service.ServiceName);
+                }
+            }
+
+            return genericResponse;
+        }
     }
 }

@@ -23,8 +23,11 @@ namespace DVSAdmin.BusinessLogic
                     };
 
                 ServiceStatusEnum highestPriorityStatus = services
-                   .Where(service => service.ServiceStatus > ServiceStatusEnum.Received &&
-                    service.ServiceStatus != ServiceStatusEnum.SavedAsDraft)
+                   .Where(service => service.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
+                    service.ServiceStatus == ServiceStatusEnum.Published ||
+                    service.ServiceStatus == ServiceStatusEnum.Removed ||
+                    service.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
+                    service.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
                    .Select(service => service.ServiceStatus)
                    .OrderBy(status => priorityOrder.IndexOf(status))
                    .FirstOrDefault();
