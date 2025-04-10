@@ -14,46 +14,46 @@
 
 
             <div class="govuk-grid-column-full">
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">
-                        Provider information
-                    </h2>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                               Registered name
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model?.CurrentProvider?.RegisteredName
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                               Trading name
-                            </dt>
-                            <dd class="govuk-summary-list__value">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Provider information
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Registered name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model?.CurrentProvider?.RegisteredName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Trading name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
                                     @Html.DisplayFor(model => model.CurrentProvider.TradingName)
-                            </dd>
-                        </div>                       
-                    </dl>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
                 </div>
-            </div>
             </div>
 
 
             @using (Html.BeginForm("SaveProviderDraft", "EditProvider", FormMethod.Post))
             {
 
-                @Html.HiddenFor(m=>m.ChangedProvider.RegisteredName)
-                @Html.HiddenFor(m=>m.ChangedProvider.TradingName)
+                @Html.HiddenFor(m => m.ChangedProvider.RegisteredName)
+                @Html.HiddenFor(m => m.ChangedProvider.TradingName)
                 @Html.HiddenFor(m => m.ChangedProvider.PrimaryContactFullName)
-                @Html.HiddenFor(m=>m.ChangedProvider.PrimaryContactJobTitle)
-                @Html.HiddenFor(m=>m.ChangedProvider.PrimaryContactEmail)
-                @Html.HiddenFor(m=>m.ChangedProvider.PrimaryContactTelephoneNumber)
-                @Html.HiddenFor(m=>m.ChangedProvider.SecondaryContactFullName)
+                @Html.HiddenFor(m => m.ChangedProvider.PrimaryContactJobTitle)
+                @Html.HiddenFor(m => m.ChangedProvider.PrimaryContactEmail)
+                @Html.HiddenFor(m => m.ChangedProvider.PrimaryContactTelephoneNumber)
+                @Html.HiddenFor(m => m.ChangedProvider.SecondaryContactFullName)
                 @Html.HiddenFor(m => m.ChangedProvider.SecondaryContactJobTitle)
                 @Html.HiddenFor(m => m.ChangedProvider.SecondaryContactEmail)
                 @Html.HiddenFor(m => m.ChangedProvider.SecondaryContactTelephoneNumber)
@@ -62,281 +62,262 @@
                 @Html.HiddenFor(m => m.ChangedProvider.ProviderWebsiteAddress)
                 @Html.HiddenFor(m => m.ChangedProvider.ProviderProfileId)
                 @Html.HiddenFor(m => m.ChangedProvider.PreviousProviderStatus)
-                @Html.HiddenFor(m=>m.DSITUserEmails)
-      
-            <div class="govuk-grid-column-full">
-                <h3 class="govuk-heading-m">What information is changing</h3>
+                @Html.HiddenFor(m => m.DSITUserEmails)
+
+                <div class="govuk-grid-column-full">
+                    <h3 class="govuk-heading-m">What information is changing</h3>
                     <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Previous information
-                        </dt>
-                            <dd class="govuk-summary-list__value">
-                        @if (Model?.ChangedProvider?.RegisteredName != null)
-                        {
-                                <strong>Registered name</strong><br>
-                                  @Model?.CurrentProvider?.RegisteredName
-                                  <br><br>
-                             
-                        }
-                           
-                        @if (Model?.ChangedProvider?.TradingName != null)
-                        {
-                            <strong>Trading name</strong><br>
-                            @Model?.CurrentProvider?.TradingName
-                            <br> <br>
-                        }
-                       
-
-                        @if (Model?.ChangedProvider?.PrimaryContactFullName != null)
-                        {
-                            <strong>Full name of primary contact</strong><br>
-                            @Model?.CurrentProvider?.PrimaryContactFullName
-                            <br> <br>
-                        }
-                         
-                        @if (Model?.ChangedProvider?.PrimaryContactJobTitle != null)
-                        {
-                            <strong>Job title of primary contact</strong><br>
-                            @Model?.CurrentProvider?.PrimaryContactJobTitle
-                             <br> <br>
-                        
-                        }
-                          
-                        @if (Model?.ChangedProvider?.PrimaryContactEmail != null)
-                        {
-                            <strong>Email of primary contact</strong><br>
-                            @Model?.CurrentProvider?.PrimaryContactEmail
-                            <br> <br>
-                        }
-                            
-                        @if (Model?.ChangedProvider?.PrimaryContactTelephoneNumber != null)
-                        {
-                            <strong>Telephone number of primary contact</strong><br>
-                            @Model?.CurrentProvider?.PrimaryContactTelephoneNumber
-                            <br> <br>
-                         
-                        }                  
-
-                        @if (Model?.ChangedProvider?.SecondaryContactFullName != null)
-                        {
-                            <strong>Full name of secondary contact</strong><br>
-                            @Model?.CurrentProvider?.SecondaryContactFullName
-                            <br> <br>
-                        }
-                       
-                        @if (Model?.ChangedProvider?.SecondaryContactJobTitle != null)
-                        {
-                            <strong>Job title of secondary contact</strong><br>
-                            @Model?.CurrentProvider?.SecondaryContactJobTitle
-                            <br> <br>
-                           
-                        }
-
-                        @if (Model?.ChangedProvider?.SecondaryContactEmail != null)
-                        {
-                            <strong>Email of secondary contact</strong><br>
-                            @Model?.CurrentProvider?.SecondaryContactEmail
-                            <br> <br>
-                            
-                        }
-
-                        @if (Model?.ChangedProvider?.SecondaryContactTelephoneNumber != null)
-                        {
-                            <strong>Telephone number of secondary contact</strong><br>
-                            @Model?.CurrentProvider?.SecondaryContactTelephoneNumber
-                            <br> <br>
-                         
-                        }
-
-                        @if (Model?.ChangedProvider?.PublicContactEmail != null)
-                        {
-                            <strong>Public contact email</strong><br>
-                              @Model?.CurrentProvider?.PublicContactEmail
-                              <br> <br>
-                           
-                        }
-
-                        @if (Model?.ChangedProvider?.ProviderTelephoneNumber != null)
-                        {
-                            <strong>Public telephone number</strong><br>
-                             @Model?.CurrentProvider?.ProviderTelephoneNumber
-                             <br> <br>
-                           
-                        }
-
-                        @if (Model?.ChangedProvider?.ProviderWebsiteAddress != null)
-                        {
-                            <strong>Public website address</strong><br>
-                                @Model?.CurrentProvider?.ProviderWebsiteAddress
-                                    <br> <br>
-                         
-                        }
-                        </dd>
-                       
-
-                    </div>
-
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            New information
-                        </dt>
-                            <dd class="govuk-summary-list__value">
-                        @if (Model?.ChangedProvider?.RegisteredName != null)
-                        {                          
-                            <strong>Registered name</strong><br>
-                           @Model.ChangedProvider.RegisteredName
-                           <br> <br>
-                            
-                         }
-                        @if (Model?.ChangedProvider?.TradingName != null)
-                        {
-                                
-                                <strong>Trading name</strong><br>
-                                @Model.ChangedProvider.TradingName
-                                <br> <br>
-                             
-                        }
-
-                        @if (Model?.ChangedProvider?.PrimaryContactFullName != null)
-                        {
-                               <strong>Full name of primary contact</strong><br>
-                                @Model?.ChangedProvider?.PrimaryContactFullName
-                                <br> <br>
-                        }
-
-                        @if (Model?.ChangedProvider?.PrimaryContactJobTitle != null)
-                        {
-                                <strong>Job title of primary contact</strong><br>
-                                @Model?.ChangedProvider?.PrimaryContactJobTitle
-                                <br> <br>
-                        }
-
-                        @if (Model?.ChangedProvider?.PrimaryContactEmail != null)
-                        { 
-                                <strong>Email of primary contact</strong><br>
-                                @Model?.ChangedProvider?.PrimaryContactEmail
-                                <br> <br>
-                        }
-
-                        @if (Model?.ChangedProvider?.PrimaryContactTelephoneNumber != null)
-                        {
-                           
-                                <strong>Telephone number of primary contact</strong><br>
-                                @Model?.ChangedProvider?.PrimaryContactTelephoneNumber
-                                <br> <br>
-                        }
-
-
-                        @if (Model?.ChangedProvider?.SecondaryContactFullName != null)
-                        {
-                           
-                                <strong>Full name of secondary contact</strong><br>
-                                @Model?.ChangedProvider?.SecondaryContactFullName
-                                <br> <br>
-                        }
-
-                        @if (Model?.ChangedProvider?.SecondaryContactJobTitle != null)
-                        {
-                           
-                                <strong>Job title of secondary contact</strong><br>
-                                @Model?.ChangedProvider?.SecondaryContactJobTitle
-                                <br> <br>
-                        }
-
-                        @if (Model?.ChangedProvider?.SecondaryContactEmail != null)
-                        {
-                           
-                                <strong>Email of secondary contact</strong><br>
-                                @Model?.ChangedProvider?.SecondaryContactEmail
-                                <br> <br>
-                        }
-
-                        @if (Model?.ChangedProvider?.SecondaryContactTelephoneNumber != null)
-                        {
-                           
-                                <strong>Telephone number of secondary contact</strong><br>
-                                @Model?.ChangedProvider?.SecondaryContactTelephoneNumber
-                                <br> <br>
-                        }
-                        @if (Model?.ChangedProvider?.PublicContactEmail != null)
-                        {
-                           
-                                <strong>Public contact email</strong><br>
-                                @Model?.ChangedProvider?.PublicContactEmail
-                                <br> <br>
-                        }
-
-                        @if (Model?.ChangedProvider?.ProviderTelephoneNumber != null)
-                        {
-                         
-                                <strong>Public telephone number</strong><br>
-                                @Model?.ChangedProvider?.ProviderTelephoneNumber
-                                <br> <br>
-                        }
-
-                        @if (Model?.ChangedProvider?.ProviderWebsiteAddress != null)
-                        {
-                           
-                                <strong>Public website address</strong><br>
-                                @Model?.ChangedProvider?.ProviderWebsiteAddress
-                                <br> <br>
-                        }
-                        </dd>
-
-                    </div>
-                </dl>
-
-                <h2 class="govuk-heading-m govuk-!-margin-top-8">Who will receive the request</h2>
-                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-                <dl class="govuk-summary-list">
-                        @foreach (var email in Model.DSITUserEmails.Split(',').ToList())
-                    {
+                    <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Email address of <br /> DSIT user
+                                Previous information
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @email
+                                @if (Model?.ChangedProvider?.RegisteredName != null)
+                                {
+                                    <strong>Registered name</strong>
+                                    <br>
+                                    @Model?.CurrentProvider?.RegisteredName
+                                    <br>
+                                    <br>
+                                }
+                                @if (Model?.ChangedProvider?.TradingName != null)
+                                {
+                                    <strong>Trading name</strong>
+                                    <br>
+                                    @Html.DisplayFor(model => model.CurrentProvider.TradingName)
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.PrimaryContactFullName != null)
+                                {
+                                    <strong>Full name of primary contact</strong>
+                                    <br>
+                                    @Model?.CurrentProvider?.PrimaryContactFullName
+                                    <br> <br>
+                                }
+
+                                @if (Model?.ChangedProvider?.PrimaryContactJobTitle != null)
+                                {
+                                    <strong>Job title of primary contact</strong>
+                                    <br>
+                                    @Model?.CurrentProvider?.PrimaryContactJobTitle
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.PrimaryContactEmail != null)
+                                {
+                                    <strong>Email of primary contact</strong>
+                                    <br>
+                                    @Model?.CurrentProvider?.PrimaryContactEmail
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.PrimaryContactTelephoneNumber != null)
+                                {
+                                    <strong>Telephone number of primary contact</strong>
+                                    <br>
+                                    @Model?.CurrentProvider?.PrimaryContactTelephoneNumber
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.SecondaryContactFullName != null)
+                                {
+                                    <strong>Full name of secondary contact</strong>
+                                    <br>
+                                    @Model?.CurrentProvider?.SecondaryContactFullName
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.SecondaryContactJobTitle != null)
+                                {
+                                    <strong>Job title of secondary contact</strong>
+                                    <br>
+                                    @Model?.CurrentProvider?.SecondaryContactJobTitle
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.SecondaryContactEmail != null)
+                                {
+                                    <strong>Email of secondary contact</strong>
+                                    <br>
+                                    @Model?.CurrentProvider?.SecondaryContactEmail
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.SecondaryContactTelephoneNumber != null)
+                                {
+                                    <strong>Telephone number of secondary contact</strong>
+                                    <br>
+                                    @Model?.CurrentProvider?.SecondaryContactTelephoneNumber
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.PublicContactEmail != null)
+                                {
+                                    <strong>Public contact email</strong>
+                                    <br>
+                                    @Html.DisplayFor(model => model.CurrentProvider.PublicContactEmail)
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.ProviderTelephoneNumber != null)
+                                {
+                                    <strong>Public telephone number</strong>
+                                    <br>
+                                    @Html.DisplayFor(model => model.CurrentProvider.ProviderTelephoneNumber)
+                                    <br> <br>
+                                }
+
+                                @if (Model?.ChangedProvider?.ProviderWebsiteAddress != null)
+                                {
+                                    <strong>Public website address</strong>
+                                    <br>
+                                    @Model?.CurrentProvider?.ProviderWebsiteAddress
+                                    <br> <br>
+                                }
                             </dd>
                         </div>
-                    }
-                </dl>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                New information
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (Model?.ChangedProvider?.RegisteredName != null)
+                                {
+                                    <strong>Registered name</strong>
+                                    <br>
+                                    @Model.ChangedProvider.RegisteredName
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.TradingName != null)
+                                {
+                                    <strong>Trading name</strong>
+                                    <br>
+                                    @Model.ChangedProvider.TradingName
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.PrimaryContactFullName != null)
+                                {
+                                    <strong>Full name of primary contact</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.PrimaryContactFullName
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.PrimaryContactJobTitle != null)
+                                {
+                                    <strong>Job title of primary contact</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.PrimaryContactJobTitle
+                                    <br> <br>
+                                }
+
+                                @if (Model?.ChangedProvider?.PrimaryContactEmail != null)
+                                {
+                                    <strong>Email of primary contact</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.PrimaryContactEmail
+                                    <br> <br>
+                                }
+
+                                @if (Model?.ChangedProvider?.PrimaryContactTelephoneNumber != null)
+                                {
+                                    <strong>Telephone number of primary contact</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.PrimaryContactTelephoneNumber
+                                    <br> <br>
+                                }
 
 
-                <h2 class="govuk-heading-m govuk-!-margin-top-8">What will happen next</h2>
-                <p class="govuk-body">
-                    The users above will be sent an email asking them to review the request to update information for this provider.
-                    Once they accept the update, you will be notified by email.
-                </p>
-                <p class="govuk-body">
-                    To publish the updates on the register, you will need to return to register management and publish the provider information once you have accepted the update request.
+                                @if (Model?.ChangedProvider?.SecondaryContactFullName != null)
+                                {
+                                    <strong>Full name of secondary contact</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.SecondaryContactFullName
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.SecondaryContactJobTitle != null)
+                                {
+                                    <strong>Job title of secondary contact</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.SecondaryContactJobTitle
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.SecondaryContactEmail != null)
+                                {
+                                    <strong>Email of secondary contact</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.SecondaryContactEmail
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.SecondaryContactTelephoneNumber != null)
+                                {
+                                    <strong>Telephone number of secondary contact</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.SecondaryContactTelephoneNumber
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.PublicContactEmail != null)
+                                {
+                                    <strong>Public contact email</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.PublicContactEmail
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.ProviderTelephoneNumber != null)
+                                {
+                                    <strong>Public telephone number</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.ProviderTelephoneNumber
+                                    <br> <br>
+                                }
+                                @if (Model?.ChangedProvider?.ProviderWebsiteAddress != null)
+                                {
+                                    <strong>Public website address</strong>
+                                    <br>
+                                    @Model?.ChangedProvider?.ProviderWebsiteAddress
+                                    <br> <br>
+                                }
+                            </dd>
+                        </div>
+                    </dl>
 
-                </p>
-                <p class="govuk-body">
-                    The service provider and Conformity Assessment Body will receive an email confirmation once the details are published.
-                </p>
+                    <h2 class="govuk-heading-m govuk-!-margin-top-8">Who will receive the request</h2>
+                    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                    <dl class="govuk-summary-list">
+                        @foreach (var email in Model.DSITUserEmails.Split(',').ToList())
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Email address of <br /> DSIT user
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @email
+                                </dd>
+                            </div>
+                        }
+                    </dl>
 
+                    <h2 class="govuk-heading-m govuk-!-margin-top-8">What will happen next</h2>
+                    <p class="govuk-body">
+                        The users above will be sent an email asking them to review the request to update information for this provider.
+                        Once they accept the update, you will be notified by email.
+                    </p>
+                    <p class="govuk-body">
+                        To publish the updates on the register, you will need to return to register management and publish the provider information once you have accepted the update request.
 
-                <div class="govuk-warning-text">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-visually-hidden">Warning</span>
-                        Once you submit the update request, the action can't be undone.
-                    </strong>
+                    </p>
+                    <p class="govuk-body">
+                        The service provider and Conformity Assessment Body will receive an email confirmation once the details are published.
+                    </p>
+
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            Once you submit the update request, the action can't be undone.
+                        </strong>
+                    </div>
+
                 </div>
-
-            </div>
-
 
                 <div class="govuk-button-group">
                     <button type="submit" class="govuk-button" data-module="govuk-button" name="action">
                         Submit update request
                     </button>
                     <a href="@(Url.Action("ProfileSummary", "EditProvider", new { providerId = Model?.CurrentProvider?.Id }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
-
                 </div>
             }
         </div>
