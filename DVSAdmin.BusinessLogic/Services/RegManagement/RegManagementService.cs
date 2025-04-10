@@ -85,7 +85,7 @@ namespace DVSAdmin.BusinessLogic.Services
             string services = string.Join("\r", serviceList.Where(item => serviceIds.Contains(item.Id)).Select(x => x.ServiceName.ToString()).ToArray())??string.Empty;
         
             // update provider status based on priority
-            genericResponse = await removeProviderService.UpdateProviderStatus(providerProfileId, loggedInUserEmail, EventTypeEnum.RegisterManagement);
+            genericResponse = await removeProviderService.UpdateProviderStatus(providerProfile, loggedInUserEmail, EventTypeEnum.RegisterManagement);
 
             if (genericResponse.Success)
             {
