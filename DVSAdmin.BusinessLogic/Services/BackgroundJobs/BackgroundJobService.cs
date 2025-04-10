@@ -34,7 +34,7 @@ namespace DVSAdmin.BusinessLogic.Services
                         Console.WriteLine($"Service: {service.ServiceName} has an expired certificate and has been removed from the Register");
                         if (success)
                         {                          
-                            GenericResponse genericResponse = await removeProviderService.UpdateProviderStatus(service.ProviderProfileId, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
+                            GenericResponse genericResponse = await removeProviderService.UpdateProviderStatusByStatusPriority(service.ProviderProfileId, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
                             if (genericResponse.Success)
                             {
                                 Console.WriteLine($"Provider: {service.Provider.RegisteredName} status updated by priority");

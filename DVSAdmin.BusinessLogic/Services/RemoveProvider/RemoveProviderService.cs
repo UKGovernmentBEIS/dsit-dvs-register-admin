@@ -54,7 +54,7 @@ namespace DVSAdmin.BusinessLogic.Services
             if (genericResponse.Success)
             {
                 providerProfile = await removeProviderRepository.GetProviderAndServices(providerProfileId);
-                await UpdateProviderStatus(providerProfile, loggedInUserEmail, EventTypeEnum.RemoveService);
+                await UpdateProviderStatusByStatusPriority(providerProfile, loggedInUserEmail, EventTypeEnum.RemoveService);
                 // save token for 2i check
                 //Insert token details to db for further reference, if multiple services are removed, insert to mapping table
 
@@ -124,14 +124,14 @@ namespace DVSAdmin.BusinessLogic.Services
             return genericResponse;
         }
 
-        public async Task<GenericResponse> UpdateProviderStatus(int providerProfileId, string loggedInUserEmail, EventTypeEnum eventType, TeamEnum team = TeamEnum.DSIT)
+        public async Task<GenericResponse> UpdateProviderStatusByStatusPriority(int providerProfileId, string loggedInUserEmail, EventTypeEnum eventType, TeamEnum team = TeamEnum.DSIT)
         {
             ProviderProfile providerProfile = await removeProviderRepository.GetProviderAndServices(providerProfileId);
             ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
             return await removeProviderRepository.UpdateProviderStatus(providerProfileId, providerStatus, loggedInUserEmail, eventType, team);
         }
 
-        public async Task<GenericResponse> UpdateProviderStatus(ProviderProfile providerProfile, string loggedInUserEmail, EventTypeEnum eventType, TeamEnum team = TeamEnum.DSIT)
+        public async Task<GenericResponse> UpdateProviderStatusByStatusPriority(ProviderProfile providerProfile, string loggedInUserEmail, EventTypeEnum eventType, TeamEnum team = TeamEnum.DSIT)
         {
             ProviderStatusEnum providerStatus = ServiceHelper.GetProviderStatus(providerProfile.Services, providerProfile.ProviderStatus);
             return await removeProviderRepository.UpdateProviderStatus(providerProfile.Id, providerStatus, loggedInUserEmail, eventType, team);
@@ -173,7 +173,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 // save token for 2i check
                 ProviderProfile providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
                 
-                genericResponse = await UpdateProviderStatus(providerProfile, loggedInUserEmail, EventTypeEnum.RemoveServiceRequestedByCab);
+                genericResponse = await UpdateProviderStatusByStatusPriority(providerProfile, loggedInUserEmail, EventTypeEnum.RemoveServiceRequestedByCab);
 
                 Service service = providerProfile.Services.Where(s => s.Id == serviceIds[0]).FirstOrDefault(); // only single service removal in current release
                if (genericResponse.Success && providerProfile.ProviderStatus == ProviderStatusEnum.RemovedFromRegister)
@@ -205,7 +205,7 @@ namespace DVSAdmin.BusinessLogic.Services
             if (genericResponse.Success)
             {
                 ProviderProfile providerProfile = await removeProviderRepository.GetProviderDetails(providerProfileId);
-                genericResponse = await UpdateProviderStatus(providerProfile, loggedInUserEmail, EventTypeEnum.RemoveServiceRequestedByCab);
+                genericResponse = await UpdateProviderStatusByStatusPriority(providerProfile, loggedInUserEmail, EventTypeEnum.RemoveServiceRequestedByCab);
 
                 if (genericResponse.Success)
                 {
