@@ -166,9 +166,9 @@ namespace DVSAdmin.BusinessLogic.Services
             var draftEntity = _mapper.Map<ServiceDraft>(draftDto);
             
             var response = await _editRepository.SaveServiceDraft(draftEntity, loggedInUserEmail);
-            GenericResponse genericResponse = await _removeProviderService.UpdateProviderStatus(draftDto.ProviderProfileId, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
+            GenericResponse genericResponse = await _removeProviderService.UpdateProviderStatusByStatusPriority(draftDto.ProviderProfileId, TeamEnum.CronJob.ToString(), EventTypeEnum.RemovedByCronJob, TeamEnum.CronJob);
 
-            if (response.Success)
+            if (response.Success && genericResponse.Success)
             {
                 // to do send email
                 TokenDetails tokenDetails = _jwtService.GenerateToken("DSIT");
@@ -180,7 +180,7 @@ namespace DVSAdmin.BusinessLogic.Services
                     CreatedTime = DateTime.UtcNow
                 };
                 response = await _editRepository.SaveServiceDraftToken(serviceDraftToken, loggedInUserEmail);
-                if (response.Success)
+                if (response.Success )
                 {
                     //56/DSIT/2i edit update request - service
 

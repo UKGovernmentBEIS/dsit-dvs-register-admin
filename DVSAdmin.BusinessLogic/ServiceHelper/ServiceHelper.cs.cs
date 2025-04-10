@@ -27,6 +27,7 @@ namespace DVSAdmin.BusinessLogic
                     service.ServiceStatus == ServiceStatusEnum.Published ||
                     service.ServiceStatus == ServiceStatusEnum.Removed ||
                     service.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
+                    service.ServiceStatus == ServiceStatusEnum.UpdatesRequested ||
                     service.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
                    .Select(service => service.ServiceStatus)
                    .OrderBy(status => priorityOrder.IndexOf(status))
