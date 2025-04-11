@@ -28,15 +28,24 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.ProceedApplicationConsentToken.FirstOrDefaultAsync(e => e.Token == consentToken.Token && e.TokenId == consentToken.TokenId);
-
+                var existingEntity = await context.ProceedApplicationConsentToken.FirstOrDefaultAsync(e => e.ServiceId == consentToken.ServiceId);
+                var service = await context.Service.FirstOrDefaultAsync(s => s.Id == consentToken.ServiceId);
+                service.OpeningLoopTokenStatus = TokenStatusEnum.Requested;// update token status
                 if (existingEntity == null)
                 {
+                    consentToken.CreatedTime = DateTime.UtcNow;
                     await context.ProceedApplicationConsentToken.AddAsync(consentToken);
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.AddOpeningLoopToken, loggedinUserEmail);
-                    transaction.Commit();
-                    genericResponse.Success = true;
+                    
                 }
+                else
+                {
+                    existingEntity.Token = existingEntity.Token;
+                    existingEntity.TokenId = existingEntity.TokenId;                   
+                    existingEntity.ModifiedTime = existingEntity.ModifiedTime;
+                }
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.AddOpeningLoopToken, loggedinUserEmail);
+                transaction.Commit();
+                genericResponse.Success = true;
 
             }
             catch (Exception ex)
