@@ -1,4 +1,5 @@
-﻿using DVSAdmin.BusinessLogic.Models;
+﻿using Amazon.CognitoIdentityProvider.Model;
+using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
@@ -223,6 +224,19 @@ namespace DVSAdmin.Controllers
                 _ => throw new InvalidOperationException("Invalid review action.")
             };
 
+        }
+
+        [HttpPost("resend-opening-loop-link")]
+        public async Task<ActionResult> ResendOpeningLinkEmail(int serviceId)
+        {
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);
+            GenericResponse genericResponse = await certificateReviewService.GenerateTokenAndSendEmail(serviceDto, UserEmail, true);
+
+            if (genericResponse.Success)
+            {
+                return View("ConsentResentConfirmation");
+            }
+            return RedirectToAction("CertificateSubmissionDetails", new { serviceId });
         }
 
         #region Approve Flow

@@ -118,8 +118,8 @@ namespace DVSAdmin.BusinessLogic.Services
                 serviceDto.CompanyAddress, serviceDto.Provider.PublicContactEmail ?? string.Empty, serviceDto.Provider.ProviderTelephoneNumber ?? string.Empty, consentLink, emailList);
 
                 if(isResend) 
-                { 
-                    // to do notify email to ofdia
+                {
+                    await emailSender.ConfirmationConsentResentToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName);
                 }
             }
             return genericResponse;
