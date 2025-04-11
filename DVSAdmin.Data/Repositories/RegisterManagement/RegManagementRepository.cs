@@ -144,38 +144,6 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return genericResponse;
         }
 
-      
-        public async Task<GenericResponse> UpdateProviderStatus(int providerId, ProviderStatusEnum providerStatus, string loggedInUserEmail)
-        {
-            GenericResponse genericResponse = new GenericResponse();
-            using var transaction = context.Database.BeginTransaction();
-            try
-            {
-
-                var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(e => e.Id == providerId);
-                if (existingProvider != null)
-                {
-                    existingProvider.ProviderStatus = providerStatus;
-                    if (providerStatus == ProviderStatusEnum.Published)
-                    {
-                        existingProvider.PublishedTime = DateTime.UtcNow;
-                    }
-                }
-
-                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RegisterManagement, loggedInUserEmail);
-                transaction.Commit();
-                genericResponse.Success = true;
-            }
-            catch (Exception ex)
-            {
-                genericResponse.EmailSent = false;
-                genericResponse.Success = false;
-                transaction.Rollback();
-                logger.LogError(ex.Message);
-            }
-            return genericResponse;
-        }
-
         public async Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail, List<int> serviceIds)
         {
             GenericResponse genericResponse = new();

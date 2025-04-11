@@ -324,23 +324,18 @@ namespace DVSAdmin.Controllers
         [HttpPost("summary-of-changes")]
         public async Task<IActionResult> SaveProviderDraft(ProviderChangesViewModel providerChangesViewModel)
         {
+            
+            if (providerChangesViewModel == null || providerChangesViewModel.ChangedProvider == null)
+                throw new InvalidOperationException("Provider draft submission is missing required data.");
+
             List<string> dsitUserEmails = providerChangesViewModel.DSITUserEmails.Split(',').ToList();
-            if (providerChangesViewModel != null && providerChangesViewModel.ChangedProvider != null)
-            {
-                GenericResponse genericResponse = await editService.SaveProviderDraft(providerChangesViewModel.ChangedProvider, UserEmail,dsitUserEmails);
-                if(genericResponse.Success)
-                {
-                    return RedirectToAction("InformationSubmitted", new { providerId = providerChangesViewModel.ChangedProvider.ProviderProfileId });
-                }
-                else
-                {
-                    return RedirectToAction("HandleException", "Error");
-                }
-            }
-            else
-            {
-                return RedirectToAction("HandleException", "Error");
-            }          
+            
+            GenericResponse genericResponse = await editService.SaveProviderDraft(providerChangesViewModel.ChangedProvider, UserEmail,dsitUserEmails);
+            
+            if(!genericResponse.Success)
+                throw new InvalidOperationException("Failed to save provider draft.");
+            
+            return RedirectToAction("InformationSubmitted", new { providerId = providerChangesViewModel.ChangedProvider.ProviderProfileId });
             
         }
 

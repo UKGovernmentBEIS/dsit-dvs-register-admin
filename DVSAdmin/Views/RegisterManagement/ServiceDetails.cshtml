@@ -12,7 +12,11 @@
 
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">Service details: @Model.CurrentServiceVersion.ServiceName </h1>
+                @* <p class="govuk-body">You can resend an email to the named contacts at the provider, to confirm <br> they agree to the service details being removed. Once they confirm, the <br/> details will be automatically removed from the register.</p> *@
+                @* <div class="govuk-button-group"> *@
+                @*     <button type="submit" class="govuk-button">Resend removal confirmation email</button> *@
                 <div class="govuk-tabs" data-module="govuk-tabs">
+                        <div class="govuk-!-padding-bottom-6"></div>
                     <ul class="govuk-tabs__list">
                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                             <a class="govuk-tabs__tab" href="#latest-submission">
@@ -44,7 +48,7 @@
                             </p>
 
                             <a href="/register-management/download-certificate?key=@Model.CurrentServiceVersion.FileLink&filename=@Model.CurrentServiceVersion.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
-                                Download certificate of conformity (Opens in a new tab)
+                                Download certificate of conformity 
                             </a>
                         </div>
                     </div>

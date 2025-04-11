@@ -4,6 +4,7 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DVSAdmin.Controllers
 {
@@ -18,8 +19,6 @@ namespace DVSAdmin.Controllers
     {
         private readonly IRemoveProviderService removeProviderService;
         private readonly IUserService userService;
-
-
       
         public RemoveProviderController(IRemoveProviderService removeProviderService, IUserService userService)
         {
@@ -148,6 +147,33 @@ namespace DVSAdmin.Controllers
             serviceDto.Provider = providerProfileDto;
             return View(serviceDto);
         }
+
+        #endregion
+
+        #region Cancel Removal
+
+        [HttpGet("service/cancel-service-removal")]
+        public async Task<IActionResult> CancelRemoval(int serviceId)
+        {
+            ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceId);
+            return View(serviceDto);
+        }
+
+        [HttpPost("service/proceed-with-canceling-service-removal")]
+        public async Task<IActionResult> ProceedRemovalCancellation(int serviceId, int providerId)
+        {
+            GenericResponse genericResponse = await removeProviderService.CancelRemoveServiceRequest(providerId, serviceId, UserEmail); 
+            if (genericResponse.Success)
+            {
+                ViewBag.providerId = providerId;
+                return View("CancelRemovalConfirmation");
+            }
+            else
+            {
+                return RedirectToAction("CancelRemoval", new { serviceId });
+            }           
+        }
+
 
         #endregion
 

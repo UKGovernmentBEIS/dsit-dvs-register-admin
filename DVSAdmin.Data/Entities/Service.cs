@@ -55,5 +55,6 @@ namespace DVSAdmin.Data.Entities
         public DateTime? RemovalRequestTime { get; set; }
         public DateTime? RemovedTime { get; set; }
         public DateTime? ResubmissionTime { get; set; }
+        public TokenStatusEnum RemovalTokenStatus { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Runtime.CompilerServices;
+using Newtonsoft.Json.Linq;
 using QRCoder;
 using System.Text;
 
