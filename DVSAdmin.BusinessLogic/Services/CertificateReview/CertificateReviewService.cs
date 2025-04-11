@@ -78,37 +78,53 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail)
         {
-            CertificateReview certificateReview = new CertificateReview();
+            CertificateReview certificateReview = new();
             automapper.Map(cetificateReviewDto, certificateReview);
             GenericResponse genericResponse = await certificateReviewRepository.UpdateCertificateReview(certificateReview, loggedInUserEmail);
             if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Approved)
             {
-              
-                TokenDetails tokenDetails = jwtService.GenerateToken();
-                string consentLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+tokenDetails.Token;
 
-                //Insert token details to db for further reference
-                ProceedApplicationConsentToken consentToken = new ProceedApplicationConsentToken();
-                consentToken.ServiceId = serviceDto.Id;
-                consentToken.Token = tokenDetails.Token;
-                consentToken.TokenId = tokenDetails.TokenId;
-                consentToken.CreatedTime = DateTime.UtcNow;
-                genericResponse = await consentRepository.SaveProceedApplicationConsentToken(consentToken, loggedInUserEmail);
+                genericResponse = await GenerateTokenAndSendEmail(serviceDto, loggedInUserEmail, false);
                 if (genericResponse.Success)
                 {
                     await emailSender.SendCertificateInfoApprovedToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, serviceDto.CabUser.CabEmail);
-                    await emailSender.SendCertificateInfoApprovedToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName);
-                    //Send Email to primary contact and secondary contact
-                    List<string> emailList = [serviceDto.Provider.PrimaryContactEmail, serviceDto.Provider.SecondaryContactEmail];
-                    await emailSender.SendProceedApplicationConsentToDIP(serviceDto.Provider.RegisteredName, serviceDto.ServiceName,
-                    !string.IsNullOrEmpty(serviceDto.Provider.CompanyRegistrationNumber) ? serviceDto.Provider.CompanyRegistrationNumber : serviceDto.Provider.DUNSNumber??string.Empty,
-                    serviceDto.CompanyAddress, serviceDto.Provider.PublicContactEmail??string.Empty, serviceDto.Provider.ProviderTelephoneNumber??string.Empty, consentLink, emailList);
+                    await emailSender.SendCertificateInfoApprovedToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName);                  
+                   
                 }
 
             }
             return genericResponse;
         }
 
+
+        public async Task<GenericResponse> GenerateTokenAndSendEmail(ServiceDto serviceDto, string loggedInUserEmail, bool isResend)
+        {
+            TokenDetails tokenDetails = jwtService.GenerateToken();
+            string consentLink = configuration["DvsRegisterLink"] + "consent/proceed-application-consent?token=" + tokenDetails.Token;
+
+            //Insert token details to db for authorization on clicking opening loop link
+            ProceedApplicationConsentToken consentToken = new()
+            {
+                ServiceId = serviceDto.Id,
+                Token = tokenDetails.Token,
+                TokenId = tokenDetails.TokenId          
+            };
+            GenericResponse genericResponse = await consentRepository.SaveProceedApplicationConsentToken(consentToken, loggedInUserEmail);
+            if(genericResponse.Success)  
+            {
+                List<string> emailList = [serviceDto.Provider.PrimaryContactEmail, serviceDto.Provider.SecondaryContactEmail];
+                await emailSender.SendProceedApplicationConsentToDIP(serviceDto.Provider.RegisteredName, serviceDto.ServiceName,
+                !string.IsNullOrEmpty(serviceDto.Provider.CompanyRegistrationNumber) ? serviceDto.Provider.CompanyRegistrationNumber : serviceDto.Provider.DUNSNumber ?? string.Empty,
+                serviceDto.CompanyAddress, serviceDto.Provider.PublicContactEmail ?? string.Empty, serviceDto.Provider.ProviderTelephoneNumber ?? string.Empty, consentLink, emailList);
+
+                if(isResend) 
+                {
+                    await emailSender.ConfirmationConsentResentToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName);
+                }
+            }
+            return genericResponse;
+
+        }
 
         public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons, string loggedInUserEmail)
         {

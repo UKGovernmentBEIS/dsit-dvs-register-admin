@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DVSAdmin.CommonUtility.Models.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using DVSAdmin.CommonUtility.Models;
 
 namespace DVSAdmin.Data.Entities
 {
@@ -42,5 +43,6 @@ namespace DVSAdmin.Data.Entities
         public PublicInterestCheck PublicInterestCheck { get; set; }
         public DateTime? RemovedTime { get; set; }
         public RemoveProviderToken RemoveProviderToken { get; set; }
+        public TokenStatusEnum EditProviderTokenStatus { get; set; }
     }
 }

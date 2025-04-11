@@ -1,4 +1,5 @@
 ﻿@model CertificateDetailsViewModel;
+@using DVSAdmin.CommonUtility.Models
 @using DVSAdmin.CommonUtility.Models.Enums
 @using DVSAdmin.Extensions
 @{
@@ -52,6 +53,19 @@
             <div class="govuk-grid-column-full">
                 @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsView.cshtml", Model?.CertificateValidation?.Service)
 
+                @if (Model?.CertificateValidation?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved
+                && Model?.CertificateValidation?.Service.ServiceStatus == ServiceStatusEnum.Submitted)
+                {
+                    @using (Html.BeginForm("ResendOpeningLinkEmail", "CertificateReview", FormMethod.Post))
+                    {
+                        @Html.Hidden("serviceId", Model.CertificateValidation.ServiceId)
+                        <div class="govuk-button-group govuk-!-margin-top-5 govuk-!-margin-bottom-5">
+                            <button type="submit" class="govuk-button" data-module="govuk-button">
+                                Resend request email
+                            </button>
+                        </div>
+                    }
+                }
 
                 <div class="govuk-!-padding-bottom-6">
                     <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
