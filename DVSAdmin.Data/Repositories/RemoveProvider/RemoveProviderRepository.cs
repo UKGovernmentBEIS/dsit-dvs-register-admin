@@ -52,6 +52,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
 
                     if (providerStatus == ProviderStatusEnum.RemovedFromRegister)
                     {
+                        existingProvider.IsInRegister = false;
                         existingProvider.RemovedTime = DateTime.UtcNow;
                     }
                     else if (providerStatus == ProviderStatusEnum.AwaitingRemovalConfirmation)
@@ -190,11 +191,9 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                     if (currentStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
                     {
                         service.ServiceStatus = ServiceStatusEnum.Removed;
+                        service.IsInRegister = false;
                     }
-                    else
-                    {
-                        service.ServiceStatus = ServiceStatusEnum.AwaitingRemovalConfirmation;
-                    }
+                
                     service.ModifiedTime = DateTime.UtcNow;
                     service.RemovalRequestTime = DateTime.UtcNow;
                 }
