@@ -61,6 +61,7 @@ namespace DVSAdmin.Controllers
             
             serviceVersions.ServiceHistoryVersions = serviceList.Where(x => x != currentServiceVersion).ToList() ?? new List<ServiceDto>();
             serviceVersions.CurrentServiceVersion = currentServiceVersion;
+            serviceVersions.CanResendRemovalRequest = currentServiceVersion.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && currentServiceVersion.ServiceRemovalReason != 0;
 
             return View(serviceVersions);
         }

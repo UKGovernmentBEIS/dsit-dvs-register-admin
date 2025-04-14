@@ -146,35 +146,53 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             }
             return genericResponse;
         }
-
-
-        public async Task<GenericResponse> SaveRemoveProviderToken(RemoveProviderToken removeProviderToken, TeamEnum team, EventTypeEnum eventType, string loggedinUserEmail)
+        public async Task<GenericResponse> SaveRemoveProviderToken(RemoveProviderToken removeProviderToken, TeamEnum team, EventTypeEnum eventType, string loggedinUserEmail, bool isResend)
         {
             GenericResponse genericResponse = new();
-            using var transaction = context.Database.BeginTransaction();
+            using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var existingEntity = await context.RemoveProviderToken.FirstOrDefaultAsync(e => e.Token == removeProviderToken.Token && e.TokenId == removeProviderToken.TokenId);
-
-                if (existingEntity == null)
-                {
-                    await context.RemoveProviderToken.AddAsync(removeProviderToken);
-                    await context.SaveChangesAsync(team, eventType, loggedinUserEmail);
-                    transaction.Commit();
-                    genericResponse.Success = true;
+                if (isResend)
+                {    
+                        await HandleServiceRemoval(removeProviderToken);
                 }
-
+                else
+                {
+                    removeProviderToken.CreatedTime = DateTime.UtcNow;
+                    await context.RemoveProviderToken.AddAsync(removeProviderToken);                    
+                }
+                await context.SaveChangesAsync(team, eventType, loggedinUserEmail);
+                await transaction.CommitAsync();
+                genericResponse.Success = true;
             }
             catch (Exception ex)
             {
                 genericResponse.EmailSent = false;
                 genericResponse.Success = false;
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 logger.LogError($"Failed SaveRemoveProviderToken: {ex}");
             }
             return genericResponse;
         }
 
+        private async Task HandleServiceRemoval(RemoveProviderToken removeProviderToken)
+        {
+            var serviceIds = removeProviderToken.RemoveTokenServiceMapping.Select(x => x.ServiceId).ToList();
+            var existingMapping = await context.RemoveTokenServiceMapping
+                .Where(x => serviceIds.Contains(x.ServiceId))
+                .FirstOrDefaultAsync();
+
+            var providerToken = await context.RemoveProviderToken
+                .FirstOrDefaultAsync(pt => pt.Id == existingMapping.RemoveProviderTokenId);
+
+            if (providerToken != null)
+            {
+                providerToken.Token = removeProviderToken.Token;
+                providerToken.TokenId = removeProviderToken.TokenId;
+                providerToken.ModifiedTime = DateTime.UtcNow;
+                context.RemoveProviderToken.Update(providerToken);
+            }
+        }
         public async Task<GenericResponse> RemoveServiceRequestByCab(int providerProfileId, List<int> serviceIds, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new();
