@@ -96,30 +96,30 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
            p.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext || p.ProviderStatus == ProviderStatusEnum.ReadyToPublish)).FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
-        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, ServiceStatusEnum serviceStatus, string loggedInUserEmail)
+        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, string loggedInUserEmail)
         {
-            GenericResponse genericResponse = new GenericResponse();
+            GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();
             try
             {
                 foreach (var serviceId in serviceIds)
                 {
-                    var existingService = await context.Service.FirstOrDefaultAsync(e => e.Id == serviceId);
+                    var existingService = await context.Service.Include(s => s.Provider).FirstOrDefaultAsync(e => e.Id == serviceId);
 
                     var previousPublishedServiceVersionList = await context.Service.Where(s => s.ServiceKey == existingService.ServiceKey
                     && s.ServiceStatus == ServiceStatusEnum.Published && s.IsCurrent == false).ToListAsync();
 
                     if (existingService != null)
                     {
-                        existingService.ServiceStatus = serviceStatus;
+
+                        existingService.ServiceStatus = ServiceStatusEnum.Published;
+                        existingService.IsInRegister = true;
+                        existingService.Provider.IsInRegister = true;
                         existingService.ModifiedTime = DateTime.UtcNow;
-                        if (serviceStatus == ServiceStatusEnum.Published)
-                        {
-                            existingService.PublishedTime = DateTime.UtcNow;
-                        }
+                        existingService.PublishedTime = DateTime.UtcNow;
 
 
-                        if(previousPublishedServiceVersionList != null && previousPublishedServiceVersionList.Count >0)
+                        if (previousPublishedServiceVersionList != null && previousPublishedServiceVersionList.Count >0)
                         {
                             foreach (var version in previousPublishedServiceVersionList)
                             {

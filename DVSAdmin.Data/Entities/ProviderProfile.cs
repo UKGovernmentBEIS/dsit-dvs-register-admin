@@ -44,5 +44,6 @@ namespace DVSAdmin.Data.Entities
         public DateTime? RemovedTime { get; set; }
         public RemoveProviderToken RemoveProviderToken { get; set; }
         public TokenStatusEnum EditProviderTokenStatus { get; set; }
+        public bool IsInRegister { get; set; }
     }
 }
