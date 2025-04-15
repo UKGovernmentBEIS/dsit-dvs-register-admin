@@ -54,7 +54,11 @@
                 {
                     <p class="govuk-body">
                         This must match the information on the certificate of conformity. We do not accept
-                        certificates with an expiry date of more than 2 years 60 days after the date of issue
+                        certificates with an expiry date of more than 2 years 30 days after the date of issue.
+                    </p>
+
+                    <p class="govuk-body">
+                        To make changes, type the new information and select 'Save'. If there is no changes to make, select 'Cancel'.
                     </p>
 
 
@@ -64,7 +68,7 @@
                     HasError = hasError,
                     ErrorMessage = hasDateError ? Html?.ViewData?.ModelState["ValidDate"]?.Errors[0].ErrorMessage ?? string.Empty : string.Empty,
                     FieldsetLegend = "Certificate of conformity expiry date",
-                    Hint = "For example, 27 3 2007",
+                    Hint = "Enter the date in the format DD MM YYYY",
 
                     Day = Convert.ToString(Model.Day) ?? string.Empty,
                     HasDayError = hasDayError,
@@ -81,8 +85,16 @@
 
                     @await Html.PartialAsync("~/Views/PartialViews/_DateView.cshtml", conformityExpiryDateViewModel)
 
+                    <div class="govuk-warning-text govuk-!-margin-top-8">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            If you select 'Save' your changes will need to be approved by another OfDIA user. Do not select 'Save' unless you have made changes.
+                        </strong>
+                    </div>
+
                     <div class="govuk-button-group">
-                        <button type="submit" class="govuk-button govuk-!-margin-top-2">Continue</button>
+                        <button type="submit" class="govuk-button govuk-!-margin-top-2">Save</button>
                         <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.serviceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
                     </div>
                 }
