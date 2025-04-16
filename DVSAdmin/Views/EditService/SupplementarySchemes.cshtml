@@ -14,7 +14,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl">
-                    Select the applicable supplementary codes for this service
+                    Select the applicable supplementary schemes for this service
                 </h1>
 
                 @if (ViewData.ModelState.ErrorCount > 0)
@@ -26,7 +26,11 @@
                 @using (Html.BeginForm("SupplementarySchemes", "EditService", FormMethod.Post))
                 {
                     <p class="govuk-body">
-                        Select all supplementary codes that the service  is certified against on the certificate of conformity.
+                        Select all supplementary schemes that the service is certified against on the certificate of conformity.
+                    </p>
+
+                    <p class="govuk-body">
+                        To make changes, type the new information and select 'Save'. If there is no changes to make, select 'Cancel'.
                     </p>
 
                     @if (hasError)
@@ -93,9 +97,17 @@
                         </div>
                     }
 
+                    <div class="govuk-warning-text govuk-!-margin-top-8">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            If you select 'Save' your changes will need to be approved by another OfDIA user. Do not select 'Save' unless you have made changes.
+                        </strong>
+                    </div>
+
                     <div class="govuk-button-group">
                         <button type="submit" class="govuk-button govuk-!-margin-top-6" data-module="govuk-button">
-                            Continue
+                            Save
                         </button>
                         <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.serviceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
                     </div>
