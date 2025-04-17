@@ -34,14 +34,13 @@ namespace DVSAdmin.Data.Repositories
                 if (existingEntity == null)
                 {
                     consentToken.CreatedTime = DateTime.UtcNow;
-                    await context.ProceedApplicationConsentToken.AddAsync(consentToken);
-                    
+                    await context.ProceedApplicationConsentToken.AddAsync(consentToken);                    
                 }
                 else
                 {
-                    existingEntity.Token = existingEntity.Token;
-                    existingEntity.TokenId = existingEntity.TokenId;                   
-                    existingEntity.ModifiedTime = existingEntity.ModifiedTime;
+                    existingEntity.Token = consentToken.Token;
+                    existingEntity.TokenId = consentToken.TokenId;                   
+                    existingEntity.ModifiedTime = DateTime.UtcNow;
                 }
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.AddOpeningLoopToken, loggedinUserEmail);
                 transaction.Commit();
