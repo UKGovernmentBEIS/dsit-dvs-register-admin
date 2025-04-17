@@ -174,13 +174,21 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             }
             return genericResponse;
         }
-
         private async Task HandleServiceRemoval(RemoveProviderToken removeProviderToken)
         {
             var serviceIds = removeProviderToken.RemoveTokenServiceMapping.Select(x => x.ServiceId).ToList();
             var existingMapping = await context.RemoveTokenServiceMapping
                 .Where(x => serviceIds.Contains(x.ServiceId))
                 .FirstOrDefaultAsync();
+
+            var services =  await context.Service
+                .Where(x => serviceIds.Contains(x.Id))
+                .ToListAsync();
+
+            foreach (var service in services)
+            {
+                service.RemovalTokenStatus = TokenStatusEnum.RequestResent;
+            }
 
             var providerToken = await context.RemoveProviderToken
                 .FirstOrDefaultAsync(pt => pt.Id == existingMapping.RemoveProviderTokenId);
