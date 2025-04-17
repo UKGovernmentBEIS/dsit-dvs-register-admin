@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewData["Title"] = "ResendEmailSuccess";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">
+                        Request email resent successfully
+                    </h1>
+                </div>
+                <h1 class="govuk-heading-s">Request email resent successfully</h1>
+                <p class="govuk-body">
+                    You have resent the request for OfDIA users to approve the edits you have made to this information.
+                </p>
+                <p class="govuk-body">
+                    Once they approve your edits, we will notify you by email.
+                </p>
+ 
+
+            </div>
+        </div>
+        <a href="@Url.Action("LandingPage", "Cab")" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+            Return to service provider profile
+
+        </a>
+    </main>
+</div>
+
+
+
+
