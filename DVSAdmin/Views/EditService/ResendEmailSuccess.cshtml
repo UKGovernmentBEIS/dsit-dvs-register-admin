@@ -24,10 +24,10 @@
 
             </div>
         </div>
-        <a href="@Url.Action("LandingPage", "Cab")" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+        <a href="@( Url.Action("ProviderDetails", "RegisterManagement", new { providerId = ViewBag.ProviderId}) )" class="govuk-button" role="button">
             Return to service provider profile
 
-        </a>
+        </a>  
     </main>
 </div>
 

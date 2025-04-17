@@ -60,5 +60,6 @@ namespace DVSAdmin.Data.Entities
         public TokenStatusEnum OpeningLoopTokenStatus { get; set; }
         public TokenStatusEnum ClosingLoopTokenStatus { get; set; }
         public bool IsInRegister { get; set; }
+        public ServiceDraft ServiceDraft { get; set; }
     }
 }
