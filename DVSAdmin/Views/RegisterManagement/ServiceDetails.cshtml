@@ -31,6 +31,7 @@
                     @using (Html.BeginForm("ResendServiceUpdateRequest", "EditService", FormMethod.Post))
                     {
                     @Html.Hidden("serviceDraftId", Model.CurrentServiceVersion.ServiceDraft.Id)
+                     @Html.Hidden("providerId", Model.CurrentServiceVersion.ProviderProfileId)
 
                     <p class="govuk-body">
                         You can resend an email request for OfDIA users to approve the changes you

@@ -542,13 +542,14 @@ namespace DVSAdmin.Controllers
         #region Resend service update request
 
         [HttpPost("resend-service-update-request")]
-        public async Task<IActionResult> ResendServiceUpdateRequest(int serviceDraftId, string action)
+        public async Task<IActionResult> ResendServiceUpdateRequest(int serviceDraftId, int providerId)
         {
             var userEmails = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);
             GenericResponse genericResponse = await editService.GenerateTokenAndSendServiceUpdateRequest(null, UserEmail, userEmails, serviceDraftId, true);
             if (genericResponse.Success)
             {
-                return View("InformationSubmitted");
+                ViewBag.ProviderId = providerId;
+                return View("ResendEmailSuccess");
             }
             else
             {

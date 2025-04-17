@@ -177,20 +177,22 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<GenericResponse> GenerateTokenAndSendServiceUpdateRequest(ServiceDraftDto? draftDto, string loggedInUserEmail, List<string> dsitUserEmails, int serviceDraftId, bool isResend)
         {
+
             GenericResponse response = new();
-            TokenDetails tokenDetails = _jwtService.GenerateToken("DSIT");
-            ServiceDraftToken serviceDraftToken = new()
-            {
-                ServiceDraftId = serviceDraftId,
-                Token = tokenDetails.Token,
-                TokenId = tokenDetails.TokenId                
-            };
             if (draftDto == null && isResend)
             {
                 var serviceDraft = await _editRepository.GetServiceDraft(serviceDraftId);
                 draftDto = _mapper.Map<ServiceDraftDto>(serviceDraft);
 
             }
+            TokenDetails tokenDetails = _jwtService.GenerateToken("DSIT", draftDto.ProviderProfileId, draftDto.serviceId.ToString());
+            ServiceDraftToken serviceDraftToken = new()
+            {
+                ServiceDraftId = serviceDraftId,
+                Token = tokenDetails.Token,
+                TokenId = tokenDetails.TokenId                
+            };
+           
             response = await _editRepository.SaveServiceDraftToken(serviceDraftToken, loggedInUserEmail, draftDto.serviceId);
             if (response.Success)
             {               
