@@ -538,6 +538,24 @@ namespace DVSAdmin.Controllers
 
         #endregion
 
+
+        #region Resend service update request
+
+        [HttpPost("resend-service-update-request")]
+        public async Task<IActionResult> ResendServiceUpdateRequest(int serviceDraftId, string action)
+        {
+            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);
+            GenericResponse genericResponse = await editService.GenerateTokenAndSendServiceUpdateRequest(null, UserEmail, userEmails, serviceDraftId, true);
+            if (genericResponse.Success)
+            {
+                return View("InformationSubmitted");
+            }
+            else
+            {
+                throw new InvalidOperationException("Failed to resend update request.");
+            }
+        }
+        #endregion
         #region Private Methods
         private ServiceSummaryViewModel GetServiceSummary()
         {
