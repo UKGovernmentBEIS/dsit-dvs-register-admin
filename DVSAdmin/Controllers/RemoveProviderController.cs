@@ -4,7 +4,6 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DVSAdmin.Controllers
 {
@@ -174,9 +173,27 @@ namespace DVSAdmin.Controllers
             }           
         }
 
-
         #endregion
 
+        #region  Resend Removal Request
+        [HttpPost("service/resend-removal-request")]
+        public async Task<ActionResult> ResendRemovalRequest(int serviceId)
+        {
+            GenericResponse genericResponse = new GenericResponse();
+
+            ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceId);
+
+            List<int> serviceIds = [serviceDto.Id];
+            genericResponse = await removeProviderService.GenerateTokenAndSendServiceRemoval(serviceDto.ProviderProfileId, serviceIds, UserEmail, serviceDto.ServiceRemovalReason, true);
+            ViewBag.providerId = serviceDto.ProviderProfileId;
+
+            if (genericResponse.Success)
+            {
+                return View("ResendRemovalEmailConformation");
+            }
+            return RedirectToAction("ServiceDetails", "RegisterManagement", new { serviceKey = serviceDto.ServiceKey });
+        }
+        #endregion
 
         #region removal requested by cab
 

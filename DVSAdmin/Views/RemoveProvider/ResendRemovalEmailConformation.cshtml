@@ -1,0 +1,23 @@
+﻿<div class="govuk-width-container">
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">Request email resent successfully</h1>
+                </div>
+                <p class="govuk-body">
+                    You have resent the service removal request to the provider's named contacts.
+                </p>
+                <p class="govuk-body">
+                    Once they have approved this request, the service details will automatically be removed from the register.
+                </p>
+                <div class="govuk-button-group govuk-!-margin-top-8 govuk-!-margin-bottom-8">
+                    </a>
+                    <a href="@Url.Action("ProviderDetails", "RegisterManagement", new { @providerId = ViewBag.providerId})" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                        Return to service provider profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
