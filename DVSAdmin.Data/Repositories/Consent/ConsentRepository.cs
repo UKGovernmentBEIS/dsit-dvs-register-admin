@@ -29,15 +29,16 @@ namespace DVSAdmin.Data.Repositories
             try
             {
                 var existingEntity = await context.ProceedApplicationConsentToken.FirstOrDefaultAsync(e => e.ServiceId == consentToken.ServiceId);
-                var service = await context.Service.FirstOrDefaultAsync(s => s.Id == consentToken.ServiceId);
-                service.OpeningLoopTokenStatus = TokenStatusEnum.Requested;// update token status
+                var service = await context.Service.FirstOrDefaultAsync(s => s.Id == consentToken.ServiceId);                
                 if (existingEntity == null)
                 {
+                    service.OpeningLoopTokenStatus = TokenStatusEnum.Requested;
                     consentToken.CreatedTime = DateTime.UtcNow;
                     await context.ProceedApplicationConsentToken.AddAsync(consentToken);                    
                 }
                 else
                 {
+                    service.OpeningLoopTokenStatus = TokenStatusEnum.RequestResent;
                     existingEntity.Token = consentToken.Token;
                     existingEntity.TokenId = consentToken.TokenId;                   
                     existingEntity.ModifiedTime = DateTime.UtcNow;
@@ -88,16 +89,25 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.ProceedPublishConsentToken.FirstOrDefaultAsync(e => e.Token == consentToken.Token && e.TokenId == consentToken.TokenId);
+                var existingEntity = await context.ProceedPublishConsentToken.FirstOrDefaultAsync(e => e.ServiceId == consentToken.ServiceId);
+                var service = await context.Service.FirstOrDefaultAsync(s => s.Id == consentToken.ServiceId);               
 
                 if (existingEntity == null)
                 {
-                    await context.ProceedPublishConsentToken.AddAsync(consentToken);
-                    await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.AddClosingLoopToken, loggedinUserEmail);
-                    transaction.Commit();
-                    genericResponse.Success = true;
+                    service.ClosingLoopTokenStatus = TokenStatusEnum.Requested;
+                    consentToken.CreatedTime = DateTime.UtcNow;
+                    await context.ProceedPublishConsentToken.AddAsync(consentToken);                   
                 }
-
+                else
+                {
+                    service.ClosingLoopTokenStatus = TokenStatusEnum.RequestResent;
+                    existingEntity.Token = consentToken.Token;
+                    existingEntity.TokenId = consentToken.TokenId;
+                    existingEntity.ModifiedTime = DateTime.UtcNow;
+                }
+                await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.AddClosingLoopToken, loggedinUserEmail);
+                transaction.Commit();
+                genericResponse.Success = true;
             }
             catch (Exception ex)
             {
