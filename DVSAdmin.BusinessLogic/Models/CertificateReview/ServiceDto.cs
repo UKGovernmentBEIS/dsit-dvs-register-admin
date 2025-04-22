@@ -49,5 +49,8 @@ namespace DVSAdmin.BusinessLogic.Models
         public ServiceRemovalReasonEnum ServiceRemovalReason { get; set; }
         public bool HasPreviousPublishedVersion { get; set; }
         public DateTime? ResubmissionTime { get; set; }
+
+        [JsonIgnore]
+        public ServiceDraftDto ServiceDraft { get; set; }
     }
 }

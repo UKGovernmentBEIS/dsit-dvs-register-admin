@@ -26,6 +26,22 @@
                         </div>
                     }
                 }
+                else if (Model.CanResendUpdateRequest)
+                {
+                    @using (Html.BeginForm("ResendServiceUpdateRequest", "EditService", FormMethod.Post))
+                    {
+                    @Html.Hidden("serviceDraftId", Model.CurrentServiceVersion.ServiceDraft.Id)
+                     @Html.Hidden("providerId", Model.CurrentServiceVersion.ProviderProfileId)
+
+                    <p class="govuk-body">
+                        You can resend an email request for OfDIA users to approve the changes you
+                        have requested to this information
+                    </p>
+                        <button type="submit" class="govuk-button" data-module="govuk-button">Resend edit request email</button>
+                    }
+                }
+
+               
                 
                 <div class="govuk-tabs" data-module="govuk-tabs">
                         <div class="govuk-!-padding-bottom-6"></div>
