@@ -97,7 +97,9 @@ namespace DVSAdmin.Controllers
             certificateDetailsViewModel.CertificateValidation = certificateValidationViewModel;
             certificateDetailsViewModel.CertificateReview = certificateReviewViewModel;
             certificateDetailsViewModel.SendBackViewModel = sendBackViewModel;
-            
+            certificateDetailsViewModel.CanResendOpeningLoopRequest = certificateValidationViewModel.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved
+            && (certificateValidationViewModel.Service.ServiceStatus == ServiceStatusEnum.Submitted
+            || certificateValidationViewModel.Service.ServiceStatus == ServiceStatusEnum.Resubmitted);
             return View(certificateDetailsViewModel);
         }
 
