@@ -13,7 +13,7 @@
         ProviderContact = Model?.Provider
     };
     bool canResend = Model?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed
-    && Model?.ServiceStatus == ServiceStatusEnum.Submitted;
+    && Model?.ServiceStatus == ServiceStatusEnum.Received;
 }
 
 <div class="govuk-width-container">
