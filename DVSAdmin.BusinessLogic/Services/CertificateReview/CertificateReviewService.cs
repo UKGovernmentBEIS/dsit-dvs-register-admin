@@ -99,7 +99,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<GenericResponse> GenerateTokenAndSendEmail(ServiceDto serviceDto, string loggedInUserEmail, bool isResend)
         {
-            TokenDetails tokenDetails = jwtService.GenerateToken();
+            TokenDetails tokenDetails = jwtService.GenerateToken(string.Empty, serviceDto.ProviderProfileId, serviceDto.Id.ToString());
             string consentLink = configuration["DvsRegisterLink"] + "consent/proceed-application-consent?token=" + tokenDetails.Token;
 
             //Insert token details to db for authorization on clicking opening loop link
