@@ -123,7 +123,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<GenericResponse> GenerateTokenAndSendEmail(ServiceDto service, string loggedInUserEmail, bool isResend)
         {
-            TokenDetails tokenDetails = jwtService.GenerateToken();
+            TokenDetails tokenDetails = jwtService.GenerateToken(string.Empty,service.ProviderProfileId,service.Id.ToString());
             string consentLink = configuration["DvsRegisterLink"] + "consent/publish-service-give-consent?token=" + tokenDetails.Token;
 
             //Insert token details to db for further reference
