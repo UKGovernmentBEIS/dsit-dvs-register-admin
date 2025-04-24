@@ -73,10 +73,10 @@ namespace DVSAdmin.Controllers
                 throw new InvalidOperationException($"Service certificate review details are missing.");
 
             
-            if (serviceDto.ProceedApplicationConsentToken != null & (serviceDto.ServiceStatus == ServiceStatusEnum.Submitted || serviceDto.ServiceStatus == ServiceStatusEnum.Resubmitted) && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
-            {
-                ViewBag.OpeningTheLoopLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
-            }
+            //if (serviceDto.ProceedApplicationConsentToken != null & (serviceDto.ServiceStatus == ServiceStatusEnum.Submitted || serviceDto.ServiceStatus == ServiceStatusEnum.Resubmitted) && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
+            //{
+            //    ViewBag.OpeningTheLoopLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
+            //}
 
 
             CertificateValidationViewModel certificateValidationViewModel = MapDtoToViewModel(serviceDto);
