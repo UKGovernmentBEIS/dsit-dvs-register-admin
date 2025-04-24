@@ -6,8 +6,7 @@
     public enum TokenStatusEnum
     {
         NA = 0,//Token not generated yet
-        Requested = 1,
-        Expired = 2,
+        Requested = 1,        
         AdminCancelled = 3,
         UserCancelled = 4,
         RequestCompleted = 5,
