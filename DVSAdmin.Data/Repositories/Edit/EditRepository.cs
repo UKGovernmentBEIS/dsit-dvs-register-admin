@@ -84,16 +84,17 @@ namespace DVSAdmin.Data.Repositories
         }
 
 
-        public async Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail)
+        public async Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail, int providerProfileId)
         {
             GenericResponse genericResponse = new();
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await _context.ProviderDraftToken.FirstOrDefaultAsync(e => e.Token == providerDraftToken.Token && e.TokenId == providerDraftToken.TokenId);
-
+                var existingEntity = await _context.ProviderDraftToken.FirstOrDefaultAsync(e => e.ProviderProfileDraftId == providerDraftToken.ProviderProfileDraftId);
+                var provider = await _context.ProviderProfile.FirstOrDefaultAsync(e => e.Id == providerProfileId);
                 if (existingEntity == null)
                 {
+                    provider.EditProviderTokenStatus = TokenStatusEnum.Requested;
                     await _context.ProviderDraftToken.AddAsync(providerDraftToken);
                     await _context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.DSITEditProvider, loggedinUserEmail);
                     transaction.Commit();

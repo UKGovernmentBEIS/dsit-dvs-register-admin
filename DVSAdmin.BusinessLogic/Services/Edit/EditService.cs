@@ -40,7 +40,7 @@ namespace DVSAdmin.BusinessLogic.Services
             if(response.Success) 
             {        
                 
-                TokenDetails tokenDetails = _jwtService.GenerateToken("DSIT");
+                TokenDetails tokenDetails = _jwtService.GenerateToken("DSIT", draftDto.ProviderProfileId);
                 ProviderDraftToken providerDraftToken = new()
                 {
                     ProviderProfileDraftId = response.InstanceId,
@@ -48,7 +48,7 @@ namespace DVSAdmin.BusinessLogic.Services
                     TokenId = tokenDetails.TokenId,                   
                     CreatedTime = DateTime.UtcNow
                 };
-                response = await _editRepository.SaveProviderDraftToken(providerDraftToken, loggedInUserEmail);
+                response = await _editRepository.SaveProviderDraftToken(providerDraftToken, loggedInUserEmail, draftDto.ProviderProfileId);
                 if(response.Success)
                 {
                     ProviderProfile providerProfile = await _editRepository.GetProviderDetails(draftDto.ProviderProfileId);

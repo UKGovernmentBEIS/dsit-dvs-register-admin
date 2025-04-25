@@ -17,7 +17,7 @@ namespace DVSAdmin.Data.Repositories
 
         public Task<GenericResponse> SaveProviderDraft(ProviderProfileDraft draft, string loggedInUserEmail);
         public Task<GenericResponse> SaveServiceDraft(ServiceDraft draft, string loggedInUserEmail);
-        public Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail);
+        public Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail, int providerProfileId);
         public Task<GenericResponse> SaveServiceDraftToken(ServiceDraftToken serviceDraftToken, string loggedinUserEmail, int serviceId);        
 
     }
