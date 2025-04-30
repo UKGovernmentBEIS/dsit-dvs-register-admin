@@ -76,8 +76,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerProfileId, string loggedInUserEmail)
         {
-            GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerProfileId,  loggedInUserEmail);
-            ProviderStatusEnum providerStatus = ProviderStatusEnum.Published;
+            GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerProfileId,  loggedInUserEmail);            
             ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
             ProviderStatusEnum currentStatus = providerProfile.ProviderStatus;// keep current status for log
             List<Service> serviceList = await certificateReviewRepository.GetServiceListByProvider(providerProfileId);        
