@@ -5,8 +5,7 @@ namespace DVSAdmin.Data.Repositories
 {
     public interface IEditRepository
     {
-        public Task<GenericResponse> SaveProviderDraft(ProviderProfileDraft draft, string loggedInUserEmail);
-        public Task<GenericResponse> SaveServiceDraft(ServiceDraft draft, string loggedInUserEmail);
+       
         public Task<Service> GetService(int serviceId);
         public Task<bool> CheckProviderRegisteredNameExists(string registeredName, int providerId);
         public Task<ProviderProfile> GetProviderDetails(int providerId);
@@ -14,8 +13,12 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<QualityLevel>> QualityLevels();
         public Task<List<IdentityProfile>> GetIdentityProfiles();
         public Task<List<SupplementaryScheme>> GetSupplementarySchemes();
-        public Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail);
-        public Task<GenericResponse> SaveServiceDraftToken(ServiceDraftToken serviceDraftToken, string loggedinUserEmail);
+        public Task<ServiceDraft?> GetServiceDraft(int serviceId);
+
+        public Task<GenericResponse> SaveProviderDraft(ProviderProfileDraft draft, string loggedInUserEmail);
+        public Task<GenericResponse> SaveServiceDraft(ServiceDraft draft, string loggedInUserEmail);
+        public Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail, int providerProfileId);
+        public Task<GenericResponse> SaveServiceDraftToken(ServiceDraftToken serviceDraftToken, string loggedinUserEmail, int serviceId);        
 
     }
 }

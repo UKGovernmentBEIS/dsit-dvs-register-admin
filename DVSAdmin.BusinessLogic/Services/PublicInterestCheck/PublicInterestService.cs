@@ -52,7 +52,7 @@ namespace DVSAdmin.BusinessLogic.Services
         }
         public async Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheckDto publicInterestCheckDto, ReviewTypeEnum reviewType, string loggedInUserEmail)
         {
-            Service service = await publicInterestCheckRepository.GetServiceDetails(publicInterestCheckDto.ServiceId);
+            ServiceDto service = await GetServiceDetails(publicInterestCheckDto.ServiceId);
 
             PublicInterestCheck publicInterestCheck = new();
             automapper.Map(publicInterestCheckDto, publicInterestCheck);
@@ -108,31 +108,41 @@ namespace DVSAdmin.BusinessLogic.Services
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed)
                     {
+                        genericResponse = await GenerateTokenAndSendEmail(service, loggedInUserEmail, false);
 
+                        if (genericResponse.Success)
+                        {
+                            await emailSender.SendApplicationApprovedToDSIT(service.Provider.RegisteredName, service.ServiceName);
 
-                        TokenDetails tokenDetails = jwtService.GenerateToken();
-                        string consentLink = configuration["DvsRegisterLink"] +"consent/publish-service-give-consent?token="+tokenDetails.Token;
-
-                        //Insert token details to db for further reference
-                        ProceedPublishConsentToken consentToken = new ();
-                        consentToken.ServiceId = publicInterestCheckDto.ServiceId;
-                        consentToken.Token = tokenDetails.Token;
-                        consentToken.TokenId = tokenDetails.TokenId;
-                        consentToken.CreatedTime = DateTime.UtcNow;
-                        genericResponse = await consentRepository.SaveConsentToken(consentToken, loggedInUserEmail);
-
-
-                        await emailSender.SendApplicationApprovedToDSIT(service.Provider.RegisteredName, service.ServiceName);
-
-                        await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
-                        service.Provider.PrimaryContactFullName,consentLink, service.Provider.PrimaryContactEmail);
-
-                        await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
-                        service.Provider.SecondaryContactFullName, consentLink, service.Provider.SecondaryContactEmail);
-
-
+                        }
                     }
                 }
+            }
+            return genericResponse;
+        }
+
+        public async Task<GenericResponse> GenerateTokenAndSendEmail(ServiceDto service, string loggedInUserEmail, bool isResend)
+        {
+            TokenDetails tokenDetails = jwtService.GenerateToken(string.Empty,service.ProviderProfileId,service.Id.ToString());
+            string consentLink = configuration["DvsRegisterLink"] + "consent/publish-service-give-consent?token=" + tokenDetails.Token;
+
+            //Insert token details to db for further reference
+            ProceedPublishConsentToken consentToken = new()
+            {
+                ServiceId = service.Id,
+                Token = tokenDetails.Token,
+                TokenId = tokenDetails.TokenId
+            };            
+            GenericResponse genericResponse = await consentRepository.SaveConsentToken(consentToken, loggedInUserEmail);
+
+            await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
+            service.Provider.PrimaryContactFullName, consentLink, service.Provider.PrimaryContactEmail);
+            await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
+            service.Provider.SecondaryContactFullName, consentLink, service.Provider.SecondaryContactEmail);
+
+            if (isResend)
+            {
+                await emailSender.ConfirmationConsentResentToDSIT(service.Provider.RegisteredName, service.ServiceName);
             }
             return genericResponse;
         }

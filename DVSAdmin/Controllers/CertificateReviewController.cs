@@ -1,4 +1,5 @@
-﻿using DVSAdmin.BusinessLogic.Models;
+﻿using Amazon.CognitoIdentityProvider.Model;
+using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
@@ -72,10 +73,10 @@ namespace DVSAdmin.Controllers
                 throw new InvalidOperationException($"Service certificate review details are missing.");
 
             
-            if (serviceDto.ProceedApplicationConsentToken != null & (serviceDto.ServiceStatus == ServiceStatusEnum.Submitted || serviceDto.ServiceStatus == ServiceStatusEnum.Resubmitted) && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
-            {
-                ViewBag.OpeningTheLoopLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
-            }
+            //if (serviceDto.ProceedApplicationConsentToken != null & (serviceDto.ServiceStatus == ServiceStatusEnum.Submitted || serviceDto.ServiceStatus == ServiceStatusEnum.Resubmitted) && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
+            //{
+            //    ViewBag.OpeningTheLoopLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
+            //}
 
 
             CertificateValidationViewModel certificateValidationViewModel = MapDtoToViewModel(serviceDto);
@@ -96,7 +97,9 @@ namespace DVSAdmin.Controllers
             certificateDetailsViewModel.CertificateValidation = certificateValidationViewModel;
             certificateDetailsViewModel.CertificateReview = certificateReviewViewModel;
             certificateDetailsViewModel.SendBackViewModel = sendBackViewModel;
-            
+            certificateDetailsViewModel.CanResendOpeningLoopRequest = certificateValidationViewModel.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved
+            && (certificateValidationViewModel.Service.ServiceStatus == ServiceStatusEnum.Submitted
+            || certificateValidationViewModel.Service.ServiceStatus == ServiceStatusEnum.Resubmitted);
             return View(certificateDetailsViewModel);
         }
 
@@ -223,6 +226,19 @@ namespace DVSAdmin.Controllers
                 _ => throw new InvalidOperationException("Invalid review action.")
             };
 
+        }
+
+        [HttpPost("resend-opening-loop-link")]
+        public async Task<ActionResult> ResendOpeningLinkEmail(int serviceId)
+        {
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);
+            GenericResponse genericResponse = await certificateReviewService.GenerateTokenAndSendEmail(serviceDto, UserEmail, true);
+
+            if (genericResponse.Success)
+            {
+                return View("ConsentResentConfirmation");
+            }
+            return RedirectToAction("CertificateSubmissionDetails", new { serviceId });
         }
 
         #region Approve Flow

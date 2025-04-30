@@ -15,5 +15,6 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<GenericResponse> UpdateProviderStatusByStatusPriority(int providerProfileId, string loggedInUserEmail, EventTypeEnum eventType, TeamEnum team = TeamEnum.DSIT);
         public Task<GenericResponse> UpdateProviderStatusByStatusPriority(ProviderProfile providerProfile, string loggedInUserEmail, EventTypeEnum eventType, TeamEnum team = TeamEnum.DSIT);
         public Task<GenericResponse> CancelRemoveServiceRequest(int providerProfileId, int serviceId, string loggedInUserEmail);
+        public Task<GenericResponse> GenerateTokenAndSendServiceRemoval(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, ServiceRemovalReasonEnum? serviceRemovalReason, bool isResend);
     }
 }

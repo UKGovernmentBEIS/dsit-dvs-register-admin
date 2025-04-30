@@ -67,14 +67,27 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ArchiveDetails(int serviceId)
         {
             ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
-            if(serviceDto.ProceedPublishConsentToken !=null && serviceDto.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed &&
-                serviceDto.ServiceStatus == ServiceStatusEnum.Received)
-            {
-                ViewBag.ClosingTheLoopLink=  configuration["DvsRegisterLink"] +"consent/publish-service-give-consent?token="+serviceDto.ProceedPublishConsentToken.Token;
-            }
+            //if(serviceDto.ProceedPublishConsentToken !=null && serviceDto.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed &&
+            //    serviceDto.ServiceStatus == ServiceStatusEnum.Received)
+            //{
+            //    ViewBag.ClosingTheLoopLink=  configuration["DvsRegisterLink"] +"consent/publish-service-give-consent?token="+serviceDto.ProceedPublishConsentToken.Token;
+            //}
            
             return View(serviceDto);
 
+        }
+
+        [HttpPost("resend-closing-loop-link")]
+        public async Task<ActionResult> ResendClosingLinkEmail(int serviceId)
+        {
+            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
+            GenericResponse genericResponse = await publicInterestCheckService.GenerateTokenAndSendEmail(serviceDto, UserEmail, true);
+
+            if (genericResponse.Success)
+            {
+                return View("ResentConsentToPublishConformation");
+            }
+            return RedirectToAction("PublicInterestCheck", "PublicInterestCheck");
         }
     }
 }

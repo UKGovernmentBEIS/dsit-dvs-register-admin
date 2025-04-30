@@ -1,11 +1,11 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Services;
-using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace DVSAdmin.Controllers
 {
@@ -142,7 +142,6 @@ namespace DVSAdmin.Controllers
             return View("Approve/SecondaryCheckApprovalConfirmation", publicInterestSecondaryCheckViewModel.Service);
         }
         #endregion
-
 
         #region Reject Flow
 
@@ -305,7 +304,6 @@ namespace DVSAdmin.Controllers
             return View("Disagree/SentBackConfirmation", secondaryCheckViewModel.Service);
         }
         #endregion
-
 
         #region private methods
         private PublicInterestSecondaryCheckViewModel GetSecondaryCheckDataFromSession(HttpContext context, string key)

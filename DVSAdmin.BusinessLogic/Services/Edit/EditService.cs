@@ -40,7 +40,7 @@ namespace DVSAdmin.BusinessLogic.Services
             if(response.Success) 
             {        
                 
-                TokenDetails tokenDetails = _jwtService.GenerateToken("DSIT");
+                TokenDetails tokenDetails = _jwtService.GenerateToken("DSIT", draftDto.ProviderProfileId);
                 ProviderDraftToken providerDraftToken = new()
                 {
                     ProviderProfileDraftId = response.InstanceId,
@@ -48,7 +48,7 @@ namespace DVSAdmin.BusinessLogic.Services
                     TokenId = tokenDetails.TokenId,                   
                     CreatedTime = DateTime.UtcNow
                 };
-                response = await _editRepository.SaveProviderDraftToken(providerDraftToken, loggedInUserEmail);
+                response = await _editRepository.SaveProviderDraftToken(providerDraftToken, loggedInUserEmail, draftDto.ProviderProfileId);
                 if(response.Success)
                 {
                     ProviderProfile providerProfile = await _editRepository.GetProviderDetails(draftDto.ProviderProfileId);
@@ -170,37 +170,52 @@ namespace DVSAdmin.BusinessLogic.Services
 
             if (response.Success && genericResponse.Success)
             {
-                // to do send email
-                TokenDetails tokenDetails = _jwtService.GenerateToken("DSIT");
-                ServiceDraftToken serviceDraftToken = new()
-                {
-                    ServiceDraftId = response.InstanceId,
-                    Token = tokenDetails.Token,
-                    TokenId = tokenDetails.TokenId,
-                    CreatedTime = DateTime.UtcNow
-                };
-                response = await _editRepository.SaveServiceDraftToken(serviceDraftToken, loggedInUserEmail);
-                if (response.Success )
-                {
-                    //56/DSIT/2i edit update request - service
-
-                    Service service = await _editRepository.GetService(draftDto.serviceId);
-                    ServiceDto serviceDto = _mapper.Map<ServiceDto>(service);                  
-                    string dsit2iCheckLink = _configuration["DvsRegisterLink"] + "update-request/service-changes?token=" + tokenDetails.Token;
-                    var (previous, current) = GetServiceKeyValue(draftDto, serviceDto);
-                    string currentData = Helper.ConcatenateKeyValuePairs(current);
-                    string previousData = Helper.ConcatenateKeyValuePairs(previous);
-                    foreach (var email in dsitUserEmails)
-                    {
-                        await _emailSender.ServiceEditRequest(email, email, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, currentData, previousData, dsit2iCheckLink);
-                    }
-
-                    //To do 58/DSIT/Update request submitted - service// send email to loggedInUserEmail
-                    await _emailSender.ServiceEditRequestConfirmation(loggedInUserEmail, loggedInUserEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, currentData, previousData);
-
-                }
+                response = await GenerateTokenAndSendServiceUpdateRequest(draftDto, loggedInUserEmail, dsitUserEmails, response.InstanceId, false);
             }
-                return response;
+            return response;
+        }
+
+        public async Task<GenericResponse> GenerateTokenAndSendServiceUpdateRequest(ServiceDraftDto? draftDto, string loggedInUserEmail, List<string> dsitUserEmails, int serviceDraftId, bool isResend)
+        {
+
+            GenericResponse response = new();
+            if (draftDto == null && isResend)
+            {
+                var serviceDraft = await _editRepository.GetServiceDraft(serviceDraftId);
+                draftDto = _mapper.Map<ServiceDraftDto>(serviceDraft);
+
+            }
+            TokenDetails tokenDetails = _jwtService.GenerateToken("DSIT", draftDto.ProviderProfileId, draftDto.serviceId.ToString());
+            ServiceDraftToken serviceDraftToken = new()
+            {
+                ServiceDraftId = serviceDraftId,
+                Token = tokenDetails.Token,
+                TokenId = tokenDetails.TokenId                
+            };
+           
+            response = await _editRepository.SaveServiceDraftToken(serviceDraftToken, loggedInUserEmail, draftDto.serviceId);
+            if (response.Success)
+            {               
+
+                //56/DSIT/2i edit update request - service
+
+                Service service = await _editRepository.GetService(draftDto.serviceId);
+                ServiceDto serviceDto = _mapper.Map<ServiceDto>(service);
+                string dsit2iCheckLink = _configuration["DvsRegisterLink"] + "update-request/service-changes?token=" + tokenDetails.Token;
+                var (previous, current) = GetServiceKeyValue(draftDto, serviceDto);
+                string currentData = Helper.ConcatenateKeyValuePairs(current);
+                string previousData = Helper.ConcatenateKeyValuePairs(previous);
+                foreach (var email in dsitUserEmails)
+                {
+                    await _emailSender.ServiceEditRequest(email, email, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, currentData, previousData, dsit2iCheckLink);
+                }
+
+                //To do 58/DSIT/Update request submitted - service// send email to loggedInUserEmail
+                await _emailSender.ServiceEditRequestConfirmation(loggedInUserEmail, loggedInUserEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, currentData, previousData);
+
+            }
+
+            return response;
         }
 
         public async Task<ServiceDto> GetService(int serviceId)
