@@ -18,8 +18,6 @@ namespace DVSAdmin.Controllers
     {
         private readonly IRemoveProviderService removeProviderService;
         private readonly IUserService userService;
-
-
       
         public RemoveProviderController(IRemoveProviderService removeProviderService, IUserService userService)
         {
@@ -151,6 +149,51 @@ namespace DVSAdmin.Controllers
 
         #endregion
 
+        #region Cancel Removal
+
+        [HttpGet("service/cancel-service-removal")]
+        public async Task<IActionResult> CancelRemoval(int serviceId)
+        {
+            ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceId);
+            return View(serviceDto);
+        }
+
+        [HttpPost("service/proceed-with-canceling-service-removal")]
+        public async Task<IActionResult> ProceedRemovalCancellation(int serviceId, int providerId)
+        {
+            GenericResponse genericResponse = await removeProviderService.CancelRemoveServiceRequest(providerId, serviceId, UserEmail); 
+            if (genericResponse.Success)
+            {
+                ViewBag.providerId = providerId;
+                return View("CancelRemovalConfirmation");
+            }
+            else
+            {
+                return RedirectToAction("CancelRemoval", new { serviceId });
+            }           
+        }
+
+        #endregion
+
+        #region  Resend Removal Request
+        [HttpPost("service/resend-removal-request")]
+        public async Task<ActionResult> ResendRemovalRequest(int serviceId)
+        {
+            GenericResponse genericResponse = new GenericResponse();
+
+            ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceId);
+
+            List<int> serviceIds = [serviceDto.Id];
+            genericResponse = await removeProviderService.GenerateTokenAndSendServiceRemoval(serviceDto.ProviderProfileId, serviceIds, UserEmail, serviceDto.ServiceRemovalReason, true);
+            ViewBag.providerId = serviceDto.ProviderProfileId;
+
+            if (genericResponse.Success)
+            {
+                return View("ResendRemovalEmailConformation");
+            }
+            return RedirectToAction("ServiceDetails", "RegisterManagement", new { serviceKey = serviceDto.ServiceKey });
+        }
+        #endregion
 
         #region removal requested by cab
 

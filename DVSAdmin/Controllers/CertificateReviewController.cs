@@ -1,4 +1,5 @@
-﻿using DVSAdmin.BusinessLogic.Models;
+﻿using Amazon.CognitoIdentityProvider.Model;
+using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
@@ -20,8 +21,11 @@ namespace DVSAdmin.Controllers
         private readonly IUserService userService;
         private readonly IBucketService bucketService;
         private readonly IConfiguration configuration;     
-        public CertificateReviewController(ICertificateReviewService certificateReviewService, IUserService userService, 
-        IBucketService bucketService, IConfiguration configuration)
+        public CertificateReviewController(
+            ICertificateReviewService certificateReviewService,
+            IUserService userService,
+            IBucketService bucketService,
+            IConfiguration configuration)
         {           
             this.certificateReviewService = certificateReviewService;
             this.userService = userService; 
@@ -62,10 +66,17 @@ namespace DVSAdmin.Controllers
             CertificateDetailsViewModel certificateDetailsViewModel = new();
             ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateInfoId);            
         
-            if (serviceDto.ProceedApplicationConsentToken != null & (serviceDto.ServiceStatus == ServiceStatusEnum.Submitted || serviceDto.ServiceStatus == ServiceStatusEnum.Resubmitted) && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
-            {
-                ViewBag.OpeningTheLoopLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
-            }
+            if (serviceDto == null)
+                throw new InvalidOperationException($"Service was not found.");
+
+            if (serviceDto.CertificateReview == null)
+                throw new InvalidOperationException($"Service certificate review details are missing.");
+
+            
+            //if (serviceDto.ProceedApplicationConsentToken != null & (serviceDto.ServiceStatus == ServiceStatusEnum.Submitted || serviceDto.ServiceStatus == ServiceStatusEnum.Resubmitted) && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
+            //{
+            //    ViewBag.OpeningTheLoopLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
+            //}
 
 
             CertificateValidationViewModel certificateValidationViewModel = MapDtoToViewModel(serviceDto);
@@ -86,7 +97,9 @@ namespace DVSAdmin.Controllers
             certificateDetailsViewModel.CertificateValidation = certificateValidationViewModel;
             certificateDetailsViewModel.CertificateReview = certificateReviewViewModel;
             certificateDetailsViewModel.SendBackViewModel = sendBackViewModel;
-            
+            certificateDetailsViewModel.CanResendOpeningLoopRequest = certificateValidationViewModel.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved
+            && (certificateValidationViewModel.Service.ServiceStatus == ServiceStatusEnum.Submitted
+            || certificateValidationViewModel.Service.ServiceStatus == ServiceStatusEnum.Resubmitted);
             return View(certificateDetailsViewModel);
         }
 
@@ -103,10 +116,13 @@ namespace DVSAdmin.Controllers
             else
             {
                 ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);
+                
+                if (serviceDto == null)
+                    throw new InvalidOperationException("Service was not found.");
+
                 if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft)
-                {
-                    return RedirectToAction(Constants.ErrorPath);
-                }
+                    throw new InvalidOperationException("Service is not in a valid state for certificate review.");
+                
                 certificateValidationViewModel = MapDtoToViewModel(serviceDto);
             }
 
@@ -117,22 +133,23 @@ namespace DVSAdmin.Controllers
         public async Task<ActionResult> SaveCertificateValidation(CertificateValidationViewModel certificateValidationViewModel, string saveReview)
         {
             ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);
+            
+            if (serviceDto == null)
+                throw new InvalidOperationException("Service was not found.");
+            
             certificateValidationViewModel.Service = serviceDto;
 
             if (string.IsNullOrEmpty(UserEmail) || (saveReview != "draft" && saveReview != "continue"))
-            {
-                return RedirectToAction(Constants.ErrorPath);
-            }
+                throw new InvalidOperationException("Invalid user or save action provided.");
 
             HttpContext?.Session.Set("CertificateValidationData", certificateValidationViewModel);
             UserDto userDto = await userService.GetUser(UserEmail);
             CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, CertificateReviewEnum.InReview, null);
 
             GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto, UserEmail);
+            
             if (!genericResponse.Success)
-            {
-                return RedirectToAction(Constants.ErrorPath);
-            }
+                throw new InvalidOperationException("Failed to save certificate review details.");
 
             switch (saveReview)
             {
@@ -140,12 +157,10 @@ namespace DVSAdmin.Controllers
                     return RedirectToAction("CertificateValidation", new { serviceId = certificateValidationViewModel?.Service?.Id });
                 case "continue":
                     if (!ModelState.IsValid)
-                    {
                         return View("CertificateValidation", certificateValidationViewModel);
-                    }
                     return RedirectToAction("CertificateReview", new { reviewId = genericResponse.InstanceId });
                 default:
-                    return RedirectToAction(Constants.ErrorPath);
+                    throw new InvalidOperationException("Unhandled save action.");
             }
         }
 
@@ -161,7 +176,14 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReview(reviewId);             
+                CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReview(reviewId);
+                
+                if (certificateReviewDto == null)
+                    throw new InvalidOperationException("Certificate review details were not found.");
+
+                if (certificateValidationViewModel.Service == null)
+                    throw new InvalidOperationException("Service details are missing from session.");
+
                 certificateReviewViewModel.Service = certificateValidationViewModel.Service;
                 certificateReviewViewModel.CertificateReviewId = reviewId;
                 certificateReviewViewModel.Comments = certificateReviewDto.Comments;               
@@ -176,39 +198,47 @@ namespace DVSAdmin.Controllers
         {  
            
             CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
+            
+            if (certificateValidationViewModel.Service == null)
+                throw new InvalidOperationException("Service details are missing from session.");
+
             certificateReviewViewModel.Service = certificateValidationViewModel.Service;
             ValidateCertificateReviewViewModel(certificateReviewViewModel, certificateValidationViewModel, saveReview);
 
-            if (!string.IsNullOrEmpty(UserEmail))
+            if (string.IsNullOrEmpty(UserEmail))
+                throw new InvalidOperationException("User email is missing from session.");
+            
+            HttpContext?.Session.Set("CertificateReviewData", certificateReviewViewModel);
+            CertificateReviewEnum certificateInfoStatus = GetCertificateReviewStatus(saveReview);
+            UserDto userDto = await userService.GetUser(UserEmail);
+            
+            if (userDto == null)
+                throw new InvalidOperationException("User details not found.");
+            
+            CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, certificateInfoStatus, certificateReviewViewModel);
+
+            return saveReview switch
             {
-                HttpContext?.Session.Set("CertificateReviewData", certificateReviewViewModel);
-                CertificateReviewEnum certificateInfoStatus = GetCertificateReviewStatus(saveReview);
-                UserDto userDto = await userService.GetUser(UserEmail);
-                CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, certificateInfoStatus, certificateReviewViewModel);
+                "draft" => await HandleDraftReview(certificateReviewViewModel, certificateReviewDto),
+                "reject" => HandleRejectReview(certificateReviewViewModel, certificateReviewDto),
+                "approve" => HandleApproveReview(certificateReviewViewModel, certificateReviewDto),
+                "send-back" => HandleSendBackToCab(certificateReviewViewModel, certificateReviewDto),
+                _ => throw new InvalidOperationException("Invalid review action.")
+            };
 
-                switch (saveReview)
-                {
-                    case "draft":
-                        return await HandleDraftReview(certificateReviewViewModel, certificateReviewDto);
+        }
 
-                    case "reject":
-                        return HandleRejectReview(certificateReviewViewModel, certificateReviewDto);
+        [HttpPost("resend-opening-loop-link")]
+        public async Task<ActionResult> ResendOpeningLinkEmail(int serviceId)
+        {
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);
+            GenericResponse genericResponse = await certificateReviewService.GenerateTokenAndSendEmail(serviceDto, UserEmail, true);
 
-                    case "approve":
-                        return HandleApproveReview(certificateReviewViewModel, certificateReviewDto);
-                    
-                    case "send-back":
-                        return HandleSendBackToCab(certificateReviewViewModel, certificateReviewDto);
-
-                    default:
-                        return RedirectToAction(Constants.ErrorPath);
-                }
-            }
-            else
+            if (genericResponse.Success)
             {
-                return RedirectToAction(Constants.ErrorPath);
+                return View("ConsentResentConfirmation");
             }
-
+            return RedirectToAction("CertificateSubmissionDetails", new { serviceId });
         }
 
         #region Approve Flow
@@ -235,10 +265,18 @@ namespace DVSAdmin.Controllers
         public async Task<ActionResult> ProceedApproveSubmission(string saveReview)
         {
             CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
+            
+            if (certificateReviewDto == null)
+                throw new InvalidOperationException("Certificate review data is missing from session.");
+            
             if (saveReview == "approve")
             {
                 HttpContext.Session.Remove("CertificateReviewDto");           
                 CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
+                
+                if (certificateValidationViewModel.Service == null)
+                    throw new InvalidOperationException("Certificate service details are missing from session.");
+
                 certificateReviewDto.CertificateReviewStatus = CertificateReviewEnum.Approved;
                 GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto, certificateValidationViewModel.Service, UserEmail);
                 if (genericResponse.Success)
@@ -247,7 +285,7 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    return RedirectToAction(Constants.ErrorPath);
+                    throw new InvalidOperationException("Failed to update certificate review during approval.");
                 }
             }
             else if (saveReview == "cancel")
@@ -256,7 +294,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                return RedirectToAction(Constants.ErrorPath);
+                throw new InvalidOperationException("Invalid action for approval submission.");
             }
 
         }
@@ -333,6 +371,10 @@ namespace DVSAdmin.Controllers
                 {
                     HttpContext?.Session.Set("CertficateRejectionData", certficateRejectionViewModel);
                     CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
+                    
+                    if (certificateReviewDto == null)
+                        throw new InvalidOperationException("Certificate review data is missing from session.");
+                    
                     certificateReviewDto.RejectionComments = certficateRejectionViewModel.Comments;
                     List<CertificateReviewRejectionReasonMappingDto> rejectionReasonIdDtos = [];
                     foreach (var item in certficateRejectionViewModel?.SelectedRejectionReasonIds)
@@ -355,7 +397,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                return RedirectToAction(Constants.ErrorPath);
+                throw new InvalidOperationException("Invalid rejection action.");
             }
         }
 
@@ -374,6 +416,10 @@ namespace DVSAdmin.Controllers
                 CertficateRejectionViewModel certficateRejectionViewModel = HttpContext?.Session.Get<CertficateRejectionViewModel>("CertficateRejectionData")??new CertficateRejectionViewModel();
 
                 CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
+                
+                if (certificateReviewDto == null)
+                    throw new InvalidOperationException("Certificate review data is missing from session.");
+
                 certificateReviewDto.CertificateReviewStatus = CertificateReviewEnum.Rejected;
                 GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReviewRejection(certificateReviewDto, certificateValidationViewModel.Service, certficateRejectionViewModel.SelectedReasons, UserEmail);
                 if (genericResponse.Success)
@@ -382,7 +428,7 @@ namespace DVSAdmin.Controllers
                 }
                 else
                 {
-                    return RedirectToAction(Constants.ErrorPath);
+                    throw new InvalidOperationException("Failed to update certificate review as rejected.");
                 }
             }
             else if (saveReview == "cancel")
@@ -391,7 +437,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                return RedirectToAction(Constants.ErrorPath);
+                throw new InvalidOperationException("Invalid rejection confirmation action.");
             }
            
         }
@@ -506,6 +552,10 @@ namespace DVSAdmin.Controllers
                 if (ModelState.IsValid)
                 {           
                     CertificateReviewDto certificateReviewDto = HttpContext?.Session.Get<CertificateReviewDto>("CertificateReviewDto");
+                    
+                    if (certificateReviewDto == null)
+                        throw new InvalidOperationException("Certificate review data is missing from session.");
+
                     certificateReviewDto.Amendments = model.Reason;
                     certificateReviewDto.CertificateReviewStatus = CertificateReviewEnum.AmendmentsRequired;
 
@@ -517,7 +567,7 @@ namespace DVSAdmin.Controllers
                     }
                     else
                     {
-                        return RedirectToAction(Constants.ErrorPath);
+                        throw new InvalidOperationException("Failed to update certificate review as sent back to CAB.");
                     }
                 }
                 else
@@ -531,7 +581,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                return RedirectToAction(Constants.ErrorPath);
+                throw new InvalidOperationException("Invalid send back action.");
             }
         }
 
@@ -561,14 +611,14 @@ namespace DVSAdmin.Controllers
 
                 if (fileContent == null || fileContent.Length == 0)
                 {
-                    return RedirectToAction(Constants.ErrorPath);
+                    throw new InvalidOperationException("Downloaded certificate file is empty or not found.");
                 }
                 string contentType = "application/octet-stream";
                 return File(fileContent, contentType, filename);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return RedirectToAction(Constants.ErrorPath);
+                throw new InvalidOperationException("An error occurred while downloading the certificate file.", ex);
             }
         }
 
@@ -612,7 +662,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                return RedirectToAction(Constants.ErrorPath);
+                throw new InvalidOperationException("An error occurred while updating the certificate review.");
             }
         }
 

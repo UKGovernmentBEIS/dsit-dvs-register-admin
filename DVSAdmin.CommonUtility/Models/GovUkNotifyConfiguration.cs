@@ -60,6 +60,11 @@ namespace DVSAdmin.CommonUtility.Models
         public EditServiceRequestTemplate EditServiceRequestTemplate { get; set; }
         public EditServiceRequestConfirmationTemplate EditServiceRequestConfirmationTemplate { get; set; }
         public EditProviderRequestConfirmationTemplate EditProviderRequestConfirmationTemplate { get; set; }
+        public CancelServiceRemovalRequestToDSIT CancelServiceRemovalRequestToDSIT { get; set; }
+        public CancelServiceRemovalRequestToProvider CancelServiceRemovalRequestToProvider { get; set; }
+        public OpeningLoopProviderReminderToDSIT OpeningLoopProviderReminderToDSIT { get; set; }
+        public ClosingLoopProviderReminderToDSIT ClosingLoopProviderReminderToDSIT { get; set; }
+
 
     }
 }

@@ -106,6 +106,18 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendNotification(emailAddress, template, personalisation);
         }
 
+        public async Task<bool> ConfirmationConsentResentToDSIT(string companyName, string serviceName)
+        {
+            var template = govUkNotifyConfig.ClosingLoopProviderReminderToDSIT;
+
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.CompanyName,  companyName},
+             };
+            return await SendNotificationToOfDiaCommonMailBox(template, personalisation);
+        }
+
         #endregion
     }
 }

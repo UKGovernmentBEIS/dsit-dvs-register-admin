@@ -44,6 +44,10 @@
                         This must match the information on the certificate of conformity.
                     </p>
 
+                         <p class="govuk-body">
+                        To make changes, type the new information ans select 'Save'. If there are no changes to make, select 'cancel.'
+                    </p>
+
 
                     @if (hasAuthenticatorError)
                     {
@@ -158,9 +162,18 @@
                             </fieldset>
                         </div>
                     }
+
+                    <div class="govuk-warning-text govuk-!-margin-top-8">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            If you select 'Save' your changes will need to be approved by another OfDIA user. Do not select 'Save' unless you have made changes.
+                        </strong>
+                    </div>
+
                     <div class="govuk-button-group">
                         <button type="submit" class="govuk-button govuk-!-margin-top-6" data-module="govuk-button">
-                            Continue
+                            Save
                         </button>
                         <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.serviceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a
                     </div>

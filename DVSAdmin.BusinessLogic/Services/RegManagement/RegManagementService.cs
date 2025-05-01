@@ -11,18 +11,21 @@ namespace DVSAdmin.BusinessLogic.Services
     public class RegManagementService : IRegManagementService
     {
         private readonly IRegManagementRepository regManagementRepository;
+        private readonly IRemoveProviderService removeProviderService;
         private readonly ICertificateReviewRepository certificateReviewRepository;
         private readonly IMapper automapper;       
         private readonly RegManagementEmailSender emailSender;
       
 
         public RegManagementService(IRegManagementRepository regManagementRepository, IMapper automapper,
-          RegManagementEmailSender emailSender, ICertificateReviewRepository certificateReviewRepository)
+          RegManagementEmailSender emailSender, ICertificateReviewRepository certificateReviewRepository,
+          IRemoveProviderService removeProviderService)
         {
             this.regManagementRepository = regManagementRepository;
             this.automapper = automapper;
             this.emailSender = emailSender;
-            this.certificateReviewRepository = certificateReviewRepository;          
+            this.certificateReviewRepository = certificateReviewRepository;   
+            this.removeProviderService = removeProviderService;
         }
         public async Task<List<ProviderProfileDto>> GetProviders()
         {
@@ -73,21 +76,17 @@ namespace DVSAdmin.BusinessLogic.Services
 
         public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerProfileId, string loggedInUserEmail)
         {
-            GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerProfileId, ServiceStatusEnum.Published, loggedInUserEmail);
-            ProviderStatusEnum providerStatus = ProviderStatusEnum.Published;
+            GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerProfileId,  loggedInUserEmail);            
             ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
             ProviderStatusEnum currentStatus = providerProfile.ProviderStatus;// keep current status for log
             List<Service> serviceList = await certificateReviewRepository.GetServiceListByProvider(providerProfileId);        
             string verifiedCab = providerProfile.CabUser.CabEmail;
             string services = string.Join("\r", serviceList.Where(item => serviceIds.Contains(item.Id)).Select(x => x.ServiceName.ToString()).ToArray())??string.Empty;
-            
-
-
+        
             // update provider status based on priority
-            providerStatus  = ServiceHelper.GetProviderStatus(providerProfile.Services, currentStatus);
-            genericResponse = await regManagementRepository.UpdateProviderStatus(providerProfileId,  providerStatus, loggedInUserEmail);
-         
-            if(genericResponse.Success)
+            genericResponse = await removeProviderService.UpdateProviderStatusByStatusPriority(providerProfile, loggedInUserEmail, EventTypeEnum.RegisterManagement);
+
+            if (genericResponse.Success)
             {
                 //insert provider log
                 RegisterPublishLog registerPublishLog = new();

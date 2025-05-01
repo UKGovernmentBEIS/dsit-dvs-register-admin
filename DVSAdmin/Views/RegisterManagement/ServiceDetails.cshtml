@@ -1,4 +1,5 @@
 ﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models
 @model DVSAdmin.Models.RegManagement.ServiceVersionViewModel
 @{
     ViewData["Title"] = "Service details";
@@ -12,7 +13,38 @@
 
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">Service details: @Model.CurrentServiceVersion.ServiceName </h1>
+                @if (Model.CanResendRemovalRequest)
+                {
+                    <p class="govuk-body">You can resend an email to the named contacts at the provider, to confirm <br> they agree to the service details being removed. Once they confirm, the <br /> details will be automatically removed from the register.</p>
+                    @using (Html.BeginForm("ResendRemovalRequest", "RemoveProvider", FormMethod.Post))
+                    {
+                        @Html.Hidden("serviceId", Model.CurrentServiceVersion.Id)
+                        <div class="govuk-button-group govuk-!-margin-top-5 govuk-!-margin-bottom-5">
+                            <button type="submit" class="govuk-button" data-module="govuk-button">
+                                Resend request email
+                            </button>
+                        </div>
+                    }
+                }
+                else if (Model.CanResendUpdateRequest)
+                {
+                    @using (Html.BeginForm("ResendServiceUpdateRequest", "EditService", FormMethod.Post))
+                    {
+                    @Html.Hidden("serviceDraftId", Model.CurrentServiceVersion.ServiceDraft.Id)
+                     @Html.Hidden("providerId", Model.CurrentServiceVersion.ProviderProfileId)
+
+                    <p class="govuk-body">
+                        You can resend an email request for OfDIA users to approve the changes you
+                        have requested to this information
+                    </p>
+                        <button type="submit" class="govuk-button" data-module="govuk-button">Resend edit request email</button>
+                    }
+                }
+
+               
+                
                 <div class="govuk-tabs" data-module="govuk-tabs">
+                        <div class="govuk-!-padding-bottom-6"></div>
                     <ul class="govuk-tabs__list">
                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                             <a class="govuk-tabs__tab" href="#latest-submission">
@@ -44,7 +76,7 @@
                             </p>
 
                             <a href="/register-management/download-certificate?key=@Model.CurrentServiceVersion.FileLink&filename=@Model.CurrentServiceVersion.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
-                                Download certificate of conformity (Opens in a new tab)
+                                Download certificate of conformity 
                             </a>
                         </div>
                     </div>

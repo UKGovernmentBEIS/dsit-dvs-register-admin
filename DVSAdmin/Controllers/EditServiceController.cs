@@ -503,26 +503,22 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> SaveServiceDraft(ServiceChangesViewModel serviceChangesViewModel)
         {
             var serializedData = TempData["changedService"] as string;
+            
+            if (string.IsNullOrEmpty(serializedData))
+                throw new InvalidOperationException("Service draft data is missing.");
+            
+            ServiceDraftDto? serviceDraft = JsonConvert.DeserializeObject<ServiceDraftDto>(serializedData);
+            
+            if (serviceDraft == null)
+                throw new InvalidOperationException("Unable to deserialize service draft data.");
+            
+            List<string> dsitUserEmails = serviceChangesViewModel.DSITUserEmails.Split(',').ToList();
+            GenericResponse genericResponse = await editService.SaveServiceDraft(serviceDraft, UserEmail, dsitUserEmails);
 
-            if (serializedData != null)
-            {
-                ServiceDraftDto? serviceDraft = JsonConvert.DeserializeObject<ServiceDraftDto>(serializedData);
-                List<string> dsitUserEmails = serviceChangesViewModel.DSITUserEmails.Split(',').ToList();
-                GenericResponse genericResponse = await editService.SaveServiceDraft(serviceDraft, UserEmail, dsitUserEmails);
-
-                if (genericResponse.Success)
-                {
-                    return RedirectToAction("InformationSubmitted", new { serviceId = serviceDraft.serviceId });
-                }
-                else
-                {
-                    return RedirectToAction("HandleException", "Error");
-                }
-            }
-            else
-            {
-                return RedirectToAction("HandleException", "Error");
-            }
+            if (!genericResponse.Success)
+                throw new InvalidOperationException("Failed to save service draft.");
+            
+            return RedirectToAction("InformationSubmitted", new { serviceId = serviceDraft.serviceId });
         }
 
 
@@ -542,6 +538,25 @@ namespace DVSAdmin.Controllers
 
         #endregion
 
+
+        #region Resend service update request
+
+        [HttpPost("resend-service-update-request")]
+        public async Task<IActionResult> ResendServiceUpdateRequest(int serviceDraftId, int providerId)
+        {
+            var userEmails = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);
+            GenericResponse genericResponse = await editService.GenerateTokenAndSendServiceUpdateRequest(null, UserEmail, userEmails, serviceDraftId, true);
+            if (genericResponse.Success)
+            {
+                ViewBag.ProviderId = providerId;
+                return View("ResendEmailSuccess");
+            }
+            else
+            {
+                throw new InvalidOperationException("Failed to resend update request.");
+            }
+        }
+        #endregion
         #region Private Methods
         private ServiceSummaryViewModel GetServiceSummary()
         {

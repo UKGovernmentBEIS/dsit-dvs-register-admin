@@ -1,11 +1,11 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Services;
-using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace DVSAdmin.Controllers
 {
@@ -21,7 +21,6 @@ namespace DVSAdmin.Controllers
             this.userService = userService;
         }
 
-
         #region Review
         [Route("public-interest-secondary-check-review")]
         public async Task<IActionResult> SecondaryCheckReview(int serviceId)
@@ -34,34 +33,24 @@ namespace DVSAdmin.Controllers
             else
             {
                 
-                if (!string.IsNullOrEmpty(UserEmail))
-                {
-                    UserDto userDto = await userService.GetUser(UserEmail);
-                    if (userDto.Id > 0)
-                    {
+                if (string.IsNullOrEmpty(UserEmail))
+                    throw new InvalidOperationException("User email is missing.");
+                
+                UserDto userDto = await userService.GetUser(UserEmail);
 
-                        ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
-                        if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft)
-                        {
-                            return RedirectToAction(Constants.ErrorPath);
-                        }
-                        publicInterestSecondaryCheckViewModel = MapDtoToViewModel(serviceDto);
-                        publicInterestSecondaryCheckViewModel.SecondaryCheckUserId = userDto.Id;
-                    }
-                    else
-                    {
-                        return RedirectToAction(Constants.ErrorPath);
-                    }
+                if (userDto.Id <= 0)
+                    throw new InvalidOperationException("User is not valid.");
 
-                }
-                else
-                {
-                    return RedirectToAction(Constants.ErrorPath);
-                }
+                ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
+                
+                if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft)
+                    throw new InvalidOperationException("Service is not in a valid status for secondary check review.");
+
+                publicInterestSecondaryCheckViewModel = MapDtoToViewModel(serviceDto);
+                publicInterestSecondaryCheckViewModel.SecondaryCheckUserId = userDto.Id;
             }
             return View("Review/SecondaryCheckReview", publicInterestSecondaryCheckViewModel);
         }
-
 
         [HttpPost("save-secondary-check-review")]
         public async Task<IActionResult> SaveSecondaryCheckReview(PublicInterestSecondaryCheckViewModel publicInterestSecondaryCheckViewModel, string saveReview)
@@ -77,29 +66,18 @@ namespace DVSAdmin.Controllers
 
             if (ModelState.IsValid)
             {
-                if (saveReview == "sentback")
+                return saveReview switch
                 {
-                    return RedirectToAction("ConfirmSentBackForPrimaryCheck", "PublicInterestSecondaryCheck");
-                }
-                else if (saveReview == "reject")
-                {
-                    return RedirectToAction("ProceedSecondaryCheckReject", "PublicInterestSecondaryCheck");
-                }
-                else if (saveReview == "approve")
-                {
-                    return RedirectToAction("ProceedSecondaryCheckApproval", "PublicInterestSecondaryCheck");
-                }
-                else
-                {
-                    HttpContext?.Session.Remove("SecondaryCheckData");
-                    return RedirectToAction("HandleException", "Error");
-                }
+                    "sentback" => RedirectToAction("ConfirmSentBackForPrimaryCheck", "PublicInterestSecondaryCheck"),
+                    "reject" => RedirectToAction("ProceedSecondaryCheckReject", "PublicInterestSecondaryCheck"),
+                    "approve" => RedirectToAction("ProceedSecondaryCheckApproval", "PublicInterestSecondaryCheck"),
+                    _ => throw new InvalidOperationException("Unexpected review action in secondary check."),
+                };
             }
             else
             {
                 return View("Review/SecondaryCheckReview", secondaryCheckViewModelData);
             }
-
         }
 #endregion
 
@@ -127,11 +105,10 @@ namespace DVSAdmin.Controllers
             else
             {
                 HttpContext?.Session.Remove("SecondaryCheckData");
-                return RedirectToAction("HandleException", "Error");
+                throw new InvalidOperationException("Invalid action during secondary check approval.");
             }
 
         }
-
 
         [HttpGet("secondary-check-approval")]
         public IActionResult ConfirmSecondaryCheckApproval()
@@ -144,26 +121,17 @@ namespace DVSAdmin.Controllers
         {
             PublicInterestSecondaryCheckViewModel secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
             GenericResponse genericResponse;
-            if (secondaryCheckViewModel != null && secondaryCheckViewModel.ServiceId > 0 && secondaryCheckViewModel.ProviderProfileId>0)
-            {
-                secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.PublicInterestCheckPassed;
-                PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
-                genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
-                if (genericResponse.Success)
-                {
-                    return RedirectToAction("SecondaryCheckApprovalConfirmation", "PublicInterestSecondaryCheck");
-                }
-                else
-                {
-                    return RedirectToAction("HandleException", "Error");
-                }
-            }
+            
+            if (secondaryCheckViewModel == null || secondaryCheckViewModel.ServiceId <= 0 || secondaryCheckViewModel.ProviderProfileId <= 0)
+                throw new InvalidOperationException("Secondary check session data is missing or invalid.");
+            
+            secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.PublicInterestCheckPassed;
+            PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
+            genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
+            if (genericResponse.Success)
+                return RedirectToAction("SecondaryCheckApprovalConfirmation", "PublicInterestSecondaryCheck");
             else
-            {
-                return RedirectToAction("HandleException", "Error");
-            }
-
-
+                throw new InvalidOperationException("Failed to save secondary check approval.");
         }
 
         [HttpGet("secondary-check-approval-confirmation")]
@@ -175,7 +143,6 @@ namespace DVSAdmin.Controllers
         }
         #endregion
 
-
         #region Reject Flow
 
         [HttpGet("proceed-secondary-check-reject")]
@@ -183,14 +150,9 @@ namespace DVSAdmin.Controllers
         {
             PublicInterestSecondaryCheckViewModel publicInterestSecondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
             if(publicInterestSecondaryCheckViewModel?.SelectedReasons != null && publicInterestSecondaryCheckViewModel?.SelectedReasons.Count>0)
-            {
                 publicInterestSecondaryCheckViewModel.SelectedReasonIds = publicInterestSecondaryCheckViewModel?.SelectedReasons?.Select(c => c.Id).ToList();
-            }
             else
-            {
                 publicInterestSecondaryCheckViewModel.SelectedReasonIds = new List<int>();
-            }
-                   
 
             return View("Reject/ProceedSecondaryCheckReject", publicInterestSecondaryCheckViewModel);
         }
@@ -225,9 +187,8 @@ namespace DVSAdmin.Controllers
             else
             {
                 HttpContext.Session.Remove("SecondaryCheckData");
-                return RedirectToAction("HandleException", "Error");
+                throw new InvalidOperationException("Invalid action during secondary check rejection.");
             }
-
         }
 
 
@@ -252,25 +213,17 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> SaveApplicationRejection()
         {
             PublicInterestSecondaryCheckViewModel secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
-            if (secondaryCheckViewModel != null && secondaryCheckViewModel.ServiceId > 0 && secondaryCheckViewModel.ProviderProfileId>0)
-            {
-                secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.PublicInterestCheckFailed;
-                PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
-                GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
-                if (genericResponse.Success)
-                {
-                    return RedirectToAction("SecondaryCheckRejectionConfirmation", "PublicInterestSecondaryCheck");
-                }
-                else
-                {
-                    return RedirectToAction("HandleException", "Error");
-                }
-            }
+            
+            if (secondaryCheckViewModel == null || secondaryCheckViewModel.ServiceId <= 0 || secondaryCheckViewModel.ProviderProfileId <= 0)
+                throw new InvalidOperationException("Secondary check session data is missing or invalid.");
+            
+            secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.PublicInterestCheckFailed;
+            PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
+            GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
+            if (genericResponse.Success)
+                return RedirectToAction("SecondaryCheckRejectionConfirmation", "PublicInterestSecondaryCheck");
             else
-            {
-                return RedirectToAction("HandleException", "Error");
-            }
-
+                throw new InvalidOperationException("Failed to save secondary check rejection.");
         }
 
 
@@ -307,40 +260,35 @@ namespace DVSAdmin.Controllers
         {
             PublicInterestSecondaryCheckViewModel secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
 
-            if (secondaryCheckViewModel != null && secondaryCheckViewModel.ServiceId > 0 && secondaryCheckViewModel.ProviderProfileId>0)
+            if (secondaryCheckViewModel == null || secondaryCheckViewModel.ServiceId <= 0 || secondaryCheckViewModel.ProviderProfileId <= 0)
             {
-                if (saveReview == "sentback")
+                HttpContext.Session.Remove("SecondaryCheckData");
+                throw new InvalidOperationException("Secondary check session data is missing or invalid.");
+            }   
+            
+            if (saveReview == "sentback")
+            {
+                secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.SentBackBySecondReviewer;
+                PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
+                GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
+                if (genericResponse.Success)
                 {
-                    secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.SentBackBySecondReviewer;
-                    PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
-                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
-                    if (genericResponse.Success)
-                    {
-                        return RedirectToAction("SentBackConfirmation", "PublicInterestSecondaryCheck");
-                    }
-                    else
-                    {
-                        return RedirectToAction("HandleException", "Error");
-                    }
-                }
-                else if (saveReview == "cancel")
-                {
-                    return RedirectToAction("SecondaryCheckReview", "PublicInterestSecondaryCheck");
+                    return RedirectToAction("SentBackConfirmation", "PublicInterestSecondaryCheck");
                 }
                 else
                 {
-                    HttpContext.Session.Remove("SecondaryCheckData");
-                    return RedirectToAction("HandleException", "Error");
+                    throw new InvalidOperationException("Failed to save sent back status.");
                 }
-
+            }
+            else if (saveReview == "cancel")
+            {
+                return RedirectToAction("SecondaryCheckReview", "PublicInterestSecondaryCheck");
             }
             else
             {
                 HttpContext.Session.Remove("SecondaryCheckData");
-                return RedirectToAction("HandleException", "Error");
+                throw new InvalidOperationException("Invalid action during secondary check sent back flow.");
             }
-
-
         }
 
         /// <summary>
@@ -356,7 +304,6 @@ namespace DVSAdmin.Controllers
             return View("Disagree/SentBackConfirmation", secondaryCheckViewModel.Service);
         }
         #endregion
-
 
         #region private methods
         private PublicInterestSecondaryCheckViewModel GetSecondaryCheckDataFromSession(HttpContext context, string key)

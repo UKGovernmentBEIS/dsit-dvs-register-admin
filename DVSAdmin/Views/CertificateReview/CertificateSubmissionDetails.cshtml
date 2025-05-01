@@ -1,4 +1,5 @@
 ﻿@model CertificateDetailsViewModel;
+@using DVSAdmin.CommonUtility.Models
 @using DVSAdmin.CommonUtility.Models.Enums
 @using DVSAdmin.Extensions
 @{
@@ -52,6 +53,18 @@
             <div class="govuk-grid-column-full">
                 @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsView.cshtml", Model?.CertificateValidation?.Service)
 
+                @if (Model.CanResendOpeningLoopRequest)
+                {
+                    @using (Html.BeginForm("ResendOpeningLinkEmail", "CertificateReview", FormMethod.Post))
+                    {
+                        @Html.Hidden("serviceId", Model.CertificateValidation.ServiceId)
+                        <div class="govuk-button-group govuk-!-margin-top-5 govuk-!-margin-bottom-5">
+                            <button type="submit" class="govuk-button" data-module="govuk-button">
+                                Resend request email
+                            </button>
+                        </div>
+                    }
+                }
 
                 <div class="govuk-!-padding-bottom-6">
                     <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
@@ -86,7 +99,7 @@
                     {
                         @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
 
-                        <h3 class="govuk-heading-m">  Opening the loop</h3>
+                       @*  <h3 class="govuk-heading-m">  Opening the loop</h3>
                         <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                         <dl class="govuk-summary-list">
                             <div class="govuk-summary-list__row">
@@ -107,7 +120,7 @@
                                 }
                             </div>
 
-                        </dl>
+                        </dl> *@
 
 
                         <h2 class="govuk-heading-l">Review summary</h2>
