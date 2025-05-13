@@ -80,29 +80,28 @@ namespace DVSAdmin.Data.Repositories
 
         public async Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheck publicInterestCheck, ReviewTypeEnum reviewType, string loggedInUserEmail)
         {
-            GenericResponse genericResponse = new ();
-            using var transaction = context.Database.BeginTransaction();
+            GenericResponse genericResponse = new();
+
+            using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var existingEntity = await context.PublicInterestCheck.FirstOrDefaultAsync(e => e.ServiceId == publicInterestCheck.ServiceId
-                && e.ProviderProfileId == publicInterestCheck.ProviderProfileId);
+                var existingEntity = await context.PublicInterestCheck.Include(e => e.Service).FirstOrDefaultAsync(e => e.ServiceId == publicInterestCheck.ServiceId
+                    && e.ProviderProfileId == publicInterestCheck.ProviderProfileId);
 
                 if (existingEntity != null)
                 {
                     if (reviewType == ReviewTypeEnum.PrimaryCheck)
                     {
-                        //update for existing draft record or for a secondary check                      
-                        existingEntity.IsCompanyHouseNumberApproved= publicInterestCheck.IsCompanyHouseNumberApproved;
-                        existingEntity.IsDirectorshipsApproved= publicInterestCheck.IsDirectorshipsApproved;
-                        existingEntity.IsDirectorshipsAndRelationApproved= publicInterestCheck.IsDirectorshipsAndRelationApproved;
-                        existingEntity.IsDirectorshipsAndRelationApproved= publicInterestCheck.IsDirectorshipsAndRelationApproved;
-                        existingEntity.IsTradingAddressApproved= publicInterestCheck.IsTradingAddressApproved;
-                        existingEntity.IsSanctionListApproved= publicInterestCheck.IsSanctionListApproved;
-                        existingEntity.IsUNFCApproved= publicInterestCheck.IsUNFCApproved;
-                        existingEntity.IsECCheckApproved= publicInterestCheck.IsECCheckApproved;
-                        existingEntity.IsTARICApproved= publicInterestCheck.IsTARICApproved;
-                        existingEntity.IsBannedPoliticalApproved= publicInterestCheck.IsBannedPoliticalApproved;
-                        existingEntity.IsProvidersWebpageApproved= publicInterestCheck.IsProvidersWebpageApproved;
+                        existingEntity.IsCompanyHouseNumberApproved = publicInterestCheck.IsCompanyHouseNumberApproved;
+                        existingEntity.IsDirectorshipsApproved = publicInterestCheck.IsDirectorshipsApproved;
+                        existingEntity.IsDirectorshipsAndRelationApproved = publicInterestCheck.IsDirectorshipsAndRelationApproved;
+                        existingEntity.IsTradingAddressApproved = publicInterestCheck.IsTradingAddressApproved;
+                        existingEntity.IsSanctionListApproved = publicInterestCheck.IsSanctionListApproved;
+                        existingEntity.IsUNFCApproved = publicInterestCheck.IsUNFCApproved;
+                        existingEntity.IsECCheckApproved = publicInterestCheck.IsECCheckApproved;
+                        existingEntity.IsTARICApproved = publicInterestCheck.IsTARICApproved;
+                        existingEntity.IsBannedPoliticalApproved = publicInterestCheck.IsBannedPoliticalApproved;
+                        existingEntity.IsProvidersWebpageApproved = publicInterestCheck.IsProvidersWebpageApproved;
                         existingEntity.PrimaryCheckComment = publicInterestCheck.PrimaryCheckComment;
                         existingEntity.PublicInterestCheckStatus = publicInterestCheck.PublicInterestCheckStatus;
                         existingEntity.PrimaryCheckUserId = publicInterestCheck.PrimaryCheckUserId;
@@ -118,30 +117,42 @@ namespace DVSAdmin.Data.Repositories
                         existingEntity.RejectionReasons = publicInterestCheck.RejectionReasons;
                     }
 
+                    if (existingEntity.Service != null)
+                    {
+                        existingEntity.Service.ModifiedTime = DateTime.UtcNow;
+                    }
+
                     await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.PICheck, loggedInUserEmail);
                     genericResponse.InstanceId = existingEntity.Id;
-
                 }
                 else
                 {
-                  
                     publicInterestCheck.PrimaryCheckTime = DateTime.UtcNow;
-                    var entity = await context.PublicInterestCheck.AddAsync(publicInterestCheck);                 
+                    var service = await context.Service.FirstOrDefaultAsync(e => e.Id == publicInterestCheck.ServiceId);
+
+                    if (service != null)
+                    {
+                        service.ModifiedTime = DateTime.UtcNow;
+                    }
+                    var entity = await context.PublicInterestCheck.AddAsync(publicInterestCheck);
                     await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.PICheck, loggedInUserEmail);
+
                     genericResponse.InstanceId = entity.Entity.Id;
                 }
-                transaction.Commit();
+
+                await transaction.CommitAsync();
                 genericResponse.Success = true;
             }
             catch (Exception ex)
             {
                 genericResponse.EmailSent = false;
                 genericResponse.Success = false;
-                transaction.Rollback();
-                logger.LogError(ex.Message);
+                await transaction.RollbackAsync();
+                logger.LogError($"Error saving Public Interest Check: {ex.Message}", ex);
             }
             return genericResponse;
         }
+
         public async Task<GenericResponse> SavePICheckLog(PICheckLogs pICheck, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new();
