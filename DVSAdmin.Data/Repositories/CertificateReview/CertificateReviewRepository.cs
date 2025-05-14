@@ -18,12 +18,7 @@ namespace DVSAdmin.Data.Repositories
         }
        
 
-        public async Task<List<Service>> GetServiceListByProvider(int providerId)
-        {
-            return await context.Service.Where(p => p.ProviderProfileId == providerId && 
-            (p.ServiceStatus == ServiceStatusEnum.ReadyToPublish || p.ServiceStatus == ServiceStatusEnum.Published))
-            .ToListAsync()??new List<Service>();
-        }    
+        
 
         public async Task<CertificateReview> GetCertificateReview(int reviewId)
         {
