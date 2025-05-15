@@ -79,7 +79,7 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerProfileId,  loggedInUserEmail);            
             ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
             ProviderStatusEnum currentStatus = providerProfile.ProviderStatus;// keep current status for log
-            List<Service> serviceList = await certificateReviewRepository.GetServiceListByProvider(providerProfileId);        
+            List<Service> serviceList = await regManagementRepository.GetServiceListByProvider(providerProfileId);        
             string verifiedCab = providerProfile.CabUser.CabEmail;
             string services = string.Join("\r", serviceList.Where(item => serviceIds.Contains(item.Id)).Select(x => x.ServiceName.ToString()).ToArray())??string.Empty;
         

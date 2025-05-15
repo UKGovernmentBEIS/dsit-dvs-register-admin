@@ -8,8 +8,8 @@ namespace DVSAdmin.Data.Repositories
         
         public Task<List<Role>> GetRoles();
         public Task<List<IdentityProfile>> GetIdentityProfiles();
-        public Task<List<SupplementaryScheme>> GetSupplementarySchemes();      
-        public Task<List<Service>> GetServiceListByProvider(int providerId);        
+        public Task<List<SupplementaryScheme>> GetSupplementarySchemes();     
+        
         public Task<List<CertificateReviewRejectionReason>> GetRejectionReasons();
         public Task<CertificateReview> GetCertificateReview(int reviewId);
         public Task<CertificateReview> GetCertificateReviewWithRejectionData(int reviewId);
