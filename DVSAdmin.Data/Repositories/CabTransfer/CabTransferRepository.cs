@@ -24,7 +24,7 @@ namespace DVSAdmin.Data.Repositories
             public int TotalCount { get; set; }
         }
 
-        public async Task<PaginatedResult<Service>> GetServices(int pageNumber)
+        public async Task<PaginatedResult<Service>> GetServices(int pageNumber, string searchText = "")
         {
             var baseQuery = context.Service
                 .Include(s => s.Provider)
@@ -32,6 +32,13 @@ namespace DVSAdmin.Data.Repositories
                 .Include(s => s.ServiceRoleMapping)
                 .Include(s => s.CabUser).ThenInclude(s => s.Cab)
                 .Where(s => s.ServiceStatus == ServiceStatusEnum.Published || s.ServiceStatus == ServiceStatusEnum.Removed);
+
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                searchText = searchText.Trim().ToLower();
+                baseQuery = baseQuery.Where(s => EF.Functions.Like(s.ServiceName.ToLower(), "%"+searchText.ToLower()+"%"));
+            }
 
             var groupedQuery = await baseQuery
                 .GroupBy(s => s.ServiceKey)

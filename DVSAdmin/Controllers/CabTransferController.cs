@@ -20,9 +20,9 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpGet("published-service-list")]
-        public async Task<IActionResult> AllPublishedServices(int pageNumber = 1)
+        public async Task<IActionResult> AllPublishedServices(int pageNumber = 1, string SearchText = "")
         {
-            var results = await cabTransferService.GetServices(pageNumber);
+            var results = await cabTransferService.GetServices(pageNumber, SearchText);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
             ViewBag.CurrentPage = pageNumber;
