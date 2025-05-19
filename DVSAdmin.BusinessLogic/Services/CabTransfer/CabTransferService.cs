@@ -23,11 +23,7 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             this.configuration = configuration;
         }
 
-        public class PaginatedResult<T>
-        {
-            public List<T> Items { get; set; }
-            public int TotalCount { get; set; }
-        }
+       
 
         public async Task<PaginatedResult<ServiceDto>> GetServices(int pageNumber)
         {

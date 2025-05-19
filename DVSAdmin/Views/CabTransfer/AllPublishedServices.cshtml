@@ -95,32 +95,15 @@
                             </tbody>
                         </table>
 
-                        <nav class="govuk-pagination" aria-label="Pagination">
-                            <div class="govuk-pagination__prev">
-                                @if (ViewBag.CurrentPage > 1)
-                                {
-                                    <a class="govuk-link govuk-pagination__link" href="@Url.Action("AllPublishedServices", new { pageNumber = ViewBag.CurrentPage - 1 })" rel="prev">
-                                        Previous
-                                    </a>
-                                }
-                            </div>
-                            <ul class="govuk-pagination__list">
-                                @for (int i = 1; i <= Model.TotalPages; i++)
-                                {
-                                    <li class="govuk-pagination__item @(i == ViewBag.CurrentPage ? "govuk-pagination__item--current" : "")">
-                                        <a class="govuk-link govuk-pagination__link" href="@Url.Action("AllPublishedServices", new { pageNumber = i })" aria-label="Page @i">@i</a>
-                                    </li>
-                                }
-                            </ul>
-                            <div class="govuk-pagination__next">
-                                @if (ViewBag.CurrentPage < Model.TotalPages)
-                                {
-                                    <a class="govuk-link govuk-pagination__link" href="@Url.Action("AllPublishedServices", new { pageNumber = ViewBag.CurrentPage + 1 })" rel="next">
-                                        Next
-                                    </a>
-                                }
-                            </div>
-                        </nav>
+
+                        @{
+                            PaginationViewModel paginationViewModel = new PaginationViewModel { Action = "AllPublishedServices",
+                            CurrentPage = ViewBag.CurrentPage, TotalPages = Model.TotalPages };
+
+                            @await Html.PartialAsync("~/Views/PartialViews/_PaginationView.cshtml", paginationViewModel)
+                        }
+
+                     
                     </div>
                 </div>
             </div>
