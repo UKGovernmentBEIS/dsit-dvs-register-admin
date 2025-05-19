@@ -1,7 +1,6 @@
 ﻿
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -13,6 +12,10 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<ProviderProfileDto> GetProviderWithServiceDetails(int providerId);
         public Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, string loggedInUserEmail);
         public Task<List<ServiceDto>> GetServiceVersionList(int serviceKey);
+        //ToDo : move to cabtranfser service
+        public Task<GenericResponse> SaveCabTransferRequest(CabTransferRequestDto cabTransferRequestDto, string loggedInUserEmail);
+
+        public Task<GenericResponse> CancelCabTransferRequest(int cantransferRequestId, string loggedInUserEmail);
 
 
     }

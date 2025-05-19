@@ -119,7 +119,15 @@ namespace DVSAdmin.BusinessLogic
             .ForMember(dest => dest.Service, opt => opt.MapFrom(src => src.Service));
             CreateMap<ProceedPublishConsentTokenDto, ProceedPublishConsentToken>()
             .ForMember(dest => dest.Service, opt => opt.MapFrom(src => src.Service));
-            
+
+            CreateMap<RequestManagement, RequestManagementDto>();
+            CreateMap<RequestManagementDto, RequestManagement>();
+
+            CreateMap<CabTransferRequest, CabTransferRequestDto>()
+          .ForMember(dest => dest.RequestManagement, opt => opt.MapFrom(src => src.RequestManagement));
+            CreateMap<CabTransferRequestDto, CabTransferRequest>()
+            .ForMember(dest => dest.RequestManagement, opt => opt.MapFrom(src => src.RequestManagement));
+
 
         }
     }

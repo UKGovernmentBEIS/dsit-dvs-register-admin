@@ -1,7 +1,5 @@
 ﻿using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.CommonUtility.Models.Enums;
-using DVSAdmin.Data.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
