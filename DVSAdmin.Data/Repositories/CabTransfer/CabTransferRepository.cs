@@ -61,7 +61,7 @@ namespace DVSAdmin.Data.Repositories
 
 
 
-        public async Task<GenericResponse> SaveCabTransferRequest(CabTransferRequest cabTransferRequest string loggedInUserEmail)
+        public async Task<GenericResponse> SaveCabTransferRequest(CabTransferRequest cabTransferRequest, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new();
             using var transaction = await context.Database.BeginTransactionAsync();
