@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
-using DVSAdmin.CommonUtility.JWT;
-using Microsoft.Extensions.Configuration;
-using DVSAdmin.Data.Repositories;
 using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility.JWT;
+using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.Data.Entities;
+using DVSAdmin.Data.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace DVSAdmin.BusinessLogic.Services.CabTransfer
 {
@@ -37,6 +39,22 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
                 Items = serviceDtos,
                 TotalCount = paginatedServices.TotalCount
             };
+        }
+
+  
+        public async Task<GenericResponse> SaveCabTransferRequest(CabTransferRequestDto cabTransferRequestDto, string loggedInUserEmail)
+        {
+            CabTransferRequest cabTransferRequest = new();
+            automapper.Map(cabTransferRequestDto, cabTransferRequest);
+            GenericResponse genericResponse = await cabTransferRepository.SaveCabTransferRequest(cabTransferRequest, loggedInUserEmail);
+            return genericResponse;
+        }
+
+        public async Task<GenericResponse> CancelCabTransferRequest(int cantransferRequestId, string loggedInUserEmail)
+        {
+
+            GenericResponse genericResponse = await cabTransferRepository.CancelCabTransferRequest(cantransferRequestId, loggedInUserEmail);
+            return genericResponse;
         }
 
     }

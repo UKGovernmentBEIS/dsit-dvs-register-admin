@@ -115,21 +115,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
         }
 
-        //ToDo : move to cabtranfser service
-        public async Task<GenericResponse> SaveCabTransferRequest(CabTransferRequestDto cabTransferRequestDto, string loggedInUserEmail)
-        {
-            CabTransferRequest cabTransferRequest = new();
-            automapper.Map(cabTransferRequestDto, cabTransferRequest);
-            GenericResponse genericResponse = await regManagementRepository.SaveCabTransferRequest(cabTransferRequest, loggedInUserEmail);
-            return genericResponse;
-        }
-
-        public async Task<GenericResponse> CancelCabTransferRequest(int cantransferRequestId, string loggedInUserEmail)
-        {           
-            
-            GenericResponse genericResponse = await regManagementRepository.CancelCabTransferRequest(cantransferRequestId, loggedInUserEmail);
-            return genericResponse;
-        }
+       
 
     }
 }
