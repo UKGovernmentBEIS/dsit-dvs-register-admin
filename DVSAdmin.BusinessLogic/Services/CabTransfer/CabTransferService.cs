@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
@@ -22,7 +22,6 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             this.jwtService = jwtService;
             this.configuration = configuration;
         }
-               
 
         public async Task<PaginatedResult<ServiceDto>> GetServices(int pageNumber, string searchText = "")
         {
@@ -35,6 +34,24 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
                 TotalCount = paginatedServices.TotalCount
             };
         }
+        
+        public async Task<IReadOnlyList<CabDto>> ListCabsExceptCurrentAsync(int serviceId)
+        {
+            var service = await cabTransferRepository.GetServiceDetails(serviceId);
+            var allCabs = await cabTransferRepository.GetAllCabsAsync();
+            return allCabs
+                .Where(c => c.Id != service.CabUser.CabId)
+                .Select(c => new CabDto { Id = c.Id, CabName = c.CabName })
+                .ToList()
+                .AsReadOnly();
+        }
+
+        public Task<GenericResponse> ReassignServiceAsync(int serviceId, int newCabId, string userEmail)
+        {
+            // TODO: database update here…
+            return Task.FromResult(new GenericResponse { Success = true });
+        }
+        
         public async Task<ServiceDto> GetServiceDetails(int serviceId)
         {
             Service service = await cabTransferRepository.GetServiceDetails(serviceId);

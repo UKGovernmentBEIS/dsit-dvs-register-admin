@@ -3,7 +3,6 @@ using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.Models.CabTransfer;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace DVSAdmin.Controllers
 {
     [Route("cab-transfer")]
@@ -58,11 +57,61 @@ namespace DVSAdmin.Controllers
            
         }
 
-        [HttpGet("service-reassign-start")]
+        [HttpGet("service-reassign-start/{serviceId}")]
         public async Task<IActionResult> ReassignServiceToCAB(int serviceId)
         {
             ServiceDto service = await cabTransferService.GetServiceDetails(serviceId);
             return View(service);
+        }
+        
+        [HttpPost("service-reassign-start/{serviceId}")]
+        [ValidateAntiForgeryToken]
+        public IActionResult ReassignServiceToCABPost(int serviceId)
+        {
+            return RedirectToAction(
+                nameof(SelectConformityAssessmentBody),
+                new { serviceId }
+            );
+        }
+        
+        [HttpGet("select-cab/{serviceId}")]
+        public async Task<IActionResult> SelectConformityAssessmentBody(int serviceId)
+        {
+            var allCabs = await cabTransferService.ListCabsExceptCurrentAsync(serviceId);
+
+            var vm = new SelectCabViewModel
+            {
+                ServiceId     = serviceId,
+                Cabs          = allCabs,
+                SelectedCabId = null
+            };
+            return View("~/Views/CabTransfer/SelectConformityAssessmentBody.cshtml", vm);
+        }
+
+        [HttpPost("select-cab/{serviceId}")]
+        public async Task<IActionResult> SelectConformityAssessmentBody(
+            int serviceId,
+            SelectCabViewModel vm
+        )
+        {
+            if (!vm.SelectedCabId.HasValue)
+            {
+                ModelState.AddModelError(
+                    nameof(vm.SelectedCabId),
+                    "Select the CAB this service should be reassigned to"
+                );
+                
+                vm.Cabs = await cabTransferService.ListCabsExceptCurrentAsync(serviceId);
+
+                return View(vm);
+            }
+            return RedirectToAction("NextStep", new { serviceId = serviceId, toCabId = vm.SelectedCabId.Value });
+        }
+
+        [HttpGet("next-step")]
+        public IActionResult NextStep(int cabId)
+        {
+            return View("NextStep");
         }
 
         [HttpGet("cancel-reassign")]

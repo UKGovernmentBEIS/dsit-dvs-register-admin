@@ -1,4 +1,4 @@
-﻿using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Models;
 
 namespace DVSAdmin.BusinessLogic.Services
@@ -6,6 +6,8 @@ namespace DVSAdmin.BusinessLogic.Services
     public interface ICabTransferService
     {
         public Task<PaginatedResult<ServiceDto>> GetServices(int pageNumber, string searchText = "");
+        Task<IReadOnlyList<CabDto>> ListCabsExceptCurrentAsync(int serviceId);
+        Task<GenericResponse> ReassignServiceAsync(int serviceId, int newCabId, string userEmail);
         public Task<GenericResponse> SaveCabTransferRequest(CabTransferRequestDto cabTransferRequestDto, string loggedInUserEmail);
         public Task<GenericResponse> CancelCabTransferRequest(int cabTransferRequestId, string loggedInUserEmail);
         public Task<ServiceDto> GetServiceDetails(int serviceId);
