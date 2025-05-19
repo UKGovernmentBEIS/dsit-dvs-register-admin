@@ -15,5 +15,6 @@ namespace DVSAdmin.Data.Entities
         public Cab Cab { get; set; }
         public string CabEmail { get; set; }
         public DateTime CreatedTime { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

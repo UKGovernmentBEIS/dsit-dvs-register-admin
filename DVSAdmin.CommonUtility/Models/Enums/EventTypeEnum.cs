@@ -32,7 +32,9 @@
         UpdateUser = 27,
         DSITEditProvider = 28,
         DSITEditService = 29,
-        CancelRemovalRequest = 30
+        CancelRemovalRequest = 30,
+        InitiateCabTranferRequest = 31,
+        CancelCabTransferRequest = 32
 
     }
 }

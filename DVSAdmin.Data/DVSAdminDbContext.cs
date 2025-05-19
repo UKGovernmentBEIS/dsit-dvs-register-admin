@@ -48,6 +48,9 @@ namespace DVSAdmin.Data
         public DbSet<Event> EventLogs { get; set; }
         public DbSet<RemoveProviderToken> RemoveProviderToken { get; set; }
         public DbSet<RemoveTokenServiceMapping> RemoveTokenServiceMapping { get; set; }
+
+        public DbSet<CabTransferRequest> CabTransferRequest { get; set; }
+        public DbSet<RequestManagement> RequestManagement { get; set; }
         public virtual async Task<int> SaveChangesAsync(TeamEnum team = TeamEnum.NA, EventTypeEnum eventType = EventTypeEnum.NA, string actorId = null)
         {
             if (actorId !=null)

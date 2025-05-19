@@ -1,5 +1,4 @@
 ﻿using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 
 
@@ -16,5 +15,11 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<Service>> GetPublishedServices();
         public Task<List<Service>> GetServiceVersionList(int serviceKey);
         public Task<List<Service>> GetServiceListByProvider(int providerId);
+
+
+        //ToDo : move to cabtransfer repository
+
+        public Task<GenericResponse> SaveCabTransferRequest(CabTransferRequest cabTransferRequest, string loggedInUserEmail);
+        public Task<GenericResponse> CancelCabTransferRequest(int cabtransferRequestId, string loggedInUserEmail);
     }
 }
