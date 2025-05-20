@@ -1,0 +1,46 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility;
+@using DVSAdmin.CommonUtility.Models;
+@using DVSAdmin.Extensions;
+@model ServiceDto
+
+@{
+    ViewData["Title"] = "Service Reassign";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+
+    var serviceTransferViewModel = new ServiceTransferViewModel
+    {
+        Service = Model,
+        IsServiceDetailsPage = true,
+        ToCabName = ViewBag.ToCabName,
+    };
+ 
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "AllPublishedServices", "CabTransfer", null, new { @class = "govuk-back-link" })
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">Service details: @Model.ServiceName</h1>                
+
+                @await Html.PartialAsync("~/Views/CabTransfer/PartialViews/_ServiceDetailsTransferView.cshtml", serviceTransferViewModel)
+                
+                <div class="govuk-grid-column-two-thirds govuk-!-margin-top-4 govuk-!-padding-0">
+                    <h2 class="govuk-heading-m">Provided certificate of conformity</h2>
+                    <p class="govuk-body-l govuk-!-margin-bottom-2">@Model.FileName</p>
+                    <p class="govuk-body govuk-!-margin-bottom-2">
+                        <span class="govuk-hint">PDF, @Model.FileSizeInKb KB, 1 page</span>
+                    </p>
+                    <p class="govuk-body">
+                        <span class="govuk-hint">This file may not be suitable for users of assistive technology.</span>
+                    </p>
+
+                    <a href="/register-management/download-certificate?key=@Model.FileLink&filename=@Model.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
+                        Download certificate of conformity
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
