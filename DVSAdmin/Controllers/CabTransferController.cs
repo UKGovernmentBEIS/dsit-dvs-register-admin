@@ -20,8 +20,13 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpGet("published-service-list")]
-        public async Task<IActionResult> AllPublishedServices(int pageNumber = 1, string SearchText = "")
+        public async Task<IActionResult> AllPublishedServices(int pageNumber = 1, string SearchText = "", string SearchAction = "")
         {
+            if(SearchAction == "clearSearch")
+            {
+                ModelState.Clear();
+                SearchText = string.Empty;
+            }
             var results = await cabTransferService.GetServices(pageNumber, SearchText);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
