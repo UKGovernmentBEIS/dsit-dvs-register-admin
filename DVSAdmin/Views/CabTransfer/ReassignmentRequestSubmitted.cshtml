@@ -1,0 +1,47 @@
+﻿
+@{
+
+    ViewData["Title"] = "Reassignment Request Submitted";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">
+                        Reassignment request submitted successfully
+                    </h1>
+                </div>
+                <p class="govuk-body">
+                   You have successfully sent a request asking ((name of accepting CAB)) to
+                   accept reassignment of this service record:
+                </p>
+                <p class="govuk-body">
+                    Provider: ((Provider name)) <br />
+                    Service: ((Service name))
+                </p>
+                <p class="govuk-body">
+                    This Conformity Assessment Body(CAB) will recieve the request by email.
+                    They will also see this request when they login to the Conformity Assessment Body Service.
+                </p>
+                <h2 class="govuk-heading-m">What happens next</h2>
+                <p class="govuk-body">Once the CAB accepts the reassignment request:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>they will be able to access the service record and upload a replacement
+                        certificate of conformity
+                        </li>
+                    <li>we will email the CAB that is transferring this service  to tell them that the
+                        reassignment has taken place, and they will no longer access to the record
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        <button type="submit" class="govuk-button" data-module="govuk-button">
+            Return to All published services
+        </button>
+    </main>
+</div>
+
