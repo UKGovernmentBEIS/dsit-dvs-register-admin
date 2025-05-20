@@ -17,9 +17,6 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<Service>> GetServiceListByProvider(int providerId);
 
 
-        //ToDo : move to cabtransfer repository
-
-        public Task<GenericResponse> SaveCabTransferRequest(CabTransferRequest cabTransferRequest, string loggedInUserEmail);
-        public Task<GenericResponse> CancelCabTransferRequest(int cabtransferRequestId, string loggedInUserEmail);
+       
     }
 }
