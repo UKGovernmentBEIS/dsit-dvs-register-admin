@@ -88,22 +88,23 @@ namespace DVSAdmin.Data.Repositories
                 else
                 {
                     var service = await context.Service.FirstOrDefaultAsync(s => s.Id == cabTransferRequest.ServiceId);
-                    if (service == null || service.ServiceStatus != ServiceStatusEnum.Published || service.ServiceStatus != ServiceStatusEnum.Removed)
+                    if (service == null || ( service.ServiceStatus != ServiceStatusEnum.Published && service.ServiceStatus != ServiceStatusEnum.Removed))
                         throw new InvalidDataException("Invalid service details");
                     
-                    ServiceStatusEnum currentStatus = service.ServiceStatus;
-                 
+                    ServiceStatusEnum currentStatus = service.ServiceStatus;    
                     if (currentStatus == ServiceStatusEnum.Published) 
                     {
                         service.ServiceStatus = ServiceStatusEnum.PublishedUnderRassign;
-                        service.ModifiedTime = DateTime.UtcNow;
+                      
                     }
                     else if(currentStatus == ServiceStatusEnum.Removed)
                     {
                         service.ServiceStatus = ServiceStatusEnum.RemovedUnderRassign;
-                        service.ModifiedTime = DateTime.UtcNow;
+                        
                     }
-                    
+                    service.ModifiedTime = DateTime.UtcNow;
+                   
+
                     cabTransferRequest.DecisionTime = DateTime.UtcNow;
                     cabTransferRequest.RequestManagement.ModifiedTime = DateTime.UtcNow;
 
