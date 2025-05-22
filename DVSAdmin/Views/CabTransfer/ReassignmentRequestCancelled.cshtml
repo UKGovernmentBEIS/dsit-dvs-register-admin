@@ -1,6 +1,6 @@
 ﻿@{
 
-    ViewData["Title"] = "Reassignment Request Cancelled";
+    ViewData["Title"] = "Reassignment request cancelled";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 <div class="govuk-width-container">
@@ -8,9 +8,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-panel govuk-panel--confirmation">
-                    <h1 class="govuk-panel__title">
-                       Reassignment request cancelled
-                    </h1>
+                    <h1 class="govuk-panel__title">@ViewData["Title"]</h1>
                 </div>
                 <p class="govuk-body govuk-!-margin-bottom-7">You have cancelled the reassignment request for this service.</p>
                <h2 class="govuk-heading-m">What happens next</h2>
@@ -28,6 +26,5 @@
                 </div>
             </div>
        </div>
-        <div class="govuk-!-padding-bottom-9"></div>
     </main>
 </div>
