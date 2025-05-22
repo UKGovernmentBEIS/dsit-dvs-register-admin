@@ -7,6 +7,8 @@ namespace DVSAdmin.BusinessLogic.Services
     {
         public Task<PaginatedResult<ServiceDto>> GetServices(int pageNumber, string searchText = "");
         public Task<GenericResponse> SaveCabTransferRequest(CabTransferRequestDto cabTransferRequestDto, string loggedInUserEmail);
-        public Task<GenericResponse> CancelCabTransferRequest(int cantransferRequestId, string loggedInUserEmail);
+        public Task<GenericResponse> CancelCabTransferRequest(int cabTransferRequestId, string loggedInUserEmail);
+        public Task<ServiceDto> GetServiceDetails(int serviceId);
+        public Task<CabTransferRequestDto> GetCabTransferDetails(int serviceId);
     }
 }

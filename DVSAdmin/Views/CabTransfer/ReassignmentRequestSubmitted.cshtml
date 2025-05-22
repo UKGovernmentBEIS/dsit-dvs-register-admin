@@ -1,4 +1,5 @@
-﻿
+﻿@using DVSAdmin.BusinessLogic.Models
+@model CabTransferRequestDto
 @{
 
     ViewData["Title"] = "Reassignment Request Submitted";
@@ -15,15 +16,15 @@
                     </h1>
                 </div>
                 <p class="govuk-body">
-                   You have successfully sent a request asking ((name of accepting CAB)) to
+                   You have successfully sent a request asking @Model.ToCab.CabName to
                    accept reassignment of this service record:
                 </p>
                 <p class="govuk-body">
-                    Provider: ((Provider name)) <br />
-                    Service: ((Service name))
+                    Provider: @Model.ProviderProfile.RegisteredName <br />
+                    Service: @Model.Service.ServiceName <br />
                 </p>
                 <p class="govuk-body">
-                    This Conformity Assessment Body(CAB) will recieve the request by email.
+                    This Conformity Assessment Body (CAB) will receive the request by email.
                     They will also see this request when they login to the Conformity Assessment Body Service.
                 </p>
                 <h2 class="govuk-heading-m">What happens next</h2>
@@ -33,7 +34,7 @@
                         certificate of conformity
                         </li>
                     <li>we will email the CAB that is transferring this service  to tell them that the
-                        reassignment has taken place, and they will no longer access to the record
+                        reassignment has taken place, and they will no longer have access to the record
                     </li>
                 </ul>
 

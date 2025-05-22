@@ -24,6 +24,7 @@ namespace DVSAdmin.Extensions
                     return "govuk-tag govuk-tag--blue";
 
                 case ServiceStatusEnum.Published:
+                case ServiceStatusEnum.PublishedUnderReassign:
                 case ProviderStatusEnum.Published:
                 case ApplicationReviewStatusEnum.PrimaryCheckPassed:                        
                 case ApplicationReviewStatusEnum.ApplicationApproved:

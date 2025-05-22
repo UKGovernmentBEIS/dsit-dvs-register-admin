@@ -1,12 +1,14 @@
-﻿@{
+﻿@using DVSAdmin.BusinessLogic.Models
+@using DVSAdmin.Extensions
+@model CabTransferRequestDto
 
+@{
     ViewData["Title"] = "Cancel Assignment Request";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
-
 <div class="govuk-width-container">
-    <a href="#" class="govuk-back-link">Back</a>
+    @Html.ActionLink("Back", "ServiceReassign", "CabTransfer", new { serviceId = Model.Id }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -14,7 +16,7 @@
                 <div class="govuk-summary-card">
                     <div class="govuk-summary-card__title-wrapper">
                         <h2 class="govuk-summary-card__title">
-                            Service: Online Identity assurance
+                            Service: @Model.Service.ServiceName
                         </h2>
                     </div>
                     <div class="govuk-summary-card__content">
@@ -24,9 +26,7 @@
                                     Service publication status
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    <span class="govuk-tag govuk-tag--green">
-                                        Published, under reassignment
-                                    </span>
+                                    @HtmlExtensions.ToStyledStrongTag(Model.Service.ServiceStatus)
                                 </dd>
                             </div>
                             <div class="govuk-summary-list__row">
@@ -34,7 +34,7 @@
                                     Registered name
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    Northrow Limited
+                                    @Model.ProviderProfile.RegisteredName
                                 </dd>
                             </div>
                             <div class="govuk-summary-list__row">
@@ -42,7 +42,7 @@
                                     CAB transferring this service
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    NQA
+                                    @Model.FromCabUser.Cab.CabName
                                 </dd>
                             </div>
                             <div class="govuk-summary-list__row">
@@ -50,16 +50,13 @@
                                     CAB accepting this service
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    BSI
+                                    @Model.ToCab.CabName
                                 </dd>
                             </div>
                         </dl>
                     </div>
                 </div>
-            </div>
-        </div>
-              <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+
                 <h2 class="govuk-heading-m">What will happen next</h2>
                 <p class="govuk-body">
                     The reassignment request sent for this service will no longer be valid.
@@ -71,7 +68,7 @@
                         <span class="govuk-visually-hidden">Warning</span>
                         Once you cancel the reassignment request, the action cannot be undone.
                     </strong>
-                </div>           
+                </div>
                 <div class="govuk-button-group">
                     <button type="submit" class="govuk-button" data-module="govuk-button">
                         Confirm
@@ -81,7 +78,6 @@
                     </button>
                 </div>
             </div>
-         </div>
+        </div>
     </main>
-</div>
-                            
+</div>                       

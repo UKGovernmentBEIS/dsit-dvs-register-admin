@@ -1,4 +1,5 @@
-﻿using DVSAdmin.BusinessLogic.Services;
+﻿using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.Models.CabTransfer;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,5 +39,38 @@ namespace DVSAdmin.Controllers
             };
             return View(serviceListViewModel);
         }
+
+        [HttpGet("reassign-service")]
+        public async Task<IActionResult> ServiceReassign(int serviceId, bool isTransferOngoing)
+        {
+            if (isTransferOngoing)
+            {
+                CabTransferRequestDto cabTransferRequestDto = await cabTransferService.GetCabTransferDetails(serviceId);
+                ServiceDto service = cabTransferRequestDto.Service;
+                ViewBag.ToCabName = cabTransferRequestDto.ToCab.CabName;
+                return View(service);
+            }
+            else
+            {
+                ServiceDto service = await cabTransferService.GetServiceDetails(serviceId);  
+                return View(service);
+            }
+           
+        }
+
+        [HttpGet("service-reassign-start")]
+        public async Task<IActionResult> ReassignServiceToCAB(int serviceId)
+        {
+            ServiceDto service = await cabTransferService.GetServiceDetails(serviceId);
+            return View(service);
+        }
+
+        [HttpGet("cancel-reassign")]
+        public async Task<IActionResult> CancelAssignmentRequest(int serviceId)
+        {
+            CabTransferRequestDto cabTransferRequestDto = await cabTransferService.GetCabTransferDetails(serviceId);
+            return View(cabTransferRequestDto);
+        }
+
     }
 }

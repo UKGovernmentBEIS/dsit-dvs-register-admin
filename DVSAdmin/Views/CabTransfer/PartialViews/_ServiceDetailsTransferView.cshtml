@@ -1,0 +1,200 @@
+﻿@using DVSAdmin.BusinessLogic.Models
+@using DVSAdmin.CommonUtility
+@using DVSAdmin.CommonUtility.Models
+@using DVSAdmin.Extensions
+@using DVSAdmin.Models.CabTransfer
+@model ServiceTransferViewModel
+
+@{
+    var displayText = Model.IsServiceDetailsPage ? $"Submission date (GMT): {DateTimeExtensions.FormatDateTime(Model.Service.CreatedTime)}" : "Service details";
+    var transferable = Model.Service.ServiceStatus == ServiceStatusEnum.Published || Model.Service.ServiceStatus == ServiceStatusEnum.Removed;
+}
+
+@if (!transferable)
+{
+    <div class="govuk-summary-card govuk-!-margin-bottom-9">
+        <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+                CAB details
+            </h2>
+            @if (!Model.IsServiceDetailsPage)
+            {
+                <ul class="govuk-summary-card__actions">
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link" href="@Url.Action("#", "#", new { serviceId = Model.Service.Id })">
+                            Change <span class="govuk-visually-hidden"> CAB of Service name @Model.Service.ServiceName</span>
+                        </a>
+                    </li>
+                </ul>
+            }            
+        </div>
+        <div class="govuk-summary-card__content">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        CAB transferring this service
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Service.CabUser.Cab.CabName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        CAB accepting this service
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ToCabName
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+}
+
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+            @displayText
+        </h2>
+
+        @if (Model.IsServiceDetailsPage)
+        {
+            var actionUrl = transferable ? Url.Action("ReassignServiceToCAB", "CabTransfer", new { serviceId = Model.Service.Id })
+            : Url.Action("CancelAssignmentRequest", "CabTransfer", new { serviceId = Model.Service.Id });
+
+            var actionText = transferable ? "Reassign this service"
+            : "Cancel reassignment request";
+
+            <ul class="govuk-summary-card__actions">
+                <li class="govuk-summary-card__action">
+                    <a class="govuk-link" href="@actionUrl">
+                        @actionText <span class="govuk-visually-hidden"> of Service name @Model.Service.ServiceName</span>
+                    </a>
+                </li>
+            </ul>
+        }
+
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Name of service</dt>
+                <dd class="govuk-summary-list__value">@Model.Service.ServiceName</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    @(Model.IsServiceDetailsPage ? "Status" : "URL link to the service")
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @(Model.IsServiceDetailsPage
+                        ? HtmlExtensions.ToStyledStrongTag(Model.Service.ServiceStatus)
+                        : Model.Service.WebSiteAddress)
+                </dd>
+            </div>
+            @if (Model.IsServiceDetailsPage)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Conformity Assessment Body</dt>
+                    <dd class="govuk-summary-list__value">@Model.Service.CabUser.Cab.CabName</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Registered name</dt>
+                    <dd class="govuk-summary-list__value">@Model.Service.Provider.RegisteredName</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Trading names</dt>
+                    <dd class="govuk-summary-list__value">@Html.DisplayFor(model => model.Service.Provider.TradingName)</dd>
+                </div>
+            }
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Company address</dt>
+                <dd class="govuk-summary-list__value">@HtmlExtensions.ToStringWithLineBreaks(Model.Service.CompanyAddress)</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Roles certified against</dt>
+                <dd class="govuk-summary-list__value">
+                    @foreach (var item in Model.Service.ServiceRoleMapping)
+                    {
+                        <div>@item.Role.RoleName</div>
+                    }
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">GPG 44 quality of authenticator</dt>
+                <dd class="govuk-summary-list__value">
+                    @if (Model.Service.ServiceQualityLevelMapping != null && Model.Service.ServiceQualityLevelMapping.Any(x => x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                    {
+                        @foreach (var item in Model.Service.ServiceQualityLevelMapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                        {
+                            <div>@item.QualityLevel.Level</div>
+                        }
+                    }
+                    else
+                    {
+                        <div>@Constants.NullFieldsDisplay</div>
+                    }
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">GPG 44 level of protection</dt>
+                <dd class="govuk-summary-list__value">
+                    @if (Model.Service.ServiceQualityLevelMapping != null && Model.Service.ServiceQualityLevelMapping.Any(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                    {
+                        @foreach (var item in Model.Service.ServiceQualityLevelMapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                        {
+                            <div>@item.QualityLevel.Level</div>
+                        }
+                    }
+                    else
+                    {
+                        <div>@Constants.NullFieldsDisplay</div>
+                    }
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">GPG 45 identity profiles</dt>
+                <dd class="govuk-summary-list__value">
+                    @if (Model.Service.ServiceIdentityProfileMapping != null && Model.Service.ServiceIdentityProfileMapping.Any())
+                    {
+                        @foreach (var item in Model.Service.ServiceIdentityProfileMapping)
+                        {
+                            <div>@item.IdentityProfile.IdentityProfileName</div>
+                        }
+                    }
+                    else
+                    {
+                        <div>@Constants.NullFieldsDisplay</div>
+                    }
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Supplementary codes</dt>
+                <dd class="govuk-summary-list__value">
+                    @if (Model.Service.ServiceSupSchemeMapping != null && Model.Service.ServiceSupSchemeMapping.Any())
+                    {
+                        @foreach (var item in Model.Service.ServiceSupSchemeMapping)
+                        {
+                            <div>@item.SupplementaryScheme.SchemeName</div>
+                        }
+                    }
+                    else
+                    {
+                        <div>@Constants.NullFieldsDisplay</div>
+                    }
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Service provider’s certificate of conformity</dt>
+                <dd class="govuk-summary-list__value">@Model.Service.FileName</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Date of issue</dt>
+                <dd class="govuk-summary-list__value">@DateTimeExtensions.FormatDateTime(@Model.Service.ConformityIssueDate, "dd MMMM yyyy")</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Date of expiry</dt>
+                <dd class="govuk-summary-list__value">@DateTimeExtensions.FormatDateTime(@Model.Service.ConformityExpiryDate, "dd MMMM yyyy")</dd>
+            </div>
+        </dl>
+    </div>
+</div>

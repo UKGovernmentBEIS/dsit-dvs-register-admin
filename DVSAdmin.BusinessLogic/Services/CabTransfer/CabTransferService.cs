@@ -22,8 +22,7 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             this.jwtService = jwtService;
             this.configuration = configuration;
         }
-
-       
+               
 
         public async Task<PaginatedResult<ServiceDto>> GetServices(int pageNumber, string searchText = "")
         {
@@ -36,8 +35,18 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
                 TotalCount = paginatedServices.TotalCount
             };
         }
-
-  
+        public async Task<ServiceDto> GetServiceDetails(int serviceId)
+        {
+            Service service = await cabTransferRepository.GetServiceDetails(serviceId);
+            ServiceDto serviceDto = automapper.Map<ServiceDto>(service);
+            return serviceDto;
+        }
+        public async Task<CabTransferRequestDto> GetCabTransferDetails(int serviceId)
+        {
+            CabTransferRequest cabTransferRequest = await cabTransferRepository.GetCabTransferDetails(serviceId);
+            CabTransferRequestDto cabTransferRequestDto = automapper.Map<CabTransferRequestDto>(cabTransferRequest);
+            return cabTransferRequestDto;
+        }
         public async Task<GenericResponse> SaveCabTransferRequest(CabTransferRequestDto cabTransferRequestDto, string loggedInUserEmail)
         {
             CabTransferRequest cabTransferRequest = new();
@@ -46,10 +55,9 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             return genericResponse;
         }
 
-        public async Task<GenericResponse> CancelCabTransferRequest(int cantransferRequestId, string loggedInUserEmail)
+        public async Task<GenericResponse> CancelCabTransferRequest(int cabTransferRequestId, string loggedInUserEmail)
         {
-
-            GenericResponse genericResponse = await cabTransferRepository.CancelCabTransferRequest(cantransferRequestId, loggedInUserEmail);
+            GenericResponse genericResponse = await cabTransferRepository.CancelCabTransferRequest(cabTransferRequestId, loggedInUserEmail);
             return genericResponse;
         }
 

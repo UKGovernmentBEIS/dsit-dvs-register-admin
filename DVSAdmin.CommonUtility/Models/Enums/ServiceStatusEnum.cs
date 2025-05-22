@@ -31,10 +31,9 @@ namespace DVSAdmin.CommonUtility.Models
         [Description("Received")]
         Resubmitted = 11,
         [Description("Published, under reassignment")]
-        PublishedUnderRassign = 12,
+        PublishedUnderReassign = 12,
         [Description("Removed, under reassignment")]
-        RemovedUnderRassign = 13
-
+        RemovedUnderReassign = 13
     }
 
     public static class ServiceStatusEnumExtensions

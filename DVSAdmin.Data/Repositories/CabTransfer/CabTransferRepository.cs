@@ -3,7 +3,6 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -28,43 +27,97 @@ namespace DVSAdmin.Data.Repositories
         {
             var baseQuery = context.Service
                 .Include(s => s.Provider)
-                .Include(s => s.CertificateReview)
-                .Include(s => s.ServiceRoleMapping)
-                .Include(s => s.CabUser).ThenInclude(s => s.Cab)
-                .Where(s => s.ServiceStatus == ServiceStatusEnum.Published || s.ServiceStatus == ServiceStatusEnum.Removed);
-
-
-            if (!string.IsNullOrEmpty(searchText))
-            {
-                searchText = searchText.Trim().ToLower();
-                baseQuery = baseQuery.Where(s => EF.Functions.Like(s.ServiceName.ToLower(), "%"+searchText.ToLower()+"%"));
-            }
+                .Include(s => s.CabUser).ThenInclude(s => s.Cab);
 
             var groupedQuery = await baseQuery
                 .GroupBy(s => s.ServiceKey)
                 .Select(g => g.OrderByDescending(s => s.ServiceVersion).FirstOrDefault())
                 .ToListAsync();
 
-            var orderedQuery = groupedQuery
-                .OrderBy(s => s.ServiceStatus)
-                .ThenBy(s => s.ModifiedTime); 
+            var filteredQuery = groupedQuery
+                .Where(s => s.ServiceStatus == ServiceStatusEnum.Published ||
+                             s.ServiceStatus == ServiceStatusEnum.Removed ||
+                             s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
+                             s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign);
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                searchText = searchText.Trim().ToLower();
+                filteredQuery = filteredQuery
+                    .Where(s => s.ServiceName.ToLower().Contains(searchText))
+                    .ToList();
+            }
+
+            var priorityOrder = new List<ServiceStatusEnum>
+            {
+                ServiceStatusEnum.PublishedUnderReassign,
+                ServiceStatusEnum.Published,
+                ServiceStatusEnum.RemovedUnderReassign,
+                ServiceStatusEnum.Removed
+            };
+
+            var orderedQuery = filteredQuery
+                .OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus))
+                .ThenBy(s => s.ModifiedTime);
 
             var totalCount = orderedQuery.Count();
 
             var items = orderedQuery
                 .Skip((pageNumber - 1) * 10)
                 .Take(10)
-                .ToList(); 
+                .ToList();
 
             return new PaginatedResult<Service>
             {
                 Items = items,
                 TotalCount = totalCount
             };
-
         }
 
         //ToDo : move to cabtranfser repository
+
+        public async Task<Service> GetServiceDetails(int serviceId)
+        {
+            var service = await context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.CabUser)
+                    .ThenInclude(c => c.Cab)
+                .Include(s => s.ServiceQualityLevelMapping)
+                    .ThenInclude(s => s.QualityLevel)
+                .Include(s => s.ServiceIdentityProfileMapping)
+                    .ThenInclude(s => s.IdentityProfile)
+                .Include(s => s.ServiceRoleMapping)
+                    .ThenInclude(s => s.Role)
+                .Include(s => s.ServiceSupSchemeMapping)
+                    .ThenInclude(s => s.SupplementaryScheme)
+                .FirstOrDefaultAsync(s => s.Id == serviceId);
+
+            return service;
+        }
+
+        public async Task<CabTransferRequest> GetCabTransferDetails(int serviceId)
+        {
+            var cabTransferRequest = await context.CabTransferRequest
+                .Include(c => c.ProviderProfile)
+                .Include(c => c.Service)
+                    .ThenInclude(s => s.ServiceIdentityProfileMapping)
+                        .ThenInclude(ip => ip.IdentityProfile)
+                .Include(c => c.Service)
+                    .ThenInclude(s => s.ServiceRoleMapping)
+                        .ThenInclude(r => r.Role)
+                .Include(c => c.Service)
+                    .ThenInclude(s => s.ServiceSupSchemeMapping)
+                        .ThenInclude(ss => ss.SupplementaryScheme)
+                .Include(c => c.Service)
+                    .ThenInclude(s => s.ServiceQualityLevelMapping)
+                        .ThenInclude(ql => ql.QualityLevel)
+                .Include(c => c.FromCabUser)
+                    .ThenInclude(c => c.Cab)
+                .Include(c => c.ToCab)
+                .FirstOrDefaultAsync(c => c.ServiceId == serviceId);
+
+            return cabTransferRequest;
+        }
 
 
 
@@ -94,12 +147,12 @@ namespace DVSAdmin.Data.Repositories
                     ServiceStatusEnum currentStatus = service.ServiceStatus;    
                     if (currentStatus == ServiceStatusEnum.Published) 
                     {
-                        service.ServiceStatus = ServiceStatusEnum.PublishedUnderRassign;
+                        service.ServiceStatus = ServiceStatusEnum.PublishedUnderReassign;
                       
                     }
                     else if(currentStatus == ServiceStatusEnum.Removed)
                     {
-                        service.ServiceStatus = ServiceStatusEnum.RemovedUnderRassign;
+                        service.ServiceStatus = ServiceStatusEnum.RemovedUnderReassign;
                         
                     }
                     service.ModifiedTime = DateTime.UtcNow;
@@ -153,7 +206,6 @@ namespace DVSAdmin.Data.Repositories
                     await transaction.RollbackAsync();
                     genericResponse.Success = false;
                 }
-
 
             }
             catch (Exception ex)
