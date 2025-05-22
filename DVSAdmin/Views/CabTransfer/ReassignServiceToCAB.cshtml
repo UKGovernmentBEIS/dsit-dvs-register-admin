@@ -1,6 +1,5 @@
 ﻿@{
-  
-    ViewData["Title"] = "Reassign Service to CAB";
+    ViewData["Title"] = "Reassign this service to another Conformity Assessment Body";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -10,25 +9,26 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
-                <h1 class="govuk-heading-xl">Reassign this service to another Conformity Assessment Body</h1>
+                <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
 
                 <p class="govuk-body">You are about to reassign control of this service record from ((name of transferring CAB)) to another Conformity Assessment Body (CAB).</p>
 
                 <p class="govuk-body">You need to tell us who the accepting CAB should be, so we can email them and ask them to agree to this change.</p>
 
                 <p class="govuk-body govuk-!-margin-bottom-0">Once the accepting CAB agrees to the reassignment:</p>
-                <ul class="govuk-list govuk-list--bullet">
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
                     <li>they will be able to access the record for this service, and upload a replacement certificate of conformity</li>
                     <li>the CAB transferring the service will no longer be able to access this record</li>
                 </ul>
 
-                <p class="govuk-body">Services with a valid certificate of conformity will remain published to the register during the reassignment process.</p>
-
+                <p class="govuk-body govuk-!-margin-bottom-6">Services with a valid certificate of conformity will remain published to the register during the reassignment process.</p>
                 <div class="govuk-button-group">
                     <button type="submit" class="govuk-button" data-module="govuk-button">
                         Continue
                     </button>
                 </div>
+                <div class="govuk-!-padding-bottom-9"></div>
             </div>
+       </div>
     </main>
 </div>
