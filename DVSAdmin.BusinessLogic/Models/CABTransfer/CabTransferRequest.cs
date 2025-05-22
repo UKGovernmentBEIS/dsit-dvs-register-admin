@@ -12,7 +12,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public int FromCabUserId { get; set; }       
         public CabUserDto FromCabUser { get; set; }      
         public int ToCabId { get; set; }     
-        public CabDto ToCab { get; set; }       
+        public CabUserDto ToCab { get; set; }       
         public ServiceStatusEnum PreviousServiceStatus { get; set; }        
         public bool CertificateUploaded { get; set; }            
         public string  RequestManagementId { get; set; }

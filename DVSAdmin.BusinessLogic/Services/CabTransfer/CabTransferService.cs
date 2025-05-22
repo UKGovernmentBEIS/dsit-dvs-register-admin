@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
@@ -12,13 +13,15 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
     {
         private readonly ICabTransferRepository cabTransferRepository;
         private readonly IMapper automapper;
+        private readonly CabTransferEmailSender emailSender;
         private readonly IJwtService jwtService;
         private readonly IConfiguration configuration;
 
-        public CabTransferService(ICabTransferRepository cabTransferRepository, IMapper automapper, IJwtService jwtService, IConfiguration configuration)
+        public CabTransferService(ICabTransferRepository cabTransferRepository, IMapper automapper, CabTransferEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
             this.cabTransferRepository = cabTransferRepository;
             this.automapper = automapper;
+            this.emailSender = emailSender;
             this.jwtService = jwtService;
             this.configuration = configuration;
         }
@@ -52,6 +55,14 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             CabTransferRequest cabTransferRequest = new();
             automapper.Map(cabTransferRequestDto, cabTransferRequest);
             GenericResponse genericResponse = await cabTransferRepository.SaveCabTransferRequest(cabTransferRequest, loggedInUserEmail);
+            if (genericResponse.Success)
+            {
+                await emailSender.SendCabTransferConfirmationToDSTI(cabTransferRequestDto.ToCab.Cab.CabName, cabTransferRequestDto.ProviderProfile.RegisteredName, 
+                    cabTransferRequestDto.Service.ServiceName);
+                await emailSender.SendCabTransferConfirmationToCAB(cabTransferRequestDto.ToCab.Cab.CabName, cabTransferRequestDto.ProviderProfile.RegisteredName,
+                    cabTransferRequestDto.Service.ServiceName, cabTransferRequestDto.ToCab.CabEmail);
+
+            }
             return genericResponse;
         }
 
