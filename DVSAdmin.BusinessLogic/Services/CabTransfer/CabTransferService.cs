@@ -85,9 +85,20 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             return genericResponse;
         }
 
-        public async Task<GenericResponse> CancelCabTransferRequest(int cabTransferRequestId, string loggedInUserEmail)
+        public async Task<GenericResponse> CancelCabTransferRequest(int cabTransferRequestId, string serviceName, string providerName,int toCabId,  string loggedInUserEmail)
         {
             GenericResponse genericResponse = await cabTransferRepository.CancelCabTransferRequest(cabTransferRequestId, loggedInUserEmail);
+            if (genericResponse.Success)
+            {
+                List<CabUser> activeCabUsers = await cabTransferRepository.GetActiveCabUsers(toCabId);
+                var cabName = activeCabUsers.FirstOrDefault()?.Cab.CabName ?? string.Empty;
+
+                await emailSender.SendCabTransferCancellationToDSTI(providerName, serviceName);
+                foreach (var user in activeCabUsers)
+                {
+                    await emailSender.SendCabTransferCancellationToCAB(cabName, providerName, serviceName, user.CabEmail);
+                }
+            }
             return genericResponse;
         }
     }

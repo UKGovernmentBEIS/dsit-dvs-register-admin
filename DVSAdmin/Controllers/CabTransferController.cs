@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
-using DVSAdmin.BusinessLogic.Models;
+﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Services;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Models.CabTransfer;
 using Microsoft.AspNetCore.Mvc;
@@ -182,6 +182,13 @@ namespace DVSAdmin.Controllers
         {
             CabTransferRequestDto cabTransferRequestDto = await cabTransferService.GetCabTransferDetails(serviceId);
             return View(cabTransferRequestDto);
+        }
+
+        [HttpPost("reassign-cancelled")]
+        public async Task<IActionResult> ReassignmentRequestCancelled(int cabTransferRequestId, int toCabId, string serviceName, string providerName)
+        {
+            GenericResponse genericResponse = await cabTransferService.CancelCabTransferRequest(cabTransferRequestId, serviceName, providerName, toCabId, UserEmail);
+            return View();
         }
 
     }

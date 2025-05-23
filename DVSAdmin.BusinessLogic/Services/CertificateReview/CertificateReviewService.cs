@@ -91,7 +91,6 @@ namespace DVSAdmin.BusinessLogic.Services
                     await emailSender.SendCertificateInfoApprovedToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName);                  
                    
                 }
-
             }
             return genericResponse;
         }
