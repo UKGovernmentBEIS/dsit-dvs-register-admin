@@ -64,7 +64,10 @@ namespace DVSAdmin.CommonUtility.Models
         public CancelServiceRemovalRequestToProvider CancelServiceRemovalRequestToProvider { get; set; }
         public OpeningLoopProviderReminderToDSIT OpeningLoopProviderReminderToDSIT { get; set; }
         public ClosingLoopProviderReminderToDSIT ClosingLoopProviderReminderToDSIT { get; set; }
-
+        public CabTransferConfirmationToDSIT CabTransferConfirmationToDSIT { get; set; }
+        public CabTransferConfirmationToCAB CabTransferConfirmationToCAB { get; set; }
+        public CabTransferCancelledToDSIT CabTransferCancelledToDSIT { get; set; }
+        public CabTransferCancelledToCAB CabTransferCancelledToCAB { get; set; }
 
     }
 }
