@@ -1,4 +1,4 @@
-﻿using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -76,6 +76,14 @@ namespace DVSAdmin.Data.Repositories
 
         //ToDo : move to cabtranfser repository
 
+        public Task<List<Cab>> GetAllCabsAsync()
+            => context.Cabs
+                .OrderBy(c => c.CabName)
+                .ToListAsync();
+
+        public Task<Cab> GetCabByIdAsync(int cabId)
+            => context.Cabs.FindAsync(cabId).AsTask();
+        
         public async Task<Service> GetServiceDetails(int serviceId)
         {
             var service = await context.Service
@@ -206,7 +214,6 @@ namespace DVSAdmin.Data.Repositories
                     await transaction.RollbackAsync();
                     genericResponse.Success = false;
                 }
-
             }
             catch (Exception ex)
             {
@@ -214,10 +221,8 @@ namespace DVSAdmin.Data.Repositories
                 genericResponse.Success = false;
                 await transaction.RollbackAsync();
                 logger.LogError("SaveCabTransferRequest failed with {exception} ", ex.Message);
-
             }
             return genericResponse;
         }
-
     }
 }
