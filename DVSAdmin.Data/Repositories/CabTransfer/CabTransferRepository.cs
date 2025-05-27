@@ -23,6 +23,12 @@ namespace DVSAdmin.Data.Repositories
             public int TotalCount { get; set; }
         }
 
+        public async Task<List<CabUser>> GetActiveCabUsers(int cabId)
+        {
+           return await context.CabUser.Where(s => s.CabId ==cabId && s.IsActive).ToListAsync();
+           
+        }
+
         public async Task<PaginatedResult<Service>> GetServices(int pageNumber, string searchText = "")
         {
             var baseQuery = context.Service
