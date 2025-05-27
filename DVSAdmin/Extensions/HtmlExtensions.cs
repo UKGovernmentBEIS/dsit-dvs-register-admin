@@ -50,6 +50,7 @@ namespace DVSAdmin.Extensions
 
                 case ProviderStatusEnum.RemovedFromRegister:
                 case ServiceStatusEnum.Removed:
+                case ServiceStatusEnum.RemovedUnderReassign:
                     return "govuk-tag govuk-tag--grey";
 
 

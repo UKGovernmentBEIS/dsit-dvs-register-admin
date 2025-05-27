@@ -8,7 +8,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "ServiceReassign", "CabTransfer", new { serviceId = Model.Id }, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "ServiceReassign", "CabTransfer", new { serviceId = Model.ServiceId, isTransferOngoing = true }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -69,14 +69,23 @@
                         Once you cancel the reassignment request, the action cannot be undone.
                     </strong>
                 </div>
-                <div class="govuk-button-group">
-                    <button type="submit" class="govuk-button" data-module="govuk-button">
-                        Confirm
-                    </button>
-                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                        Cancel
-                    </button>
-                </div>
+                @using (Html.BeginForm("ReassignmentRequestCancelled", "CabTransfer", FormMethod.Post))
+                {
+                    // cabTransferRequestId, toCabId, serviceName, providerName
+                    @Html.Hidden("cabTransferRequestId", Model.Id)
+                    @Html.Hidden("toCabId", Model.ToCabId)
+                    @Html.Hidden("serviceName", Model.Service.ServiceName)
+                    @Html.Hidden("providerName", Model.ProviderProfile.RegisteredName)
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button" data-module="govuk-button">
+                            Confirm
+                        </button>
+                        <a href="@Url.Action("ServiceReassign", "CabTransfer", new { serviceId = Model.ServiceId, isTransferOngoing = true })"
+                           class="govuk-button govuk-button--secondary">
+                            Cancel
+                        </a>
+                    </div>
+                }
             </div>
         </div>
     </main>
