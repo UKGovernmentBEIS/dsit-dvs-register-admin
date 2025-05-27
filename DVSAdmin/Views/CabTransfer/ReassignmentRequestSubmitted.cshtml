@@ -1,5 +1,4 @@
-﻿@using DVSAdmin.BusinessLogic.Models
-@model CabTransferRequestDto
+﻿@model DVSAdmin.Models.CabTransfer.ReassignmentRequestSubmittedViewModel
 @{
 
     ViewData["Title"] = "Reassignment Request Submitted";
@@ -16,12 +15,12 @@
                     </h1>
                 </div>
                 <p class="govuk-body">
-                   You have successfully sent a request asking @Model.ToCab.CabName to
+                   You have successfully sent a request asking @Model.ToCabName to
                    accept reassignment of this service record:
                 </p>
                 <p class="govuk-body">
-                    Provider: @Model.ProviderProfile.RegisteredName <br />
-                    Service: @Model.Service.ServiceName <br />
+                    Provider: @Model.ProviderName <br />
+                    Service: @Model.ServiceName <br />
                 </p>
                 <p class="govuk-body">
                     This Conformity Assessment Body (CAB) will receive the request by email.
@@ -41,7 +40,9 @@
             </div>
         </div>
         <div class="govuk-button-group">
-            <a href="published-service-list" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+            <a asp-action="AllPublishedServices"
+               asp-controller="CabTransfer"
+               class="govuk-button">
                 Return to All published services
             </a>
         </div>

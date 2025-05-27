@@ -3,6 +3,7 @@ using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -16,10 +17,13 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
         private readonly CabTransferEmailSender emailSender;
         private readonly IJwtService jwtService;
         private readonly IConfiguration configuration;
+        private readonly IUserService userService;
 
-        public CabTransferService(ICabTransferRepository cabTransferRepository, IMapper automapper, CabTransferEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
+
+        public CabTransferService(ICabTransferRepository cabTransferRepository, IUserService userService, IMapper automapper, CabTransferEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
             this.cabTransferRepository = cabTransferRepository;
+            this.userService           = userService;
             this.automapper = automapper;
             this.emailSender = emailSender;
             this.jwtService = jwtService;
@@ -47,12 +51,6 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
                 .Select(c => new CabDto { Id = c.Id, CabName = c.CabName })
                 .ToList()
                 .AsReadOnly();
-        }
-
-        public Task<GenericResponse> ReassignServiceAsync(int serviceId, int newCabId, string userEmail)
-        {
-            // TODO: database update here…
-            return Task.FromResult(new GenericResponse { Success = true });
         }
         
         public async Task<ServiceDto> GetServiceDetails(int serviceId)
@@ -92,6 +90,5 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             GenericResponse genericResponse = await cabTransferRepository.CancelCabTransferRequest(cabTransferRequestId, loggedInUserEmail);
             return genericResponse;
         }
-
     }
 }
