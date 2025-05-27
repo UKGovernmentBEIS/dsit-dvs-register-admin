@@ -54,7 +54,6 @@
                     asp-route-serviceId="@Model.ServiceId"
                     method="post"
                     class="govuk-form-group govuk-!-margin-top-7 @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
-                    @Html.AntiForgeryToken()
 
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">

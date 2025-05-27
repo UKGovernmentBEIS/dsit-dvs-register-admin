@@ -1,7 +1,7 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 
-namespace DVSAdmin.Models
+namespace DVSAdmin.Models.CabTransfer
 {
     public class ServiceTransferViewModel
     {

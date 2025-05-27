@@ -6,27 +6,16 @@
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
-<div class="govuk-width-container">
-    @Html.ActionLink(
-        "Back",
-        "ServiceReassign",
-        "CabTransfer",
-        new { serviceId = Model.Id },
-        new { @class = "govuk-back-link" }
-    )
-
+<div class="govuk-width-container">@Html.ActionLink("Back", "ServiceReassign", "CabTransfer", new { serviceId = Model.Id }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-
                 <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
-
                 <p class="govuk-body">
                     You are about to reassign control of this service record from
                     <strong>@Model.CabUser.Cab.CabName</strong>
                     to another Conformity Assessment Body (CAB).
                 </p>
-
                 <p class="govuk-body">
                     You need to tell us who the accepting CAB should be, so we can email them and ask them to agree to this change.
                 </p>
@@ -42,19 +31,16 @@
                 <p class="govuk-body govuk-!-margin-bottom-8">
                     Services with a valid certificate of conformity will remain published to the register during the reassignment process.
                 </p>
-
                 <form
                   asp-action="ReassignServiceToCABPost"
                   asp-controller="CabTransfer"
                   asp-route-serviceId="@Model.Id"
                   method="post"
                   class="govuk-!-margin-bottom-0">
-                  @Html.AntiForgeryToken()
                   <button type="submit" class="govuk-button" data-module="govuk-button">
                     Continue
                   </button>
                 </form>
-
             </div>
         </div>
     </main>

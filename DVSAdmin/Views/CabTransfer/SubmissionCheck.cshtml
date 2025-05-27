@@ -1,0 +1,92 @@
+﻿@model DVSAdmin.Models.CabTransfer.SubmissionCheckViewModel
+@using DVSAdmin.Models.CabTransfer
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+  ViewData["Title"]        = "You are about to ask a Conformity Assessment Body to accept access to an existing service record";
+  Layout                   = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+  var transferViewModel           = (ServiceTransferViewModel)ViewData["ServiceTransferVm"];
+}
+
+<div class="govuk-width-container">@Html.ActionLink("Back", "SelectConformityAssessmentBody", "CabTransfer", new { serviceId = Model.ServiceId }, new { @class = "govuk-back-link" })
+  <main id="main-content" class="govuk-main-wrapper" role="main">
+    <div class="govuk-grid-row">
+
+      <div class="govuk-grid-column-three-quarters">
+        <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
+      </div>
+      <div class="govuk-grid-column-full">
+        <p class="govuk-body">
+          Please check the details of the Conformity Assessment Body (CAB)
+          you wish to reassign this service to, as well as the service details,
+          before you continue.
+        </p>
+        <p class="govuk-body">
+          We will email the accepting CAB and ask them to confirm they agree to the reassignment.
+        </p>
+        <p class="govuk-body">
+          If these details are correct, select ‘Reassign’ to continue.
+        </p>
+        <p class="govuk-body">
+          If these details are not correct, select ‘Cancel’ to return to ‘All published services’.
+        </p>
+        <div class="govuk-summary-card govuk-!-margin-top-6">
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">CAB details</h2>
+            <ul class="govuk-summary-card__actions">
+              <li class="govuk-summary-card__action">
+                <a asp-action="SelectConformityAssessmentBody"
+                   asp-route-serviceId="@Model.ServiceId"
+                   class="govuk-summary-card__change-link">
+                  Change
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="govuk-summary-card__content">
+            <dl class="govuk-summary-list">
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">CAB transferring this service</dt>
+                <dd class="govuk-summary-list__value">@Model.CurrentCabName</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">CAB accepting this service</dt>
+                <dd class="govuk-summary-list__value">@Model.SelectedCabName</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+        @await Html.PartialAsync("~/Views/CabTransfer/PartialViews/_ServiceDetailsTransferView.cshtml", transferViewModel)
+        <div class="govuk-grid-column-three-quarters govuk-!-padding-left-0 govuk-!-padding-bottom-0">
+          <div class="govuk-warning-text govuk-!-margin-top-6">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+              <span class="govuk-visually-hidden">Warning</span>
+              Once the CAB approves this request, the service record will be reassigned
+              to them. The CAB transferring this service will no longer have access to this record.
+            </strong>
+          </div>
+        </div>
+        <div class="govuk-grid-column-full govuk-!-padding-left-0">
+          <form asp-action="ReassignmentSubmitted"
+                asp-controller="CabTransfer"
+                asp-route-serviceId="@Model.ServiceId"
+                asp-route-toCabId="@Model.SelectedCabId"
+                method="post"
+                class="govuk-!-margin-top-0">
+            <button type="submit"
+                    class="govuk-button"
+                    data-module="govuk-button">
+              Reassign
+            </button>
+            <a asp-action="AllPublishedServices"
+               asp-controller="CabTransfer"
+               class="govuk-button govuk-button--secondary">
+              Cancel
+            </a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
