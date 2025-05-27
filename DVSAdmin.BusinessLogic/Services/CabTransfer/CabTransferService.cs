@@ -74,10 +74,15 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             GenericResponse genericResponse = await cabTransferRepository.SaveCabTransferRequest(cabTransferRequest, loggedInUserEmail);
             if (genericResponse.Success)
             {
-                await emailSender.SendCabTransferConfirmationToDSTI(cabTransferRequestDto.ToCab.Cab.CabName, cabTransferRequestDto.ProviderProfile.RegisteredName, 
-                    cabTransferRequestDto.Service.ServiceName);
-                await emailSender.SendCabTransferConfirmationToCAB(cabTransferRequestDto.ToCab.Cab.CabName, cabTransferRequestDto.ProviderProfile.RegisteredName,
-                    cabTransferRequestDto.Service.ServiceName, cabTransferRequestDto.ToCab.CabEmail);
+             await emailSender.SendCabTransferConfirmationToDSTI(cabTransferRequestDto.ToCab.CabName, cabTransferRequestDto.ProviderProfile.RegisteredName,
+                     cabTransferRequestDto.Service.ServiceName);
+                List<CabUser> activeCabUsers = await cabTransferRepository.GetActiveCabUsers(cabTransferRequestDto.ToCabId);
+                foreach(var user in activeCabUsers)
+                {                 
+                    await emailSender.SendCabTransferConfirmationToCAB(cabTransferRequestDto.ToCab.CabName, cabTransferRequestDto.ProviderProfile.RegisteredName,
+                        cabTransferRequestDto.Service.ServiceName, user.CabEmail);
+                }
+
 
             }
             return genericResponse;

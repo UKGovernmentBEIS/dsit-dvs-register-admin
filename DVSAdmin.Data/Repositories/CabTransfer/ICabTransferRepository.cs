@@ -7,6 +7,7 @@ namespace DVSAdmin.Data.Repositories
     public interface ICabTransferRepository
     {
         public Task<PaginatedResult<Service>> GetServices(int pageNumber, string searchText = "");
+        public Task<List<CabUser>> GetActiveCabUsers(int cabId);
         Task<List<Cab>> GetAllCabsAsync();
         Task<Cab> GetCabByIdAsync(int cabId);
         public Task<Service> GetServiceDetails(int serviceId);

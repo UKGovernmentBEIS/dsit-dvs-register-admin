@@ -142,6 +142,7 @@ namespace DVSAdmin
             services.AddTransient<RegManagementEmailSender>();
             services.AddTransient<RemoveProviderEmailSender>();
             services.AddTransient<EditEmailSender>();
+            services.AddTransient<CabTransferEmailSender>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {

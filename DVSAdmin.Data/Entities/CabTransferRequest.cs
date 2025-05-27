@@ -23,9 +23,9 @@ namespace DVSAdmin.Data.Entities
         public int FromCabUserId { get; set; }       
         public CabUser FromCabUser { get; set; }
 
-        [ForeignKey("CabUser")]
+        [ForeignKey("Cab")]
         public int ToCabId { get; set; }     
-        public CabUser ToCab { get; set; }       
+        public Cab ToCab { get; set; }       
         public ServiceStatusEnum PreviousServiceStatus { get; set; }        
         public bool CertificateUploaded { get; set; }      
 
