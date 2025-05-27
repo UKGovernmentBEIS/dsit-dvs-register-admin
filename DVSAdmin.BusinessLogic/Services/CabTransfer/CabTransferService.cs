@@ -11,7 +11,7 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
 {
     public class CabTransferService: ICabTransferService
     {
-        private readonly ICabTransferRepository cabTransferRepository;
+        private readonly ICabTransferRepository cabTransferRepository;        
         private readonly IMapper automapper;
         private readonly CabTransferEmailSender emailSender;
         private readonly IJwtService jwtService;
@@ -67,23 +67,22 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             CabTransferRequestDto cabTransferRequestDto = automapper.Map<CabTransferRequestDto>(cabTransferRequest);
             return cabTransferRequestDto;
         }
-        public async Task<GenericResponse> SaveCabTransferRequest(CabTransferRequestDto cabTransferRequestDto, string loggedInUserEmail)
+        public async Task<GenericResponse> SaveCabTransferRequest(CabTransferRequestDto cabTransferRequestDto,string serviceName, string providerName, string loggedInUserEmail)
         {
             CabTransferRequest cabTransferRequest = new();
             automapper.Map(cabTransferRequestDto, cabTransferRequest);
             GenericResponse genericResponse = await cabTransferRepository.SaveCabTransferRequest(cabTransferRequest, loggedInUserEmail);
+            
             if (genericResponse.Success)
             {
-             await emailSender.SendCabTransferConfirmationToDSTI(cabTransferRequestDto.ToCab.CabName, cabTransferRequestDto.ProviderProfile.RegisteredName,
-                     cabTransferRequestDto.Service.ServiceName);
                 List<CabUser> activeCabUsers = await cabTransferRepository.GetActiveCabUsers(cabTransferRequestDto.ToCabId);
+                var cabName = activeCabUsers.FirstOrDefault()?.Cab.CabName??string.Empty;
+                
+                await emailSender.SendCabTransferConfirmationToDSTI(cabName, providerName, serviceName);              
                 foreach(var user in activeCabUsers)
                 {                 
-                    await emailSender.SendCabTransferConfirmationToCAB(cabTransferRequestDto.ToCab.CabName, cabTransferRequestDto.ProviderProfile.RegisteredName,
-                        cabTransferRequestDto.Service.ServiceName, user.CabEmail);
+                    await emailSender.SendCabTransferConfirmationToCAB(cabName, providerName, serviceName, user.CabEmail);
                 }
-
-
             }
             return genericResponse;
         }

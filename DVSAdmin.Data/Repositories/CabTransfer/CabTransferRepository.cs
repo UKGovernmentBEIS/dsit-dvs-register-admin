@@ -25,7 +25,7 @@ namespace DVSAdmin.Data.Repositories
 
         public async Task<List<CabUser>> GetActiveCabUsers(int cabId)
         {
-           return await context.CabUser.Where(s => s.CabId ==cabId && s.IsActive).ToListAsync();
+           return await context.CabUser.Include(s=>s.Cab).Where(s => s.CabId ==cabId && s.IsActive).ToListAsync();
            
         }
 
