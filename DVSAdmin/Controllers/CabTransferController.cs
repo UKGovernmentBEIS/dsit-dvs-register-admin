@@ -151,11 +151,10 @@ namespace DVSAdmin.Controllers
                 PreviousServiceStatus   = serviceDto.ServiceStatus,
                 RequestManagement       = new RequestManagementDto {
                     RequestStatus = RequestStatusEnum.Pending,
-                    CabId = serviceDto.CabUser.CabId,
+                    CabId = toCabId,
                     InitiatedUserId = userDto.Id,
                     RequestType = RequestTypeEnum.CabTransfer,
                 },
-                DecisionTime            = DateTime.UtcNow
             };
             
             var result = await cabTransferService.SaveCabTransferRequest(requestDto, serviceDto.ServiceName, providerName, UserEmail);
