@@ -26,6 +26,7 @@ namespace DVSAdmin.Extensions
                 case ServiceStatusEnum.Published:
                 case ServiceStatusEnum.PublishedUnderReassign:
                 case ProviderStatusEnum.Published:
+                case ProviderStatusEnum.PublishedUnderReassign:
                 case ApplicationReviewStatusEnum.PrimaryCheckPassed:                        
                 case ApplicationReviewStatusEnum.ApplicationApproved:
                 case CertificateReviewEnum.Approved:
@@ -49,6 +50,7 @@ namespace DVSAdmin.Extensions
 
 
                 case ProviderStatusEnum.RemovedFromRegister:
+                case ProviderStatusEnum.RemovedUnderReassign:
                 case ServiceStatusEnum.Removed:
                 case ServiceStatusEnum.RemovedUnderReassign:
                     return "govuk-tag govuk-tag--grey";

@@ -12,7 +12,8 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
 {
     public class CabTransferService: ICabTransferService
     {
-        private readonly ICabTransferRepository cabTransferRepository;        
+        private readonly ICabTransferRepository cabTransferRepository;
+        private readonly IRemoveProviderService removeProviderService;
         private readonly IMapper automapper;
         private readonly CabTransferEmailSender emailSender;
         private readonly IJwtService jwtService;
@@ -20,9 +21,10 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
         private readonly IUserService userService;
 
 
-        public CabTransferService(ICabTransferRepository cabTransferRepository, IUserService userService, IMapper automapper, CabTransferEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
+        public CabTransferService(ICabTransferRepository cabTransferRepository, IRemoveProviderService removeProviderService, IUserService userService, IMapper automapper, CabTransferEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
             this.cabTransferRepository = cabTransferRepository;
+            this .removeProviderService = removeProviderService;
             this.userService           = userService;
             this.automapper = automapper;
             this.emailSender = emailSender;
@@ -73,6 +75,8 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             
             if (genericResponse.Success)
             {
+                await removeProviderService.UpdateProviderStatusByStatusPriority(cabTransferRequestDto.ProviderProfileId, loggedInUserEmail, EventTypeEnum.InitiateCabTranferRequest);
+
                 List<CabUser> activeCabUsers = await cabTransferRepository.GetActiveCabUsers(cabTransferRequestDto.ToCabId);
                 var cabName = activeCabUsers.FirstOrDefault()?.Cab.CabName??string.Empty;
                 
@@ -85,11 +89,13 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             return genericResponse;
         }
 
-        public async Task<GenericResponse> CancelCabTransferRequest(int cabTransferRequestId, string serviceName, string providerName,int toCabId,  string loggedInUserEmail)
+        public async Task<GenericResponse> CancelCabTransferRequest(int cabTransferRequestId, string serviceName, string providerName,int toCabId, int providerId, string loggedInUserEmail)
         {
             GenericResponse genericResponse = await cabTransferRepository.CancelCabTransferRequest(cabTransferRequestId, loggedInUserEmail);
             if (genericResponse.Success)
             {
+                await removeProviderService.UpdateProviderStatusByStatusPriority(providerId, loggedInUserEmail, EventTypeEnum.CancelCabTransferRequest);
+
                 List<CabUser> activeCabUsers = await cabTransferRepository.GetActiveCabUsers(toCabId);
                 var cabName = activeCabUsers.FirstOrDefault()?.Cab.CabName ?? string.Empty;
 

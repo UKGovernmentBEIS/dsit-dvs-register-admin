@@ -184,9 +184,9 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("reassign-cancelled")]
-        public async Task<IActionResult> ReassignmentRequestCancelled(int cabTransferRequestId, int toCabId, string serviceName, string providerName)
+        public async Task<IActionResult> ReassignmentRequestCancelled(int cabTransferRequestId, int toCabId, int providerId, string serviceName, string providerName)
         {
-            GenericResponse genericResponse = await cabTransferService.CancelCabTransferRequest(cabTransferRequestId, serviceName, providerName, toCabId, UserEmail);
+            GenericResponse genericResponse = await cabTransferService.CancelCabTransferRequest(cabTransferRequestId, serviceName, providerName, toCabId, providerId, UserEmail);
             return View();
         }
 
