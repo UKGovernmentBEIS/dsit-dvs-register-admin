@@ -9,10 +9,12 @@
 
 <div class="govuk-width-container">
     @Html.ActionLink("Back", "ServiceReassign", "CabTransfer", new { serviceId = Model.ServiceId, isTransferOngoing = true }, new { @class = "govuk-back-link" })
+
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <h1 class="govuk-heading-xl">Review this information and select 'Confirm' to cancel the assignment request.</h1>
+                <h1 class="govuk-heading-xl">Review this information and select 'Confirm' to cancel the assignment request</h1>
+
                 <div class="govuk-summary-card">
                     <div class="govuk-summary-card__title-wrapper">
                         <h2 class="govuk-summary-card__title">
@@ -57,36 +59,38 @@
                     </div>
                 </div>
 
-                <h2 class="govuk-heading-m">What will happen next</h2>
-                <p class="govuk-body">
-                    The reassignment request sent for this service will no longer be valid.
-                    If you need to reassign this service, you will need to create a new reassignment request.
-                </p>
-                <div class="govuk-warning-text">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-visually-hidden">Warning</span>
-                        Once you cancel the reassignment request, the action cannot be undone.
-                    </strong>
-                </div>
-                @using (Html.BeginForm("ReassignmentRequestCancelled", "CabTransfer", FormMethod.Post))
-                {
-                    // cabTransferRequestId, toCabId, serviceName, providerName
-                    @Html.Hidden("cabTransferRequestId", Model.Id)
-                    @Html.Hidden("toCabId", Model.ToCabId)
-                    @Html.Hidden("serviceName", Model.Service.ServiceName)
-                    @Html.Hidden("providerName", Model.ProviderProfile.RegisteredName)
-                    <div class="govuk-button-group">
-                        <button type="submit" class="govuk-button" data-module="govuk-button">
-                            Confirm
-                        </button>
-                        <a href="@Url.Action("ServiceReassign", "CabTransfer", new { serviceId = Model.ServiceId, isTransferOngoing = true })"
-                           class="govuk-button govuk-button--secondary">
-                            Cancel
-                        </a>
+                <div class="govuk-grid-column-two-thirds">
+                    <h2 class="govuk-heading-m">What will happen next</h2>
+                    <p class="govuk-body">
+                        The reassignment request sent for this service will no longer be valid.
+                        If you need to reassign this service, you will need to create a new reassignment request.
+                    </p>
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            Once you cancel the reassignment request, the action cannot be undone.
+                        </strong>
                     </div>
-                }
+
+                    @using (Html.BeginForm("ReassignmentRequestCancelled", "CabTransfer", FormMethod.Post))
+                    {
+                        @Html.Hidden("cabTransferRequestId", Model.Id)
+                        @Html.Hidden("toCabId", Model.ToCabId)
+                        @Html.Hidden("serviceName", Model.Service.ServiceName)
+                        @Html.Hidden("providerName", Model.ProviderProfile.RegisteredName)
+
+                        <div class="govuk-button-group">
+                            <button type="submit" class="govuk-button" data-module="govuk-button">
+                                Confirm
+                            </button>
+                            <a href="@Url.Action("ServiceReassign", "CabTransfer", new { serviceId = Model.ServiceId, isTransferOngoing = true })" class="govuk-button govuk-button--secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </main>
-</div>                       
+</div>
