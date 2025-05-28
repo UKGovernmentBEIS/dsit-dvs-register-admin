@@ -33,7 +33,9 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         ProviderStatusEnum.ReadyToPublish,
         ProviderStatusEnum.UpdatesRequested,
         ProviderStatusEnum.AwaitingRemovalConfirmation,
+        ProviderStatusEnum.PublishedUnderReassign,
         ProviderStatusEnum.Published,
+        ProviderStatusEnum.RemovedUnderReassign,
         ProviderStatusEnum.RemovedFromRegister
             };
 
@@ -57,7 +59,9 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                 ServiceStatusEnum.Received,
                 ServiceStatusEnum.AwaitingRemovalConfirmation,
                 ServiceStatusEnum.Submitted,
+                ServiceStatusEnum.PublishedUnderReassign,
                 ServiceStatusEnum.Published,
+                ServiceStatusEnum.RemovedUnderReassign,
                 ServiceStatusEnum.Removed
              };
 

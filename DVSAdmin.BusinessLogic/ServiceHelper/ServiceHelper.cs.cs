@@ -18,13 +18,17 @@ namespace DVSAdmin.BusinessLogic
                         ServiceStatusEnum.ReadyToPublish,
                         ServiceStatusEnum.UpdatesRequested,
                         ServiceStatusEnum.AwaitingRemovalConfirmation,
+                        ServiceStatusEnum.PublishedUnderReassign,
                         ServiceStatusEnum.Published,
+                        ServiceStatusEnum.RemovedUnderReassign,
                         ServiceStatusEnum.Removed
                     };
 
                 ServiceStatusEnum highestPriorityStatus = services
                    .Where(service => service.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
                     service.ServiceStatus == ServiceStatusEnum.Published ||
+                    service.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
+                    service.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign ||
                     service.ServiceStatus == ServiceStatusEnum.Removed ||
                     service.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
                     service.ServiceStatus == ServiceStatusEnum.UpdatesRequested ||
@@ -46,6 +50,10 @@ namespace DVSAdmin.BusinessLogic
                         return ProviderStatusEnum.AwaitingRemovalConfirmation;
                     case ServiceStatusEnum.Published:
                         return ProviderStatusEnum.Published;
+                    case ServiceStatusEnum.PublishedUnderReassign:
+                        return ProviderStatusEnum.PublishedUnderReassign;
+                    case ServiceStatusEnum.RemovedUnderReassign:
+                        return ProviderStatusEnum.RemovedUnderReassign;
                     case ServiceStatusEnum.Removed:
                         return ProviderStatusEnum.RemovedFromRegister;
                     default:
@@ -63,8 +71,10 @@ namespace DVSAdmin.BusinessLogic
             {
                 filteredServices = services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
                                     s.ServiceStatus == ServiceStatusEnum.Published ||
+                                    s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
                                     s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
                                     s.ServiceStatus == ServiceStatusEnum.Removed ||
+                                    s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign ||
                                     s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation ||
                                     s.ServiceStatus == ServiceStatusEnum.UpdatesRequested).ToList();
                
@@ -81,8 +91,10 @@ namespace DVSAdmin.BusinessLogic
             {
                 filteredServices = services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
                                     s.ServiceStatus == ServiceStatusEnum.Published ||
+                                    s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
                                     s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
                                     s.ServiceStatus == ServiceStatusEnum.Removed ||
+                                    s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign ||
                                     s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation ||
                                     s.ServiceStatus == ServiceStatusEnum.UpdatesRequested).ToList();
 
