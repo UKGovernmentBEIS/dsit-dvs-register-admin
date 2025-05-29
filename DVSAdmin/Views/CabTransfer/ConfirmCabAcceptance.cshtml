@@ -1,11 +1,10 @@
-﻿@model DVSAdmin.Models.CabTransfer.SubmissionCheckViewModel
-@using DVSAdmin.Models.CabTransfer
+﻿@model DVSAdmin.Models.CabTransfer.ConfirmCabAcceptanceViewModel
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
   ViewData["Title"]        = "You are about to ask a Conformity Assessment Body to accept access to an existing service record";
   Layout                   = "~/Views/Shared/_LayoutLoggedIn.cshtml";
-  var transferViewModel           = (ServiceTransferViewModel)ViewData["ServiceTransferVm"];
+  var transferViewModel = Model.TransferViewModel;
 }
 
 <div class="govuk-width-container">@Html.ActionLink("Back", "SelectConformityAssessmentBody", "CabTransfer", new { serviceId = Model.ServiceId }, new { @class = "govuk-back-link" })
