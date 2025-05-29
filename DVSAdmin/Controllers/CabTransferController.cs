@@ -68,7 +68,6 @@ namespace DVSAdmin.Controllers
         }
         
         [HttpPost("service-reassign-start")]
-        [ValidateAntiForgeryToken]
         public IActionResult ReassignServiceToCABPost(int serviceId)
         {
             return RedirectToAction(nameof(SelectConformityAssessmentBody), new { serviceId });
@@ -77,12 +76,14 @@ namespace DVSAdmin.Controllers
         [HttpGet("select-cab")]
         public async Task<IActionResult> SelectConformityAssessmentBody(int serviceId)
         {
-            var allCabs = await cabTransferService.ListCabsExceptCurrentAsync(serviceId);
+            ViewData["Cabs"] = await cabTransferService.ListCabsExceptCurrentAsync(serviceId);
 
+            var service = await cabTransferService.GetServiceDetails(serviceId);
             var selectCabViewModel = new SelectCabViewModel
             {
                 ServiceId     = serviceId,
-                Cabs          = allCabs,
+                CurrentCabId    = service.CabUser.CabId,
+                CurrentCabName  = service.CabUser.Cab.CabName,
                 SelectedCabId = null
             };
             return View("~/Views/CabTransfer/SelectConformityAssessmentBody.cshtml", selectCabViewModel);
@@ -96,45 +97,42 @@ namespace DVSAdmin.Controllers
         {
             if (!selectCabViewModel.SelectedCabId.HasValue)
             {
-                ModelState.AddModelError(
-                    nameof(selectCabViewModel.SelectedCabId),
-                    "Select the CAB this service should be reassigned to"
-                );
-                
-                selectCabViewModel.Cabs = await cabTransferService.ListCabsExceptCurrentAsync(serviceId);
-
+                ViewData["Cabs"] = await cabTransferService.ListCabsExceptCurrentAsync(serviceId);
                 return View(selectCabViewModel);
-            } 
-            return RedirectToAction(nameof(SubmissionCheck), new { serviceId = serviceId, toCabId = selectCabViewModel.SelectedCabId.Value }
+            }
+            
+            return RedirectToAction(nameof(ConfirmCabAcceptance), new { serviceId = serviceId, toCabId = selectCabViewModel.SelectedCabId.Value }
             );
         }
         
-        [HttpGet("submission-check")]
-        public async Task<IActionResult> SubmissionCheck(int serviceId, int toCabId)
+        [HttpGet("confirm-cab-acceptance")]
+        public async Task<IActionResult> ConfirmCabAcceptance(int serviceId, int toCabId)
         {
             var service = await cabTransferService.GetServiceDetails(serviceId);
             var chosenCab   = (await cabTransferService.ListCabsExceptCurrentAsync(serviceId))
                 .Single(c => c.Id == toCabId);
 
-            var submissionCheckViewModel = new SubmissionCheckViewModel {
-                ServiceId         = serviceId,
-                ServiceName       = service.ServiceName,
-                CurrentCabId      = service.CabUser.CabId,
-                CurrentCabName    = service.CabUser.Cab.CabName,
-                SelectedCabId     = chosenCab.Id,
-                SelectedCabName   = chosenCab.CabName
+            var confirmCabAcceptanceViewModel = new ConfirmCabAcceptanceViewModel
+            {
+                ServiceId          = serviceId,
+                ServiceName        = service.ServiceName,
+                CurrentCabId       = service.CabUser.CabId,
+                CurrentCabName     = service.CabUser.Cab.CabName,
+                SelectedCabId      = chosenCab.Id,
+                SelectedCabName    = chosenCab.CabName,
+
+                TransferViewModel = new ServiceTransferViewModel
+                {
+                    Service              = service,
+                    ToCabName            = chosenCab.CabName,
+                    IsServiceDetailsPage = false
+                }
             };
 
-            ViewData["ServiceTransferVm"] = new ServiceTransferViewModel {
-                Service              = service,
-                ToCabName            = chosenCab.CabName,
-                IsServiceDetailsPage = false
-            };
-
-            return View(submissionCheckViewModel);
+            return View(confirmCabAcceptanceViewModel);
         }
         
-        [HttpPost("submission-check")]
+        [HttpPost("confirm-cab-acceptance")]
         public async Task<IActionResult> ReassignmentSubmitted(int serviceId, int toCabId)
         {
         
@@ -160,17 +158,15 @@ namespace DVSAdmin.Controllers
             var result = await cabTransferService.SaveCabTransferRequest(requestDto, serviceDto.ServiceName, providerName, UserEmail);
             
             if (!result.Success)
-            {
-                ViewData["ErrorMessage"] = result.ErrorMessage ?? "Unable to reassign CAB";
-                return View("~/Views/Error/ServiceIssue.cshtml");
-            }
+                throw new InvalidOperationException(string.IsNullOrWhiteSpace(result.ErrorMessage) ? "Unable to reassign CAB" : result.ErrorMessage);
+            
             var dto = await cabTransferService.GetCabTransferDetails(serviceId);
 
             var reassignmentRequestSubmittedViewModel = new ReassignmentRequestSubmittedViewModel
             {
-                ToCabName     = dto.ToCab?.CabName ?? String.Empty,
-                ProviderName  = dto.ProviderProfile?.RegisteredName ?? String.Empty,
-                ServiceName   = dto.Service?.ServiceName ?? String.Empty
+                ToCabName     = dto.ToCab.CabName,
+                ProviderName  = dto.ProviderProfile.RegisteredName,
+                ServiceName   = dto.Service.ServiceName
             };
             
             return View("ReassignmentRequestSubmitted", reassignmentRequestSubmittedViewModel);
@@ -189,6 +185,5 @@ namespace DVSAdmin.Controllers
             GenericResponse genericResponse = await cabTransferService.CancelCabTransferRequest(cabTransferRequestId, serviceName, providerName, toCabId, providerId, UserEmail);
             return View();
         }
-
     }
 }
