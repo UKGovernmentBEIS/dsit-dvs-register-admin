@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models;
+﻿using DVSAdmin.CommonUtility;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,6 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             this.logger = logger;
         }
 
-
         public async Task<List<Service>> GetServiceListByProvider(int providerId)
         {
             return await context.Service.Where(p => p.ProviderProfileId == providerId &&
@@ -26,18 +26,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
         public async Task<List<ProviderProfile>> GetProviders()
         {
-            var priorityOrder = new List<ProviderStatusEnum>
-            {
-        ProviderStatusEnum.CabAwaitingRemovalConfirmation,
-        ProviderStatusEnum.ReadyToPublishNext,
-        ProviderStatusEnum.ReadyToPublish,
-        ProviderStatusEnum.UpdatesRequested,
-        ProviderStatusEnum.AwaitingRemovalConfirmation,
-        ProviderStatusEnum.PublishedUnderReassign,
-        ProviderStatusEnum.Published,
-        ProviderStatusEnum.RemovedUnderReassign,
-        ProviderStatusEnum.RemovedFromRegister
-            };
+            var priorityOrder = Helper.priorityOrderProvider;
 
             return await context.ProviderProfile
                 .Include(p => p.Services)
@@ -48,22 +37,9 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                 .ToListAsync();
         }
 
-
         public async Task<ProviderProfile> GetProviderDetails(int providerId)
         {
-            var priorityOrder = new List<ServiceStatusEnum>
-            {
-                ServiceStatusEnum.CabAwaitingRemovalConfirmation,
-                ServiceStatusEnum.ReadyToPublish,
-                ServiceStatusEnum.UpdatesRequested,
-                ServiceStatusEnum.Received,
-                ServiceStatusEnum.AwaitingRemovalConfirmation,
-                ServiceStatusEnum.Submitted,
-                ServiceStatusEnum.PublishedUnderReassign,
-                ServiceStatusEnum.Published,
-                ServiceStatusEnum.RemovedUnderReassign,
-                ServiceStatusEnum.Removed
-             };
+            var priorityOrder = Helper.priorityOrderService;
 
             return await context.ProviderProfile
                 .Include(p => p.Services.OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus))) 

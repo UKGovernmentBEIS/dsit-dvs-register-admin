@@ -1,4 +1,5 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
@@ -12,17 +13,7 @@ namespace DVSAdmin.BusinessLogic
             ProviderStatusEnum providerStatus = currentStatus;
             if (services != null && services.Count > 0)
             {
-                var priorityOrder = new List<ServiceStatusEnum>
-                    {
-                        ServiceStatusEnum.CabAwaitingRemovalConfirmation,
-                        ServiceStatusEnum.ReadyToPublish,
-                        ServiceStatusEnum.UpdatesRequested,
-                        ServiceStatusEnum.AwaitingRemovalConfirmation,
-                        ServiceStatusEnum.PublishedUnderReassign,
-                        ServiceStatusEnum.Published,
-                        ServiceStatusEnum.RemovedUnderReassign,
-                        ServiceStatusEnum.Removed
-                    };
+                var priorityOrder = Helper.priorityOrderService;
 
                 ServiceStatusEnum highestPriorityStatus = services
                    .Where(service => service.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
