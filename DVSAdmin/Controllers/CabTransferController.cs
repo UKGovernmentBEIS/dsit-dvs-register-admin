@@ -142,8 +142,7 @@ namespace DVSAdmin.Controllers
             var userDto = await userService.GetUser(UserEmail);
             
             var requestDto = new CabTransferRequestDto {
-                ServiceId               = serviceId,
-                ProviderProfileId       = serviceDto.ProviderProfileId,
+                ServiceId               = serviceId,               
                 FromCabUserId           = serviceDto.CabUser.Id,
                 ToCabId                 = toCabId,
                 PreviousServiceStatus   = serviceDto.ServiceStatus,
@@ -155,7 +154,7 @@ namespace DVSAdmin.Controllers
                 },
             };
             
-            var result = await cabTransferService.SaveCabTransferRequest(requestDto, serviceDto.ServiceName, providerName, UserEmail);
+            var result = await cabTransferService.SaveCabTransferRequest(requestDto, serviceDto.ProviderProfileId, serviceDto.ServiceName, providerName, UserEmail);
             
             if (!result.Success)
                 throw new InvalidOperationException(string.IsNullOrWhiteSpace(result.ErrorMessage) ? "Unable to reassign CAB" : result.ErrorMessage);
@@ -165,7 +164,7 @@ namespace DVSAdmin.Controllers
             var reassignmentRequestSubmittedViewModel = new ReassignmentRequestSubmittedViewModel
             {
                 ToCabName     = dto.ToCab.CabName,
-                ProviderName  = dto.ProviderProfile.RegisteredName,
+                ProviderName  = dto.Service.Provider.RegisteredName,
                 ServiceName   = dto.Service.ServiceName
             };
             

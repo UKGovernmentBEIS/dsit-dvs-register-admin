@@ -112,7 +112,7 @@ namespace DVSAdmin.Data.Repositories
         public async Task<CabTransferRequest> GetCabTransferDetails(int serviceId)
         {
             var cabTransferRequest = await context.CabTransferRequest
-                .Include(c => c.ProviderProfile)
+                .Include(c => c.Service).ThenInclude(c=>c.Provider)
                 .Include(c => c.Service)
                     .ThenInclude(s => s.ServiceIdentityProfileMapping)
                         .ThenInclude(ip => ip.IdentityProfile)
@@ -141,11 +141,10 @@ namespace DVSAdmin.Data.Repositories
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var existingRequest = await context.CabTransferRequest.Include(s => s.Service).Where(s => s.ServiceId == cabTransferRequest.ServiceId &&
-                s.ProviderProfileId == cabTransferRequest.ProviderProfileId &&
+                var existingRequest = await context.CabTransferRequest.Include(s => s.Service).Where(s => s.ServiceId == cabTransferRequest.ServiceId &&         
                 s.ToCabId == cabTransferRequest.ToCabId &&
                 s.FromCabUserId == cabTransferRequest.FromCabUserId
-                && s.RequestManagement != null && s.RequestManagement.RequestStatus == RequestStatusEnum.Pending).ToListAsync();
+                && s.RequestManagement != null && (s.RequestManagement.RequestStatus == RequestStatusEnum.Pending)).ToListAsync();
 
                 if (existingRequest != null && existingRequest.Count > 0)
                 {

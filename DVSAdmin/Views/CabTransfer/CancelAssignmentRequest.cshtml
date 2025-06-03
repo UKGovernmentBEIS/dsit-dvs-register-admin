@@ -36,7 +36,7 @@
                                     Registered name
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    @Model.ProviderProfile.RegisteredName
+                                    @Model.Service.Provider.RegisteredName
                                 </dd>
                             </div>
                             <div class="govuk-summary-list__row">
@@ -78,8 +78,8 @@
                         @Html.Hidden("cabTransferRequestId", Model.Id)
                         @Html.Hidden("toCabId", Model.ToCabId)
                         @Html.Hidden("serviceName", Model.Service.ServiceName)
-                        @Html.Hidden("providerName", Model.ProviderProfile.RegisteredName)
-                        @Html.Hidden("providerId", Model.ProviderProfileId)
+                        @Html.Hidden("providerName", Model.Service.Provider.RegisteredName)
+                        @Html.Hidden("providerId", Model.Service.Provider.Id)
 
                         <div class="govuk-button-group">
                             <button type="submit" class="govuk-button" data-module="govuk-button">
