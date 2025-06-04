@@ -15,21 +15,15 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
         private readonly ICabTransferRepository cabTransferRepository;
         private readonly IRemoveProviderService removeProviderService;
         private readonly IMapper automapper;
-        private readonly CabTransferEmailSender emailSender;
-        private readonly IJwtService jwtService;
-        private readonly IConfiguration configuration;
-        private readonly IUserService userService;
+        private readonly CabTransferEmailSender emailSender;     
 
 
         public CabTransferService(ICabTransferRepository cabTransferRepository, IRemoveProviderService removeProviderService, IUserService userService, IMapper automapper, CabTransferEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
         {
             this.cabTransferRepository = cabTransferRepository;
-            this .removeProviderService = removeProviderService;
-            this.userService           = userService;
+            this .removeProviderService = removeProviderService;            
             this.automapper = automapper;
-            this.emailSender = emailSender;
-            this.jwtService = jwtService;
-            this.configuration = configuration;
+            this.emailSender = emailSender;            
         }
 
         public async Task<PaginatedResult<ServiceDto>> GetServices(int pageNumber, string searchText = "")
@@ -67,7 +61,7 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             CabTransferRequestDto cabTransferRequestDto = automapper.Map<CabTransferRequestDto>(cabTransferRequest);
             return cabTransferRequestDto;
         }
-        public async Task<GenericResponse> SaveCabTransferRequest(CabTransferRequestDto cabTransferRequestDto,string serviceName, string providerName, string loggedInUserEmail)
+        public async Task<GenericResponse> SaveCabTransferRequest(CabTransferRequestDto cabTransferRequestDto, int providerProfileId, string serviceName, string providerName, string loggedInUserEmail)
         {
             CabTransferRequest cabTransferRequest = new();
             automapper.Map(cabTransferRequestDto, cabTransferRequest);
@@ -75,7 +69,7 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             
             if (genericResponse.Success)
             {
-                await removeProviderService.UpdateProviderStatusByStatusPriority(cabTransferRequestDto.ProviderProfileId, loggedInUserEmail, EventTypeEnum.InitiateCabTranferRequest);
+                await removeProviderService.UpdateProviderStatusByStatusPriority(providerProfileId, loggedInUserEmail, EventTypeEnum.InitiateCabTranferRequest);
 
                 List<CabUser> activeCabUsers = await cabTransferRepository.GetActiveCabUsers(cabTransferRequestDto.ToCabId);
                 var cabName = activeCabUsers.FirstOrDefault()?.Cab.CabName??string.Empty;
