@@ -30,7 +30,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
             return await context.ProviderProfile
                 .Include(p => p.Services)
-                .Include(x => x.CabUser).ThenInclude(x => x.Cab)
+                .Include(p => p.Services).ThenInclude(x => x.CabUser).ThenInclude(x => x.Cab)
                 .OrderBy(c => priorityOrder.IndexOf(c.ProviderStatus))
                 .ThenByDescending(c => c.ModifiedTime)
                 .Where(c => c.ProviderStatus > ProviderStatusEnum.Unpublished)
@@ -42,9 +42,8 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             var priorityOrder = Helper.priorityOrderService;
 
             return await context.ProviderProfile
-                .Include(p => p.Services.OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus))) 
-                .Include(x => x.CabUser)
-                .ThenInclude(x => x.Cab)
+                .Include(p => p.Services.OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus)))
+                .Include(p => p.Services).ThenInclude(x => x.CabUser).ThenInclude(x => x.Cab)
                 .Include(p => p.Services).ThenInclude(x => x.CertificateReview)
                 .Include(p => p.Services).ThenInclude(x => x.PublicInterestCheck)
                 .Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished))

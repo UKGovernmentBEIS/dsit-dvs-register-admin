@@ -34,7 +34,15 @@
                             <td class="govuk-table__cell">@Model.RegisteredName</td>
                             <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.ProviderStatus)</td>
                             <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.PublishedTime)</td>
-                            <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
+                            <td class="govuk-table__cell">
+                                @foreach (var cab in Model.Services.Select(s => s.CabUser.Cab.CabName).Distinct())
+                                {
+                                    <div class="govuk-!-margin-bottom-1">
+                                        @cab
+                                    </div>
+                                }
+                                
+                            </td>
                             <td class="govuk-table__cell">
                                 @foreach (var item in Model.Services.Where(s => s.ServiceStatus == ServiceStatusEnum.Published))
                                 {

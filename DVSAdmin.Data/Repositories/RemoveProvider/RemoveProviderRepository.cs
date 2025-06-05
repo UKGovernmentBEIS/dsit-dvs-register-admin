@@ -20,8 +20,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
         {
             return await context.ProviderProfile
                 .Include(p => p.Services)
-                .Include(x => x.CabUser)
-                .Include(x => x.CabUser).ThenInclude(x => x.Cab)
+                .Include(p => p.Services).ThenInclude(x => x.CabUser).ThenInclude(x => x.Cab)
                 .Include(p => p.Services).ThenInclude(x => x.CertificateReview)
                 .Include(p => p.Services).ThenInclude(x => x.PublicInterestCheck)
                 .Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();

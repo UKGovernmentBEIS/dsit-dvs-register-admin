@@ -76,6 +76,17 @@ namespace DVSAdmin.BusinessLogic.Services
             return serviceDto;
         }
 
+        public async Task<List<string>> GetCabEmailListForProvider(int providerId)
+        {
+            return await certificateReviewRepository.GetCabEmailListForProvider(providerId);
+        }
+
+        public async Task<List<string>> GetCabEmailListForServices(List<int> serviceIds)
+        {
+            return await certificateReviewRepository.GetCabEmailListForServices(serviceIds);
+        }
+
+
         public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail)
         {
             CertificateReview certificateReview = new();
