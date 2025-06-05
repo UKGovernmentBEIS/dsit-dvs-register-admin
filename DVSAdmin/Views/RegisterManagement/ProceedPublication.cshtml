@@ -1,4 +1,5 @@
 ﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models;
 @model ProviderProfileDto;
 @{
     ViewData["Title"] = "What will happen once you publish services on the register";
@@ -47,7 +48,12 @@
                             Email address of CAB
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.CabUser.CabEmail
+                            @foreach (var cab in Model.Services.Where(x=>x.ServiceStatus == ServiceStatusEnum.ReadyToPublish) .Select(s => s.CabUser.CabEmail).Distinct())
+                            {
+                                <div class="govuk-!-margin-bottom-1">
+                                    @cab
+                                </div>
+                            }
                         </dd>
                     </div>
                  
