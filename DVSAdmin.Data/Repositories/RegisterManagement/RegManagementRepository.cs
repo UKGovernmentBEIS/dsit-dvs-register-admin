@@ -113,6 +113,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                             {
                                 version.ServiceStatus = ServiceStatusEnum.Removed; // remove old published versions if any
                                 version.RemovedTime = DateTime.UtcNow;
+                                version.IsInRegister = false;
                             }
                         }
 
