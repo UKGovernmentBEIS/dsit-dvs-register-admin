@@ -41,7 +41,8 @@ namespace DVSAdmin.Data.Repositories.BackgroundJobs
                     service.ServiceStatus = ServiceStatusEnum.Removed;
                     service.ModifiedTime = DateTime.UtcNow;
                     service.RemovedTime = DateTime.UtcNow;
-                    service.ServiceRemovalReason = ServiceRemovalReasonEnum.RemovedByCronJob;                   
+                    service.ServiceRemovalReason = ServiceRemovalReasonEnum.RemovedByCronJob;
+                    service.IsInRegister = false;
                 }
 
                 await context.SaveChangesAsync();
