@@ -33,7 +33,8 @@ namespace DVSAdmin.Data.Repositories
         {
             var baseQuery = context.Service
                 .Include(s => s.Provider)
-                .Include(s => s.CabUser).ThenInclude(s => s.Cab);
+                .Include(s => s.CabUser).ThenInclude(s => s.Cab)
+                .Include(s => s.CabTransferRequest).ThenInclude(s => s.RequestManagement);
 
             var groupedQuery = await baseQuery
                 .GroupBy(s => s.ServiceKey)
@@ -41,10 +42,13 @@ namespace DVSAdmin.Data.Repositories
                 .ToListAsync();
 
             var filteredQuery = groupedQuery
-                .Where(s => s.ServiceStatus == ServiceStatusEnum.Published ||
-                             s.ServiceStatus == ServiceStatusEnum.Removed ||
-                             s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
-                             s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign);
+            .Where(s =>
+                (s.ServiceStatus == ServiceStatusEnum.Published ||
+                 s.ServiceStatus == ServiceStatusEnum.Removed) &&
+                !(s.CabTransferRequest?.Any(c => c.CertificateUploaded == false && c.RequestManagement?.RequestStatus == RequestStatusEnum.Approved) ?? false) ||
+                s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
+                s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign);
+
 
             if (!string.IsNullOrEmpty(searchText))
             {
