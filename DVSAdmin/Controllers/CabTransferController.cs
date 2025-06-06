@@ -23,21 +23,39 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpGet("published-service-list")]
-        public async Task<IActionResult> AllPublishedServices(int pageNumber = 1, string SearchText = "", string SearchAction = "")
+        public async Task<IActionResult> AllPublishedServices(string CurrentSort = "status", string CurrentSortAction = "ascending",
+            int pageNumber = 1, string SearchText = "", string SearchAction = "", string NewSort = "")
         {
-            if(SearchAction == "clearSearch")
+            if (NewSort != string.Empty)
+            {
+                if (CurrentSort == NewSort)
+                {
+                    CurrentSortAction = CurrentSortAction == "ascending" ? "descending" : "ascending";
+                }
+                else
+                {
+                    CurrentSort = NewSort;
+                    CurrentSortAction = "ascending";
+                }
+                pageNumber = 1;
+            }
+
+            if (SearchAction == "clearSearch")
             {
                 ModelState.Clear();
                 SearchText = string.Empty;
             }
-            var results = await cabTransferService.GetServices(pageNumber, SearchText);
+            var results = await cabTransferService.GetServices(pageNumber, CurrentSort, CurrentSortAction, SearchText);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
             ViewBag.CurrentPage = pageNumber;
+
             var serviceListViewModel = new ServiceListViewModel
             {
                 Services = results.Items,
-                TotalPages = totalPages
+                TotalPages = totalPages,
+                CurrentSort = CurrentSort,
+                CurrentSortAction = CurrentSortAction
             };
             return View(serviceListViewModel);
         }
