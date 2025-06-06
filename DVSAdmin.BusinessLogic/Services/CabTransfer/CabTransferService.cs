@@ -26,9 +26,9 @@ namespace DVSAdmin.BusinessLogic.Services.CabTransfer
             this.emailSender = emailSender;            
         }
 
-        public async Task<PaginatedResult<ServiceDto>> GetServices(int pageNumber, string searchText = "")
+        public async Task<PaginatedResult<ServiceDto>> GetServices(int pageNumber, string sort, string sortAction, string searchText = "")
         {
-            var paginatedServices = await cabTransferRepository.GetServices(pageNumber, searchText);
+            var paginatedServices = await cabTransferRepository.GetServices(pageNumber, sort, sortAction, searchText);
             var serviceDtos = automapper.Map<List<ServiceDto>>(paginatedServices.Items);
 
             return new PaginatedResult<ServiceDto>

@@ -7754,4 +7754,78 @@ x:-moz-any-link {
   line-height: 1.8em;
 }
 
+.sortable-table [aria-sort] {
+    color: #1D70B8;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    padding: 0 10px 0 0;
+    position: relative;
+    text-align: inherit;
+    font-size: 1em;
+    margin: 0;
+}
+.sortable-table [aria-sort] a {
+        text-decoration: none; 
+        color: inherit; 
+        display: inline-block; 
+        padding: 0; 
+        margin: 0;
+}
+.sortable-table [aria-sort] a:focus {
+            outline: none;    
+
+}
+.sortable-table [aria-sort]:focus {
+        background-color: #ffdd00;
+        color: #0b0c0c;
+        box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+        outline: none;
+
+    }
+
+.sortable-table [aria-sort]:first-child {
+        right: auto;
+    }
+
+.sortable-table [aria-sort] a:before {
+        content: " ▼";
+        position: absolute;
+        right: -1px;
+        top: 9px;
+        font-size: 0.5em;
+    }
+
+.sortable-table [aria-sort] a:after {
+        content: " ▲";
+        position: absolute;
+        right: -1px;
+        top: 1px;
+        font-size: 0.5em;
+    }
+
+.sortable-table [aria-sort=ascending] a:before,
+.sortable-table [aria-sort=descending] a:before {
+    content: none;
+}
+
+.sortable-table [aria-sort=ascending] a:after {
+    content: " ▲";
+    font-size: 0.8em;
+    position: absolute;
+    right: -1px;
+    top: 2px;
+}
+
+.sortable-table [aria-sort=descending] a:after {
+    content: " ▼";
+    font-size: 0.8em;
+    position: absolute;
+    right: -1px;
+    top: 2px;
+}
+
+
+
 /*# sourceMappingURL=main.css.map */

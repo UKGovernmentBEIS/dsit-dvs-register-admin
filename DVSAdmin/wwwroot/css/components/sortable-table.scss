@@ -1,0 +1,74 @@
+﻿.sortable-table {
+    [aria-sort] {
+        color: #005ea5;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        padding: 0 10px 0 0;
+        position: relative;
+        text-align: inherit;
+        font-size: 1em;
+        margin: 0;
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            display: inline-block; 
+            padding: 0; 
+            margin: 0;
+        }
+
+        a:focus {
+            outline: none;
+        }
+    }
+
+    [aria-sort]:focus {
+        background-color: #ffdd00;
+        color: #0b0c0c;
+        box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+        outline: none;
+    }
+
+    [aria-sort]:first-child {
+        right: auto;
+    }
+
+    [aria-sort] a:before {
+        content: " ▼";
+        position: absolute;
+        right: -1px;
+        top: 9px;
+        font-size: 0.5em;
+    }
+
+    [aria-sort] a:after {
+        content: " ▲";
+        position: absolute;
+        right: -1px;
+        top: 1px;
+        font-size: 0.5em;
+    }
+
+    [aria-sort=ascending] a:before,
+    [aria-sort=descending] a:before {
+        content: none;
+    }
+
+    [aria-sort=ascending] a:after {
+        content: " ▲";
+        font-size: 0.8em;
+        position: absolute;
+        right: -5px;
+        top: 2px;
+    }
+
+    [aria-sort=descending] a:after {
+        content: " ▼";
+        font-size: 0.8em;
+        position: absolute;
+        right: -5px;
+        top: 2px;
+    }
+}
