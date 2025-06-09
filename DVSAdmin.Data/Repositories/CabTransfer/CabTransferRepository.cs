@@ -54,7 +54,8 @@ namespace DVSAdmin.Data.Repositories
             {
                 searchText = searchText.Trim().ToLower();
                 filteredQuery = filteredQuery
-                    .Where(s => s.ServiceName.ToLower().Contains(searchText))
+                    .Where(s => s.ServiceName.ToLower().Contains(searchText) ||
+                    s.Provider.RegisteredName.ToLower().Contains(searchText))
                     .ToList();
             }
 
