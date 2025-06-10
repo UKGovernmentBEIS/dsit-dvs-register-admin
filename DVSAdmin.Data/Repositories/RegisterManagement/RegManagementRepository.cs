@@ -50,6 +50,18 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                 .FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
+
+        public async Task<ProviderProfile> GetProviderDetailsWithOutReviewDetails(int providerId)
+        {
+            var priorityOrder = Helper.priorityOrderService;
+
+            return await context.ProviderProfile
+                .Include(p => p.Services.OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus)))
+                .Include(p => p.Services).ThenInclude(x => x.CabUser).ThenInclude(x => x.Cab)        
+                .Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished))
+                .FirstOrDefaultAsync() ?? new ProviderProfile();
+        }
+
         public async Task<List<Service>> GetServiceVersionList(int serviceKey)
         {
             return await context.Service
