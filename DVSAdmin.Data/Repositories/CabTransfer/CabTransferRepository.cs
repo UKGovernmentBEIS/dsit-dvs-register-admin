@@ -42,12 +42,10 @@ namespace DVSAdmin.Data.Repositories
                 .ToListAsync();
 
             var filteredQuery = groupedQuery
-            .Where(s =>
-                (s.ServiceStatus == ServiceStatusEnum.Published ||
-                 s.ServiceStatus == ServiceStatusEnum.Removed) &&
-                !(s.CabTransferRequest?.Any(c => c.CertificateUploaded == false && c.RequestManagement?.RequestStatus == RequestStatusEnum.Approved) ?? false) ||
-                s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
-                s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign);
+            .Where(s => s.ServiceStatus == ServiceStatusEnum.Published ||
+                 s.ServiceStatus == ServiceStatusEnum.Removed ||
+                (s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
+                s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign) && !(s.CabTransferRequest?.Any(c => c.CertificateUploaded == false && c.RequestManagement?.RequestStatus == RequestStatusEnum.Approved) ?? false));
 
 
             if (!string.IsNullOrEmpty(searchText))
