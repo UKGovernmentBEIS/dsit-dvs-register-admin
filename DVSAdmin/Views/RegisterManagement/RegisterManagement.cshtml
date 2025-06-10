@@ -46,7 +46,15 @@
                                         <td class="govuk-table__cell"> @Html.ActionLink(@item.RegisteredName, "ProviderDetails", "RegisterManagement", new { @providerId = item.Id }, new { @class = "govuk-link" })</td>
                                         <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@item.ProviderStatus) </td>
                                         <td class="govuk-table__cell">@(DateTimeExtensions.FormatDateTime(item.ModifiedTime))</td>
-                                        <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
+                                        <td class="govuk-table__cell">
+                                            @foreach (var cab in item.Services.Select(s => s.CabUser.Cab.CabName).Distinct())
+                                            {
+                                                <div class="govuk-!-margin-bottom-1">
+                                                    @cab
+                                                </div>
+                                            }
+                                            
+                                            </td>
                                         <td class="govuk-table__cell">
                                             @foreach (var item1 in item.Services)
                                             {

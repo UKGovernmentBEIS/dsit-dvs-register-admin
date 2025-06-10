@@ -14,21 +14,24 @@ namespace DVSAdmin.BusinessLogic.Services
     public class RemoveProviderService : IRemoveProviderService
     {
         private readonly IRemoveProviderRepository removeProviderRepository;
+        private readonly ICertificateReviewService certificateReviewService;
         private readonly IMapper automapper;
         private readonly RemoveProviderEmailSender emailSender;
         private readonly IJwtService jwtService;
         private readonly IConfiguration configuration;
+        
 
 
 
         public RemoveProviderService(IRemoveProviderRepository removeProviderRepository, IMapper automapper,
-          RemoveProviderEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
+          RemoveProviderEmailSender emailSender, ICertificateReviewService certificateReviewService, IJwtService jwtService, IConfiguration configuration)
         {
             this.removeProviderRepository = removeProviderRepository;
+            this.certificateReviewService = certificateReviewService;
             this.automapper = automapper;
             this.emailSender = emailSender;      
             this.jwtService = jwtService;
-            this.configuration = configuration;
+            this.configuration = configuration;            
         }
         public async Task<ServiceDto> GetServiceDetails(int serviceId)
         {
@@ -169,7 +172,8 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await removeProviderRepository.RemoveServiceRequestByCab(providerProfileId, serviceIds, loggedInUserEmail);
                        
             if (genericResponse.Success)
-            {            
+            {        
+                 List<string>  cabEmails = await certificateReviewService.GetCabEmailListForProvider(providerProfileId);
                 // update provider status
                 
                 // save token for 2i check
@@ -181,9 +185,11 @@ namespace DVSAdmin.BusinessLogic.Services
                if (genericResponse.Success && providerProfile.ProviderStatus == ProviderStatusEnum.RemovedFromRegister)
                 {
                     //35/CAB + Provider/Whole record
-
+                    foreach (var cabEmail in cabEmails)
+                    {
+                        await emailSender.RecordRemovedConfirmedToCabOrProvider(cabEmail, cabEmail, providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
+                    }
                     await emailSender.SendRecordRemovedToDSIT(providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
-                    await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.CabUser.CabEmail, providerProfile.CabUser.CabEmail, providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
                     await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.PrimaryContactFullName, providerProfile.PrimaryContactEmail, providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
                     await emailSender.RecordRemovedConfirmedToCabOrProvider(providerProfile.SecondaryContactFullName, providerProfile.SecondaryContactEmail, providerProfile.RegisteredName, service.ServiceName, Constants.CabHasWithdrawnCertificate);
                 }

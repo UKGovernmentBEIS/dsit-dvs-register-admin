@@ -1,5 +1,6 @@
 ﻿using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Data.Entities;
 using System.Text.Json.Serialization;
 
 namespace DVSAdmin.BusinessLogic.Models
@@ -52,5 +53,9 @@ namespace DVSAdmin.BusinessLogic.Models
 
         [JsonIgnore]
         public ServiceDraftDto ServiceDraft { get; set; }
+
+        [JsonIgnore]
+        public ICollection<CabTransferRequestDto> CabTransferRequest { get; set; }
+        public int CabTransferRequestId { get; set; }
     }
 }

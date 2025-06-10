@@ -1,0 +1,134 @@
+﻿@using DVSAdmin.CommonUtility.Models
+@using DVSAdmin.Extensions
+@using DVSAdmin.Models.CabTransfer
+@model ServiceListViewModel
+
+@{
+    ViewData["Title"] = "All published services";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+
+    var priorityOrder = new List<ServiceStatusEnum>
+    {
+        ServiceStatusEnum.PublishedUnderReassign,
+        ServiceStatusEnum.Published,
+        ServiceStatusEnum.RemovedUnderReassign,
+        ServiceStatusEnum.Removed
+    };
+    
+}
+
+<div class="govuk-width-container">
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                @Html.ActionLink("Home", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-breadcrumbs__link" })
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                @Html.ActionLink("List of all services", "AllPublishedServices", "CabTransfer", null, new { @class = "govuk-breadcrumbs__link" })
+            </li>
+        </ol>
+    </div>
+
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">All published services</h1>
+                <p class="govuk-body">
+                    These services are currently, or have previously been, published on the public register.
+                </p>
+                <p class="govuk-body">
+                    Select a service to reassign it to another Conformity Assessment Body, following a transfer of certification.
+                </p>
+            </div>
+
+            @using (Html.BeginForm("ListProviders", "Cab", FormMethod.Get))
+            {
+                <div class="govuk-grid-column-two-thirds">
+                    @{
+                        var searchTextBoxViewModel = new TextBoxViewModel
+                        {
+                            PropertyName = "SearchText",
+                            Label = "Search for a service",
+                            Value = Model?.SearchText ?? string.Empty,
+                            Class = "govuk-input",
+                            Hint = "You can find a service by searching for its name, the service provider's name, or CAB name"
+                        };
+                    }
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_TextBoxView.cshtml", searchTextBoxViewModel)
+
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="SearchAction" value="search">
+                            Search
+                        </button>
+                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="SearchAction" value="clearSearch">
+                            Clear search
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <table class="govuk-table govuk-table--small-text-until-tablet moj-sortable-table" data-module="moj-sortable-table">
+                    <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">
+                        search results table - column headers with buttons are sortable
+                    </caption>
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header" aria-sort="none">Service name</th>
+                            <th scope="col" class="govuk-table__header" aria-sort="none">Service Provider</th>
+                            <th scope="col" class="govuk-table__header" aria-sort="none">Conformity Assessment Body</th>
+                            <th scope="col" class="govuk-table__header" aria-sort="ascending">Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="govuk-table__body">
+                        @if (Model?.Services != null && Model.Services.Count > 0)
+                        {
+                            @foreach (var item in Model.Services)
+                            {                                                     
+                                int sortValue = priorityOrder.IndexOf(item.ServiceStatus);                               
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell" data-sort-value="@item.ServiceName">
+                                    @Html.ActionLink(
+                                             item.ServiceName,
+                                             "ServiceReassign",
+                                             "CabTransfer",
+                                             new { serviceId = item.Id, IsTransferOngoing = (item.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign
+                                             || item.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign ) ? true : false },
+                                             new { @class = "govuk-link" }
+                                             )
+                                    </td>
+                                    <td class="govuk-table__cell"> @item.Provider.RegisteredName</td>
+                                    <td class="govuk-table__cell"> @item.CabUser.Cab.CabName</td>
+                                    <td class="govuk-table__cell" data-sort-value="@sortValue"> @HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" colspan="4">
+                                    <p class="govuk-body"><b>Your search did not match any services.</b></p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @{
+                    PaginationViewModel paginationViewModel = new PaginationViewModel
+                    {
+                        Action = "AllPublishedServices",
+                        CurrentPage = ViewBag.CurrentPage,
+                        TotalPages = Model.TotalPages
+                    };
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_PaginationView.cshtml", paginationViewModel)
+                }
+            </div>
+        </div>
+    </main>
+</div>

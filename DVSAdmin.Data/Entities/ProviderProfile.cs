@@ -31,10 +31,7 @@ namespace DVSAdmin.Data.Entities
         public string? ProviderTelephoneNumber { get; set; }
         public string ProviderWebsiteAddress { get; set; }
         public RemovalReasonsEnum? RemovalReason { get; set; }
-
-        [ForeignKey("CabUser")]
-        public int CabUserId { get; set; }
-        public CabUser CabUser { get; set; }
+      
         public ProviderStatusEnum ProviderStatus { get; set; }
         public ICollection<Service>? Services { get; set; }      
         public DateTime? CreatedTime { get; set; }
@@ -46,8 +43,8 @@ namespace DVSAdmin.Data.Entities
         public RemoveProviderToken RemoveProviderToken { get; set; }
         public TokenStatusEnum EditProviderTokenStatus { get; set; }
         public bool IsInRegister { get; set; }
-
-        [JsonIgnore]
+      
         public ProviderProfileDraft ProviderProfileDraft { get; set; }
+        public ICollection<ProviderProfileCabMapping> ProviderProfileCabMapping { get; set; }
     }
 }

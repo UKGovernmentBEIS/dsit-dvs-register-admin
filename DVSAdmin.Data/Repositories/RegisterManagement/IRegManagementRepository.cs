@@ -1,5 +1,4 @@
 ﻿using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 
 
@@ -15,5 +14,11 @@ namespace DVSAdmin.Data.Repositories
         public Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail, List<int> serviceIds);       
         public Task<List<Service>> GetPublishedServices();
         public Task<List<Service>> GetServiceVersionList(int serviceKey);
+        public Task<List<Service>> GetServiceListByProvider(int providerId);
+        public Task<ProviderProfile> GetProviderDetailsWithOutReviewDetails(int providerId);
+
+
+
+
     }
 }

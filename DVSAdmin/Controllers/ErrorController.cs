@@ -8,8 +8,15 @@ namespace DVSAdmin.Controllers
         [HttpGet("service-error")]
         public IActionResult HandleException()
         {
-            HttpContext.Session.Clear();
+            if (HttpContext != null)
+            {
+                HttpContext.Session.Clear();
+                HttpContext.Response.Clear();
+                HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            }
             return View("ServiceIssue");
         }
+
+
     }
 }

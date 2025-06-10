@@ -3,6 +3,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -18,12 +19,7 @@ namespace DVSAdmin.Data.Repositories
         }
        
 
-        public async Task<List<Service>> GetServiceListByProvider(int providerId)
-        {
-            return await context.Service.Where(p => p.ProviderProfileId == providerId && 
-            (p.ServiceStatus == ServiceStatusEnum.ReadyToPublish || p.ServiceStatus == ServiceStatusEnum.Published))
-            .ToListAsync()??new List<Service>();
-        }    
+        
 
         public async Task<CertificateReview> GetCertificateReview(int reviewId)
         {
@@ -114,6 +110,17 @@ namespace DVSAdmin.Data.Repositories
             return service;
         }
 
+        public async Task<List<string>> GetCabEmailListForProvider(int providerId)
+        {
+            return await context.Service.Include(p => p.CabUser).Where(x => x.ProviderProfileId == providerId).Select(x => x.CabUser.CabEmail).Distinct().ToListAsync();
+
+        }
+
+        public async Task<List<string>> GetCabEmailListForServices(List<int> serviceIds)
+        {
+            return await context.Service.Include(p => p.CabUser).Where(x =>  serviceIds.Contains(x.Id)).Select(x => x.CabUser.CabEmail).Distinct().ToListAsync();
+
+        }
 
         #region Save, update
 

@@ -77,10 +77,11 @@ namespace DVSAdmin.BusinessLogic.Services
         public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerProfileId, string loggedInUserEmail)
         {
             GenericResponse genericResponse = await regManagementRepository.UpdateServiceStatus(serviceIds, providerProfileId,  loggedInUserEmail);            
-            ProviderProfile providerProfile = await regManagementRepository.GetProviderDetails(providerProfileId);
+            ProviderProfile providerProfile = await regManagementRepository.GetProviderDetailsWithOutReviewDetails(providerProfileId);
             ProviderStatusEnum currentStatus = providerProfile.ProviderStatus;// keep current status for log
-            List<Service> serviceList = await certificateReviewRepository.GetServiceListByProvider(providerProfileId);        
-            string verifiedCab = providerProfile.CabUser.CabEmail;
+            List<Service> serviceList = await regManagementRepository.GetServiceListByProvider(providerProfileId);              
+            var cabEmails = await certificateReviewRepository.GetCabEmailListForProvider(providerProfileId);
+            
             string services = string.Join("\r", serviceList.Where(item => serviceIds.Contains(item.Id)).Select(x => x.ServiceName.ToString()).ToArray())??string.Empty;
         
             // update provider status based on priority
@@ -99,9 +100,13 @@ namespace DVSAdmin.BusinessLogic.Services
 
               
                 await emailSender.SendServicePublishedToDIP(providerProfile.PrimaryContactFullName, services, providerProfile.RegisteredName, providerProfile.PrimaryContactEmail);
-                await emailSender.SendServicePublishedToDIP(providerProfile.SecondaryContactFullName, services, providerProfile.RegisteredName, providerProfile.SecondaryContactEmail);               
-                await emailSender.SendServicePublishedToCAB(verifiedCab, services, providerProfile.RegisteredName, verifiedCab);
+                await emailSender.SendServicePublishedToDIP(providerProfile.SecondaryContactFullName, services, providerProfile.RegisteredName, providerProfile.SecondaryContactEmail);                              
                 await emailSender.SendServicePublishedToDSIT(providerProfile.RegisteredName, services);
+                foreach(var cabEmail in cabEmails)
+                {
+                    await emailSender.SendServicePublishedToCAB(cabEmail, services, providerProfile.RegisteredName, cabEmail);
+                }
+               
             }
 
             return genericResponse;
@@ -114,6 +119,8 @@ namespace DVSAdmin.BusinessLogic.Services
             return ServiceHelper.FilterByServiceStatus(services);
 
         }
+
+       
 
     }
 }

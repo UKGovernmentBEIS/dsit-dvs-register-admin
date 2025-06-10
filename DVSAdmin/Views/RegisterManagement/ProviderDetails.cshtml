@@ -4,7 +4,7 @@
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using DVSAdmin.CommonUtility.Models;
 @{
-    ViewData["Title"] = "Provider Details";
+    ViewData["Title"] = "Provider contact information";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 
     var providerEmailsViewModel = new ProviderEmailsViewModel
@@ -14,6 +14,15 @@
     };
 
     ViewBag.showViewDetailsLink = true;
+
+    var isRemovable = Model.Services.Any(service =>
+        (service.ServiceStatus == ServiceStatusEnum.Published ||
+         service.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation) &&
+        !Model.Services.Any(s =>
+            s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
+            s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign));
+
+
 }
 
 <div class="govuk-width-container">
@@ -104,10 +113,7 @@
                             Publish
                         </a>
                     }
-
-                    @if (Model.Services.Any(service =>
-                    service.ServiceStatus == ServiceStatusEnum.Published ||
-                    service.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation))
+                    @if (isRemovable)
                     {
                         <a href="/remove/provider/reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">
                             Remove provider from register
