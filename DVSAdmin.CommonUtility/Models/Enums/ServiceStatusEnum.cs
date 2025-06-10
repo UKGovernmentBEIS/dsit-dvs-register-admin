@@ -29,7 +29,11 @@ namespace DVSAdmin.CommonUtility.Models
         [Description("Sent back to CAB")]
         AmendmentsRequired = 10,
         [Description("Received")]
-        Resubmitted = 11
+        Resubmitted = 11,
+        [Description("Published, under reassignment")]
+        PublishedUnderReassign = 12,
+        [Description("Removed, under reassignment")]
+        RemovedUnderReassign = 13
     }
 
     public static class ServiceStatusEnumExtensions

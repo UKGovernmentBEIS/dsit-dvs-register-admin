@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models;
+﻿using DVSAdmin.CommonUtility;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -16,49 +17,47 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             this.logger = logger;
         }
 
+        public async Task<List<Service>> GetServiceListByProvider(int providerId)
+        {
+            return await context.Service.Where(p => p.ProviderProfileId == providerId &&
+            (p.ServiceStatus == ServiceStatusEnum.ReadyToPublish || p.ServiceStatus == ServiceStatusEnum.Published))
+            .ToListAsync() ?? new List<Service>();
+        }
+
         public async Task<List<ProviderProfile>> GetProviders()
         {
-            var priorityOrder = new List<ProviderStatusEnum>
-            {
-        ProviderStatusEnum.CabAwaitingRemovalConfirmation,
-        ProviderStatusEnum.ReadyToPublishNext,
-        ProviderStatusEnum.ReadyToPublish,
-        ProviderStatusEnum.UpdatesRequested,
-        ProviderStatusEnum.AwaitingRemovalConfirmation,
-        ProviderStatusEnum.Published,
-        ProviderStatusEnum.RemovedFromRegister
-            };
+            var priorityOrder = Helper.priorityOrderProvider;
 
             return await context.ProviderProfile
                 .Include(p => p.Services)
-                .Include(x => x.CabUser).ThenInclude(x => x.Cab)
+                .Include(p => p.Services).ThenInclude(x => x.CabUser).ThenInclude(x => x.Cab)
                 .OrderBy(c => priorityOrder.IndexOf(c.ProviderStatus))
                 .ThenByDescending(c => c.ModifiedTime)
                 .Where(c => c.ProviderStatus > ProviderStatusEnum.Unpublished)
                 .ToListAsync();
         }
 
-
         public async Task<ProviderProfile> GetProviderDetails(int providerId)
         {
-            var priorityOrder = new List<ServiceStatusEnum>
-            {
-                ServiceStatusEnum.CabAwaitingRemovalConfirmation,
-                ServiceStatusEnum.ReadyToPublish,
-                ServiceStatusEnum.UpdatesRequested,
-                ServiceStatusEnum.Received,
-                ServiceStatusEnum.AwaitingRemovalConfirmation,
-                ServiceStatusEnum.Submitted,
-                ServiceStatusEnum.Published,
-                ServiceStatusEnum.Removed
-             };
+            var priorityOrder = Helper.priorityOrderService;
 
             return await context.ProviderProfile
-                .Include(p => p.Services.OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus))) 
-                .Include(x => x.CabUser)
-                .ThenInclude(x => x.Cab)
+                .Include(p => p.Services.OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus)))
+                .Include(p => p.Services).ThenInclude(x => x.CabUser).ThenInclude(x => x.Cab)
                 .Include(p => p.Services).ThenInclude(x => x.CertificateReview)
                 .Include(p => p.Services).ThenInclude(x => x.PublicInterestCheck)
+                .Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished))
+                .FirstOrDefaultAsync() ?? new ProviderProfile();
+        }
+
+
+        public async Task<ProviderProfile> GetProviderDetailsWithOutReviewDetails(int providerId)
+        {
+            var priorityOrder = Helper.priorityOrderService;
+
+            return await context.ProviderProfile
+                .Include(p => p.Services.OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus)))
+                .Include(p => p.Services).ThenInclude(x => x.CabUser).ThenInclude(x => x.Cab)        
                 .Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished))
                 .FirstOrDefaultAsync() ?? new ProviderProfile();
         }
@@ -126,6 +125,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                             {
                                 version.ServiceStatus = ServiceStatusEnum.Removed; // remove old published versions if any
                                 version.RemovedTime = DateTime.UtcNow;
+                                version.IsInRegister = false;
                             }
                         }
 
@@ -190,6 +190,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                          && ci.ServiceStatus != ServiceStatusEnum.SavedAsDraft
                          && ci.Provider.ProviderStatus !=ProviderStatusEnum.RemovedFromRegister)
             .ToListAsync();
-        }
+        }       
+
     }
 }

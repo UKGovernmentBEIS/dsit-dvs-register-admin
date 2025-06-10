@@ -21,7 +21,10 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("Removal requested by CAB")]
         CabAwaitingRemovalConfirmation = 7,
         [Description("Updates requested")]
-        UpdatesRequested = 8
-
+        UpdatesRequested = 8,
+        [Description("Published, under reassignment")]
+        PublishedUnderReassign = 9,
+        [Description("Removed, under reassignment")]
+        RemovedUnderReassign = 10
     }
 }

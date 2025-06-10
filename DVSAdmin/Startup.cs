@@ -3,6 +3,7 @@ using Amazon.S3;
 using DVSAdmin.BusinessLogic;
 using DVSAdmin.BusinessLogic.Models.Cookies;
 using DVSAdmin.BusinessLogic.Services;
+using DVSAdmin.BusinessLogic.Services.CabTransfer;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.JWT;
@@ -133,12 +134,15 @@ namespace DVSAdmin
             services.AddScoped<IRemoveProviderRepository, RemoveProviderRepository>();
             services.AddScoped<IEditService, EditService>();
             services.AddScoped<IEditRepository, EditRepository>();
+            services.AddScoped<ICabTransferService, CabTransferService>();
+            services.AddScoped<ICabTransferRepository, CabTransferRepository>();
             services.AddTransient<LoginEmailSender>();
             services.AddTransient<CertificateReviewEmailSender>();
             services.AddTransient<PICheckEmailSender>();
             services.AddTransient<RegManagementEmailSender>();
             services.AddTransient<RemoveProviderEmailSender>();
             services.AddTransient<EditEmailSender>();
+            services.AddTransient<CabTransferEmailSender>();
         }
         public void ConfigureAutomapperServices(IServiceCollection services)
         {

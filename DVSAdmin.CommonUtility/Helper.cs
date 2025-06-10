@@ -1,5 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-using Newtonsoft.Json.Linq;
+﻿using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using QRCoder;
 using System.Text;
 
@@ -50,5 +50,32 @@ namespace DVSAdmin.CommonUtility
 
             return result.ToString();
         }
+
+        public static List<ProviderStatusEnum> priorityOrderProvider = new List<ProviderStatusEnum>
+        {
+            ProviderStatusEnum.CabAwaitingRemovalConfirmation,
+            ProviderStatusEnum.ReadyToPublishNext,
+            ProviderStatusEnum.ReadyToPublish,
+            ProviderStatusEnum.UpdatesRequested,
+            ProviderStatusEnum.AwaitingRemovalConfirmation,
+            ProviderStatusEnum.PublishedUnderReassign,
+            ProviderStatusEnum.Published,
+            ProviderStatusEnum.RemovedUnderReassign,
+            ProviderStatusEnum.RemovedFromRegister
+        };
+
+        public static List<ServiceStatusEnum> priorityOrderService = new List<ServiceStatusEnum>
+            {
+                ServiceStatusEnum.CabAwaitingRemovalConfirmation,
+                ServiceStatusEnum.ReadyToPublish,
+                ServiceStatusEnum.UpdatesRequested,
+                ServiceStatusEnum.Received,
+                ServiceStatusEnum.AwaitingRemovalConfirmation,
+                ServiceStatusEnum.Submitted,
+                ServiceStatusEnum.PublishedUnderReassign,
+                ServiceStatusEnum.Published,
+                ServiceStatusEnum.RemovedUnderReassign,
+                ServiceStatusEnum.Removed
+             };
     }
 }

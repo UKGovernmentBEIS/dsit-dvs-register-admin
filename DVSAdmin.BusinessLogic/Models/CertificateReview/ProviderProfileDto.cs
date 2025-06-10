@@ -1,5 +1,6 @@
 ﻿using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Data.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -34,9 +35,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public string? ProviderTelephoneNumber { get; set; }
         public string ProviderWebsiteAddress { get; set; }
         public RemovalReasonsEnum RemovalReason { get; set; }
-        public int CompanyId { get; set; }
-        public int CabUserId { get; set; }       
-        public CabUserDto CabUser { get; set; }
+        public int CompanyId { get; set; }      
         public ProviderStatusEnum ProviderStatus { get; set; }
 
         [JsonIgnore]
@@ -47,6 +46,10 @@ namespace DVSAdmin.BusinessLogic.Models
         public DateTime? RemovalRequestTime { get; set; }
         public int DaysLeftToComplete { get; set; }
         public string? DSITUserEmails { get; set; }
+
+        [JsonIgnore]
         public ProviderProfileDraftDto? ProviderProfileDraft { get; set; }
+        [JsonIgnore]
+        public ICollection<ProviderProfileCabMapping> ProviderProfileCabMapping { get; set; }
     }
 }

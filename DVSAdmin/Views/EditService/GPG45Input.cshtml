@@ -2,7 +2,7 @@
 @model DVSAdmin.Models.ServiceSummaryViewModel
 
 @{
-    ViewData["Title"] = "SelectSupplementarySchemes";
+    ViewData["Title"] = "Is the service certified against GPG 45 identity profiles?";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 @{
@@ -35,7 +35,7 @@
                     {
                         PropertyName = "HasGPG45",
                         Value = Model.HasGPG45,
-                        FieldSet = "Is the service certified against GPG45 identity profiles?",
+                        FieldSet = "Is the service certified against GPG 45 identity profiles?",
                         ParagraphText = "This must match the information on the certificate of conformity.",
                         Heading = HeadingEnum.H1,
                         LegendStyleClass = "govuk-fieldset__legend--xl",

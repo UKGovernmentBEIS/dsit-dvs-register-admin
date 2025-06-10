@@ -77,9 +77,10 @@ namespace DVSAdmin.Data.Repositories
         public async Task<ProviderProfile> GetProviderDetails(int providerId)
         {
             ProviderProfile providerProfile = new();
-            providerProfile = await _context.ProviderProfile         
-           .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.ReadyToPublish )
-           .OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new ProviderProfile();
+            providerProfile = await _context.ProviderProfile      
+               .Include(p => p.Services)
+               .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.ReadyToPublish )
+               .OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new ProviderProfile();
             return providerProfile;
         }
 
