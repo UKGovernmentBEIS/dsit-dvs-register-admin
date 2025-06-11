@@ -86,7 +86,7 @@ namespace DVSAdmin.Data.Repositories
         //ToDo : move to cabtranfser repository
 
         public Task<List<Cab>> GetAllCabsAsync()
-            => context.Cabs
+            => context.Cabs.Where(x=>x.IsActive ==true)
                 .OrderBy(c => c.CabName)
                 .ToListAsync();
 
