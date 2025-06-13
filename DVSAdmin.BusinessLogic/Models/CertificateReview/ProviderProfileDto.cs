@@ -51,5 +51,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public ProviderProfileDraftDto? ProviderProfileDraft { get; set; }
         [JsonIgnore]
         public ICollection<ProviderProfileCabMapping> ProviderProfileCabMapping { get; set; }
+
+        public List<string> ActiveCabEmails { get; set; }
     }
 }

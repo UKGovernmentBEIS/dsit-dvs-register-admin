@@ -43,19 +43,19 @@
                     <h2 class="govuk-heading-m">Who else will receive an email notification</h2>
                 <p class="govuk-body">The Conformity Assessment Body and OfDIA will also receive an email notification.</p>
                 <dl class="govuk-summary-list govuk-!-margin-bottom-8">
-                    <div class="govuk-summary-list__row">
+                    @foreach (var email in Model.ActiveCabEmails)
+                    {
+                    <div class="govuk-summary-list__row">                      
                         <dt class="govuk-summary-list__key">
                             Email address of CAB
                         </dt>
-                        <dd class="govuk-summary-list__value">
-                            @foreach (var cab in Model.Services.Where(x=>x.ServiceStatus == ServiceStatusEnum.ReadyToPublish) .Select(s => s.CabUser.CabEmail).Distinct())
-                            {
-                                <div class="govuk-!-margin-bottom-1">
-                                    @cab
-                                </div>
-                            }
-                        </dd>
+                        <dd class="govuk-summary-list__value">                           
+                            <div class="govuk-!-margin-bottom-1">
+                                @email
+                            </div>                          
+                        </dd>                           
                     </div>
+                    }
                  
                 </dl>
                 <div class="govuk-button-group" id="submitvalidation">

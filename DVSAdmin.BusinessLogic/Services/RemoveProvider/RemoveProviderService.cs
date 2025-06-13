@@ -167,13 +167,13 @@ namespace DVSAdmin.BusinessLogic.Services
             }
         }
 
-        public async Task<GenericResponse> RemoveServiceRequestByCab(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string>? dsitUserEmails)
+        public async Task<GenericResponse> RemoveServiceRequestByCab(int providerProfileId, List<int> serviceIds, string loggedInUserEmail, List<string> cabEmails, List<string>? dsitUserEmails)
         {
             GenericResponse genericResponse = await removeProviderRepository.RemoveServiceRequestByCab(providerProfileId, serviceIds, loggedInUserEmail);
                        
             if (genericResponse.Success)
             {        
-                 List<string>  cabEmails = await certificateReviewService.GetCabEmailListForProvider(providerProfileId);
+               
                 // update provider status
                 
                 // save token for 2i check
