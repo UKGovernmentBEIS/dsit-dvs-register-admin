@@ -3,6 +3,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -29,7 +30,7 @@ namespace DVSAdmin.Data.Repositories
            
         }
 
-        public async Task<PaginatedResult<Service>> GetServices(int pageNumber, string searchText = "")
+        public async Task<PaginatedResult<Service>> GetServices(int pageNumber, string sort, string sortAction, string searchText = "")
         {
             var baseQuery = context.Service
                 .Include(s => s.Provider)
@@ -45,16 +46,15 @@ namespace DVSAdmin.Data.Repositories
             .Where(s => s.ServiceStatus == ServiceStatusEnum.Published ||
                  s.ServiceStatus == ServiceStatusEnum.Removed ||
                 (s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
-                s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign) && !(s.CabTransferRequest?.Any(c => c.CertificateUploaded == false && c.RequestManagement?.RequestStatus == RequestStatusEnum.Approved) ?? false));
-
+                s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign) && !(s.CabTransferRequest?.Any(c => c.CertificateUploaded == false && c.RequestManagement?.RequestStatus == RequestStatusEnum.Approved) ?? false))
+            .AsQueryable();          
 
             if (!string.IsNullOrEmpty(searchText))
             {
                 searchText = searchText.Trim().ToLower();
                 filteredQuery = filteredQuery
                     .Where(s => s.ServiceName.ToLower().Contains(searchText) ||
-                    s.Provider.RegisteredName.ToLower().Contains(searchText))
-                    .ToList();
+                    s.Provider.RegisteredName.ToLower().Contains(searchText));
             }
 
             var priorityOrder = new List<ServiceStatusEnum>
@@ -65,11 +65,17 @@ namespace DVSAdmin.Data.Repositories
                 ServiceStatusEnum.Removed
             };
 
-            var orderedQuery = filteredQuery
-                .OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus))
-                .ThenBy(s => s.ModifiedTime);
+            Func<IQueryable<Service>, IOrderedQueryable<Service>> orderByFunc = sort switch
+            {
+                "service name" => q => sortAction == "descending" ? q.OrderByDescending(s => s.ServiceName) : q.OrderBy(s => s.ServiceName),
+                "provider" => q => sortAction == "descending" ? q.OrderByDescending(s => s.Provider.RegisteredName) : q.OrderBy(s => s.Provider.RegisteredName),
+                "cab" => q => sortAction == "descending" ? q.OrderByDescending(s => s.CabUser.Cab.CabName) : q.OrderBy(s => s.CabUser.Cab.CabName),
+                "status" => q => sortAction == "descending" ? q.OrderByDescending(s => priorityOrder.IndexOf(s.ServiceStatus)) : q.OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus))
+            };
 
-            var totalCount = orderedQuery.Count();
+            var orderedQuery = orderByFunc(filteredQuery).ThenBy(s => s.ModifiedTime);
+
+            var totalCount = filteredQuery.Count();
 
             var items = orderedQuery
                 .Skip((pageNumber - 1) * 10)
@@ -82,6 +88,7 @@ namespace DVSAdmin.Data.Repositories
                 TotalCount = totalCount
             };
         }
+
 
         //ToDo : move to cabtranfser repository
 

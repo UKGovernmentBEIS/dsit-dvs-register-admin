@@ -1,17 +1,12 @@
 ﻿@using DVSAdmin.BusinessLogic.Models;
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
-@model ServiceDto
+@model CabRemovalViewModel
 @{
     ViewData["Title"] = "You are about to send a request to remove a service from the register";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
-
-    var cabRemovalViewModel = new CabRemovalViewModel
-    { 
-        Service = Model,
-        WhatToRemove = ViewBag.whatToRemove
-    
-    };
 }
 
-@await Html.PartialAsync("~/Views/RemoveProvider/PartialViews/_RemovalSummaryView.cshtml", cabRemovalViewModel)
+
+
+@await Html.PartialAsync("~/Views/RemoveProvider/PartialViews/_RemovalSummaryView.cshtml", Model)

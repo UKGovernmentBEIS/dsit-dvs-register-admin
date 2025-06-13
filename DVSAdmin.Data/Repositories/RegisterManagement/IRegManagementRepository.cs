@@ -16,6 +16,7 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<Service>> GetServiceVersionList(int serviceKey);
         public Task<List<Service>> GetServiceListByProvider(int providerId);
         public Task<ProviderProfile> GetProviderDetailsWithOutReviewDetails(int providerId);
+        public Task<List<string>> GetCabEmailListForServices(List<int> serviceIds);
 
 
 
