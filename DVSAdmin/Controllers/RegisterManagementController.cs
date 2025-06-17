@@ -85,7 +85,8 @@ namespace DVSAdmin.Controllers
             //To make sure only the service ids reviewed in previous screen is fetched
             List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
             ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
-            providerProfileDto.Services =  providerProfileDto.Services.Where(item => serviceids.Contains(item.Id)).ToList();          
+            providerProfileDto.Services =  providerProfileDto.Services.Where(item => serviceids.Contains(item.Id)).ToList();
+            providerProfileDto.ActiveCabEmails = await regManagementService.GetCabEmailListForServices(serviceids);
             return View(providerProfileDto);
         }
 
@@ -105,8 +106,8 @@ namespace DVSAdmin.Controllers
                 List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
                 if (serviceids == null && !serviceids.Any())
                     throw new InvalidOperationException("No service IDs found in session to publish.");
-                
-                GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,UserEmail);
+                List<string> activeCabEmails = await regManagementService.GetCabEmailListForServices(serviceids);
+                GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,UserEmail, activeCabEmails);
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Id });

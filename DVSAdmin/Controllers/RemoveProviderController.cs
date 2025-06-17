@@ -17,12 +17,14 @@ namespace DVSAdmin.Controllers
     public class RemoveProviderController : BaseController
     {
         private readonly IRemoveProviderService removeProviderService;
+        private readonly IRegManagementService regManagementService;
         private readonly IUserService userService;
       
-        public RemoveProviderController(IRemoveProviderService removeProviderService, IUserService userService)
+        public RemoveProviderController(IRemoveProviderService removeProviderService, IUserService userService, IRegManagementService regManagementService)
         {
             this.removeProviderService = removeProviderService;
             this.userService = userService;
+            this.regManagementService = regManagementService;
         }   
 
 
@@ -203,19 +205,30 @@ namespace DVSAdmin.Controllers
             ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceId);
             ProviderProfileDto providerProfileDto = await removeProviderService.GetProviderDetails(providerId);
             ViewBag.whatToRemove = whatToRemove;
-
             serviceDto.Provider = providerProfileDto;
+            List<int> ServiceIds = [serviceId];
+            List<string> activeCabEmails = await regManagementService.GetCabEmailListForServices(ServiceIds);
 
-            return View("CabRemoval", serviceDto);
+
+            var cabRemovalViewModel = new CabRemovalViewModel
+            {
+                Service = serviceDto,
+                WhatToRemove = whatToRemove,
+                ActiveCabEmails = string.Join(",", activeCabEmails)
+
+             };
+        
+            return View("CabRemoval", cabRemovalViewModel);
         }
 
         [HttpPost("cab-publish-removal")]
         public async Task<IActionResult> SubmitRemoval(CabRemovalViewModel cabRemovalViewModel)
         {
-            ServiceDto serviceDto = await removeProviderService.GetServiceDetails(cabRemovalViewModel.Service.Id);
+            ServiceDto serviceDto = await removeProviderService.GetServiceDetails(cabRemovalViewModel.Service.Id);           
             List<int> ServiceIds = [serviceDto.Id];
-            GenericResponse genericResponse = await removeProviderService.RemoveServiceRequestByCab(cabRemovalViewModel.Service.ProviderProfileId, ServiceIds, UserEmail, null);
- 
+            List<string> activeCabEmails = cabRemovalViewModel.ActiveCabEmails.Split(',').ToList();
+            GenericResponse genericResponse = await removeProviderService.RemoveServiceRequestByCab(cabRemovalViewModel.Service.ProviderProfileId, ServiceIds, UserEmail, activeCabEmails, null);
+         
             if (genericResponse.Success)
             {
                 return RedirectToAction("CabRemovalConfirmation", new { providerId = cabRemovalViewModel.Service.ProviderProfileId, serviceId = cabRemovalViewModel.Service.Id, whatToRemove = cabRemovalViewModel.WhatToRemove });

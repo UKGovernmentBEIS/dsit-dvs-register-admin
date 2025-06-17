@@ -1,12 +1,6 @@
-﻿.moj-sortable-table {
-    [aria-sort] button,
-    [aria-sort] button:hover {
-        background-color: transparent;
-        border-width: 0;
-        -webkit-box-shadow: 0 0 0 0;
-        -moz-box-shadow: 0 0 0 0;
-        box-shadow: 0 0 0 0;
-        color: #005ea5;
+﻿.sortable-table {
+    [aria-sort] {
+        color: #1D70B8;
         cursor: pointer;
         font-family: inherit;
         font-size: inherit;
@@ -16,53 +10,54 @@
         text-align: inherit;
         font-size: 1em;
         margin: 0;
-    }
 
-    [aria-sort] button:focus {
-        background-color: #ffdd00;
-        color: #0b0c0c;
-        box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
-        outline: none;
-    }
+        a {
+            text-decoration: none;
+            color: inherit;
+            display: inline-flex;
+            align-items: center;
+            padding: 0;
+            margin: 0;
+        }
 
-    [aria-sort]:first-child button {
-        right: auto;
-    }
+        a:focus {
+            outline: none;
+        }
 
-    [aria-sort] button:before {
-        content: " ▼";
-        position: absolute;
-        right: -1px;
-        top: 9px;
-        font-size: 0.5em;
-    }
+        &:focus {
+            background-color: #ffdd00;
+            color: #0b0c0c;
+            box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+            outline: none;
+        }
 
-    [aria-sort] button:after {
-        content: " ▲";
-        position: absolute;
-        right: -1px;
-        top: 1px;
-        font-size: 0.5em;
-    }
+        &:first-child {
+            right: auto;
+        }
 
-    [aria-sort=ascending] button:before,
-    [aria-sort=descending] button:before {
-        content: none;
-    }
+        &::before {
+            content: none;
+        }
 
-    [aria-sort=ascending] button:after {
-        content: " ▲";
-        font-size: 0.8em;
-        position: absolute;
-        right: -5px;
-        top: 2px;
-    }
+        &::after {
+            content: "▲\A▼";
+            white-space: pre;
+            font-size: 0.5em;
+            margin-left: 0.3em;
+            line-height: 1;
+            display: inline-block;
+        }
 
-    [aria-sort=descending] button:after {
-        content: " ▼";
-        font-size: 0.8em;
-        position: absolute;
-        right: -5px;
-        top: 2px;
+        &[aria-sort="ascending"]::after {
+            content: "▲";
+            font-size: 0.8em;
+            margin-left: 0.3em;
+        }
+
+        &[aria-sort="descending"]::after {
+            content: "▼";
+            font-size: 0.8em;
+            margin-left: 0.3em;
+        }
     }
 }

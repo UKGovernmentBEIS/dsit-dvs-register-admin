@@ -82,14 +82,17 @@
                 <h2 class="govuk-heading-m govuk-!-margin-top-8">Who will receive the removal notification</h2>
                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                 <dl class="govuk-summary-list">
+                    @foreach (var email in Model.ActiveCabEmails.Split(',').ToList())
+                     {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Email address of <br /> Conformity <br /> Assessment Body
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.Service.CabUser?.CabEmail
-                        </dd>
+                        </dt>                         
+                        <dd class="govuk-summary-list__value">                           
+                             @email                           
+                        </dd>                        
                     </div>
+                    }
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Email address of <br /> primary contact
@@ -125,6 +128,7 @@
                     @Html.HiddenFor(v => v.Service.Id)
                     @Html.HiddenFor(m => m.Service.ProviderProfileId)
                     @Html.HiddenFor(m => m.WhatToRemove)
+                    @Html.HiddenFor(m => m.ActiveCabEmails)
                     <div class="govuk-button-group govuk-!-margin-top-8 govuk-!-margin-bottom-8">
                         <button type="submit"
                                 class="govuk-button govuk-button--warning"

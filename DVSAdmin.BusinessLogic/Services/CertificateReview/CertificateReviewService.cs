@@ -74,17 +74,9 @@ namespace DVSAdmin.BusinessLogic.Services
             var certificateInfo = await certificateReviewRepository.GetServiceDetails(serviceId);
             ServiceDto serviceDto = automapper.Map<ServiceDto>(certificateInfo);
             return serviceDto;
-        }
+        }        
 
-        public async Task<List<string>> GetCabEmailListForProvider(int providerId)
-        {
-            return await certificateReviewRepository.GetCabEmailListForProvider(providerId);
-        }
-
-        public async Task<List<string>> GetCabEmailListForServices(List<int> serviceIds)
-        {
-            return await certificateReviewRepository.GetCabEmailListForServices(serviceIds);
-        }
+       
 
 
         public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail)
