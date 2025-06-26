@@ -22,7 +22,7 @@ namespace DVSAdmin.Data.Repositories.BackgroundJobs
         {
             // only check the services which are already published to register. Status of services which are in review,but have an expired certificate will not be changed
             return await context.Service.Include(s => s.Provider).ThenInclude(s=>s.Services)
-                .Where(s => s.ConformityExpiryDate <= DateTime.UtcNow && s.ServiceStatus == ServiceStatusEnum.Published)
+                .Where(s => s.ConformityExpiryDate < DateTime.Today && s.IsInRegister == true)
                 .ToListAsync();
         }
 
