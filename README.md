@@ -22,15 +22,36 @@
       - user: postgres
       - password: postgres
 5. Add user secrets - ask member of team for them and update the postgres details with the correct credentials - the username and password you created when setting up the database.
-6. `cd` into `dsit-dvs-register` repo
-   - Run DB migrations - `dotnet ef database update --project DVSRegister.Data  --startup-project DVSRegister`
+    - To add user secret file to the project, right click the project -> add user secrets
+6. `cd` into `dsit-dvs-register` repo - the migrations are in register repo, in this repo only the updates
+   - Run DB update - `dotnet ef database update --project DVSRegister.Data  --startup-project DVSRegister`
 7. Install localstack
+    ## Installation steps : Mac
     - `brew install localstack/tap/localstack-cli`
     - `localstack start -d`
     - run `docker ps` to get the localstack container id (or copy the container ID from Docker Desktop)
     - `docker exec -it 'CONTAINER_ID' bash`
     - `awslocal s3api create-bucket --bucket s3-dvs-dev20240529103145426300000001`
     - http://s3-dvs-dev20240529103145426300000001.s3.localhost.localstack.cloud:4566
+    
+    ## Installation steps windows
+
+        1. Start power shell, execute below commands to run local stack
+        - PS C:\Users\AA> python -m venv myenv
+        - PS C:\Users\AA> myenv\Scripts\activate
+        - (myenv) PS C:\Users\AA> pip install localstack
+        - (myenv) PS C:\Users\AA> .\localstack start
+
+        2. Start command prompt, execute below commands to configure aws credentials and create bucket
+        - C:\Users\AA>aws configure
+        - AWS Access Key ID [****************test]: test
+        - AWS Secret Access Key [****************test]: test
+        - Default region name [eu-west-2]: eu-west-2
+        - Default output format [json]: json
+        - C:\Users\AA>aws --endpoint-url=http://localhost:4566 s3api create-bucket --bucket s3-dvs-dev20240529103145426300000001 --create-bucket-configuration LocationConstraint=eu-west-2
+        - C:\Users\AA>aws --endpoint-url=http://localhost:4566 s3api list-buckets (to verify buckets created)
+        - Update the credentials in user secrets
+8. Login :  Ask team member to add the dsit email id to user pool and sign up using MFA
 
 > Note: Make sure to update the s3 bucket in user secrets to use path style instead of host style.
 
@@ -49,3 +70,4 @@ We store credentials for the dev site inside the UserSecrets of the project. Spe
 
 ## Database
 At the root of **The DVS Register repo** - run `dotnet ef database update --project DVSRegister.Data  --startup-project DVSRegister`
+
