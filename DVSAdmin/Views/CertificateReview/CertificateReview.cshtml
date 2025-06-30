@@ -33,7 +33,8 @@
                 <div class="govuk-grid-column-two-thirds">
                     <h2 class="govuk-heading-l">Information match</h2>
                     <p class="govuk-body">
-                        In this section, you will need to review the service provider's certificate submitted by the Conformity Assessment Body (CAB) against the submitted information below to check that the information matches. It is important that all information matches as it will be publicly available.
+                        Review the service provider's certificate submitted by the Conformity Assessment Body (CAB) against the submitted information on this page to check
+                        that it matches. It is important that all information matches as it will be publicly available.
                     </p>
 
 
@@ -48,21 +49,21 @@
 
                             <ol class="govuk-list govuk-list--number">
                                 <li>
-                                    Make sure that you have the service provider’s certificate of conformity open. You can download the file again using the ‘Download certificate of conformity’ button below.
+                                    Make sure that you have the service provider’s certificate of conformity open. You can download the file again using the ‘Download certificate of conformity’ button on this page.
                                 </li>
                                 <li>
-                                    Once you have the certificate open, compare the certification information below.
+                                    Once you have the certificate open, compare the information on it to the information on this page.
                                 </li>
                                 <li>
-                                    After you have verified that all items match, scroll down to the bottom of the page and select 'Yes, it matches the information
-                                    on the certificate' option. If the items do not match select 'No, it does not match'. You must enter comments or notes in the text
-                                    area at the bottom of the page.
+                                    When you have verified that all items match, navigate to 'Information match' and select 'Yes, it matches the information to the certificate'.
+                                    If the items do not match select 'No, it does not much'.
                                 </li>
                                 <li>
-                                    If you wish to submit your review at a later time, you can select the ‘Save as draft’ button located at the bottom of the page. You must have completed all sections before saving.
+                                    If you wish to submit your review at a later time, you can select the ‘Save as draft’ button. You must have completed all sections before saving.
                                 </li>
                                 <li>
-                                    Once you have verified all items, scroll down to the bottom of the page and select ‘Approve submission' or ‘Reject submission’ to proceed with the process. To proceed with approval, the submission must have passed all certificate validation and information match checks.
+                                   To continue with approval, the submission must have passed all certificate validation and information match checks,
+                                   Once you have verified all items, select the 'Approve submission' or 'Reject submission' button to continue.
                                 </li>
                             </ol>
                         </div>
@@ -70,7 +71,7 @@
 
                     <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
                     <p class="govuk-body">
-                        Download the certificate of conformity provided by the CAB to compare against the details submitted by the CAB.
+                        Download the certificate of conformity provided by the CAB to check that the information matches the details provided.
                     </p>
 
                     <span class="govuk-caption-xl">@Model.Service.FileName</span>
@@ -147,8 +148,7 @@
                             </h3>
                             <div id="comments-hint" class="govuk-hint">
                                 This information will only be visible to OfDIA users. If you selected 'No, it does
-                                not match', you should provide further details. If all the information matches the
-                                certificate, please provide a note to confirm this.
+                                not match', you should provide further details.
                             </div>
 
                             @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5",
