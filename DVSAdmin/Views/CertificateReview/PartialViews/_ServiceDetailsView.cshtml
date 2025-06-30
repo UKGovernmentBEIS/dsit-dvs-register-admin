@@ -8,8 +8,7 @@
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Service provider</th>
                 <th scope="col" class="govuk-table__header">Service name</th>
-                <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
-                <th scope="col" class="govuk-table__header">Role type</th>
+                <th scope="col" class="govuk-table__header">New / Re- <br />submission</th>
                 <th scope="col" class="govuk-table__header">Submission date (GMT)</th>
                 <th scope="col" class="govuk-table__header">Review status</th>
                 <th scope="col" class="govuk-table__header">Time reviewed (GMT)</th>
@@ -20,7 +19,7 @@
 
                 <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
                 <td class="govuk-table__cell">@Model.ServiceName</td>
-                <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
+                <td class="govuk-table__cell">Resubmission</td>
                 <td class="govuk-table__cell">
                     @foreach (var role in @Model.ServiceRoleMapping)
                     {
