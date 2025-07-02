@@ -13,6 +13,12 @@
     @Html.ActionLink("Back", "CertificateValidation", "CertificateReview", null, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
 
+        @* NEED TO ADD IF STATEMENT *@
+        {
+        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_BannerNoticeView.cshtml")
+
+        }
+
         <div class="govuk-grid-row">
             @using (Html.BeginForm("SaveCertificateReview", "CertificateReview", FormMethod.Post))
             {              
