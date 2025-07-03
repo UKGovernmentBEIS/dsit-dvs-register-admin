@@ -12,7 +12,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
 
-                <h1 class="govuk-heading-xl">Approve submission</h1>
+                <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
 
                 <p class="govuk-body">
                     You are about to confirm that the following submission has passed certificate review and that the information provided matches the certificate.
@@ -20,38 +20,32 @@
                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Service provider</th>
-                            <th scope="col" class="govuk-table__header">Service name</th>
-                            <th scope="col" class="govuk-table__header">New / Re- <br />submission</th>
-                            <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
-                            <th scope="col" class="govuk-table__header">Review status</th>
-                            <th scope="col" class="govuk-table__header">Days left to complete checks</th>
-                        </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Service provider</th>
+                        <th scope="col" class="govuk-table__header">Service name</th>
+                        <th scope="col" class="govuk-table__header">New / Re- <br/>submission</th>
+                        <th scope="col" class="govuk-table__header">Submission date <br/>(GMT)</th>
+                        <th scope="col" class="govuk-table__header">Review status</th>
+                        <th scope="col" class="govuk-table__header">Days left to complete checks</th>
+                    </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
+                    <tr class="govuk-table__row">
 
-                            <td class="govuk-table__cell">@Model.CertificateValidation.Service.Provider.RegisteredName</td>
-                            <td class="govuk-table__cell">@Model.CertificateValidation.Service.ServiceName</th>
-                            <td class="govuk-table__cell">Resubmission</td>
-                            <td class="govuk-table__cell">
-                                @foreach (var role in @Model.CertificateValidation.Service.ServiceRoleMapping)
-                                {
-                                    RoleEnum enumValue = (RoleEnum)role.RoleId;
-                                    <div> @Enum.GetName(enumValue) </div>
-                                }
-                            </td>
-                            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateValidation.Service.CreatedTime)</td>
-                            @if (@Model.CertificateValidation.Service.CertificateReview == null)
-                            {
-                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.Service.ServiceStatus)</td>
-                            }
-                            else
-                            {
-                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.Service.CertificateReview.CertificateReviewStatus)</td>
-                            }
-                            <td class="govuk-table__cell">@Model.CertificateValidation.Service.DaysLeftToComplete  days</td>
+                        <td class="govuk-table__cell">@Model.CertificateValidation.Service.Provider.RegisteredName</td>
+                        <td class="govuk-table__cell">@Model.CertificateValidation.Service.ServiceName</td>
+                        @* TODO: Replace resubmission with Model.SubmissionType *@
+                        <td class="govuk-table__cell">Resubmission</td>
+                        <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateValidation.Service.CreatedTime)</td>
+                        @if (@Model.CertificateValidation.Service.CertificateReview == null)
+                        {
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.Service.ServiceStatus)</td>
+                        }
+                        else
+                        {
+                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.Service.CertificateReview.CertificateReviewStatus)</td>
+                        }
+                        <td class="govuk-table__cell">@Model.CertificateValidation.Service.DaysLeftToComplete  days</td>
 
                         </tr>
                     </tbody>
