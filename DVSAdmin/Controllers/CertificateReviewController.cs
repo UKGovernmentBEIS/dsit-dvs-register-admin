@@ -36,10 +36,15 @@ namespace DVSAdmin.Controllers
       
 
         [HttpGet("certificate-review-list")]
-        public async Task<ActionResult> CertificateReviews()
-        {            
+        public async Task<ActionResult> CertificateReviews(string SearchText = "", string SearchAction = "")
+        {          
             CertificateReviewListViewModel certificateReviewListViewModel = new ();
-            var serviceList = await certificateReviewService.GetServiceList();
+            if (SearchAction == "clearSearch")
+            {
+                ModelState.Clear();
+                SearchText = string.Empty;
+            }
+            var serviceList = await certificateReviewService.GetServiceList(SearchText);
 
             certificateReviewListViewModel.CertificateReviewList = serviceList
                 .Where(x =>
@@ -47,11 +52,10 @@ namespace DVSAdmin.Controllers
                      x.ServiceStatus != ServiceStatusEnum.Removed &&
                      x.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                      x.Id != x?.CertificateReview?.ServiceId) ||
-                        (x.CertificateReview != null &&
-                        (x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview ||
-                         x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)))
-                .OrderBy(x => x.DaysLeftToComplete)
-                .ToList();
+                    (x.CertificateReview != null &&
+                    (x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview ||
+                    x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)))
+                   .OrderBy(x => x.DaysLeftToComplete).ToList();
 
             certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
             ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) 
@@ -71,12 +75,7 @@ namespace DVSAdmin.Controllers
 
             if (serviceDto.CertificateReview == null)
                 throw new InvalidOperationException($"Service certificate review details are missing.");
-
-            
-            //if (serviceDto.ProceedApplicationConsentToken != null & (serviceDto.ServiceStatus == ServiceStatusEnum.Submitted || serviceDto.ServiceStatus == ServiceStatusEnum.Resubmitted) && serviceDto.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
-            //{
-            //    ViewBag.OpeningTheLoopLink = configuration["DvsRegisterLink"] +"consent/proceed-application-consent?token="+serviceDto?.ProceedApplicationConsentToken?.Token;
-            //}
+                      
 
 
             CertificateValidationViewModel certificateValidationViewModel = MapDtoToViewModel(serviceDto);

@@ -61,9 +61,9 @@ namespace DVSAdmin.BusinessLogic.Services
             return automapper.Map<List<CertificateReviewRejectionReasonDto>>(rejectionReasonList);
         }
 
-        public async Task<List<ServiceDto>> GetServiceList()
+        public async Task<List<ServiceDto>> GetServiceList(string searchText = "")
         {
-            var serviceList = await certificateReviewRepository.GetServiceList();
+            var serviceList = await certificateReviewRepository.GetServiceList(searchText);
             return automapper.Map<List<ServiceDto>>(serviceList);
         }
 
