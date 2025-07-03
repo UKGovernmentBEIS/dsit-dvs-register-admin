@@ -11,5 +11,8 @@ namespace DVSAdmin.Data.Entities
         public int Id { get; set; }
         public string SchemeName { get; set; }
         public int Order { get; set; }
+        [ForeignKey("TrustFrameworkVersion")]
+        public int TrustFrameworkVersionId { get; set; }
+        public TrustFrameworkVersion TrustFrameworkVersion { get; set; }
     }
 }

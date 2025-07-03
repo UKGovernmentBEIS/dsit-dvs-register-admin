@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DVSAdmin.BusinessLogic.Automapper.Resolvers;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.Data.Entities;
@@ -73,7 +74,8 @@ namespace DVSAdmin.BusinessLogic
             .ForMember(dest => dest.CabUser, opt => opt.MapFrom(src => src.CabUser))
             .ForMember(dest => dest.DaysLeftToComplete, opt => opt.MapFrom<DaysLeftResolverCertificateReview>())
             .ForMember(dest => dest.DaysLeftToCompletePICheck, opt => opt.MapFrom<DaysLeftResolverPICheck>())
-            .ForMember(dest => dest.CreatedTime, opt => opt.MapFrom<CreatedTimeResolver>());
+            .ForMember(dest => dest.CreatedTime, opt => opt.MapFrom<CreatedTimeResolver>())
+            .ForMember(dest => dest.NewOrResubmission, opt => opt.MapFrom<NewOrResubmissionResolver>());
 
             CreateMap<ServiceDto, Service>()
            .ForMember(dest => dest.ServiceQualityLevelMapping, opt => opt.MapFrom(src => src.ServiceQualityLevelMapping))
@@ -132,6 +134,11 @@ namespace DVSAdmin.BusinessLogic
           .ForMember(dest => dest.RequestManagement, opt => opt.MapFrom(src => src.RequestManagement));
             CreateMap<CabTransferRequestDto, CabTransferRequest>()
             .ForMember(dest => dest.RequestManagement, opt => opt.MapFrom(src => src.RequestManagement));
+
+            CreateMap<TrustFrameworkVersion, TrustFrameworkVersionDto>();
+            CreateMap<TrustFrameworkVersionDto, TrustFrameworkVersion>();
+            CreateMap<ManualUnderPinningService, ManualUnderPinningServiceDto>();
+            CreateMap<ManualUnderPinningServiceDto, ManualUnderPinningService>();
 
 
         }
