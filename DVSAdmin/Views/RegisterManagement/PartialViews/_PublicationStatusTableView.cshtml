@@ -22,7 +22,7 @@
               
             </td>
             <td class="govuk-table__cell">
-                @foreach (var cab in Model.Services.Select(s => s.CabUser.Cab.CabName).Distinct())
+                @foreach (var cab in ViewModelHelper.GetCabsForProvider(Model.Services))
                 {
                     <div class="govuk-!-margin-bottom-1">
                         @cab
