@@ -1,5 +1,6 @@
 ﻿@model DVSAdmin.Models.CertificateReviewListViewModel;
 @using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.Models.UI;
 @{
     ViewData["Title"] = "Review a provider certificate";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -30,6 +31,20 @@
                         In this section, you will need to review the certificate information submitted by Conformity Assessment Bodies. Start the review from top to bottom, as the applications that need more urgent action will appear at the top. Once completed, they will appear in the Archive tab.
                     </div>
                 </details>
+
+                @using (Html.BeginForm("CertificateReviews", "CertificateReview", FormMethod.Get))
+                {
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_SearchView.cshtml", new SearchViewModel
+                    {
+                        Label = "Search for a service provider or service",
+                        SearchTextFieldId = "SearchProviderOrService",
+                        SearchTextFieldName = "search-provider-or-service"
+                        })
+                 }
+                 
+
                 <div class="govuk-tabs" data-module="govuk-tabs">
                     <ul class="govuk-tabs__list">
                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
