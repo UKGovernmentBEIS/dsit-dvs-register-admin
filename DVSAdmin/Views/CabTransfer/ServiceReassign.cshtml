@@ -25,7 +25,7 @@
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">Service details: @Model.ServiceName</h1>                
 
-                @await Html.PartialAsync("~/Views/CabTransfer/PartialViews/_ServiceDetailsTransferView.cshtml", serviceTransferViewModel)
+                @await Html.PartialAsync("~/Views/CabTransfer/PartialViews/_ServiceDetailsTransferView.cshtml", serviceTransferViewModel, new ViewDataDictionary(ViewData) { ["DateFormat"] = "d MMMM yyyy" })
                 
                 <div class="govuk-grid-column-two-thirds govuk-!-margin-top-4 govuk-!-padding-0">
                     <h2 class="govuk-heading-m">Provided certificate of conformity</h2>
