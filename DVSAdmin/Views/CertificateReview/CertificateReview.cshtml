@@ -2,24 +2,33 @@
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using Newtonsoft.Json
+@using DVSAdmin.Models.UI;
 
 @{
     ViewData["Title"] = "Part 2 of 2: Information match";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
-    ViewData["HidePublishStatus"] = true;// setting variable to hide status field in partial view
+    ViewData["HidePublishStatus"] = true;
+}
+
+@if (Model?.Service?.IsResubmission == true)
+{
+    var notificationBanner = new NotificationBannerViewModel
+    {
+        Title = "Important",
+        NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been submitted as part of a re-application or trust framework uplift for an existing service.",
+                HtmlContent = "To see the original submission, go to <a href='/certificate-review/certificate-submission-details?serviceId=" + Model?.Service?.PreviousVersionServiceId + "' class='govuk-link'>Review a service certificate</a> and select the Archive tab."
+            } }
+    };
+    @await Html.PartialAsync("~/Views/PartialViews/_NotificationBanner.cshtml", notificationBanner)
+
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateValidation", "CertificateReview", null, new { @class = "govuk-back-link" })
-    <main id="main-content" class="govuk-main-wrapper" role="main">
-
-        @* NEED TO ADD IF STATEMENT *@
-        {
-        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_BannerNoticeView.cshtml")
-
-        }
+    @Html.ActionLink("Back", "CertificateValidation", "CertificateReview", new { serviceId =Model.Service.Id}, new { @class = "govuk-back-link" })
+    <main id="main-content" class="govuk-main-wrapper" role="main">       
 
         <div class="govuk-grid-row">
+            
             @using (Html.BeginForm("SaveCertificateReview", "CertificateReview", FormMethod.Post))
             {              
                 @Html.HiddenFor(m => m.CertificateReviewId)
@@ -37,6 +46,7 @@
 
 
                 <div class="govuk-grid-column-two-thirds">
+                 
                     <h2 class="govuk-heading-l">Information match</h2>
                     <p class="govuk-body">
                         Review the service provider's certificate submitted by the Conformity Assessment Body (CAB) against the submitted information on this page to check
@@ -95,11 +105,34 @@
 
                 </div>
                 <div class="govuk-grid-column-full">
-                    <h3 class="govuk-heading-m">Certification information</h3>
-             
+                    <h3 class="govuk-heading-m">Certification information</h3>             
 
                     @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
                 </div>
+
+
+                @if (@Model.Service.ServiceSupSchemeMapping != null && @Model.Service.ServiceSupSchemeMapping.Count > 0)
+                {
+                    if ((@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
+                    || (@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
+                    {
+                        <div class="govuk-grid-column-full">
+                            <h3 class="govuk-heading-m">Supplementary codes</h3>
+
+                            @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.Service)
+                        </div>
+                    }
+                }
+
+                @if(Model.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
+                {
+                    <div class="govuk-grid-column-full">
+                    @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.Service)
+                    </div>
+                }
+
+
+                
 
                 <div class="govuk-grid-column-two-thirds">
                     <h3 class="govuk-heading-m">Information match</h3>

@@ -26,12 +26,20 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<QualityLevel, QualityLevelDto>();
             CreateMap<QualityLevelDto, QualityLevel>();
 
+            CreateMap<SchemeGPG44Mapping, SchemeGPG44MappingDto>();
+            CreateMap<SchemeGPG44MappingDto, SchemeGPG44Mapping>();
+
+            CreateMap<SchemeGPG45Mapping, SchemeGPG45MappingDto>();
+            CreateMap<SchemeGPG45MappingDto, SchemeGPG45Mapping>();
+
             CreateMap<ServiceIdentityProfileMapping, ServiceIdentityProfileMappingDto>();
             CreateMap<ServiceIdentityProfileMappingDto, ServiceIdentityProfileMapping>();
             CreateMap<ServiceRoleMapping, ServiceRoleMappingDto>();
             CreateMap<ServiceRoleMappingDto, ServiceRoleMapping>();
-            CreateMap<ServiceSupSchemeMapping, ServiceSupSchemeMappingDto>();
-            CreateMap<ServiceSupSchemeMappingDto, ServiceSupSchemeMapping>();
+            CreateMap<ServiceSupSchemeMapping, ServiceSupSchemeMappingDto>()
+            .ForMember(dest => dest.SchemeGPG44Mapping, opt => opt.MapFrom(src => src.SchemeGPG44Mapping));
+            CreateMap<ServiceSupSchemeMappingDto, ServiceSupSchemeMapping>()
+            .ForMember(dest => dest.SchemeGPG45Mapping, opt => opt.MapFrom(src => src.SchemeGPG45Mapping));
             CreateMap<ServiceQualityLevelMapping, ServiceQualityLevelMappingDto>();
             CreateMap<ServiceQualityLevelMappingDto, ServiceQualityLevelMapping>();
 

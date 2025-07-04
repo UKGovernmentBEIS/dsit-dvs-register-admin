@@ -1,4 +1,4 @@
-﻿namespace DVSAdmin.Models
+﻿namespace DVSAdmin.Models.UI
 {
     public class NotificationBannerViewModel
     {
