@@ -4,7 +4,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateSubmissionDetails", "CertificateReview", new { certificateInfoId = ViewBag.ServiceId}, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "CertificateSubmissionDetails", "CertificateReview", new { serviceId = ViewBag.ServiceId }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -34,7 +34,7 @@
                         <button type="submit" class="govuk-button" data-module="govuk-button">
                             Confirm and restore this submission
                         </button>
-                        <a href="/certificate-review/certificate-submission-details?certificateInfoId=@ViewBag.ServiceId" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                        <a href="/certificate-review/certificate-submission-details?serviceId=@ViewBag.ServiceId" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
                             Cancel
                         </a>
                     </div>
