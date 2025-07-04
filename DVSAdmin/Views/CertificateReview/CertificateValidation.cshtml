@@ -1,4 +1,4 @@
-﻿@model CertificateValidationViewModel
+﻿@model CertificateValidationViewModel;
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using Newtonsoft.Json
@@ -9,10 +9,15 @@
 }
 
 
-
 <div class="govuk-width-container">
     @Html.ActionLink("Back", "CertificateReviews", "CertificateReview", null, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
+
+        @* NEED TO ADD IF STATEMENT *@
+        {
+            @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_BannerNoticeView.cshtml")
+
+        }
 
         <div class="govuk-grid-row">
             @using (Html.BeginForm("SaveCertificateValidation", "CertificateReview", FormMethod.Post))
@@ -33,7 +38,7 @@
                 <div class="govuk-grid-column-two-thirds">
                     <h2 class="govuk-heading-l">Certificate validation</h2>
                     <p class="govuk-body">
-                        In this section, you will need to review the certificate submitted by the Conformity Assessment Body (CAB) to check whether it contains the correct information and whether the information about the service is consistent with certification scheme requirements.
+                        Review the certificate submitted by the Conformity Assessment Body (CAB) to check whether it contains the correct information about the service and that it is consistent with certification scheme requirements.
                     </p>
 
                     <details class="govuk-details">
@@ -47,19 +52,20 @@
 
                             <ol class="govuk-list govuk-list--number">
                                 <li>
-                                    Begin by downloading the ‘Provided certificate of conformity’ submitted by the CAB. Open the certificate document for your review.
+                                    Make sure that you have the service provider's certificate of conformity open. You can download the file
+                                    again using the 'Download certificate of conformity' button on this page.
                                 </li>
                                 <li>
-                                    Return to this page to compare the certificate against the statements below.
+                                    Compare the information on the certificate against the statements on this page.
                                 </li>
                                 <li>
-                                    For each category, pay attention to the individual items or entries to confirm their accuracy. Please select ‘Correct’ if the statement is true and ‘Incorrect’ if the statement is false. You must enter comments or notes in the text area at the bottom of the page.
+                                    For each category, pay attention to the individual items or entries to confirm their accuracy. If the statement is true, select 'Correct', and if the statement is false, select 'Incorrect'.
                                 </li>
                                 <li>
-                                    If you wish to submit your review at a later time, you can select the ‘Save as draft’ button located at the bottom of the page. You must have completed all sections before saving.
+                                    If you wish to submit your review at a later time, you can select the ‘Save as draft’ button. You must have completed all sections before saving.
                                 </li>
                                 <li>
-                                    Once you have verified all items, scroll down to the bottom of the page and click the ‘Continue’ button to proceed to the next page where you must complete the information match.
+                                    Once you have verified all items, select the ‘Continue’ button to go to the 'Information match' page.
                                 </li>
                             </ol>
                         </div>
@@ -67,7 +73,7 @@
 
                     <h3 class="govuk-heading-l">Provided certificate of conformity </h3>
                     <p class="govuk-body">
-                        Download the certificate of conformity provided by the CAB to check that the certificate meets the requirements in the statements below.
+                        Download the certificate of conformity provided by the CAB to check that the certificate meets the requirements in the statements on this page.
                     </p>
 
                     <span class="govuk-caption-xl">@Model.Service.FileName</span>
@@ -97,6 +103,9 @@
                         </li>
                         <li>
                             certificate number or other unique identification
+                        </li>
+                        <li>
+                            UKAS reference number of the CAB
                         </li>
                     </ul>
 
@@ -174,9 +183,9 @@
                     <h3 class="govuk-heading-m">Statement of conformity</h3>
 
                     @* --------------Name of service ----------------- *@
-                    <h4 class="govuk-heading-s">Name of service</h4>
+                    <h4 class="govuk-heading-s">Name of service and trust framework version</h4>
                     <p class="govuk-body">
-                        The certificate contains a statement of conformity which includes the name of the service.
+                        The certificate states the name of the service, and version of the trust framework it is certified against.
                     </p>
 
 
@@ -196,7 +205,8 @@
                     @* --------------Roles certified against----------------- *@
                     <h4 class="govuk-heading-s">Roles certified against</h4>
                     <p class="govuk-body">
-                        The certificate contains a statement of conformity which includes the roles certified against.
+                        The certificate contains a statement of conformity which includes the roles certified against, and details of whether this is an 
+                        underpinning or white-labelled service.
                     </p>
 
 
@@ -216,8 +226,18 @@
                     @* --------------Scope of certification----------------- *@
                     <h4 class="govuk-heading-s">Scope of certification</h4>
                     <p class="govuk-body">
-                        The certificate contains a statement of conformity which details the scope of certification, including any recognised supplementary codes. If the service is scoped for supplementary codes, only Right to Work, Right to Rent or Disclosure and Barring Service are applicable.
+                        The certificate contains a statement of conformity which details the scope of certification, including any recognised supplementary codes. If the service is scoped for supplementary codes, only right to work, right to rent or Disclosure and Barring Service are applicable.
+                        if the service is scoped for supplementary codes:
                     </p>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>
+                            the identity profiles against GPG 45 should be shown, where appropiate
+                        </li>
+                        <li>
+                            the quality of protection and quality of authentication against GPG 44 should be shown, where appropriate
+                        </li>
+                    </ul>
 
 
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
@@ -276,17 +296,18 @@
                     <h3 class="govuk-heading-m">Unique designation of services</h3>
 
                     @* --------------GPG44 quality assessment----------------- *@
-                    <h4 class="govuk-heading-s">GPG 44 quality assessment</h4>
+                    <h4 class="govuk-heading-s">GPG 45 identity profiles</h4>
                     <p class="govuk-body">
-                        The certificate includes a description of the GPG44 quality of authenticator and level of protection assessed. If the service is not scoped for GPG44, this should be clearly stated or a ‘not applicable’ description provided in the certificate.
+                        The certificate includes details of the GPG 45 identity profiles assessed. If the provider has been certified
+                        against supplementary codes, the profiles listed meet the certification scheme requirements.
                     </p>
 
 
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                    {
-                        PropertyName = "IsGPG44Correct",
+                        PropertyName = "IsGPG45Correct",
                         Value = Model.IsGPG44Correct,
-                        Legend = "GPG44 quality assessment",
+                        Legend = "GPG45 quality assessment",
                         HasError = Html.ViewData.ModelState.ContainsKey("IsGPG44Correct") && Html.ViewData.ModelState["IsGPG44Correct"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsGPG44Correct") && Html.ViewData.ModelState["IsGPG44Correct"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsGPG44Correct"].Errors[0].ErrorMessage : string.Empty,
@@ -295,17 +316,18 @@
                    })
 
                     @* --------------GPG45 identity profiles----------------- *@
-                    <h4 class="govuk-heading-s">GPG 45 identity profiles</h4>
+                    <h4 class="govuk-heading-s">GPG 44 quality assessment</h4>
                     <p class="govuk-body">
-                        The certificate includes GPG 45 identity profiles assessed. If the provider has been certified on supplementary codes, the profiles listed meet the certification scheme requirements.
+                        The certificate includes a description of the GPG 44 quality of authenticator and quality of protection assessed.
+                        If the service is not scoped for GPG 44, this should be clearly stated or a 'not applicable' description provided on the certificate.
                     </p>
 
 
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                    {
-                        PropertyName = "IsGPG45Correct",
+                        PropertyName = "IsGPG44Correct",
                         Value = Model.IsGPG45Correct,
-                        Legend = "GPG45 identity profiles",
+                        Legend = "GPG44 quality assessment",
                         HasError = Html.ViewData.ModelState.ContainsKey("IsGPG45Correct") && Html.ViewData.ModelState["IsGPG45Correct"].Errors.Count > 0,
                         ErrorMessage = Html.ViewData.ModelState.ContainsKey("IsGPG45Correct") && Html.ViewData.ModelState["IsGPG45Correct"].Errors.Count > 0 ?
                         Html.ViewData.ModelState["IsGPG45Correct"].Errors[0].ErrorMessage : string.Empty,
@@ -382,7 +404,7 @@
 
                     <h4 class="govuk-heading-s">Date of expiry</h4>
                     <p class="govuk-body">
-                        The certificate includes a valid date of expiry. The expiry date should not be more than 2 years and 30 days after the date of issue.
+                        The certificate includes a valid date of expiry. The expiry date should not be more than 3 years and 60 days after the date of issue.
                     </p>
 
 
@@ -435,7 +457,6 @@
                             </h3>
                            <div id="comments-hint" class="govuk-hint">
                               This information will only be visible to OfDIA users. If you have marked any item as 'Incorrect', you should provide further details. 
-                              If all sections are marked 'Correct', please add a comment to confirm below.
                            </div>
                             <p id="commentsforincorrect-error" class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.CommentsForIncorrect)
@@ -454,7 +475,6 @@
                             </h3>
                             <div id="comments-hint" class="govuk-hint">
                                 This information will only be visible to OfDIA users. If you have marked any item as 'Incorrect', you should provide further details.
-                                If all sections are marked 'Correct', please add a comment to confirm below.
                             </div>
                             @Html.TextAreaFor(model => model.CommentsForIncorrect, new { @class = "govuk-textarea", @id = "commentsforincorrect", @name = "comment", @rows = "5", aria_describedby = "comments-hint" })
                         </div>
