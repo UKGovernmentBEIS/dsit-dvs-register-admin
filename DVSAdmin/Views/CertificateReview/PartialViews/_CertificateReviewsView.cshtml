@@ -27,7 +27,7 @@
             <tr class="govuk-table__row">
                 @if (item.ServiceStatus == ServiceStatusEnum.AmendmentsRequired)
                 {
-                    <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateSubmissionDetails", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
+                        <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateSubmissionDetails", "CertificateReview", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>
                 }
                 else
                 {
