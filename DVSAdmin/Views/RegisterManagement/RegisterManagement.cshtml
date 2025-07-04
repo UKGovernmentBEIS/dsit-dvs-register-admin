@@ -47,7 +47,7 @@
                                         <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(@item.ProviderStatus) </td>
                                         <td class="govuk-table__cell">@(DateTimeExtensions.FormatDateTime(item.ModifiedTime))</td>
                                         <td class="govuk-table__cell">
-                                            @foreach (var cab in item.Services.Select(s => s.CabUser.Cab.CabName).Distinct())
+                                            @foreach (var cab in ViewModelHelper.GetCabsForProvider(item.Services))
                                             {
                                                 <div class="govuk-!-margin-bottom-1">
                                                     @cab
