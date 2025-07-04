@@ -3,8 +3,6 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -59,18 +57,17 @@ namespace DVSAdmin.Data.Repositories
         }       
 
        
-        public async Task<List<Service>> GetServiceList()
+        public async Task<List<Service>> GetServiceList(string searchText = "")
         {
-            return await context.Service
+            return await context.Service.Where(s => s.ServiceName.ToLower().Contains(searchText) ||
+             s.Provider.RegisteredName.ToLower().Contains(searchText))
             .Include(s => s.Provider)
             .Include(s => s.CertificateReview)
             .Include(s => s.ServiceRoleMapping)
             .Include(s => s.CabUser).ThenInclude(s => s.Cab)
             .OrderByDescending(s => s.CreatedTime)
             .ToListAsync();
-        }
-
-     
+        }     
 
 
 

@@ -57,5 +57,20 @@ namespace DVSAdmin.BusinessLogic.Models
         [JsonIgnore]
         public ICollection<CabTransferRequestDto> CabTransferRequest { get; set; }
         public int CabTransferRequestId { get; set; }
+
+        public int TrustFrameworkVersionId { get; set; }
+        [JsonIgnore]
+        public TrustFrameworkVersionDto TrustFrameworkVersion { get; set; }
+        public ServiceTypeEnum? ServiceType { get; set; }
+        public int? UnderPinningServiceId { get; set; }
+        [JsonIgnore]
+        public ServiceDto UnderPinningService { get; set; }
+        public int? ManualUnderPinningServiceId { get; set; }
+        [JsonIgnore]
+        public ManualUnderPinningServiceDto ManualUnderPinningService { get; set; }
+
+        public bool? IsUnderPinningServicePublished { get; set; }
+
+        public string NewOrResubmission { get; set; }
     }
 }

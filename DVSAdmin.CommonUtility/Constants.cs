@@ -32,7 +32,8 @@
         public const string ConformityIssueDateExpiryDateError = "The certificate of conformity expiry date cannot be before issue date";
         public const string ConformityExpiryPastDateError = "The certificate of conformity expiry date must be in the future";
         public const string NullFieldsDisplay = "No data";
-
+        public const string NewSubmission = "New";
+        public const string ReSubmission = "Resubmission";
 
     }
 }
