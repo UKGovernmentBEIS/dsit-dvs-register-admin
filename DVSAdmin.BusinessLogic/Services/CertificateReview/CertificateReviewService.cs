@@ -74,9 +74,17 @@ namespace DVSAdmin.BusinessLogic.Services
             var certificateInfo = await certificateReviewRepository.GetServiceDetails(serviceId);
             ServiceDto serviceDto = automapper.Map<ServiceDto>(certificateInfo);
             return serviceDto;
-        }        
+        }
 
-       
+        public async Task<ServiceDto> GetPreviousServiceVersion(int currentServiceId)
+        {
+            var certificateInfo = await certificateReviewRepository.GetPreviousServiceVersion(currentServiceId);
+            ServiceDto serviceDto = automapper.Map<ServiceDto>(certificateInfo);
+            return serviceDto;
+        }
+
+
+
 
 
         public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail)

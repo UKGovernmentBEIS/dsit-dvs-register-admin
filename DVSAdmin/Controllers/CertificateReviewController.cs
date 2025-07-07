@@ -64,11 +64,11 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpGet("certificate-submission-details")]
-        public async Task<ActionResult> CertificateSubmissionDetails(int certificateInfoId)
+        public async Task<ActionResult> CertificateSubmissionDetails(int serviceId)
         {
             SetRefererURL();
             CertificateDetailsViewModel certificateDetailsViewModel = new();
-            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateInfoId);            
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);            
         
             if (serviceDto == null)
                 throw new InvalidOperationException($"Service was not found.");
@@ -78,7 +78,7 @@ namespace DVSAdmin.Controllers
                       
 
 
-            CertificateValidationViewModel certificateValidationViewModel = MapDtoToViewModel(serviceDto);
+            CertificateValidationViewModel certificateValidationViewModel = await MapDtoToViewModel(serviceDto);
             CertificateReviewViewModel certificateReviewViewModel = new ();
           
             certificateReviewViewModel.InformationMatched = serviceDto?.CertificateReview?.InformationMatched;
@@ -104,26 +104,15 @@ namespace DVSAdmin.Controllers
 
         [HttpGet("certificate-review-validation")]
         public async Task<ActionResult> CertificateValidation(int serviceId)
-        {
-            CertificateValidationViewModel certificateValidationViewModel = new();
+        {           
+            CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData") ?? new CertificateValidationViewModel();
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);
 
-           
-            if (serviceId == 0)
-            {
-                certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
-            }
-            else
-            {
-                ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(serviceId);
-                
-                if (serviceDto == null)
-                    throw new InvalidOperationException("Service was not found.");
+            if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft)
+                throw new InvalidOperationException("Service is not in a valid state for certificate review.");
 
-                if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft)
-                    throw new InvalidOperationException("Service is not in a valid state for certificate review.");
-                
-                certificateValidationViewModel = MapDtoToViewModel(serviceDto);
-            }
+            certificateValidationViewModel = await MapDtoToViewModel(serviceDto);
+          
 
             return View(certificateValidationViewModel);
         }    
@@ -131,22 +120,17 @@ namespace DVSAdmin.Controllers
         [HttpPost("certificate-review-validation")]     
         public async Task<ActionResult> SaveCertificateValidation(CertificateValidationViewModel certificateValidationViewModel, string saveReview)
         {
-            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);
-            
-            if (serviceDto == null)
-                throw new InvalidOperationException("Service was not found.");
-            
-            certificateValidationViewModel.Service = serviceDto;
-
             if (string.IsNullOrEmpty(UserEmail) || (saveReview != "draft" && saveReview != "continue"))
                 throw new InvalidOperationException("Invalid user or save action provided.");
-
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);           
+            if (serviceDto == null)
+                throw new InvalidOperationException("Service was not found.");
+            await SetResubmissionFields(serviceDto);
             HttpContext?.Session.Set("CertificateValidationData", certificateValidationViewModel);
+            certificateValidationViewModel.Service = serviceDto;  
             UserDto userDto = await userService.GetUser(UserEmail);
             CertificateReviewDto certificateReviewDto = MapViewModelToDto(certificateValidationViewModel, userDto.Id, CertificateReviewEnum.InReview, null);
-
-            GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto, UserEmail);
-            
+            GenericResponse genericResponse = await certificateReviewService.SaveCertificateReview(certificateReviewDto, UserEmail);            
             if (!genericResponse.Success)
                 throw new InvalidOperationException("Failed to save certificate review details.");
 
@@ -166,29 +150,14 @@ namespace DVSAdmin.Controllers
         [HttpGet("certificate-review")]
         public async Task<ActionResult> CertificateReview(int reviewId)
         {           
-            CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
-            CertificateReviewViewModel certificateReviewViewModel = new();
-          
-            if (reviewId == 0)
-            {
-                certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData")??new CertificateReviewViewModel();
-            }
-            else
-            {
-                CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReview(reviewId);
-                
-                if (certificateReviewDto == null)
-                    throw new InvalidOperationException("Certificate review details were not found.");
-
-                if (certificateValidationViewModel.Service == null)
-                    throw new InvalidOperationException("Service details are missing from session.");
-
-                certificateReviewViewModel.Service = certificateValidationViewModel.Service;
-                certificateReviewViewModel.CertificateReviewId = reviewId;
-                certificateReviewViewModel.Comments = certificateReviewDto.Comments;               
-                certificateReviewViewModel.InformationMatched = certificateReviewDto.InformationMatched;
-                certificateReviewViewModel.Service.CertificateReview = certificateReviewDto;
-            }
+         
+            CertificateReviewViewModel certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData") ?? new CertificateReviewViewModel();
+            CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReview(reviewId);
+            certificateReviewViewModel.Service = await certificateReviewService.GetServiceDetails(certificateReviewDto.ServiceId);
+            certificateReviewViewModel.CertificateReviewId = reviewId;
+            certificateReviewViewModel.Comments = certificateReviewDto.Comments;
+            certificateReviewViewModel.InformationMatched = certificateReviewDto.InformationMatched;
+            certificateReviewViewModel.Service.CertificateReview = certificateReviewDto;           
             return View(certificateReviewViewModel);
         }
 
@@ -196,12 +165,10 @@ namespace DVSAdmin.Controllers
         public async Task<ActionResult> SaveCertificateReview(CertificateReviewViewModel certificateReviewViewModel, string saveReview)
         {  
            
-            CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
-            
-            if (certificateValidationViewModel.Service == null)
-                throw new InvalidOperationException("Service details are missing from session.");
-
-            certificateReviewViewModel.Service = certificateValidationViewModel.Service;
+            CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();                     
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);
+            certificateReviewViewModel.Service = serviceDto;
+            certificateValidationViewModel.Service = serviceDto;
             ValidateCertificateReviewViewModel(certificateReviewViewModel, certificateValidationViewModel, saveReview);
 
             if (string.IsNullOrEmpty(UserEmail))
@@ -243,10 +210,12 @@ namespace DVSAdmin.Controllers
         #region Approve Flow
 
         [HttpGet("approve-submission")]
-        public IActionResult ApproveSubmission()
+        public async Task<IActionResult> ApproveSubmission()
         {           
             CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();          
             CertificateReviewViewModel certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData")??new CertificateReviewViewModel();
+            ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);
+            certificateValidationViewModel.Service = serviceDto;
             CertificateApprovalViewModel certificateApprovalViewModel = new();
             certificateApprovalViewModel.CertificateReview = certificateReviewViewModel;
             certificateApprovalViewModel.CertificateValidation= certificateValidationViewModel;
@@ -272,9 +241,8 @@ namespace DVSAdmin.Controllers
             {
                 HttpContext.Session.Remove("CertificateReviewDto");           
                 CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();
-                
-                if (certificateValidationViewModel.Service == null)
-                    throw new InvalidOperationException("Certificate service details are missing from session.");
+
+                certificateValidationViewModel.Service = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);
 
                 certificateReviewDto.CertificateReviewStatus = CertificateReviewEnum.Approved;
                 GenericResponse genericResponse = await certificateReviewService.UpdateCertificateReview(certificateReviewDto, certificateValidationViewModel.Service, UserEmail);
@@ -779,13 +747,15 @@ namespace DVSAdmin.Controllers
 
 
         }
-        private CertificateValidationViewModel MapDtoToViewModel(ServiceDto serviceDto)
+        private async Task<CertificateValidationViewModel> MapDtoToViewModel(ServiceDto serviceDto)
         {
 
             CertificateValidationViewModel certificateValidationViewModel = new CertificateValidationViewModel();
+            await SetResubmissionFields(serviceDto);
             certificateValidationViewModel.Service = serviceDto;
-            certificateValidationViewModel.ServiceId =serviceDto.Id;
-            if (serviceDto.CertificateReview!= null)
+            certificateValidationViewModel.ServiceId = serviceDto.Id;
+
+            if (serviceDto.CertificateReview != null)
             {
                 certificateValidationViewModel.IsCabLogoCorrect = serviceDto.CertificateReview.IsCabLogoCorrect;
                 certificateValidationViewModel.IsCabDetailsCorrect = serviceDto.CertificateReview.IsCabDetailsCorrect;
@@ -797,16 +767,26 @@ namespace DVSAdmin.Controllers
                 certificateValidationViewModel.IsURLLinkToServiceCorrect = serviceDto.CertificateReview.IsURLLinkToServiceCorrect;
                 certificateValidationViewModel.IsGPG45Correct = serviceDto.CertificateReview.IsGPG45Correct;
                 certificateValidationViewModel.IsGPG44Correct = serviceDto.CertificateReview.IsGPG44Correct;
-                certificateValidationViewModel.IsServiceProvisionCorrect =serviceDto.CertificateReview.IsServiceProvisionCorrect;
-                certificateValidationViewModel.IsLocationCorrect= serviceDto.CertificateReview.IsLocationCorrect;
+                certificateValidationViewModel.IsServiceProvisionCorrect = serviceDto.CertificateReview.IsServiceProvisionCorrect;
+                certificateValidationViewModel.IsLocationCorrect = serviceDto.CertificateReview.IsLocationCorrect;
                 certificateValidationViewModel.IsDateOfIssueCorrect = serviceDto.CertificateReview.IsDateOfIssueCorrect;
                 certificateValidationViewModel.IsDateOfExpiryCorrect = serviceDto.CertificateReview.IsDateOfExpiryCorrect;
                 certificateValidationViewModel.IsAuthenticyVerifiedCorrect = serviceDto.CertificateReview.IsAuthenticyVerifiedCorrect;
-                certificateValidationViewModel.CommentsForIncorrect =  serviceDto.CertificateReview.CommentsForIncorrect;
+                certificateValidationViewModel.CommentsForIncorrect = serviceDto.CertificateReview.CommentsForIncorrect;
 
 
             }
             return certificateValidationViewModel;
+        }
+
+        private async Task SetResubmissionFields(ServiceDto serviceDto)
+        {
+            if (serviceDto.NewOrResubmission == Constants.ReSubmission)
+            {
+                serviceDto.IsResubmission = true;
+                ServiceDto previousVersion = await certificateReviewService.GetPreviousServiceVersion(serviceDto.Id);
+                serviceDto.PreviousVersionServiceId = previousVersion.Id;
+            }
         }
         #endregion
     }
