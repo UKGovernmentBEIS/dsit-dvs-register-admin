@@ -2,6 +2,7 @@
 @using DVSAdmin.CommonUtility.Models
 @using DVSAdmin.CommonUtility.Models.Enums
 @using DVSAdmin.Extensions
+@using DVSAdmin.Models.UI;
 @{
     ViewData["Title"] = "Submission details";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -29,6 +30,19 @@
         </ol>
     </div>
     <main id="main-content" class="govuk-main-wrapper" role="main">
+
+        @if (Model?.CertificateValidation?.Service?.IsResubmission == true)
+        {
+            var notificationBanner = new NotificationBannerViewModel
+                {
+                    Title = "Important",
+                    NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been submitted as part of a re-application or trust framework uplift for an existing service.",
+                    HtmlContent = "To see the original submission, <a href='/certificate-review/certificate-submission-details?serviceId=" + Model?.CertificateValidation?.Service?.PreviousVersionServiceId + "' class='govuk-link'>Go to archive</a>"
+               } }
+                };
+            @await Html.PartialAsync("~/Views/PartialViews/_NotificationBanner.cshtml", notificationBanner)
+
+        }
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
@@ -89,6 +103,28 @@
                 <div class="govuk-!-padding-bottom-6">
                     <h2 class="govuk-heading-l">Submitted information</h2>
                     @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_SubmittedInformationView.cshtml", Model?.CertificateValidation?.Service)
+
+
+
+                    @if (@Model?.CertificateValidation?.Service.ServiceSupSchemeMapping != null && @Model?.CertificateValidation?.Service.ServiceSupSchemeMapping.Count > 0)
+                    {
+                        if ((@Model.CertificateValidation.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
+                        || (@Model.CertificateValidation.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
+                        {
+                         
+                                <h3 class="govuk-heading-m">Supplementary codes</h3>
+                                @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.CertificateValidation.Service)
+                          
+                        }
+                    }
+
+                    @if (Model?.CertificateValidation.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
+                    {                       
+                            @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.CertificateValidation.Service)                        
+                    }
+
+
+
                     @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ContactView.cshtml", Model?.CertificateValidation?.Service)
                 </div>
 
@@ -99,28 +135,6 @@
                     {
                         @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
 
-                       @*  <h3 class="govuk-heading-m">  Opening the loop</h3>
-                        <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-                        <dl class="govuk-summary-list">
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Link
-                                </dt>
-                                @if (ViewBag.OpeningTheLoopLink != null)
-                                {
-                                    <dd class="govuk-summary-list__value">
-                                        @Convert.ToString(ViewBag.OpeningTheLoopLink)
-                                    </dd>
-                                }
-                                else
-                                {
-                                    <dd class="govuk-summary-list__value">
-                                        Already consented
-                                    </dd>
-                                }
-                            </div>
-
-                        </dl> *@
 
 
                         <h2 class="govuk-heading-l">Review summary</h2>
@@ -157,6 +171,10 @@
                         <p class="govuk-body">
                             @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateReview?.Comments ?? string.Empty)
                         </p>
+
+                        <a href="/certificate-review/certificate-review-list#archive" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                            Go back to archive
+                        </a>
 
 
                     }

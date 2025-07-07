@@ -96,10 +96,10 @@
                         <dt class="govuk-summary-list__key">Company address details</dt>
                         <dd class="govuk-summary-list__value">@HtmlExtensions.ToStringWithLineBreaks(Model.CompanyAddress)</dd>
                     </div>
-                    @* TODO: Replace “0.4 gamma” with @Model.TrustFrameworkVersion *@
+                   
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Trust framework version</dt>
-                        <dd class="govuk-summary-list__value">0.4 gamma</dd>
+                        <dd class="govuk-summary-list__value">@Model.TrustFrameworkVersion.TrustFrameworkName</dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Name of service</dt>
@@ -118,11 +118,22 @@
                             }
                         </dd>
                     </div>
-                    @* TODO: Replace “White-labelled service” with @Model.ServiceType *@
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Underpinning or white-labelled service</dt>
-                        <dd class="govuk-summary-list__value">White-labelled service</dd>
-                    </div>
+
+
+
+                    @if (Model.TrustFrameworkVersion.Version == Constants.TFVersion0_4)
+                    {                       
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Underpinning or white-labelled service
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @ViewModelHelper.GetServiceType(Model.ServiceType)
+                            </dd>
+                        </div>
+                    }
+
+                   
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">GPG45 identity profiles</dt>
                         <dd class="govuk-summary-list__value">
@@ -200,11 +211,26 @@
                         <dd class="govuk-summary-list__value">  @DateTimeExtensions.FormatDateTime(@Model.ConformityExpiryDate, "dd MMMM yyyy")</dd>
                     </div>
                 </dl>
-                @* // TODO: Add model *@
-                @await Html.PartialAsync("PartialViews/_SupplementaryCodes", Model)
 
-                @* // TODO: Add model *@
-                @await Html.PartialAsync("PartialViews/_UnderpinningServiceDetails", Model)
+
+                @if (@Model.ServiceSupSchemeMapping != null && @Model.ServiceSupSchemeMapping.Count > 0)
+                {
+                    if ((@Model.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
+                    || (@Model.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
+                    {
+                        
+                            <h3 class="govuk-heading-m">Supplementary codes</h3>
+                            @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model)                       
+                    }
+                }
+
+                @if (Model.ServiceType == ServiceTypeEnum.WhiteLabelled)
+                {
+                    
+                  @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model)
+                 
+                }
+
 
                 @using (Html.BeginForm("ProceedSecondaryCheckApproval", "PublicInterestSecondaryCheck", FormMethod.Post))
                 {
