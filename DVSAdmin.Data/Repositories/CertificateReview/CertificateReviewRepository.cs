@@ -32,6 +32,8 @@ namespace DVSAdmin.Data.Repositories
         {
             CertificateReview certificateReview = new ();
             certificateReview = await context.CertificateReview.Include(p => p.CertificateReviewRejectionReasonMapping)
+            .Include(s=>s.Service).ThenInclude(s => s.Provider)
+            .Include(s => s.Service).ThenInclude(s => s.CabUser).ThenInclude(s=>s.Cab)
             .Where(p => p.Id == reviewId).FirstOrDefaultAsync()?? new CertificateReview();
             return certificateReview;
         }
