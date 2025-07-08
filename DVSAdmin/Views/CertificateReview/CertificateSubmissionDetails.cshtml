@@ -1,5 +1,4 @@
 ﻿@model CertificateDetailsViewModel;
-@using DVSAdmin.CommonUtility.Models
 @using DVSAdmin.CommonUtility.Models.Enums
 @using DVSAdmin.Extensions
 @using DVSAdmin.Models.UI;
@@ -14,6 +13,14 @@
             };
 
     string refererUrl = Convert.ToString(ViewBag.RefererUrl);
+    
+    var notificationBanner = new NotificationBannerViewModel
+    {
+        Title = "Important",
+        NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been submitted as part of a re-application or trust framework uplift for an existing service.",
+            HtmlContent = "To see the original submission, go back to Archive."
+        } }
+    };
 }
 
 <div class="govuk-width-container">
@@ -33,20 +40,27 @@
 
         @if (Model?.CertificateValidation?.Service?.IsResubmission == true)
         {
-            var notificationBanner = new NotificationBannerViewModel
-                {
-                    Title = "Important",
-                    NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been submitted as part of a re-application or trust framework uplift for an existing service.",
-                    HtmlContent = "To see the original submission, <a href='/certificate-review/certificate-submission-details?serviceId=" + Model?.CertificateValidation?.Service?.PreviousVersionServiceId + "' class='govuk-link'>Go to archive</a>"
-               } }
-                };
             @await Html.PartialAsync("~/Views/PartialViews/_NotificationBanner.cshtml", notificationBanner)
-
         }
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
-                <h1 class="govuk-heading-xl">Submission details</h1>
+                <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
+                
+                @if (Model?.CertificateValidation?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)
+                {
+                    <details class="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                This submission has been rejected.
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text">
+                            <p>If you want to review other submissions, select the 'Go back to Archive' button.</p>
+                            <p>If you reject this submission by mistake, select 'Restore this submission' button to move this record to the Certificate Submissions tab.</p>
+                        </div>
+                    </details>
+                }
 
                 @if (Model?.CertificateValidation?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
                 {
@@ -57,9 +71,8 @@
                             </span>
                         </summary>
                         <div class="govuk-details__text">
-                            A resubmission request has been sent to the Conformity Assessment Body.
-                            The CAB will need to amend and resubmit the submission according to the review feedback from OfDIA.
-                            Select ‘Go back to certificate review’ to review other submissions.
+                            <p>A resubmission request has been sent to the Conformity Assessment Body. The CAB will need to amend and resubmit the submission according to the review feedback from OfDIA.</p>
+                            <p>To review other submissions, select ‘Go back to certificate review’ button.</p>
                         </div>
                     </details>
                 }
@@ -73,6 +86,9 @@
                     {
                         @Html.Hidden("serviceId", Model.CertificateValidation.ServiceId)
                         <div class="govuk-button-group govuk-!-margin-top-5 govuk-!-margin-bottom-5">
+                            <h2 class="govuk-heading-l">Resend the provider an invitation to rejoin the register</h2>
+                            <p>The provider of this service has not responded to our request to start their application for it to appear on the register.</p>
+                            <p>Select the 'Resend email request' button to send another email with an updated link that the provider can use to start the application process.</p>
                             <button type="submit" class="govuk-button" data-module="govuk-button">
                                 Resend request email
                             </button>
@@ -171,7 +187,7 @@
                         <p class="govuk-body">
                             @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateReview?.Comments ?? string.Empty)
                         </p>
-
+                        
                         <a href="/certificate-review/certificate-review-list#archive" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
                             Go back to archive
                         </a>
@@ -224,7 +240,6 @@
                                 Go back to archive
                             </a>
                         </div>
-
                     }
 
                     else if (Model?.CertificateValidation?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
