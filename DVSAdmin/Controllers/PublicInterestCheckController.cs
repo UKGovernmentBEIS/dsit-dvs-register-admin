@@ -66,13 +66,7 @@ namespace DVSAdmin.Controllers
         [HttpGet("archive-details")]
         public async Task<IActionResult> ArchiveDetails(int serviceId)
         {
-            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
-            //if(serviceDto.ProceedPublishConsentToken !=null && serviceDto.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed &&
-            //    serviceDto.ServiceStatus == ServiceStatusEnum.Received)
-            //{
-            //    ViewBag.ClosingTheLoopLink=  configuration["DvsRegisterLink"] +"consent/publish-service-give-consent?token="+serviceDto.ProceedPublishConsentToken.Token;
-            //}
-           
+            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);       
             return View(serviceDto);
 
         }

@@ -88,6 +88,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         public async Task<ProviderProfile> GetProviderWithServiceDetails(int providerId)
         {
             return await context.ProviderProfile
+           .Include(p => p.Services).ThenInclude(s => s.TrustFrameworkVersion)
            .Include(p => p.Services).ThenInclude(s => s.ServiceRoleMapping).ThenInclude(s => s.Role)
            .Include(p => p.Services).ThenInclude(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel)
            .Include(p => p.Services).ThenInclude(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)

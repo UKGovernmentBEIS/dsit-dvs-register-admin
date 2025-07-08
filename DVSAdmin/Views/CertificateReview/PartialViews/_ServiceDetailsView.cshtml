@@ -22,9 +22,8 @@
         <tr class="govuk-table__row">
 
             <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
-            <td class="govuk-table__cell">@Model.ServiceName</td>
-            @* TODO: Replace resubmission with Model.SubmissionType *@
-            <td class="govuk-table__cell">Resubmission</td>
+            <td class="govuk-table__cell">@Model.ServiceName</td>          
+            <td class="govuk-table__cell">@Model.NewOrResubmission</td>
             <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CreatedTime)</td>
             @if (Model.CertificateReview !=null)
             {
