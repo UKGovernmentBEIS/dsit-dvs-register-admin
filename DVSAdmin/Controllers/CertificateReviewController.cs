@@ -149,14 +149,11 @@ namespace DVSAdmin.Controllers
 
         [HttpGet("certificate-review")]
         public async Task<ActionResult> CertificateReview(int reviewId)
-        {           
-         
+        {  
             CertificateReviewViewModel certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData") ?? new CertificateReviewViewModel();
             CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReview(reviewId);
             certificateReviewViewModel.Service = await certificateReviewService.GetServiceDetails(certificateReviewDto.ServiceId);
-            certificateReviewViewModel.CertificateReviewId = reviewId;
-            certificateReviewViewModel.Comments = certificateReviewDto.Comments;
-            certificateReviewViewModel.InformationMatched = certificateReviewDto.InformationMatched;
+            certificateReviewViewModel.CertificateReviewId = reviewId;       
             certificateReviewViewModel.Service.CertificateReview = certificateReviewDto;           
             return View(certificateReviewViewModel);
         }
@@ -505,13 +502,14 @@ namespace DVSAdmin.Controllers
 
         [HttpPost("proceed-return")]
         public async Task<ActionResult> ProceedReturn(string action, SendBackViewModel model)
-        {
+        {           
             if (action == "return")
             {
                 CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData") ?? new CertificateValidationViewModel();
                 CertificateReviewViewModel certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData") ?? new CertificateReviewViewModel();
 
                 model.CertificateValidation = certificateValidationViewModel;
+                model.CertificateValidation.Service = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);
                 model.CertificateReview = certificateReviewViewModel;
                 model.CommentFromReview = certificateReviewViewModel.Comments;
 
@@ -541,10 +539,7 @@ namespace DVSAdmin.Controllers
                     return View("SendBackToCab", model);
                 }
             }
-            else if (action == "cancel")
-            {
-                return RedirectToAction("CertificateReview");
-            }
+           
             else
             {
                 throw new InvalidOperationException("Invalid send back action.");

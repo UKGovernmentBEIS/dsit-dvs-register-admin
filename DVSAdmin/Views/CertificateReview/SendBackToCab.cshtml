@@ -10,7 +10,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new {reviewId = Model.CertificateReview.CertificateReviewId}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
 
         <div class="govuk-grid-row">
@@ -118,7 +118,7 @@
                         <button type="submit" class="govuk-button" data-module="govuk-button" name="action" value="return">
                             Return to CAB
                         </button>
-                        <a href="/certificate-review/certificate-review" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                        <a href="/certificate-review/certificate-review?reviewId=@Model.CertificateReview.CertificateReviewId" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
                             Cancel
                         </a>
                     </div>
