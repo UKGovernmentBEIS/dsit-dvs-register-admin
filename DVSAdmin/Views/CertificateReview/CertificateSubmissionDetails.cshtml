@@ -17,9 +17,10 @@
     var notificationBanner = new NotificationBannerViewModel
     {
         Title = "Important",
-        NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been submitted as part of a re-application or trust framework uplift for an existing service.",
-            HtmlContent = "To see the original submission, go back to Archive."
-        } }
+        NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been provided as part of a reapplication, trust framework uplift or certification transfer from another CAB.",
+         HtmlContent = "<p class='govuk-body'><a href='#' class='govuk-link' rel='noreferrer noopener' target='_blank'>Access the original submission (opens in new tab)</a></p>"
+     } }
+       
     };
 }
 
