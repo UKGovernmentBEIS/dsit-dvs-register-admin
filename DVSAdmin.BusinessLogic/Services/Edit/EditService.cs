@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.BusinessLogic.Models.CertificateReview;
+using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.JWT;
-using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
 using Microsoft.Extensions.Configuration;
-using DVSAdmin.CommonUtility;
-using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -267,14 +267,14 @@ namespace DVSAdmin.BusinessLogic.Services
 
             if (currentData.CompanyAddress != null)
             {
-                previousDataDictionary.Add("Registered address", [previousData.CompanyAddress]);
-                currentDataDictionary.Add("Registered address", [currentData.CompanyAddress]);
+                previousDataDictionary.Add(Constants.RegisteredAddress, [previousData.CompanyAddress]);
+                currentDataDictionary.Add(Constants.RegisteredAddress, [currentData.CompanyAddress]);
             }
 
             if (currentData.ServiceName != null)
             {
-                previousDataDictionary.Add("Service name", [previousData.ServiceName]);
-                currentDataDictionary.Add("Service name", [currentData.ServiceName]);
+                previousDataDictionary.Add(Constants.ServiceName, [previousData.ServiceName]);
+                currentDataDictionary.Add(Constants.ServiceName, [currentData.ServiceName]);
             }
 
 
@@ -282,10 +282,10 @@ namespace DVSAdmin.BusinessLogic.Services
             if (currentData.ServiceRoleMappingDraft.Count > 0)
             {
                 var roles = previousData.ServiceRoleMapping.Select(item => item.Role.RoleName).ToList();
-                previousDataDictionary.Add("Roles certified against", roles);
+                previousDataDictionary.Add(Constants.Roles, roles);
 
                 var currentRoles = currentData.ServiceRoleMappingDraft.Select(item => item.Role.RoleName).ToList();
-                currentDataDictionary.Add("Roles certified against", currentRoles);
+                currentDataDictionary.Add(Constants.Roles, currentRoles);
 
 
             }
@@ -304,8 +304,8 @@ namespace DVSAdmin.BusinessLogic.Services
                     .Select(item => item.QualityLevel.Level)
                     .ToList();
 
-                previousDataDictionary.Add("GPG44 level of protection", protectionLevels != null && protectionLevels.Count > 0 ? protectionLevels : new List<string> { @Constants.NullFieldsDisplay });
-                currentDataDictionary.Add("GPG44 level of protection", currentProtectionLevels != null && currentProtectionLevels.Count > 0 ? currentProtectionLevels : new List<string> { @Constants.NullFieldsDisplay });
+                previousDataDictionary.Add(Constants.GPG44Protection, protectionLevels != null && protectionLevels.Count > 0 ? protectionLevels : new List<string> { @Constants.NullFieldsDisplay });
+                currentDataDictionary.Add(Constants.GPG44Protection, currentProtectionLevels != null && currentProtectionLevels.Count > 0 ? currentProtectionLevels : new List<string> { @Constants.NullFieldsDisplay });
             }
 
             if (authenticationExists || currentData.HasGPG44 == false)
@@ -320,8 +320,8 @@ namespace DVSAdmin.BusinessLogic.Services
                     .Select(item => item.QualityLevel.Level)
                     .ToList();
 
-                previousDataDictionary.Add("GPG44 quality of authentication", authenticationLevels != null && authenticationLevels.Count > 0 ? authenticationLevels : new List<string> { @Constants.NullFieldsDisplay });
-                currentDataDictionary.Add("GPG44 quality of authentication", currentAuthenticationLevels != null && currentAuthenticationLevels.Count > 0 ? currentAuthenticationLevels : new List<string> { @Constants.NullFieldsDisplay });
+                previousDataDictionary.Add(Constants.GPG44Authentication, authenticationLevels != null && authenticationLevels.Count > 0 ? authenticationLevels : new List<string> { @Constants.NullFieldsDisplay });
+                currentDataDictionary.Add(Constants.GPG44Authentication, currentAuthenticationLevels != null && currentAuthenticationLevels.Count > 0 ? currentAuthenticationLevels : new List<string> { @Constants.NullFieldsDisplay });
             }
 
             #region GPG45 Identity profile
@@ -331,24 +331,24 @@ namespace DVSAdmin.BusinessLogic.Services
                 var currentIdentityProfiles = currentData.ServiceIdentityProfileMappingDraft?.Select(item => item.IdentityProfile.IdentityProfileName).ToList();
                 if (identityProfiles != null && identityProfiles.Count > 0)
                 {
-                    previousDataDictionary.Add("GPG45 identity profiles", identityProfiles);
+                    previousDataDictionary.Add(Constants.GPG45IdentityProfiles, identityProfiles);
                    
                 }
                 else
                 {
-                    previousDataDictionary.Add("GPG45 identity profiles", [@Constants.NullFieldsDisplay]);
+                    previousDataDictionary.Add(Constants.GPG45IdentityProfiles, [@Constants.NullFieldsDisplay]);
                 }
 
                 if (currentIdentityProfiles != null && currentIdentityProfiles.Count > 0)
                 {
-                    currentDataDictionary.Add("GPG45 identity profiles", currentIdentityProfiles);
+                    currentDataDictionary.Add(Constants.GPG45IdentityProfiles, currentIdentityProfiles);
                 }
                 else
                 {
-                    currentDataDictionary.Add("GPG45 identity profiles", [@Constants.NullFieldsDisplay]);
+                    currentDataDictionary.Add(Constants.GPG45IdentityProfiles, [@Constants.NullFieldsDisplay]);
                 }
             }
-           
+
             #endregion
 
 
@@ -356,27 +356,42 @@ namespace DVSAdmin.BusinessLogic.Services
 
             if (currentData.ServiceSupSchemeMappingDraft.Count > 0 || currentData.HasSupplementarySchemes == false)
             {
-                var supplementarySchemes = previousData.ServiceSupSchemeMapping?.Select(item => item.SupplementaryScheme.SchemeName).ToList();
-                var currentSupplementarySchemes = currentData.ServiceSupSchemeMappingDraft?.Select(item => item.SupplementaryScheme.SchemeName).ToList();
-                if (supplementarySchemes != null && supplementarySchemes.Count > 0)
-                {
-                    previousDataDictionary.Add("Supplementary Codes", supplementarySchemes);
-                }
-                else
-                {
-                    previousDataDictionary.Add("Supplementary Codes", [@Constants.NullFieldsDisplay]);
-                }
+                var supplementarySchemes = previousData.ServiceSupSchemeMapping?.OrderBy(x=>x.SupplementarySchemeId).Select(item => item.SupplementaryScheme.SchemeName).ToList();
+                var currentSupplementarySchemes = currentData.ServiceSupSchemeMappingDraft?.OrderBy(x => x.SupplementarySchemeId).Select(item => item.SupplementaryScheme.SchemeName).ToList();
+                bool areSame = supplementarySchemes != null && currentSupplementarySchemes != null &&
+                supplementarySchemes.SequenceEqual(currentSupplementarySchemes);
 
-                if (currentSupplementarySchemes != null && currentSupplementarySchemes.Count > 0)
+               
+                if ( !areSame   )
                 {
-                    currentDataDictionary.Add("Supplementary Codes", currentSupplementarySchemes);
-                }
-                else
-                {
-                    currentDataDictionary.Add("Supplementary Codes", [@Constants.NullFieldsDisplay]);
-                }
+                    if (supplementarySchemes != null && supplementarySchemes.Count > 0)
+                    {
+                        previousDataDictionary.Add(Constants.SupplementaryCodes, supplementarySchemes);
+                    }
+                    else
+                    {
+                        previousDataDictionary.Add(Constants.SupplementaryCodes, [@Constants.NullFieldsDisplay]);
+                    }
+
+                    if (currentSupplementarySchemes != null && currentSupplementarySchemes.Count > 0)
+                    {
+                        currentDataDictionary.Add(Constants.SupplementaryCodes, currentSupplementarySchemes);
+                    }
+                    else
+                    {
+                        currentDataDictionary.Add(Constants.SupplementaryCodes, [@Constants.NullFieldsDisplay]);
+                    }
+                }              
+
+
             }
-         
+
+            if (previousData.TrustFrameworkVersion.Version == Constants.TFVersion0_4)
+            {
+                GetServiceKeyValueForSchemeMappings(currentData, previousData, currentDataDictionary, previousDataDictionary);
+            }
+
+
             #endregion
 
 
@@ -394,6 +409,97 @@ namespace DVSAdmin.BusinessLogic.Services
         
             return (previousDataDictionary, currentDataDictionary);
         }
+
+        private static void GetServiceKeyValueForSchemeMappings(ServiceDraftDto currentData, ServiceDto previousData, Dictionary<string, List<string>> currentDataDictionary, Dictionary<string, List<string>> previousDataDictionary)
+        {
+            foreach (var schemeMappingDraft in currentData.ServiceSupSchemeMappingDraft)
+            {
+
+                if (schemeMappingDraft.SchemeGPG45MappingDraft != null && schemeMappingDraft.SchemeGPG45MappingDraft.Count > 0)
+                {
+                    var previousSchemeMappingDraft = previousData.ServiceSupSchemeMapping.Where(x => x.SupplementarySchemeId == schemeMappingDraft.SupplementarySchemeId).FirstOrDefault();
+
+                    if (previousSchemeMappingDraft != null)
+                    {
+                        var schemeGpg45Mappings = previousSchemeMappingDraft.SchemeGPG45Mapping.Select(x => x.IdentityProfile.IdentityProfileName).ToList();
+                        previousDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG45IdentityProfiles, schemeGpg45Mappings);
+                    }
+                    else
+                    {
+                        previousDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG45IdentityProfiles,[@Constants.NullFieldsDisplay]);
+                    }
+                    var currentSchemeGpg45Mappings = schemeMappingDraft?.SchemeGPG45MappingDraft?.Select(x => x.IdentityProfile.IdentityProfileName).ToList();
+
+                    if (currentSchemeGpg45Mappings != null && currentSchemeGpg45Mappings.Count > 0)
+                    {
+                        currentDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG45IdentityProfiles, currentSchemeGpg45Mappings);
+                    }
+                    else
+                    {
+                        currentDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG45IdentityProfiles, [@Constants.NullFieldsDisplay]);
+                        currentDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG45IdentityProfiles, [@Constants.NullFieldsDisplay]);
+                    }
+                }
+
+
+                if (schemeMappingDraft.SchemeGPG44MappingDraft != null && schemeMappingDraft.SchemeGPG44MappingDraft.Count > 0 || schemeMappingDraft.HasGpg44Mapping == false)
+                {
+
+                    var previousSchemeMappingDraft = previousData.ServiceSupSchemeMapping.Where(x => x.SupplementarySchemeId == schemeMappingDraft.SupplementarySchemeId).FirstOrDefault();
+                    if (previousSchemeMappingDraft != null)
+                    {
+                        var previousSchemeGpg44Protection = previousSchemeMappingDraft.SchemeGPG44Mapping?
+                      .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection).Select(x => x.QualityLevel.Level).ToList();
+
+                        var previousSchemeGpg44Authentication = previousSchemeMappingDraft.SchemeGPG44Mapping?
+                         .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication).Select(x => x.QualityLevel.Level).ToList();
+
+
+                        if (previousSchemeGpg44Authentication != null && previousSchemeGpg44Authentication.Count > 0 && previousSchemeGpg44Protection != null && previousSchemeGpg44Protection.Count > 0)
+                        {
+                            previousDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG44Protection, previousSchemeGpg44Protection);
+                            previousDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG44Authentication, previousSchemeGpg44Authentication);
+
+                        }
+                        else
+                        {
+                            previousDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG44Protection, [@Constants.NullFieldsDisplay]);
+                            previousDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG44Authentication, [@Constants.NullFieldsDisplay]);
+
+                        }
+
+                    }
+                    else
+                    {
+                        previousDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG44Protection, [@Constants.NullFieldsDisplay]);
+                        previousDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG44Authentication, [@Constants.NullFieldsDisplay]);
+
+                    }
+
+                    var currentSchemeGpg44Protection = schemeMappingDraft?.SchemeGPG44MappingDraft?
+                    .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Protection).Select(x => x.QualityLevel.Level).ToList();
+
+                    var currentSchemeGpg44Authentication = schemeMappingDraft?.SchemeGPG44MappingDraft?
+                    .Where(m => m.QualityLevel.QualityType == QualityTypeEnum.Authentication).Select(x => x.QualityLevel.Level).ToList();
+
+                    if (currentSchemeGpg44Protection != null && currentSchemeGpg44Protection.Count > 0 && currentSchemeGpg44Authentication != null
+                        && currentSchemeGpg44Authentication.Count > 0)
+                    {
+                        currentDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG44Protection, currentSchemeGpg44Protection);
+                        currentDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG44Authentication, currentSchemeGpg44Authentication);
+
+                    }
+                    else
+                    {
+                        currentDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG44Protection, [@Constants.NullFieldsDisplay]);
+                        currentDataDictionary.Add(schemeMappingDraft.SupplementaryScheme.SchemeName + ":" + Constants.GPG44Authentication, [@Constants.NullFieldsDisplay]);
+
+
+                        }
+                }
+            }
+        }
+
 
     }
 }

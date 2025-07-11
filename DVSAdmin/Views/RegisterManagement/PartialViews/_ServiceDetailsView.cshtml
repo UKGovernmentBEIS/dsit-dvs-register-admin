@@ -2,11 +2,14 @@
 @using DVSAdmin.Extensions;
 @using DVSAdmin.BusinessLogic.Models;
 @using DVSAdmin.CommonUtility.Models;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.BusinessLogic.Models.CertificateReview;
 @model ServiceDto
 
 @{
     bool isEditable = !Convert.ToBoolean(ViewBag.IsPrevious) && 
     (Model.ServiceStatus == ServiceStatusEnum.ReadyToPublish || Model.ServiceStatus == ServiceStatusEnum.Published);
+    bool is0_4GammaVersion = Model?.TrustFrameworkVersion.Version == Constants.TFVersion0_4;
 }
 
 <div class="govuk-summary-card__title-wrapper">
@@ -57,6 +60,16 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
+                Trust framework version
+            </dt>
+            <dd class="govuk-summary-list__value">
+                
+                @Model?.TrustFrameworkVersion.TrustFrameworkName
+            </dd>
+           
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
                 Name of service
             </dt>
             <dd class="govuk-summary-list__value">
@@ -88,6 +101,18 @@
                 </dd>
             }
         </div>
+        @if (is0_4GammaVersion)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Underpinning or white-labelled service
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @ViewModelHelper.GetServiceType(Model.ServiceType)
+                </dd>
+               
+            </div>
+        }
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
                 GPG 44 quality of authenticator
@@ -228,6 +253,264 @@
         </div>
     </dl>
 </div>
+
+@if (is0_4GammaVersion)
+{
+    @if (Model?.ServiceSupSchemeMapping != null && Model.ServiceSupSchemeMapping.Count > 0)
+    {
+     
+        @foreach (var schemeMapping in Model.ServiceSupSchemeMapping)
+        {
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">
+                        Supplementary codes: @schemeMapping.SupplementaryScheme.SchemeName
+                    </h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                GPG 45 identity profiles
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+
+                                @if (schemeMapping.SchemeGPG45Mapping != null && schemeMapping.SchemeGPG45Mapping.Count>0)
+                                {
+                                    @foreach (var item in schemeMapping.SchemeGPG45Mapping)
+                                    {
+                                        @item.IdentityProfile.IdentityProfileName
+                                        <br>
+                                    }
+                                }
+                                else
+                                {
+                                    <div>@Constants.NullFieldsDisplay</div>
+                                }
+
+                            </dd>
+                            @if(isEditable)
+                            {
+                                <dd class="govuk-summary-list__actions">
+                                    @Html.ActionLink("Change", "SchemeGPG45", "EditServiceTrustFramework0_4", new { fromSummaryPage = true, providerProfileId = Model.ProviderProfileId, schemeId = schemeMapping.SupplementarySchemeId },
+                                             new { @class = "govuk-link", @aria_label = "Change selected GPG45 options for " + schemeMapping.SupplementaryScheme.SchemeName })
+                                </dd>
+                            }
+                            
+                        </div>
+
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                GPG 44 quality of authentication
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (schemeMapping.SchemeGPG44Mapping != null && schemeMapping.SchemeGPG44Mapping.Count > 0 && schemeMapping.HasGpg44Mapping == true)
+                                {
+                                    @foreach (var item in schemeMapping.SchemeGPG44Mapping.Where(x=>x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
+                                    {
+                                        @item.QualityLevel.Level
+                                        <br>
+                                    }
+                                }
+                                else
+                                {
+                                    <div>@Constants.NullFieldsDisplay</div>
+                                }
+                            </dd>
+                            @if(isEditable)
+                            {
+                                <dd class="govuk-summary-list__actions">
+                                    @Html.ActionLink("Change", "SchemeGPG44Input", "EditServiceTrustFramework0_4", new { fromSummaryPage = true, providerProfileId = Model.ProviderProfileId, schemeId = schemeMapping.SupplementarySchemeId },
+                                    new { @class = "govuk-link", @aria_label = "Change selected GPG 44 options for " + schemeMapping.SupplementaryScheme.SchemeName })
+                                </dd>
+                            }
+                          
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                GPG 44 quality of protection
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (schemeMapping.SchemeGPG44Mapping != null && schemeMapping.SchemeGPG44Mapping.Count > 0 && schemeMapping.HasGpg44Mapping == true)
+                                {
+                                    @foreach (var item in schemeMapping.SchemeGPG44Mapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
+                                    {
+                                        @item.QualityLevel.Level
+                                        <br>
+                                    }
+                                }
+                                else
+                                {
+                                    <div>@Constants.NullFieldsDisplay</div>
+                                }
+                            </dd>
+                            @if (isEditable)
+                            {
+                            <dd class="govuk-summary-list__actions">
+                                    @Html.ActionLink("Change", "SchemeGPG44Input", "EditServiceTrustFramework0_4", new { fromSummaryPage = true, providerProfileId = Model.ProviderProfileId, schemeId = schemeMapping.SupplementarySchemeId },
+                                 new { @class = "govuk-link", @aria_label = "Change selected GPG 44 options for " + schemeMapping.SupplementaryScheme.SchemeName })         
+                            </dd>
+                            }
+                        </div>
+
+                    </dl>
+                </div>
+            </div>
+        }
+
+    }
+
+    @if (Model.ServiceType == ServiceTypeEnum.WhiteLabelled)
+    {
+       @if(Model.UnderPinningService!=null)
+        {
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">
+                        Underpinning service
+                    </h2>
+
+                    @if(isEditable)
+                    {
+                        <ul class="govuk-summary-card__actions">
+                            <li class="govuk-summary-card__action">
+                                @Html.ActionLink("Change", "StatusOfUnderpinningService", "EditServiceTrustFramework0_4", new { fromSummaryPage = true }, new { @class = "govuk-link", @aria_label = "Change selected underpinning service name " })
+                            </li>
+                        </ul>
+                    }
+                  
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Service name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+
+                                @Model.UnderPinningService.ServiceName
+
+                            </dd>
+                            
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Service provider
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.UnderPinningService.Provider.RegisteredName
+                            </dd>                          
+
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                CAB of underpinning service
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model?.UnderPinningService.CabUser.Cab.CabName
+                            </dd>                          
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Underpinning service <br /> certificate expiry date
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @DateTimeExtensions.FormatDateTime(Model?.UnderPinningService.ConformityExpiryDate, "dd MMM yyyy")
+                            </dd>                          
+                        </div>
+
+                    </dl>
+                </div>
+            </div>
+        }
+        else if(Model.ManualUnderPinningService !=null)
+        {
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">
+                        Underpinning service
+                    </h2>                  
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Service name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                             @Model.ManualUnderPinningService.ServiceName
+                            </dd>
+                            @if(isEditable)
+                            {
+                            <dd class="govuk-summary-list__actions">
+                                    @Html.ActionLink("Change", "UnderPinningServiceName", "EditServiceTrustFramework0_4", new { fromSummaryPage = true }, new { @class = "govuk-link", @aria_label = "Change selected underpinning service name " })
+                            </dd>
+                            }
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Service provider
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.ManualUnderPinningService.ProviderName
+                            </dd>
+                            @if(isEditable)
+                            {
+                                <dd class="govuk-summary-list__actions">
+                                    @Html.ActionLink("Change", "UnderPinningProviderName", "EditServiceTrustFramework0_4", new { fromSummaryPage = true }, new { @class = "govuk-link", @aria_label = "Change selected underpinning service provider name " })
+                                </dd>
+                            }                         
+
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                CAB of underpinning service
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model?.ManualUnderPinningService?.ProviderName
+                            </dd>
+                            @if(isEditable)
+                            {
+                                <dd class="govuk-summary-list__actions">
+                                    @Html.ActionLink("Change", "SelectCabOfUnderpinningService", "EditServiceTrustFramework0_4", new { fromSummaryPage = true }, new { @class = "govuk-link", @aria_label = "Change selected underpinning service provider name " })
+                                </dd>
+                            }                            
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Underpinning service <br /> certificate expiry date
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @DateTimeExtensions.FormatDateTime(Model?.ManualUnderPinningService.CertificateExpiryDate, "dd MMM yyyy")
+                            </dd>
+                            @if(isEditable)
+                            {
+                                <dd class="govuk-summary-list__actions">
+                                    @Html.ActionLink("Change", "UnderPinningServiceExpiryDate", "EditServiceTrustFramework0_4", new { fromSummaryPage = true }, new { @class = "govuk-link", @aria_label = "Change selected underpinning service provider name " })
+                                </dd>
+                            }                           
+                        </div>
+
+                    </dl>
+                </div>
+            </div>
+        }
+
+
+    }
+
+}
 
 
 

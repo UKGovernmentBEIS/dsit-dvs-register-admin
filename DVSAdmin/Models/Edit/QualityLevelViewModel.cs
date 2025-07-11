@@ -3,7 +3,7 @@ using DVSAdmin.Validations;
 
 namespace DVSAdmin.Models
 {
-    public class QualityLevelViewModel
+    public class QualityLevelViewModel: ServiceSummaryBaseViewModel
     {
         public List<QualityLevelDto>? AvailableQualityOfAuthenticators { get; set; }
 
@@ -15,6 +15,6 @@ namespace DVSAdmin.Models
         [EnsureMinimumCount(ErrorMessage = "Select the level of protection")]
         public List<int>? SelectedLevelOfProtectionIds { get; set; }
         public List<QualityLevelDto>? SelectedLevelOfProtections { get; set; }
-        public bool FromSummaryPage { get; set; }
+       
     }
 }
