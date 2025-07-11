@@ -320,13 +320,14 @@ namespace DVSAdmin.Controllers
                 ServiceType = serviceDto?.ServiceType ?? 0,
                 SelectCabViewModel = selectCabViewModel,
                 IsUnderpinningServicePublished = serviceDto?.IsUnderPinningServicePublished,
-                SelectedManualUnderPinningServiceId = serviceDto?.ManualUnderPinningServiceId,//non published manual
-                IsManualServiceLinkedToMultipleServices = serviceDto?.IsManualServiceLinkedToMultipleServices, // non published manual selected from list
+               
+                SelectedManualUnderPinningServiceId = serviceDto?.ManualUnderPinningServiceId,//non published manual               
                 SelectedUnderPinningServiceId = serviceDto?.UnderPinningServiceId,// published
 
                 UnderPinningServiceName = serviceDto?.UnderPinningServiceId == null ? serviceDto?.ManualUnderPinningService?.ServiceName : serviceDto?.UnderPinningService?.ServiceName,
                 UnderPinningProviderName = serviceDto?.UnderPinningServiceId == null ? serviceDto?.ManualUnderPinningService?.ProviderName : serviceDto?.UnderPinningService.Provider?.RegisteredName,
                 UnderPinningServiceExpiryDate = serviceDto?.UnderPinningServiceId == null ? serviceDto?.ManualUnderPinningService?.CertificateExpiryDate : serviceDto?.UnderPinningService.ConformityExpiryDate,
+                CabId = serviceDto?.UnderPinningServiceId == null ? serviceDto?.ManualUnderPinningService?.Cab.Id??0 : serviceDto?.UnderPinningService.CabUser.CabId??0,
 
                 HasGPG44 = serviceDto.HasGPG44,
                 HasGPG45 = serviceDto.HasGPG45,

@@ -20,8 +20,10 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly EditEmailSender _emailSender;
         private readonly IJwtService _jwtService;
         private readonly IConfiguration _configuration;
+        private readonly ICabTransferRepository _cabTransferRepository;
 
-        public EditService(IEditRepository editRepository, IRemoveProviderService removeProviderService, IMapper mapper, EditEmailSender emailSender, IJwtService jwtService, IConfiguration configuration)
+        public EditService(IEditRepository editRepository, IRemoveProviderService removeProviderService, IMapper mapper, EditEmailSender emailSender,
+            IJwtService jwtService, IConfiguration configuration, ICabTransferRepository cabTransferRepository)
         {
             _removeProviderService = removeProviderService;
             _editRepository = editRepository;
@@ -29,6 +31,7 @@ namespace DVSAdmin.BusinessLogic.Services
             _emailSender  = emailSender;
             _jwtService = jwtService;
             _configuration = configuration;
+            _cabTransferRepository = cabTransferRepository;
 
         }
         
@@ -258,6 +261,13 @@ namespace DVSAdmin.BusinessLogic.Services
             return _mapper.Map<List<IdentityProfileDto>>(list);
         }
 
+        public async Task<IReadOnlyList<CabDto>> GetAllCabs()
+        {
+
+            var allCabs = await _cabTransferRepository.GetAllCabsAsync();
+            List<CabDto> cabDtos = _mapper.Map<List<CabDto>>(allCabs);
+            return cabDtos;
+        }
 
         public (Dictionary<string, List<string>>, Dictionary<string, List<string>>) GetServiceKeyValue(ServiceDraftDto currentData, ServiceDto previousData)
         {          

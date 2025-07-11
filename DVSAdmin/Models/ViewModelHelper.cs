@@ -1,6 +1,7 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Models.Edit;
 
 namespace DVSAdmin.Models
 {
@@ -37,6 +38,15 @@ namespace DVSAdmin.Models
             else return "Neither";
 
 
+        }
+        public static DateViewModel GetDayMonthYear(DateTime? dateTime)
+        {
+            DateViewModel dateViewModel = new();
+            DateTime conformityIssueDate = Convert.ToDateTime(dateTime);
+            dateViewModel.Day = conformityIssueDate.Day;
+            dateViewModel.Month = conformityIssueDate.Month;
+            dateViewModel.Year = conformityIssueDate.Year;
+            return dateViewModel;
         }
     }
 }

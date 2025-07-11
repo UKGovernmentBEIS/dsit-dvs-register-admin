@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DVSAdmin.Models.CabTransfer
 {
-    public class SelectCabViewModel
+    public class SelectCabViewModel : ServiceSummaryBaseViewModel
     { 
         public IReadOnlyList<CabDto> Cabs { get; set; }
         [Required(ErrorMessage = "Select the CAB this service should be reassigned to")]
