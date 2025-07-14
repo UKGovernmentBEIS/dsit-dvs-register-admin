@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.Data.Entities
 {
@@ -11,5 +12,6 @@ namespace DVSAdmin.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string IdentityProfileName { get; set; }
+        public IdentityProfileTypeEnum IdentityProfileType { get; set; }
     }
 }

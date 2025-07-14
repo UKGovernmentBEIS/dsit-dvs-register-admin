@@ -1,5 +1,6 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
+using DVSAdmin.BusinessLogic.Models.TrustFramework;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
@@ -94,8 +95,7 @@ namespace DVSAdmin.Controllers
         [HttpPost("provider-roles")]
         public async Task<IActionResult> ProviderRoles(RoleViewModel roleViewModel)
         {
-            bool fromSummaryPage = roleViewModel.FromSummaryPage;
-            bool fromDetailsPage = roleViewModel.FromDetailsPage;
+            bool fromSummaryPage = roleViewModel.FromSummaryPage;          
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             List<RoleDto> availableRoles = await editService.GetRoles();
             roleViewModel.AvailableRoles = availableRoles;
@@ -366,13 +366,14 @@ namespace DVSAdmin.Controllers
             supplementarySchemeViewModel.SelectedSupplementarySchemeIds = supplementarySchemeViewModel.SelectedSupplementarySchemeIds ?? [];
             if (supplementarySchemeViewModel.SelectedSupplementarySchemeIds.Count > 0)
                 summaryViewModel.SupplementarySchemeViewModel.SelectedSupplementarySchemes = availableSupplementarySchemes.Where(c => supplementarySchemeViewModel.SelectedSupplementarySchemeIds.Contains(c.Id)).ToList();
-            summaryViewModel.SupplementarySchemeViewModel.FromSummaryPage = false;
+          
 
             if (ModelState.IsValid)
             {
                 HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
-                return RedirectToAction("ServiceSummary");
 
+                return RedirectToMissingMappings(supplementarySchemeViewModel.FromSummaryPage);
+              
             }
             else
             {
@@ -558,17 +559,9 @@ namespace DVSAdmin.Controllers
         }
         #endregion
         #region Private Methods
-        private ServiceSummaryViewModel GetServiceSummary()
-        {
-            ServiceSummaryViewModel model = HttpContext?.Session.Get<ServiceSummaryViewModel>("ServiceSummary") ?? new ServiceSummaryViewModel
-            {
-                QualityLevelViewModel = new QualityLevelViewModel { SelectedLevelOfProtections = new List<QualityLevelDto>(), SelectedQualityofAuthenticators = new List<QualityLevelDto>() },
-                RoleViewModel = new RoleViewModel { SelectedRoles = new List<RoleDto>() },
-                IdentityProfileViewModel = new IdentityProfileViewModel { SelectedIdentityProfiles = new List<IdentityProfileDto>() },
-                SupplementarySchemeViewModel = new SupplementarySchemeViewModel { SelectedSupplementarySchemes = new List<SupplementarySchemeDto> { } }
-            };
-            return model;
-        }        
+
+
+      
 
         private ServiceDraftDto MapToDraft(ServiceDto existingService, ServiceSummaryViewModel updatedService)
         {
@@ -592,6 +585,7 @@ namespace DVSAdmin.Controllers
 
             var existingSupSchemeIds = existingService.ServiceSupSchemeMapping.Select(m => m.SupplementarySchemeId).ToList();
             var updatedSupSchemeIds = updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes.Select(m => m.Id).ToList();
+
 
             var draft = new ServiceDraftDto
             {
@@ -677,9 +671,183 @@ namespace DVSAdmin.Controllers
                 }
             }
 
+            if (existingService.TrustFrameworkVersion.Version == Constants.TFVersion0_4)
+            {
+                MapTFVersion0_4SchemeMappingFields(existingService, updatedService, draft);
+
+            }
+
+
+
             return (draft);
         }
-        
+
+        private static void MapTFVersion0_4SchemeMappingFields(ServiceDto existingService, ServiceSummaryViewModel updatedService, ServiceDraftDto draft)
+        {
+            Dictionary<int, List<IdentityProfileDto>>? existingSchemeIdentityProfileMappings = [];
+            Dictionary<int, List<IdentityProfileDto>>? updatedSchemeIdentityProfileMappings = [];
+
+            if (updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes != null && updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes.Count > 0)
+            {
+
+
+                foreach (var schemeMapping in existingService.ServiceSupSchemeMapping)
+                {
+                    existingSchemeIdentityProfileMappings.Add(schemeMapping.SupplementarySchemeId, schemeMapping.SchemeGPG45Mapping.Select(m => m.IdentityProfile).ToList());
+                }
+
+                foreach (var schemeMapping in updatedService.SchemeIdentityProfileMapping)
+                {
+                    updatedSchemeIdentityProfileMappings.Add(schemeMapping.SchemeId, schemeMapping.IdentityProfile.SelectedIdentityProfiles);
+                }
+
+
+                Dictionary<int, QualityLevelDtoWithFlagDto>? existingSchemeQualityLevelMappings = new();
+                Dictionary<int, QualityLevelDtoWithFlagDto>? updatedSchemeQualityLevelMappings = [];
+
+
+                foreach (var schemeMapping in existingService.ServiceSupSchemeMapping)
+                {
+
+                    QualityLevelDtoWithFlagDto qualityLevelDtoWithFlagDto = new();
+                    qualityLevelDtoWithFlagDto.HasGpg44 = schemeMapping.HasGpg44Mapping;
+                    if (schemeMapping.HasGpg44Mapping == true)
+                    {
+                        qualityLevelDtoWithFlagDto.QualityLevels = schemeMapping.SchemeGPG44Mapping.Select(x => x.QualityLevel).ToList();
+                    }
+
+                    existingSchemeQualityLevelMappings.Add(schemeMapping.SupplementarySchemeId, qualityLevelDtoWithFlagDto);
+                }
+
+                foreach (var schemeMapping in updatedService.SchemeQualityLevelMapping)
+                {
+                    QualityLevelDtoWithFlagDto qualityLevelDtoWithFlagDto = new();
+                    qualityLevelDtoWithFlagDto.HasGpg44 = schemeMapping.HasGPG44;
+                    if (schemeMapping.HasGPG44 == true)
+                    {
+                        qualityLevelDtoWithFlagDto.QualityLevels = schemeMapping.QualityLevel.SelectedLevelOfProtections.Union(schemeMapping.QualityLevel.SelectedQualityofAuthenticators).ToList();
+                    }
+                    updatedSchemeQualityLevelMappings.Add(schemeMapping.SchemeId, qualityLevelDtoWithFlagDto);
+                }
+
+
+                List<SchemeGPG45MappingDraftDto> gpg45MappingDraft;
+                // New scheme additions
+                foreach (var schemeMapping in updatedSchemeIdentityProfileMappings)
+                {
+                    gpg45MappingDraft = [];
+                    if (!existingSchemeIdentityProfileMappings.ContainsKey(schemeMapping.Key))
+                    {
+                        if (updatedSchemeIdentityProfileMappings.TryGetValue(schemeMapping.Key, out var updatedList))
+                        {
+                            foreach (var item in updatedList)
+                            {
+                                gpg45MappingDraft.Add(new SchemeGPG45MappingDraftDto { IdentityProfileId = item.Id, IdentityProfile = item });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Existing scheme, check for value changes
+                        if (updatedSchemeIdentityProfileMappings.TryGetValue(schemeMapping.Key, out var updatedList))
+                        {
+                            var existingIds = existingSchemeIdentityProfileMappings[schemeMapping.Key].OrderBy(x => x.Id).Select(x => x.Id).ToList();
+                            var updatedIds = updatedList.OrderBy(x => x.Id).Select(x => x.Id).ToList();
+                            if (!existingIds.SequenceEqual(updatedIds))
+                            {
+                                foreach (var item in updatedList)
+                                {
+                                    gpg45MappingDraft.Add(new SchemeGPG45MappingDraftDto { IdentityProfileId = item.Id, IdentityProfile = item });
+                                }
+                            }
+                        }
+                    }
+
+
+                    ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
+
+                    // Selected schemes not changed, only mapping changes, so add entry to serviceSupSchemeMappingDraft
+                    if (serviceSupSchemeMappingDraft == null)
+                    {
+                        SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
+                        Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
+                        draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto
+                        {
+                            SupplementarySchemeId = schemeMapping.Key,
+                            SchemeGPG45MappingDraft = gpg45MappingDraft,
+                            SupplementaryScheme = supplementaryScheme
+                        });
+                    }
+                    else
+                    {
+                        serviceSupSchemeMappingDraft.SchemeGPG45MappingDraft = gpg45MappingDraft;
+                    }
+
+                }
+
+                List<SchemeGPG44MappingDraftDto> gpg44MappingDraft;
+                foreach (var schemeMapping in updatedSchemeQualityLevelMappings)
+                {
+                    gpg44MappingDraft = [];
+                    if (!existingSchemeQualityLevelMappings.ContainsKey(schemeMapping.Key)) // new schemes added
+                    {
+                        if (updatedSchemeQualityLevelMappings.TryGetValue(schemeMapping.Key, out var updatedList))
+                        {
+                            if (updatedList.HasGpg44 == true && updatedList.QualityLevels != null)
+                            {
+                                foreach (var item in updatedList.QualityLevels)
+                                {
+                                    gpg44MappingDraft.Add(new SchemeGPG44MappingDraftDto { QualityLevelId = item.Id, QualityLevel = item });
+                                }
+                            }
+
+                        }
+                    }
+
+
+                    else
+                    {
+                        // Existing key, check for value changes
+                        if (updatedSchemeQualityLevelMappings.TryGetValue(schemeMapping.Key, out var updatedList))
+                        {
+                            var existingIds = existingSchemeQualityLevelMappings[schemeMapping.Key].QualityLevels?.OrderBy(x => x.Id).Select(x => x.Id).ToList();
+                            var updatedIds = updatedList?.QualityLevels?.OrderBy(x => x.Id).Select(x => x.Id).ToList();
+                            if (existingIds != null && updatedIds != null && !existingIds.SequenceEqual(updatedIds))
+                            {
+                                if (updatedList?.QualityLevels != null)
+                                {
+                                    foreach (var item in updatedList.QualityLevels)
+                                    {
+                                        gpg44MappingDraft.Add(new SchemeGPG44MappingDraftDto { QualityLevelId = item.Id, QualityLevel = item });
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Update the ServiceSupSchemeMappingDraftDto if there are changes
+                    ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
+                    if (serviceSupSchemeMappingDraft == null)
+                    {
+                        SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
+                        Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
+                        draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto
+                        {
+                            SupplementarySchemeId = schemeMapping.Key,
+                            HasGpg44Mapping = schemeMapping.Value.HasGpg44,
+                            SchemeGPG44MappingDraft = gpg44MappingDraft,
+                            SupplementaryScheme = supplementaryScheme
+                        });
+                    }
+                    else
+                    {
+                        serviceSupSchemeMappingDraft.HasGpg44Mapping = schemeMapping.Value.HasGpg44;
+                        serviceSupSchemeMappingDraft.SchemeGPG44MappingDraft = gpg44MappingDraft;
+                    }
+
+                }
+            }
+        }
 
         private DateViewModel GetDayMonthYear(DateTime? dateTime)
         {

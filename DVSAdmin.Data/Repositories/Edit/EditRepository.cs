@@ -20,16 +20,18 @@ namespace DVSAdmin.Data.Repositories
         public async Task<Service> GetService(int serviceId)
         {
             return await _context.Service
-            .Include(s => s.Provider)
-            .Include(s => s.CertificateReview)
-            .Include(s => s.ServiceSupSchemeMapping)
-            .ThenInclude(s => s.SupplementaryScheme)
-            .Include(s => s.ServiceRoleMapping)
-            .ThenInclude(s => s.Role)
-            .Include(s => s.ServiceQualityLevelMapping)
-            .ThenInclude(s => s.QualityLevel)
-            .Include(s => s.ServiceIdentityProfileMapping)
-            .ThenInclude(s => s.IdentityProfile)
+            .Include(s => s.Provider).AsNoTracking()
+            .Include(s=>s.TrustFrameworkVersion).AsNoTracking()
+            .Include(s=>s.UnderPinningService).ThenInclude(p=>p.Provider).AsNoTracking()
+             .Include(s => s.UnderPinningService).ThenInclude(p => p.CabUser).ThenInclude(c=>c.Cab).AsNoTracking()
+            .Include(s => s.ManualUnderPinningService).ThenInclude(p => p.Cab).AsNoTracking()
+            .Include(s => s.CertificateReview).AsNoTracking()
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme).AsNoTracking()
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG44Mapping).ThenInclude(s=>s.QualityLevel).AsNoTracking()
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG45Mapping).ThenInclude(s => s.IdentityProfile).AsNoTracking()
+            .Include(s => s.ServiceRoleMapping).ThenInclude(s => s.Role).AsNoTracking()
+            .Include(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel).AsNoTracking()
+            .Include(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile).AsNoTracking()
             .FirstOrDefaultAsync(s => s.Id == serviceId);
         }
         public async Task<List<Role>> GetRoles()

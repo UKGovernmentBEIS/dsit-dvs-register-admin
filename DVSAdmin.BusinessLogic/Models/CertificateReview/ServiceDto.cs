@@ -74,7 +74,8 @@ namespace DVSAdmin.BusinessLogic.Models
         public int? ManualUnderPinningServiceId { get; set; }
         [JsonIgnore]
         public ManualUnderPinningServiceDto ManualUnderPinningService { get; set; }
-
+        
+        public bool? IsManualServiceLinkedToMultipleServices { get; set; }
         public bool? IsUnderPinningServicePublished { get; set; }
 
         public string NewOrResubmission { get; set; }

@@ -17,5 +17,6 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<List<IdentityProfileDto>> GetIdentityProfiles();
         public Task<List<SupplementarySchemeDto>> GetSupplementarySchemes();
         public Task<GenericResponse> GenerateTokenAndSendServiceUpdateRequest(ServiceDraftDto? draftDto, string loggedInUserEmail, List<string> dsitUserEmails, int serviceDraftId, bool isResend);
+        public Task<IReadOnlyList<CabDto>> GetAllCabs();
     }
 }
