@@ -9,7 +9,7 @@ namespace DVSAdmin.Data.Repositories
         public Task<Service> GetService(int serviceId);
         public Task<bool> CheckProviderRegisteredNameExists(string registeredName, int providerId);
         public Task<ProviderProfile> GetProviderDetails(int providerId);
-        public Task<List<Role>> GetRoles();
+        public Task<List<Role>> GetRoles(decimal tfVersion);
         public Task<List<QualityLevel>> QualityLevels();
         public Task<List<IdentityProfile>> GetIdentityProfiles();
         public Task<List<SupplementaryScheme>> GetSupplementarySchemes();
@@ -18,7 +18,10 @@ namespace DVSAdmin.Data.Repositories
         public Task<GenericResponse> SaveProviderDraft(ProviderProfileDraft draft, string loggedInUserEmail);
         public Task<GenericResponse> SaveServiceDraft(ServiceDraft draft, string loggedInUserEmail);
         public Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail, int providerProfileId);
-        public Task<GenericResponse> SaveServiceDraftToken(ServiceDraftToken serviceDraftToken, string loggedinUserEmail, int serviceId);        
+        public Task<GenericResponse> SaveServiceDraftToken(ServiceDraftToken serviceDraftToken, string loggedinUserEmail, int serviceId);
+        public Task<List<Service>> GetPublishedUnderpinningServices(string searchText);
+        public Task<List<Service>> GetServicesWithManualUnderinningService(string searchText);
+        public Task<Service> GetServiceDetails(int serviceId);
 
     }
 }

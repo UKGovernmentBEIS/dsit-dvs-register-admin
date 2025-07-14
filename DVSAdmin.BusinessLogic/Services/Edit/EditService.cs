@@ -205,7 +205,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 Service service = await _editRepository.GetService(draftDto.serviceId);
                 ServiceDto serviceDto = _mapper.Map<ServiceDto>(service);
                 string dsit2iCheckLink = _configuration["DvsRegisterLink"] + "update-request/service-changes?token=" + tokenDetails.Token;
-                var (previous, current) = GetServiceKeyValue(draftDto, serviceDto);
+                var (previous, current) = await GetServiceKeyValue(draftDto, serviceDto);
                 string currentData = Helper.ConcatenateKeyValuePairs(current);
                 string previousData = Helper.ConcatenateKeyValuePairs(previous);
                 foreach (var email in dsitUserEmails)
@@ -240,9 +240,9 @@ namespace DVSAdmin.BusinessLogic.Services
             ProviderProfileDto providerProfileDto = _mapper.Map<ProviderProfileDto>(provider);
             return providerProfileDto;
         }
-        public async Task<List<RoleDto>> GetRoles()
+        public async Task<List<RoleDto>> GetRoles(decimal tfVersion)
         {
-            var list = await _editRepository.GetRoles();
+            var list = await _editRepository.GetRoles(tfVersion);
             return _mapper.Map<List<RoleDto>>(list);
         }
         public async Task<List<QualityLevelDto>> GetQualitylevels()
@@ -269,7 +269,23 @@ namespace DVSAdmin.BusinessLogic.Services
             return cabDtos;
         }
 
-        public (Dictionary<string, List<string>>, Dictionary<string, List<string>>) GetServiceKeyValue(ServiceDraftDto currentData, ServiceDto previousData)
+        public async Task<List<ServiceDto>> GetPublishedUnderpinningServices(string searchText)
+        {
+            var services = await _editRepository.GetPublishedUnderpinningServices(searchText);
+            var serviceDtos = _mapper.Map<List<ServiceDto>>(services);
+
+            return serviceDtos;
+        }
+
+        public async Task<List<ServiceDto>> GetServicesWithManualUnderinningService(string searchText)
+        {
+            var services = await _editRepository.GetServicesWithManualUnderinningService(searchText);
+            var serviceDtos = _mapper.Map<List<ServiceDto>>(services);
+
+            return serviceDtos;
+        }
+
+        public async Task<(Dictionary<string, List<string>>, Dictionary<string, List<string>>)> GetServiceKeyValue(ServiceDraftDto currentData, ServiceDto previousData)
         {          
 
             var currentDataDictionary = new Dictionary<string, List<string>>();
@@ -372,7 +388,7 @@ namespace DVSAdmin.BusinessLogic.Services
                 supplementarySchemes.SequenceEqual(currentSupplementarySchemes);
 
                
-                if ( !areSame   )
+                if ( !areSame )
                 {
                     if (supplementarySchemes != null && supplementarySchemes.Count > 0)
                     {
@@ -399,6 +415,49 @@ namespace DVSAdmin.BusinessLogic.Services
             if (previousData.TrustFrameworkVersion.Version == Constants.TFVersion0_4)
             {
                 GetServiceKeyValueForSchemeMappings(currentData, previousData, currentDataDictionary, previousDataDictionary);
+
+                if( previousData.IsUnderPinningServicePublished == false && currentData.ManualUnderPinningServiceId!= null) 
+                {
+                    if(currentData.ManualUnderPinningService.ServiceName!= null)
+                    {
+                        previousDataDictionary.Add(Constants.UnderpinningServiceName, [previousData.ManualUnderPinningService.ServiceName]);
+                        currentDataDictionary.Add(Constants.UnderpinningServiceName, [currentData.ManualUnderPinningService.ServiceName]);
+                    }
+
+                    if (currentData.ManualUnderPinningService.ProviderName != null)
+                    {
+                        previousDataDictionary.Add(Constants.UnderpinningProviderName, [previousData.ManualUnderPinningService.ProviderName]);
+                        currentDataDictionary.Add(Constants.UnderpinningProviderName, [currentData.ManualUnderPinningService.ProviderName]);
+                    }
+
+                    if (currentData.ManualUnderPinningService.CabId != null)
+                    {
+                        previousDataDictionary.Add(Constants.CabOfUnderpinningService, [previousData.ManualUnderPinningService.Cab.CabName]);
+                        currentDataDictionary.Add(Constants.CabOfUnderpinningService, [currentData.ManualUnderPinningService.SelectedCabName]);
+                    }
+
+                    if (currentData.ManualUnderPinningService.CertificateExpiryDate != null)
+                    {
+                        previousDataDictionary.Add(Constants.UnderpiningExpiryDate, [Helper.GetLocalDateTime(previousData.ManualUnderPinningService.CertificateExpiryDate, "dd MMMM yyyy")]);
+                        currentDataDictionary.Add(Constants.UnderpiningExpiryDate, [Helper.GetLocalDateTime(currentData.ManualUnderPinningService.CertificateExpiryDate, "dd MMMM yyyy")]);
+                    }
+                }
+                else if( previousData.IsUnderPinningServicePublished == false && currentData.IsUnderpinningServicePublished == true && currentData.UnderPinningServiceId!=null)
+                {
+                    //get details of current selected published under pinning service
+                    Service currentServiceDto = await _editRepository.GetServiceDetails((int)currentData.UnderPinningServiceId);
+                    previousDataDictionary.Add(Constants.UnderpinningServiceName, [previousData.ManualUnderPinningService.ServiceName]);
+                    currentDataDictionary.Add(Constants.UnderpinningServiceName, [currentServiceDto.ServiceName]);
+
+                    previousDataDictionary.Add(Constants.UnderpinningProviderName, [previousData.ManualUnderPinningService.ProviderName]);
+                    currentDataDictionary.Add(Constants.UnderpinningProviderName, [currentServiceDto.Provider.RegisteredName]);
+
+                    previousDataDictionary.Add(Constants.CabOfUnderpinningService, [previousData.ManualUnderPinningService.Cab.CabName]);
+                    currentDataDictionary.Add(Constants.CabOfUnderpinningService, [currentServiceDto.CabUser.Cab.CabName]);
+
+                    previousDataDictionary.Add(Constants.UnderpiningExpiryDate, [Helper.GetLocalDateTime(previousData.ManualUnderPinningService.CertificateExpiryDate, "dd MMMM yyyy")]);
+                    currentDataDictionary.Add(Constants.UnderpiningExpiryDate, [Helper.GetLocalDateTime(currentServiceDto.ConformityExpiryDate, "dd MMMM yyyy")]);
+                }
             }
 
 

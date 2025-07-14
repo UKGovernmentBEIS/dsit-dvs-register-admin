@@ -1,8 +1,10 @@
-﻿using DVSAdmin.CommonUtility.Models;
+﻿using DVSAdmin.CommonUtility;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -20,10 +22,11 @@ namespace DVSAdmin.Data.Repositories
         public async Task<Service> GetService(int serviceId)
         {
             return await _context.Service
+            .Include(s => s.CabUser).ThenInclude(s=>s.Cab).AsNoTracking()
             .Include(s => s.Provider).AsNoTracking()
             .Include(s=>s.TrustFrameworkVersion).AsNoTracking()
             .Include(s=>s.UnderPinningService).ThenInclude(p=>p.Provider).AsNoTracking()
-             .Include(s => s.UnderPinningService).ThenInclude(p => p.CabUser).ThenInclude(c=>c.Cab).AsNoTracking()
+            .Include(s => s.UnderPinningService).ThenInclude(p => p.CabUser).ThenInclude(c=>c.Cab).AsNoTracking()
             .Include(s => s.ManualUnderPinningService).ThenInclude(p => p.Cab).AsNoTracking()
             .Include(s => s.CertificateReview).AsNoTracking()
             .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme).AsNoTracking()
@@ -34,9 +37,17 @@ namespace DVSAdmin.Data.Repositories
             .Include(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile).AsNoTracking()
             .FirstOrDefaultAsync(s => s.Id == serviceId);
         }
-        public async Task<List<Role>> GetRoles()
+
+        public async Task<Service> GetServiceDetails(int serviceId)
         {
-            return await _context.Role.OrderBy(c => c.Order).ToListAsync();
+            return await _context.Service
+            .Include(s => s.CabUser).ThenInclude(s => s.Cab).AsNoTracking()
+            .Include(s => s.Provider).AsNoTracking()          
+            .FirstOrDefaultAsync(s => s.Id == serviceId);
+        }
+        public async Task<List<Role>> GetRoles(decimal tfVersion)
+        {           
+            return await _context.Role.Include(x => x.TrustFrameworkVersion).Where(x => x.TrustFrameworkVersion.Version <= tfVersion).OrderBy(c => c.Order).ToListAsync();
         }
         public async Task<List<QualityLevel>> QualityLevels()
         {
@@ -84,6 +95,43 @@ namespace DVSAdmin.Data.Repositories
                .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.ReadyToPublish )
                .OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new ProviderProfile();
             return providerProfile;
+        }
+
+        public async Task<List<Service>> GetPublishedUnderpinningServices(string searchText)
+        {
+            var baseQuery = _context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.CertificateReview)
+                .Include(s => s.TrustFrameworkVersion)
+                .Include(s => s.CabUser).ThenInclude(s => s.Cab);
+
+            var filteredQuery = baseQuery
+                .Where(s => s.TrustFrameworkVersion.Version == Constants.TFVersion0_4 && s.ServiceType == ServiceTypeEnum.UnderPinning
+                 && s.ServiceStatus == ServiceStatusEnum.Published);
+
+            string trimmedSearchText = searchText.Trim().ToLower();
+            filteredQuery = filteredQuery
+                .Where(s => s.ServiceName.ToLower().Contains(trimmedSearchText) ||
+                            s.Provider.RegisteredName.ToLower().Contains(trimmedSearchText));
+
+            return await filteredQuery.AsNoTracking().ToListAsync();
+        }
+
+
+        public async Task<List<Service>> GetServicesWithManualUnderinningService(string searchText)
+        {
+            var trimmedSearchText = searchText.Trim().ToLower();
+            //select manually entered under pinning services for a white labelled type
+            var manualUnderPinningServices = await _context.Service.Include(s => s.ManualUnderPinningService)
+            .ThenInclude(s => s.Cab).Include(s => s.CertificateReview)
+            .Where(x => x.ServiceType == ServiceTypeEnum.WhiteLabelled
+                            && x.ManualUnderPinningServiceId != null
+                            && x.ManualUnderPinningServiceId > 0
+                            && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved
+                            && (string.IsNullOrEmpty(trimmedSearchText) ||
+                                x.ManualUnderPinningService.ServiceName.ToLower().Contains(trimmedSearchText) ||
+                                x.Provider.RegisteredName.ToLower().Contains(trimmedSearchText))).AsNoTracking().ToListAsync();
+            return manualUnderPinningServices;
         }
 
 

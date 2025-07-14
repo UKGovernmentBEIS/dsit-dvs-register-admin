@@ -85,7 +85,7 @@ namespace DVSAdmin.Controllers
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
             RoleViewModel roleViewModel = new RoleViewModel();
             roleViewModel.SelectedRoleIds = serviceSummaryViewModel?.RoleViewModel?.SelectedRoles?.Select(c => c.Id).ToList();
-            roleViewModel.AvailableRoles = await editService.GetRoles();
+            roleViewModel.AvailableRoles = await editService.GetRoles(serviceSummaryViewModel.TFVersionViewModel.SelectedTFVersion.Version);
 
             roleViewModel.FromSummaryPage = fromSummaryPage;
             ViewBag.ServiceKey = serviceSummaryViewModel.ServiceKey;
@@ -97,7 +97,7 @@ namespace DVSAdmin.Controllers
         {
             bool fromSummaryPage = roleViewModel.FromSummaryPage;          
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-            List<RoleDto> availableRoles = await editService.GetRoles();
+            List<RoleDto> availableRoles = await editService.GetRoles(summaryViewModel.TFVersionViewModel.SelectedTFVersion.Version);
             roleViewModel.AvailableRoles = availableRoles;
             roleViewModel.SelectedRoleIds = roleViewModel.SelectedRoleIds ?? [];
             if (roleViewModel.SelectedRoleIds.Count > 0)
@@ -491,7 +491,7 @@ namespace DVSAdmin.Controllers
 
             ServiceDraftDto currentData = MapToDraft(previousData, summaryViewModel);
 
-            (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = editService.GetServiceKeyValue(currentData, previousData);
+            (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = await editService.GetServiceKeyValue(currentData, previousData);
 
             TempData["changedService"] = JsonConvert.SerializeObject(currentData);
 
@@ -675,12 +675,13 @@ namespace DVSAdmin.Controllers
             {
                 MapTFVersion0_4SchemeMappingFields(existingService, updatedService, draft);
 
+                MapTFVersion0_4UnderpinningServiceFields(existingService, updatedService, draft);
             }
 
 
 
             return (draft);
-        }
+        }       
 
         private static void MapTFVersion0_4SchemeMappingFields(ServiceDto existingService, ServiceSummaryViewModel updatedService, ServiceDraftDto draft)
         {
@@ -845,10 +846,59 @@ namespace DVSAdmin.Controllers
                         serviceSupSchemeMappingDraft.SchemeGPG44MappingDraft = gpg44MappingDraft;
                     }
 
-                }
+                }                           
+
+
+
             }
         }
 
+        private static void MapTFVersion0_4UnderpinningServiceFields(ServiceDto existingService, ServiceSummaryViewModel updatedService, ServiceDraftDto draft)
+        {
+            // Previous un published and current also unpublished
+            if (existingService.IsUnderPinningServicePublished == false && updatedService.IsUnderpinningServicePublished == false 
+              && existingService.ManualUnderPinningService != null
+              && updatedService.SelectedManualUnderPinningServiceId != null )
+            {
+                draft.ManualUnderPinningService = new();
+                draft.IsUnderpinningServicePublished = updatedService.IsUnderpinningServicePublished;
+                if (existingService.ManualUnderPinningServiceId != updatedService.SelectedManualUnderPinningServiceId)
+                {
+                    draft.ManualUnderPinningServiceId = updatedService.SelectedManualUnderPinningServiceId;
+                }
+                else
+                {
+                    draft.ManualUnderPinningServiceId = existingService.ManualUnderPinningServiceId;
+                }
+
+
+                if (existingService.ManualUnderPinningService.ServiceName != updatedService.UnderPinningServiceName)
+                {
+                    draft.ManualUnderPinningService.ServiceName = updatedService.UnderPinningServiceName;
+                }
+
+                if (existingService.ManualUnderPinningService.ProviderName != updatedService.UnderPinningProviderName)
+                {
+                    draft.ManualUnderPinningService.ProviderName = updatedService.UnderPinningProviderName;
+                }
+
+                if (existingService.ManualUnderPinningService.CabId != updatedService.SelectCabViewModel.SelectedCabId)
+                {
+                    draft.ManualUnderPinningService.CabId = updatedService.SelectCabViewModel.SelectedCabId;
+                    draft.ManualUnderPinningService.SelectedCabName= updatedService.SelectCabViewModel.SelectedCabName;
+                }
+                if (existingService.ManualUnderPinningService.CertificateExpiryDate != updatedService.UnderPinningServiceExpiryDate)
+                {
+                    draft.ManualUnderPinningService.CertificateExpiryDate = updatedService.UnderPinningServiceExpiryDate;
+                }                
+            }
+            //changed to published service
+            else if(existingService.IsUnderPinningServicePublished == false && updatedService.IsUnderpinningServicePublished == true)
+            {
+                draft.UnderPinningServiceId = updatedService.SelectedUnderPinningServiceId;
+                draft.IsUnderpinningServicePublished = updatedService.IsUnderpinningServicePublished;
+            }
+        }
         private DateViewModel GetDayMonthYear(DateTime? dateTime)
         {
             DateViewModel dateViewModel = new DateViewModel();
