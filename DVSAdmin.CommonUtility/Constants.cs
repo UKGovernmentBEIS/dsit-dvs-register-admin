@@ -32,8 +32,8 @@
         public const string ConformityIssueDateExpiryDateError = "The certificate of conformity expiry date cannot be before issue date";
         public const string ConformityExpiryPastDateError = "The certificate of conformity expiry date must be in the future";
         public const string NullFieldsDisplay = "Not applicable";
-        public const string NewSubmission = "New";
-        public const string ReSubmission = "Resubmission";
+        public const string NewApplication = "New application";
+        public const string ReApplication = "Reapplication";
         public const decimal TFVersion0_4 = 0.4m;
         public const decimal TFVersion0_3 = 0.3m;
         public const string GPG44Authentication = "GPG 44 quality of authentication";
