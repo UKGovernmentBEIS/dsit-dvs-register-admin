@@ -775,7 +775,7 @@ namespace DVSAdmin.Controllers
 
         private async Task SetResubmissionFields(ServiceDto serviceDto)
         {
-            if (serviceDto.NewOrResubmission == Constants.ReSubmission)
+            if (serviceDto.NewOrResubmission == Constants.ReApplication)
             {
                 serviceDto.IsResubmission = true;
                 ServiceDto previousVersion = await certificateReviewService.GetPreviousServiceVersion(serviceDto.Id);
