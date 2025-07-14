@@ -2,6 +2,7 @@
 using DVSAdmin.BusinessLogic.Automapper.Resolvers;
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
+using DVSAdmin.BusinessLogic.Models.Edit;
 using DVSAdmin.Data.Entities;
 
 namespace DVSAdmin.BusinessLogic
@@ -37,8 +38,10 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<ServiceRoleMapping, ServiceRoleMappingDto>();
             CreateMap<ServiceRoleMappingDto, ServiceRoleMapping>();
             CreateMap<ServiceSupSchemeMapping, ServiceSupSchemeMappingDto>()
-            .ForMember(dest => dest.SchemeGPG44Mapping, opt => opt.MapFrom(src => src.SchemeGPG44Mapping));
+            .ForMember(dest => dest.SchemeGPG44Mapping, opt => opt.MapFrom(src => src.SchemeGPG44Mapping))
+            .ForMember(dest => dest.SchemeGPG45Mapping, opt => opt.MapFrom(src => src.SchemeGPG45Mapping));
             CreateMap<ServiceSupSchemeMappingDto, ServiceSupSchemeMapping>()
+             .ForMember(dest => dest.SchemeGPG44Mapping, opt => opt.MapFrom(src => src.SchemeGPG44Mapping))
             .ForMember(dest => dest.SchemeGPG45Mapping, opt => opt.MapFrom(src => src.SchemeGPG45Mapping));
             CreateMap<ServiceQualityLevelMapping, ServiceQualityLevelMappingDto>();
             CreateMap<ServiceQualityLevelMappingDto, ServiceQualityLevelMapping>();
@@ -95,7 +98,11 @@ namespace DVSAdmin.BusinessLogic
            .ForMember(dest => dest.CabUser, opt => opt.MapFrom(src => src.CabUser))
            .ForMember(dest => dest.Provider, opt => opt.MapFrom(src => src.Provider));
 
+            CreateMap<SchemeGPG45MappingDraft, SchemeGPG45MappingDraftDto>();
+            CreateMap<SchemeGPG45MappingDraftDto, SchemeGPG45MappingDraft>().ForMember(x => x.IdentityProfile, opt => opt.Ignore());
 
+            CreateMap<SchemeGPG44MappingDraft, SchemeGPG44MappingDraftDto>();
+            CreateMap<SchemeGPG44MappingDraftDto, SchemeGPG44MappingDraft>().ForMember(x => x.QualityLevel, opt => opt.Ignore());
 
             CreateMap<ServiceIdentityProfileMappingDraft, ServiceIdentityProfileMappingDraftDto>();
             CreateMap<ServiceIdentityProfileMappingDraftDto, ServiceIdentityProfileMappingDraft>().ForMember(x => x.IdentityProfile, opt => opt.Ignore());
@@ -103,7 +110,11 @@ namespace DVSAdmin.BusinessLogic
            CreateMap<ServiceRoleMappingDraftDto, ServiceRoleMappingDraft>().ForMember(x => x.Role, opt => opt.Ignore());
 
 
-            CreateMap<ServiceSupSchemeMappingDraft, ServiceSupSchemeMappingDraftDto>();
+
+
+            CreateMap<ServiceSupSchemeMappingDraft, ServiceSupSchemeMappingDraftDto>()
+            .ForMember(dest => dest.SchemeGPG44MappingDraft, opt => opt.MapFrom(src => src.SchemeGPG44MappingDraft))
+            .ForMember(dest => dest.SchemeGPG45MappingDraft, opt => opt.MapFrom(src => src.SchemeGPG45MappingDraft));
             CreateMap<ServiceSupSchemeMappingDraftDto, ServiceSupSchemeMappingDraft>().ForMember(x => x.SupplementaryScheme, opt => opt.Ignore());
             CreateMap<ServiceQualityLevelMappingDraft, ServiceQualityLevelMappingDraftDto>();
             CreateMap<ServiceQualityLevelMappingDraftDto, ServiceQualityLevelMappingDraft>().ForMember(x => x.QualityLevel, opt => opt.Ignore());
@@ -147,6 +158,9 @@ namespace DVSAdmin.BusinessLogic
             CreateMap<TrustFrameworkVersionDto, TrustFrameworkVersion>();
             CreateMap<ManualUnderPinningService, ManualUnderPinningServiceDto>();
             CreateMap<ManualUnderPinningServiceDto, ManualUnderPinningService>();
+
+            CreateMap<ManualUnderPinningServiceDraft, ManualUnderPinningServiceDraftDto>();
+            CreateMap<ManualUnderPinningServiceDraftDto, ManualUnderPinningServiceDraft>();
 
 
         }
