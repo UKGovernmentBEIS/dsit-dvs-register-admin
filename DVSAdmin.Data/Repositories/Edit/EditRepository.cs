@@ -45,6 +45,11 @@ namespace DVSAdmin.Data.Repositories
             .Include(s => s.Provider).AsNoTracking()          
             .FirstOrDefaultAsync(s => s.Id == serviceId);
         }
+
+        public async Task<ManualUnderPinningService> GetManualUnderPinningServiceDetails(int serviceId)
+        {
+            return await _context.ManualUnderPinningService.Include(m=>m.Cab).FirstOrDefaultAsync(s => s.Id == serviceId);
+        }
         public async Task<List<Role>> GetRoles(decimal tfVersion)
         {           
             return await _context.Role.Include(x => x.TrustFrameworkVersion).Where(x => x.TrustFrameworkVersion.Version <= tfVersion).OrderBy(c => c.Order).ToListAsync();

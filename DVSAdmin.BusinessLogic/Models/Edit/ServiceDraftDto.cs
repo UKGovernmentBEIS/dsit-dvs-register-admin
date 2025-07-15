@@ -27,9 +27,8 @@ namespace DVSAdmin.BusinessLogic.Models
         public int? UnderPinningServiceId { get; set; }
         public ServiceDto UnderPinningService { get; set; }
         public int? ManualUnderPinningServiceId { get; set; }
-    
-
-        public ManualUnderPinningServiceDraftDto ManualUnderPinningService { get; set; }
+        public ManualUnderPinningServiceDto ManualUnderPinningService { get; set; }
+        public ManualUnderPinningServiceDraftDto ManualUnderPinningServiceDraft { get; set; } // for newly entered service
 
     }
 }

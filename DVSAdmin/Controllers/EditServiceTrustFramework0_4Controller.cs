@@ -13,6 +13,7 @@ namespace DVSAdmin.Controllers
 {
 
     //Controller for TF version 0.4 gamma screens
+    [Route("edit-service")]
     public class EditServiceTrustFramework0_4Controller : BaseController
     {
         private readonly IEditService editService;        
@@ -215,7 +216,7 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("status-of-underpinning-service")]
-        public async Task<IActionResult> StatusOfUnderpinningService(ServiceSummaryViewModel serviceSummaryViewModel)
+        public  IActionResult StatusOfUnderpinningService(ServiceSummaryViewModel serviceSummaryViewModel)
         {
             ServiceSummaryViewModel serviceSummary = GetServiceSummary();
             serviceSummary.FromSummaryPage = serviceSummaryViewModel.FromSummaryPage;           
@@ -249,7 +250,7 @@ namespace DVSAdmin.Controllers
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             ViewBag.fromSummaryPage = summaryViewModel.FromSummaryPage;            
 
-            var published = (bool)summaryViewModel.IsUnderpinningServicePublished;
+            var published = summaryViewModel.IsUnderpinningServicePublished == true;
 
             var services = new List<ServiceDto>();
             var manualServices = new List<ServiceDto>();
@@ -346,7 +347,7 @@ namespace DVSAdmin.Controllers
             return View(serviceSummary);
         }
         [HttpPost("confirm-underpinning-service")]
-        public async Task<IActionResult> SaveUnderpinningService(ServiceSummaryViewModel serviceSummaryViewModel)
+        public  IActionResult  SaveUnderpinningService(ServiceSummaryViewModel serviceSummaryViewModel)
         {
             ServiceSummaryViewModel serviceSummary = GetServiceSummary();        
             serviceSummaryViewModel.FromSummaryPage = false;
@@ -589,12 +590,20 @@ namespace DVSAdmin.Controllers
 
         #region Service Name
         [HttpGet("underpinning-service-name")]
-        public IActionResult UnderPinningServiceName(bool fromSummaryPage)
+        public IActionResult UnderPinningServiceName(bool fromSummaryPage, bool fromUnderPinningServiceSummaryPage, bool manualEntry)
         {
 
-            ViewBag.fromSummaryPage = fromSummaryPage;     
+            ViewBag.fromSummaryPage = fromSummaryPage;
+            ViewBag.fromUnderPinningServiceSummaryPage = fromUnderPinningServiceSummaryPage;
+            ViewBag.manualEntryFirstTimeLoad = manualEntry;
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
-     
+            if (manualEntry)
+            {
+                ViewModelHelper.ClearUnderPinningServiceFieldsBeforeManualEntry(serviceSummaryViewModel);
+                serviceSummaryViewModel.ManualEntryFirstTimeLoad = manualEntry;
+                HttpContext?.Session.Set("ServiceSummary", serviceSummaryViewModel);
+            }
+          
             return View(serviceSummaryViewModel);
         }
 
@@ -607,11 +616,13 @@ namespace DVSAdmin.Controllers
             {
                 serviceSummary.UnderPinningServiceName = serviceSummaryViewModel.UnderPinningServiceName;               
                 HttpContext?.Session.Set("ServiceSummary", serviceSummary);
-                return RedirectToAction("ServiceSummary", "EditService");
+                return  serviceSummaryViewModel.FromUnderPinningServiceSummaryPage ? RedirectToAction("UnderpinningServiceDetailsSummary") 
+                : serviceSummary.ManualEntryFirstTimeLoad ? RedirectToAction("UnderPinningProviderName") 
+                : RedirectToAction("ServiceSummary", "EditService");
             }
             else
             {
-                return View("UnderPinningServiceName", serviceSummaryViewModel);
+              return  View("UnderPinningServiceName", serviceSummaryViewModel);
             }
         }
         #endregion
@@ -619,24 +630,26 @@ namespace DVSAdmin.Controllers
         #region Underpinning provider name
 
         [HttpGet("underpinning-provider-name")]
-        public IActionResult UnderPinningProviderName(bool fromSummaryPage)
+        public IActionResult UnderPinningProviderName(bool fromSummaryPage, bool fromUnderPinningServiceSummaryPage)
         {
-            ViewBag.fromSummaryPage = fromSummaryPage;              
+            ViewBag.fromSummaryPage = fromSummaryPage;
+            ViewBag.fromUnderPinningServiceSummaryPage = fromUnderPinningServiceSummaryPage;        
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();            
             return View(serviceSummaryViewModel);
         }
 
         [HttpPost("underpinning-provider-name")]
-        public IActionResult SaveUnderPinningProviderName(ServiceSummaryViewModel serviceSummaryViewModel, string action)
+        public IActionResult SaveUnderPinningProviderName(ServiceSummaryViewModel serviceSummaryViewModel)
         {         
             
-            ServiceSummaryViewModel serviceSummary = GetServiceSummary();            
-            
+            ServiceSummaryViewModel serviceSummary = GetServiceSummary();
             if (ModelState["UnderPinningProviderName"].Errors.Count == 0)
             {
                 serviceSummary.UnderPinningProviderName = serviceSummaryViewModel.UnderPinningProviderName;
                 HttpContext?.Session.Set("ServiceSummary", serviceSummary);
-                return RedirectToAction("ServiceSummary", "EditService");
+                return serviceSummaryViewModel.FromUnderPinningServiceSummaryPage ? RedirectToAction("UnderpinningServiceDetailsSummary")
+                : serviceSummary.ManualEntryFirstTimeLoad ? RedirectToAction("SelectCabOfUnderpinningService")
+                : RedirectToAction("ServiceSummary", "EditService");
             }
             else
             {
@@ -651,7 +664,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> SelectCabOfUnderpinningService(bool fromSummaryPage, bool fromUnderPinningServiceSummaryPage)
         {
             ViewBag.fromSummaryPage = fromSummaryPage;            
-            ViewBag.fromUnderPinningServiceSummaryPage = fromUnderPinningServiceSummaryPage;
+            ViewBag.fromUnderPinningServiceSummaryPage = fromUnderPinningServiceSummaryPage;            
             var allCabs = await editService.GetAllCabs();
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
             var selectCabViewModel = serviceSummaryViewModel?.SelectCabViewModel ?? new SelectCabViewModel();
@@ -675,7 +688,10 @@ namespace DVSAdmin.Controllers
                     SelectedCabName = cabName
                 };
                 HttpContext?.Session.Set("ServiceSummary", serviceSummary);
-                return RedirectToAction("ServiceSummary", "EditService");
+                return cabsViewModel.FromUnderPinningServiceSummaryPage ? RedirectToAction("UnderpinningServiceDetailsSummary")
+               : serviceSummary.ManualEntryFirstTimeLoad ? 
+                 RedirectToAction("UnderPinningServiceExpiryDate")
+               : RedirectToAction("ServiceSummary", "EditService");
             }
 
             return View("SelectCabOfUnderpinningService", cabsViewModel);
@@ -688,10 +704,10 @@ namespace DVSAdmin.Controllers
         [HttpGet("under-pinning-service-expiry-date")]
         public IActionResult UnderPinningServiceExpiryDate(bool fromSummaryPage,  bool fromUnderPinningServiceSummaryPage)
         {
-            ViewBag.fromSummaryPage = fromSummaryPage;           
-            
+            ViewBag.fromSummaryPage = fromSummaryPage;
+            ViewBag.fromUnderPinningServiceSummaryPage = fromUnderPinningServiceSummaryPage;
+          
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-
             DateViewModel dateViewModel = new()
             {
                 PropertyName = "UnderPinningServiceExpiryDate"
@@ -722,7 +738,8 @@ namespace DVSAdmin.Controllers
             {
                 summaryViewModel.UnderPinningServiceExpiryDate = underPinningServiceExpiryDate;
                 HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
-                return RedirectToAction("ServiceSummary", "EditService");
+                return dateViewModel.FromSummaryPage ? RedirectToAction("ServiceSummary", "EditService")
+               : RedirectToAction("UnderpinningServiceDetailsSummary");
             }
             else
             {
@@ -730,5 +747,18 @@ namespace DVSAdmin.Controllers
             }
         }
         #endregion
+
+
+        [HttpGet("underpinning-service-details-summary")]
+        public IActionResult UnderpinningServiceDetailsSummary()
+        {
+            ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            summaryViewModel.ManualEntryFirstTimeLoad = false;
+            HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
+           
+            return View(summaryViewModel);
+        }
+
+        
     }
 }

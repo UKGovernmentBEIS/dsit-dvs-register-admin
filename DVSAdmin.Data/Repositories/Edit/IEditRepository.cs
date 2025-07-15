@@ -22,6 +22,7 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<Service>> GetPublishedUnderpinningServices(string searchText);
         public Task<List<Service>> GetServicesWithManualUnderinningService(string searchText);
         public Task<Service> GetServiceDetails(int serviceId);
+        public Task<ManualUnderPinningService> GetManualUnderPinningServiceDetails(int serviceId);
 
     }
 }

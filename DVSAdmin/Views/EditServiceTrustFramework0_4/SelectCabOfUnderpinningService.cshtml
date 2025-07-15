@@ -28,7 +28,9 @@
                 </p>
                 @using (Html.BeginForm("SaveSelectedCab", "EditServiceTrustFramework0_4", FormMethod.Post))
                 {
-                    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })                                   
+                    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })
+                    @Html.HiddenFor(m => m.FromUnderPinningServiceSummaryPage, new { @Value = ViewBag.fromUnderPinningServiceSummaryPage })
+                  
                     
                     <div class="govuk-form-group govuk-!-margin-bottom-7">
 
