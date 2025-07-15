@@ -363,19 +363,22 @@ namespace DVSAdmin.Models
             if (existingService.IsUnderPinningServicePublished == true && existingService.UnderPinningServiceId != null) // previous selected service was under pinning published
             {
                 draft.IsUnderpinningServicePublished = updatedService.IsUnderpinningServicePublished;
-                if (existingService.IsUnderPinningServicePublished == true && updatedService.IsUnderpinningServicePublished == true && updatedService.SelectedUnderPinningServiceId != null)//current data is selected from list of manual services 
+                if (existingService.IsUnderPinningServicePublished == true && updatedService.IsUnderpinningServicePublished == true 
+                    && updatedService.SelectedUnderPinningServiceId != null &&  updatedService.SelectedUnderPinningServiceId != existingService.UnderPinningServiceId)//current data is selected from list of manual services 
                 {
-                    draft.ManualUnderPinningService = new();
+                    draft.UnderPinninngServiceEditType = UnderPinninngServiceEditEnum.PublishedToPublished;                   
                     draft.UnderPinningServiceId = updatedService.SelectedUnderPinningServiceId;
 
                 }
                 else if (updatedService.IsUnderpinningServicePublished == false && updatedService.SelectedManualUnderPinningServiceId != null)//current data is selected from list of manual services 
                 {
+                    draft.UnderPinninngServiceEditType = UnderPinninngServiceEditEnum.PublishedToSelectOrChangeManual;
                     UpdateDraftWithManualUnderPinningServiceChanges(updatedService, draft);
 
                 }
                 else if (updatedService.IsUnderpinningServicePublished == false && updatedService.SelectedManualUnderPinningServiceId == null) // means manually entered 
                 {
+                    draft.UnderPinninngServiceEditType = UnderPinninngServiceEditEnum.PublishedToEnterManual;
                     UpdateDraftWithManualServiceDetails(updatedService, draft);
                 }
             }
@@ -384,15 +387,17 @@ namespace DVSAdmin.Models
                 draft.IsUnderpinningServicePublished = updatedService.IsUnderpinningServicePublished;
                 if (updatedService.IsUnderpinningServicePublished == true && updatedService.SelectedUnderPinningServiceId != null)
                 {
-                    draft.ManualUnderPinningService = new();
+                    draft.UnderPinninngServiceEditType = UnderPinninngServiceEditEnum.ManualToPublished;               
                     draft.UnderPinningServiceId = updatedService.SelectedUnderPinningServiceId;
                 }
                 else if (existingService.IsUnderPinningServicePublished == false && updatedService.SelectedManualUnderPinningServiceId != null)//  selected service
                 {
+                    draft.UnderPinninngServiceEditType = UnderPinninngServiceEditEnum.ManualToSelectOrChangeManual;
                     UpdateDraftWithManualUnderPinningServiceChanges(updatedService, draft);
                 }
                 else if (existingService.IsUnderPinningServicePublished == false && updatedService.SelectedManualUnderPinningServiceId == null) // manually entered service
                 {
+                    draft.UnderPinninngServiceEditType = UnderPinninngServiceEditEnum.ManualToEnterManual;
                     UpdateDraftWithManualServiceDetails(updatedService, draft);
                 }
             }
@@ -408,11 +413,13 @@ namespace DVSAdmin.Models
             draft.ManualUnderPinningService = new();
             draft.ManualUnderPinningServiceId = updatedService.SelectedManualUnderPinningServiceId;
 
-            draft.ManualUnderPinningService.ServiceName = updatedService.UnderPinningServiceName;
-            draft.ManualUnderPinningService.ProviderName = updatedService.UnderPinningProviderName;
-            draft.ManualUnderPinningService.CertificateExpiryDate = updatedService.UnderPinningServiceExpiryDate;
-            draft.ManualUnderPinningService.SelectedCabName = updatedService.SelectCabViewModel.SelectedCabName;
-            draft.ManualUnderPinningService.CabId = updatedService.SelectCabViewModel.SelectedCabId;
+            draft.ManualUnderPinningServiceDraft = new();
+
+            draft.ManualUnderPinningServiceDraft.ServiceName = updatedService.UnderPinningServiceName;
+            draft.ManualUnderPinningServiceDraft.ProviderName = updatedService.UnderPinningProviderName;
+            draft.ManualUnderPinningServiceDraft.CertificateExpiryDate = updatedService.UnderPinningServiceExpiryDate;
+            draft.ManualUnderPinningServiceDraft.SelectedCabName = updatedService.SelectCabViewModel.SelectedCabName;
+            draft.ManualUnderPinningServiceDraft.CabId = updatedService.SelectCabViewModel.SelectedCabId;
         }
 
         private static void UpdateDraftWithManualServiceDetails(ServiceSummaryViewModel updatedService, ServiceDraftDto draft)

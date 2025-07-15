@@ -1,5 +1,6 @@
 ﻿using DVSAdmin.BusinessLogic.Models.Edit;
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -29,6 +30,8 @@ namespace DVSAdmin.BusinessLogic.Models
         public int? ManualUnderPinningServiceId { get; set; }
         public ManualUnderPinningServiceDto ManualUnderPinningService { get; set; }
         public ManualUnderPinningServiceDraftDto ManualUnderPinningServiceDraft { get; set; } // for newly entered service
+
+         public UnderPinninngServiceEditEnum? UnderPinninngServiceEditType { get;set; }
 
     }
 }

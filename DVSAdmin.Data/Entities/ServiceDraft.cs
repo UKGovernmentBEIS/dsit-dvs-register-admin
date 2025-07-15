@@ -1,4 +1,5 @@
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -53,5 +54,6 @@ namespace DVSAdmin.Data.Entities
         [ForeignKey("ManualUnderPinningService")]
         public int? ManualUnderPinningServiceId { get; set; }
         public ManualUnderPinningService ManualUnderPinningService { get; set; }
+        public UnderPinninngServiceEditEnum? UnderPinninngServiceEditType { get; set; }
     }
 }
