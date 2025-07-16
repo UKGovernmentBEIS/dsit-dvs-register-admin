@@ -220,7 +220,7 @@ namespace DVSAdmin.Data.Repositories
 
                 if (existingDraft != null)
                 {
-                    throw new InvalidOperationException("Service draft already exist for the service");
+                    throw new InvalidOperationException("Edit request already exists for the provider");
                 }
                 else
                 {
@@ -281,9 +281,7 @@ namespace DVSAdmin.Data.Repositories
                 var existingService = await _context.Service.Include(p => p.Provider).FirstOrDefaultAsync(x => x.Id == draft.ServiceId);
                 if (existingDraft != null)
                 {
-                    UpdateExistingServiceDraft(draft, existingDraft);
-                    await _context.SaveChangesAsync();
-                    response.InstanceId = existingDraft.Id;
+                    throw new InvalidOperationException("Edit request already exists for the service");
                 }
                 else
                 {
@@ -311,48 +309,6 @@ namespace DVSAdmin.Data.Repositories
         }
 
 
-        #region Private methods
-        private void UpdateExistingServiceDraft(ServiceDraft source, ServiceDraft target)
-        {
-            target.ServiceName = source.ServiceName;
-            target.WebSiteAddress = source.WebSiteAddress;
-            target.CompanyAddress = source.CompanyAddress;
-
-            if (target.ServiceRoleMappingDraft != null && target.ServiceRoleMappingDraft.Count > 0)
-            {
-                _context.ServiceRoleMappingDraft.RemoveRange(target.ServiceRoleMappingDraft);
-            }
-            target.ServiceRoleMappingDraft = source.ServiceRoleMappingDraft;
-
-            if (target.ServiceIdentityProfileMappingDraft != null && target.ServiceIdentityProfileMappingDraft.Count > 0)
-            {
-                _context.ServiceIdentityProfileMappingDraft.RemoveRange(target.ServiceIdentityProfileMappingDraft);
-            }
-            target.ServiceIdentityProfileMappingDraft = source.ServiceIdentityProfileMappingDraft;
-
-            if (target.ServiceQualityLevelMappingDraft != null && target.ServiceQualityLevelMappingDraft.Count > 0)
-            {
-                _context.ServiceQualityLevelMappingDraft.RemoveRange(target.ServiceQualityLevelMappingDraft);
-            }
-            target.ServiceQualityLevelMappingDraft = source.ServiceQualityLevelMappingDraft;
-
-            target.HasSupplementarySchemes = source.HasSupplementarySchemes;
-            target.HasGPG44 = source.HasGPG44;
-            target.HasGPG45 = source.HasGPG45;
-
-            if (target.ServiceSupSchemeMappingDraft != null && target.ServiceSupSchemeMappingDraft.Count > 0)
-            {
-                _context.ServiceSupSchemeMappingDraft.RemoveRange(target.ServiceSupSchemeMappingDraft);
-            }
-            target.ServiceSupSchemeMappingDraft = source.ServiceSupSchemeMappingDraft;
-
-            target.ConformityIssueDate = source.ConformityIssueDate;
-            target.ConformityExpiryDate = source.ConformityExpiryDate;
-            target.PreviousServiceStatus = source.PreviousServiceStatus;
-
-            target.ModifiedTime = DateTime.UtcNow;
-        }
-        
-        #endregion
+      
     }
 }

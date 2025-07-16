@@ -54,7 +54,7 @@
                             Save
                         </button>
                         <a href="@((Model.FromSummaryPage) ? Url.Action( "ServiceSummary", "EditService") :
-                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.serviceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
                     </div>
                 }
             </div>

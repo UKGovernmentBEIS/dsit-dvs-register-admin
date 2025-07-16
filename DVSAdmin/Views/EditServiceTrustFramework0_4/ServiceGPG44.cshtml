@@ -17,7 +17,7 @@
     @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })
   
     <div class="govuk-width-container">
-        @Html.ActionLink("Back", "ServiceGPG44Input", "EditServiceTrustFramework0_4", new { fromSummaryPage = Model.FromSummaryPage, serviceId = ViewBag.serviceId }, new { @class = "govuk-back-link" })
+        @Html.ActionLink("Back", "ServiceGPG44Input", "EditServiceTrustFramework0_4", new { fromSummaryPage = Model.FromSummaryPage, serviceId = Model.ServiceKey }, new { @class = "govuk-back-link" })
         <main id="main-content" class="govuk-main-wrapper" role="main">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
@@ -43,12 +43,7 @@
                     </h1>
 
                     <p class="govuk-body">
-                        This must match the information on the certificate.
-                    </p>
-                    <p class="govuk-body">
-                        You should only answer this question in relation to certification against the
-                        trust framework. We will ask you to provide information in relation to any
-                        supplementary codes separately.
+                        To make changes, type the new information and select 'Save'. If there are no changes to make, select 'cancel.'
                     </p>
 
                     @if (hasAuthenticatorError)
@@ -170,7 +165,7 @@
                             Save
                         </button>
                         <a href="@((Model.FromSummaryPage) ? Url.Action( "ServiceSummary", "EditService") :
-                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.serviceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
                     </div>
                 </div>
             </div>

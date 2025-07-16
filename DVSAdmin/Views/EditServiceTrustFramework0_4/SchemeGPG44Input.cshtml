@@ -10,8 +10,7 @@
 
 @using (Html.BeginForm("SaveSchemeGPG44Input", "EditServiceTrustFramework0_4", FormMethod.Post))
 {
-    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })
-    @Html.HiddenFor(m => m.FromDetailsPage, new { @Value = ViewBag.fromDetailsPage })
+    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })    
     @Html.HiddenFor(m=>m.SchemeId)
     @Html.HiddenFor(m => m.SchemeName)
     <div class="govuk-width-container">
@@ -53,7 +52,7 @@
                             Save
                         </button>
                         <a href="@((Model.FromSummaryPage) ? Url.Action( "ServiceSummary", "EditService") :
-                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.serviceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
                     </div>
                 </div>
             </div>

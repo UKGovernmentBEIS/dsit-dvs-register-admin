@@ -109,6 +109,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
+                ViewBag.ServiceKey = summaryViewModel.ServiceKey;
                 return View("ProviderRoles", roleViewModel);
             }
         }
@@ -123,7 +124,6 @@ namespace DVSAdmin.Controllers
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             summaryViewModel.FromSummaryPage = fromSummaryPage;
             HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
-
             return View(summaryViewModel);
         }
 
@@ -134,8 +134,6 @@ namespace DVSAdmin.Controllers
             if (ModelState["HasGPG44"].Errors.Count == 0)
             {
                 serviceSummary.HasGPG44 = serviceSummaryViewModel.HasGPG44;
-
-
                 if (Convert.ToBoolean(serviceSummary.HasGPG44))
                 {
                     return RedirectToAction("GPG44");
@@ -201,12 +199,11 @@ namespace DVSAdmin.Controllers
             if (ModelState.IsValid)
             {
                 HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
-
                 return RedirectToAction("ServiceSummary");
-
             }
             else
             {
+                ViewBag.serviceKey = summaryViewModel.ServiceKey;
                 return View("GPG44", qualityLevelViewModel);
             }
         }
@@ -404,7 +401,6 @@ namespace DVSAdmin.Controllers
             }
             dateViewModel.FromSummaryPage = fromSummaryPage;
             ViewBag.serviceKey = summaryViewModel.ServiceKey;
-
             return View(dateViewModel);
         }
 
@@ -427,6 +423,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
+                ViewBag.serviceKey = summaryViewModel.ServiceKey;
                 return View("ConformityIssueDate", dateViewModel);
             }
         }
@@ -472,6 +469,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
+                ViewBag.serviceKey = summaryViewModel.ServiceKey;
                 return View("ConformityExpiryDate", dateViewModel);
             }
         }

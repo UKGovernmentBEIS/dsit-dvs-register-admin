@@ -312,7 +312,8 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> ConfirmUnderpinningService(int serviceId, bool published, bool fromSummaryPage)
         {           
             ViewBag.fromSummaryPage = fromSummaryPage;            
-            var service = await editService.GetService(serviceId);  //under pinning service or whitelabel service details with manual service details
+            var service = await editService.GetService(serviceId); //under pinning service or whitelabel service details with manual service details
+            ServiceSummaryViewModel serviceSummaryInSession = GetServiceSummary();
             ServiceSummaryViewModel serviceSummary;
             if (published)
             {
@@ -323,8 +324,9 @@ namespace DVSAdmin.Controllers
                     UnderPinningProviderName = service.Provider.RegisteredName,
                     UnderPinningServiceName = service.ServiceName,
                     UnderPinningServiceExpiryDate = service.ConformityExpiryDate,
-                    SelectCabViewModel = new SelectCabViewModel { SelectedCabId = service?.CabUser?.CabId, SelectedCabName = service?.CabUser?.Cab?.CabName }
-                  
+                    SelectCabViewModel = new SelectCabViewModel { SelectedCabId = service?.CabUser?.CabId, SelectedCabName = service?.CabUser?.Cab?.CabName },
+                    ServiceKey = serviceSummaryInSession.ServiceKey
+
 
                 };
 
@@ -339,7 +341,7 @@ namespace DVSAdmin.Controllers
                     UnderPinningServiceName = service.ManualUnderPinningService.ServiceName,
                     UnderPinningServiceExpiryDate = service.ManualUnderPinningService.CertificateExpiryDate,
                     SelectCabViewModel = new SelectCabViewModel { SelectedCabId = service?.ManualUnderPinningService?.CabId, SelectedCabName = service?.ManualUnderPinningService?.Cab?.CabName },
-                  
+                    ServiceKey = serviceSummaryInSession.ServiceKey
                 };
 
             }
@@ -389,9 +391,10 @@ namespace DVSAdmin.Controllers
             {
                 SchemeId = schemeId,
                 SchemeName = summaryViewModel?.SupplementarySchemeViewModel?.SelectedSupplementarySchemes?.Where(scheme => scheme.Id == schemeId)
-                .Select(scheme => scheme.SchemeName).FirstOrDefault() ?? string.Empty,               
+                .Select(scheme => scheme.SchemeName).FirstOrDefault() ?? string.Empty,
                 SelectedIdentityProfileIds = identityProfile?.SelectedIdentityProfiles?.Select(c => c.Id)?.ToList() ?? [],
-                AvailableIdentityProfiles = await editService.GetIdentityProfiles()
+                AvailableIdentityProfiles = await editService.GetIdentityProfiles(),
+                ServiceKey = summaryViewModel.ServiceKey
             };
 
             return View(identityProfileViewModel);
@@ -405,7 +408,7 @@ namespace DVSAdmin.Controllers
         /// <param name="identityProfileViewModel"></param>
         /// <returns></returns>
         [HttpPost("scheme/gpg45")]
-        public async Task<IActionResult> SaveSchemeGPG45(IdentityProfileViewModel identityProfileViewModel, string action)
+        public async Task<IActionResult> SaveSchemeGPG45(IdentityProfileViewModel identityProfileViewModel)
         {
             bool fromSummaryPage = identityProfileViewModel.FromSummaryPage;            
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
@@ -442,6 +445,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
+                identityProfileViewModel.ServiceKey = summaryViewModel.ServiceKey;
                 return View("SchemeGPG45", identityProfileViewModel);
             }
         }
@@ -461,8 +465,8 @@ namespace DVSAdmin.Controllers
             FirstOrDefault() ?? new();            
             schemeQualityLevelMappingViewModel.SchemeId = schemeId;
             schemeQualityLevelMappingViewModel.SchemeName = summaryViewModel?.SupplementarySchemeViewModel?.SelectedSupplementarySchemes?.Where(scheme => scheme.Id == schemeId)
-            .Select(scheme => scheme.SchemeName).FirstOrDefault() ?? string.Empty;           
-
+            .Select(scheme => scheme.SchemeName).FirstOrDefault() ?? string.Empty;
+            schemeQualityLevelMappingViewModel.ServiceKey = summaryViewModel.ServiceKey;
             return View(schemeQualityLevelMappingViewModel);
         }
 
@@ -471,15 +475,12 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> SaveSchemeGPG44Input(SchemeQualityLevelMappingViewModel viewModel)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-            bool fromSummaryPage = viewModel.FromSummaryPage;                       
-            viewModel.FromDetailsPage = false;
-            viewModel.FromSummaryPage = false;
+            bool fromSummaryPage = viewModel.FromSummaryPage; 
             if (ModelState["HasGPG44"].Errors.Count == 0)
             {
                 SchemeQualityLevelMappingViewModel schemeQualityLevelMappingViewModel = new();
 
-                var existingMapping = summaryViewModel?.SchemeQualityLevelMapping?.FirstOrDefault(x => x.SchemeId == viewModel.SchemeId);
-              
+                var existingMapping = summaryViewModel?.SchemeQualityLevelMapping?.FirstOrDefault(x => x.SchemeId == viewModel.SchemeId);              
                 if (existingMapping != null)
                 {
                     int index = summaryViewModel.SchemeQualityLevelMapping.IndexOf(existingMapping);
@@ -517,6 +518,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
+                viewModel.ServiceKey = summaryViewModel.ServiceKey;
                 return View("SchemeGPG44Input", viewModel);
             }
         }
@@ -532,7 +534,8 @@ namespace DVSAdmin.Controllers
             {
                 SchemeId = schemeId,
                 SchemeName = summaryViewModel?.SupplementarySchemeViewModel?.SelectedSupplementarySchemes?.Where(scheme => scheme.Id == schemeId)
-                .Select(scheme => scheme.SchemeName).FirstOrDefault() ?? string.Empty
+                .Select(scheme => scheme.SchemeName).FirstOrDefault() ?? string.Empty,
+                ServiceKey = summaryViewModel.ServiceKey
             };
             var qualityLevel = summaryViewModel?.SchemeQualityLevelMapping?.Where(scheme => scheme.SchemeId == schemeId)?.FirstOrDefault()?.QualityLevel;
 
@@ -582,6 +585,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
+                qualityLevelViewModel.ServiceKey = summaryViewModel.ServiceKey;
                 return View("SchemeGPG44", qualityLevelViewModel);
             }
         }
@@ -669,7 +673,7 @@ namespace DVSAdmin.Controllers
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
             var selectCabViewModel = serviceSummaryViewModel?.SelectCabViewModel ?? new SelectCabViewModel();
             selectCabViewModel.Cabs = allCabs;
-           
+            selectCabViewModel.ServiceKey = serviceSummaryViewModel.ServiceKey;
             return View(selectCabViewModel);
         }
 
@@ -693,7 +697,7 @@ namespace DVSAdmin.Controllers
                  RedirectToAction("UnderPinningServiceExpiryDate")
                : RedirectToAction("ServiceSummary", "EditService");
             }
-
+            cabsViewModel.ServiceKey = serviceSummary.ServiceKey;
             return View("SelectCabOfUnderpinningService", cabsViewModel);
         }
         #endregion
