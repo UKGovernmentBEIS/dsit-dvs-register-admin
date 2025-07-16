@@ -1,4 +1,6 @@
-﻿using DVSAdmin.CommonUtility.Models;
+﻿using DVSAdmin.BusinessLogic.Models.Edit;
+using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 
 namespace DVSAdmin.BusinessLogic.Models
 {
@@ -21,6 +23,15 @@ namespace DVSAdmin.BusinessLogic.Models
         public ICollection<ServiceQualityLevelMappingDraftDto> ServiceQualityLevelMappingDraft { get; set; } = new List<ServiceQualityLevelMappingDraftDto>();
         public ICollection<ServiceIdentityProfileMappingDraftDto> ServiceIdentityProfileMappingDraft { get; set; } = new List<ServiceIdentityProfileMappingDraftDto>();
         public ICollection<ServiceSupSchemeMappingDraftDto> ServiceSupSchemeMappingDraft { get; set; } = new List<ServiceSupSchemeMappingDraftDto>();
+
+        public bool? IsUnderpinningServicePublished { get; set; }
+        public int? UnderPinningServiceId { get; set; }
+        public ServiceDto UnderPinningService { get; set; }
+        public int? ManualUnderPinningServiceId { get; set; }
+        public ManualUnderPinningServiceDto ManualUnderPinningService { get; set; }
+        public ManualUnderPinningServiceDraftDto ManualUnderPinningServiceDraft { get; set; } // for newly entered service
+
+         public UnderPinninngServiceEditEnum? UnderPinninngServiceEditType { get;set; }
 
     }
 }

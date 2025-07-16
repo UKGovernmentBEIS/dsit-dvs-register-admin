@@ -52,7 +52,8 @@
 
                 @using (Html.BeginForm("SaveUnderPinningServiceExpiryDate", "EditServiceTrustFramework0_4", FormMethod.Post))
                 {
-                    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })    
+                    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })
+                    @Html.HiddenFor(m => m.FromUnderPinningServiceSummaryPage, new { @Value = ViewBag.fromUnderPinningServiceSummaryPage })              
                     <p class="govuk-body">
                         This must match the information on the certificate.
                     </p>

@@ -43,6 +43,10 @@
         public const string RegisteredAddress = "Registered address";
         public const string ServiceName = "Service name";
         public const string Roles = "Roles certified against";
+        public const string UnderpinningServiceName = "Underpinning service name";
+        public const string UnderpinningProviderName = "Underpinning service provider registered name";
+        public const string CabOfUnderpinningService = "CAB of underpinning service";
+        public const string UnderpiningExpiryDate = "Underpinning service certificate expiry date";
 
 
     }

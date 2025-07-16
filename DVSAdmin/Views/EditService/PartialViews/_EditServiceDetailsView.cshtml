@@ -95,11 +95,24 @@
                         <div>@Constants.NullFieldsDisplay</div>
                 }
                 </dd>
-
-                <dd class="govuk-summary-list__actions">
-                    @Html.ActionLink("Change", "GPG44Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                @if (is0_4GammaVersion)
+                {
+                    <dd class="govuk-summary-list__actions">
+                        @Html.ActionLink("Change", "ServiceGPG44Input", "EditServiceTrustFramework0_4", new { serviceId = Model.ServiceId, fromSummaryPage = true },
                          new { @class = "govuk-link", @aria_label = "Change GPG44 quality of authenticator" })
-                </dd>
+                    </dd>
+                }
+               else
+                {
+                    <dd class="govuk-summary-list__actions">
+                        @Html.ActionLink("Change", "GPG44Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                        new { @class = "govuk-link", @aria_label = "Change GPG44 quality of authenticator" })
+                    </dd>
+                }
+
+                
+
+             
 
             </div>
             <div class="govuk-summary-list__row">
@@ -119,10 +132,21 @@
                         <div>@Constants.NullFieldsDisplay</div>
                 }
                 </dd>
-                <dd class="govuk-summary-list__actions">
-                    @Html.ActionLink("Change", "GPG44Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
-                         new { @class = "govuk-link", @aria_label = "Change GPG44 level of protection" })
-                </dd>
+                @if (is0_4GammaVersion)
+                {
+                    <dd class="govuk-summary-list__actions">
+                        @Html.ActionLink("Change", "ServiceGPG44Input", "EditServiceTrustFramework0_4", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                                 new { @class = "govuk-link", @aria_label = "Change GPG44 level of protection" })
+                    </dd>
+                }
+                else
+                {
+                    <dd class="govuk-summary-list__actions">
+                        @Html.ActionLink("Change", "GPG44Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                                 new { @class = "govuk-link", @aria_label = "Change GPG44 level of protection" })
+                    </dd>
+                }
+
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
@@ -141,11 +165,21 @@
                         <div>@Constants.NullFieldsDisplay</div>
                 }
                 </dd>
-
-                <dd class="govuk-summary-list__actions">
-                    @Html.ActionLink("Change", "GPG45Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
-                         new { @class = "govuk-link", @aria_label = "Change GPG45 identity profiles" })
-                </dd>
+                @if (is0_4GammaVersion)
+                {
+                    <dd class="govuk-summary-list__actions">
+                        @Html.ActionLink("Change", "ServiceGPG45Input", "EditServiceTrustFramework0_4", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                                 new { @class = "govuk-link", @aria_label = "Change GPG45 identity profiles" })
+                    </dd>
+                }
+                else
+                {
+                    <dd class="govuk-summary-list__actions">
+                        @Html.ActionLink("Change", "GPG45Input", "EditService", new { serviceId = Model.ServiceId, fromSummaryPage = true },
+                                 new { @class = "govuk-link", @aria_label = "Change GPG45 identity profiles" })
+                    </dd>
+                }
+              
 
             </div>
             <div class="govuk-summary-list__row">
@@ -343,14 +377,11 @@
                     Underpinning service
                 </h2>
 
-                @if (Model.IsUnderpinningServicePublished == true)
-                {
-                    <ul class="govuk-summary-card__actions">
-                        <li class="govuk-summary-card__action">
-                            @Html.ActionLink("Change", "StatusOfUnderpinningService", "EditServiceTrustFramework0_4", new { fromSummaryPage = true }, new { @class = "govuk-link", @aria_label = "Change selected underpinning service name " })
-                        </li>
-                    </ul>
-                }
+                <ul class="govuk-summary-card__actions">
+                    <li class="govuk-summary-card__action">
+                        @Html.ActionLink("Change", "StatusOfUnderpinningService", "EditServiceTrustFramework0_4", new { fromSummaryPage = true }, new { @class = "govuk-link", @aria_label = "Change selected underpinning service name " })
+                    </li>
+                </ul>
                
             </div>
             <div class="govuk-summary-card__content">

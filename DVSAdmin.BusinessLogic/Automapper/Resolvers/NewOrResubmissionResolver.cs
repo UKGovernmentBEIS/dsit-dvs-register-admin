@@ -11,9 +11,9 @@ namespace DVSAdmin.BusinessLogic.Automapper.Resolvers
         {
             string result = string.Empty;
             if (source.ServiceVersion == 1)
-                result = Constants.NewSubmission;
+                result = Constants.NewApplication;
             else if(destination.ServiceVersion >1)
-                result = Constants.ReSubmission;
+                result = Constants.ReApplication;
 
             return result;
         }

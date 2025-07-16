@@ -13,6 +13,7 @@ namespace DVSAdmin.Controllers
 {
 
     //Controller for TF version 0.4 gamma screens
+    [Route("edit-service")]
     public class EditServiceTrustFramework0_4Controller : BaseController
     {
         private readonly IEditService editService;        
@@ -24,7 +25,358 @@ namespace DVSAdmin.Controllers
             this.userService = userService;
            
         }
-        #region GPG45
+
+        #region GPG45 input
+
+        [HttpGet("service/gpg45-input")]
+        public IActionResult ServiceGPG45Input(bool fromSummaryPage)
+        {
+            ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            summaryViewModel.FromSummaryPage = fromSummaryPage;
+            HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
+            return View(summaryViewModel);
+        }
+
+        [HttpPost("service/gpg45-input")]
+        public  IActionResult SaveServiceGPG45Input(ServiceSummaryViewModel serviceSummaryViewModel)
+        {
+            ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            if (ModelState["HasGPG45"].Errors.Count == 0)
+            {
+                summaryViewModel.HasGPG45 = serviceSummaryViewModel.HasGPG45;
+
+                if (Convert.ToBoolean(summaryViewModel.HasGPG45))
+                {
+                    return RedirectToAction("ServiceGPG45");
+
+                }
+                else
+                {
+                    summaryViewModel.IdentityProfileViewModel.SelectedIdentityProfiles = [];
+                    HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
+                    return RedirectToAction("ServiceSummary", "EditService");
+                }
+            }
+            else
+            {
+                return View("ServiceGPG45Input", serviceSummaryViewModel);
+            }
+        }
+        #endregion
+        #region select GPG45
+
+        [HttpGet("service/gpg45")]
+        public async Task<IActionResult> ServiceGPG45()
+        {
+            ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            IdentityProfileViewModel identityProfileViewModel = new();
+            identityProfileViewModel.SelectedIdentityProfileIds = summaryViewModel?.IdentityProfileViewModel?.SelectedIdentityProfiles?.Select(c => c.Id).ToList();
+            identityProfileViewModel.AvailableIdentityProfiles = await editService.GetIdentityProfiles();
+
+            identityProfileViewModel.FromSummaryPage = summaryViewModel.FromSummaryPage;
+            ViewBag.serviceId = summaryViewModel.ServiceId;
+            ViewBag.serviceKey = summaryViewModel.ServiceKey;
+
+            return View(identityProfileViewModel);
+        }
+
+        /// <summary>
+        /// Save selected values to session
+        /// </summary>
+        /// <param name="identityProfileViewModel"></param>
+        /// <returns></returns>
+        [HttpPost("service/gpg45")]
+        public async Task<IActionResult> SaveServiceGPG45(IdentityProfileViewModel identityProfileViewModel)
+        {
+            ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            summaryViewModel.HasGPG45 = true;
+            List<IdentityProfileDto> availableIdentityProfiles = await editService.GetIdentityProfiles();
+            identityProfileViewModel.AvailableIdentityProfiles = availableIdentityProfiles;
+            identityProfileViewModel.SelectedIdentityProfileIds = identityProfileViewModel.SelectedIdentityProfileIds ?? new List<int>();
+            if (identityProfileViewModel.SelectedIdentityProfileIds.Count > 0)
+                summaryViewModel.IdentityProfileViewModel.SelectedIdentityProfiles = availableIdentityProfiles.Where(c => identityProfileViewModel.SelectedIdentityProfileIds.Contains(c.Id)).ToList();
+            summaryViewModel.IdentityProfileViewModel.FromSummaryPage = false;
+            if (ModelState.IsValid)
+            {
+                HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
+                return RedirectToAction("ServiceSummary", "EditService");
+
+            }
+            else
+            {
+                return View("ServiceGPG45", identityProfileViewModel);
+            }
+        }
+        #endregion
+        #region GPG44 - input
+
+        [HttpGet("service/gpg44-input")]
+        public IActionResult ServiceGPG44Input(bool fromSummaryPage)
+        {
+            ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            summaryViewModel.FromSummaryPage = fromSummaryPage;
+            HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
+
+            return View(summaryViewModel);
+        }
+
+        [HttpPost("service/gpg44-input")]
+        public IActionResult SaveServiceGPG44Input(ServiceSummaryViewModel serviceSummaryViewModel)
+        {
+            ServiceSummaryViewModel serviceSummary = GetServiceSummary();
+            if (ModelState["HasGPG44"].Errors.Count == 0)
+            {
+                serviceSummary.HasGPG44 = serviceSummaryViewModel.HasGPG44;
+
+
+                if (Convert.ToBoolean(serviceSummary.HasGPG44))
+                {
+                    return RedirectToAction("ServiceGPG44");
+                }
+                else
+                {
+                    // clear selections if the value is changed from yes to no
+                    serviceSummary.QualityLevelViewModel.SelectedQualityofAuthenticators = new List<QualityLevelDto>();
+                    serviceSummary.QualityLevelViewModel.SelectedLevelOfProtections = new List<QualityLevelDto>();
+                    HttpContext?.Session.Set("ServiceSummary", serviceSummary);
+                    return RedirectToAction("ServiceSummary", "EditService");
+
+                }
+            }
+            else
+            {
+                return View("ServiceGPG44Input", serviceSummary);
+            }
+        }
+
+        #endregion
+
+        #region select GPG44
+        [HttpGet("service/gpg44")]
+        public async Task<IActionResult> ServiceGPG44(bool fromSummaryPage, bool fromDetailsPage)
+        {
+            ServiceSummaryViewModel serviceSummary = GetServiceSummary();
+            QualityLevelViewModel qualityLevelViewModel = new();
+            var qualityLevels = await editService.GetQualitylevels();
+            qualityLevelViewModel.AvailableQualityOfAuthenticators = qualityLevels.Where(x => x.QualityType == QualityTypeEnum.Authentication).ToList();
+            qualityLevelViewModel.SelectedQualityofAuthenticatorIds = serviceSummary?.QualityLevelViewModel?.SelectedQualityofAuthenticators?.Select(c => c.Id).ToList();
+
+            qualityLevelViewModel.AvailableLevelOfProtections = qualityLevels.Where(x => x.QualityType == QualityTypeEnum.Protection).ToList();
+            qualityLevelViewModel.SelectedLevelOfProtectionIds = serviceSummary?.QualityLevelViewModel?.SelectedLevelOfProtections?.Select(c => c.Id).ToList();
+
+            qualityLevelViewModel.FromSummaryPage = serviceSummary.FromSummaryPage;
+            ViewBag.serviceId = serviceSummary.ServiceId;
+            ViewBag.serviceKey = serviceSummary.ServiceKey;
+
+            return View(qualityLevelViewModel);
+        }
+
+        /// <summary>
+        /// Save selected values to session
+        /// </summary>
+        /// <param name="qualityLevelViewModel"></param>
+        /// <returns></returns>
+        [HttpPost("service/gpg44")]
+        public async Task<IActionResult> SaveServiceGPG44(QualityLevelViewModel qualityLevelViewModel, string action)
+        {
+
+            ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            summaryViewModel.HasGPG44 = true;
+            List<QualityLevelDto> availableQualityLevels = await editService.GetQualitylevels();
+            qualityLevelViewModel.AvailableQualityOfAuthenticators = availableQualityLevels.Where(x => x.QualityType == QualityTypeEnum.Authentication).ToList();
+            qualityLevelViewModel.SelectedQualityofAuthenticatorIds = qualityLevelViewModel.SelectedQualityofAuthenticatorIds ?? [];
+            if (qualityLevelViewModel.SelectedQualityofAuthenticatorIds.Count > 0)
+                summaryViewModel.QualityLevelViewModel.SelectedQualityofAuthenticators = availableQualityLevels.Where(c => qualityLevelViewModel.SelectedQualityofAuthenticatorIds.Contains(c.Id)).ToList();
+
+            qualityLevelViewModel.AvailableLevelOfProtections = availableQualityLevels.Where(x => x.QualityType == QualityTypeEnum.Protection).ToList();
+            qualityLevelViewModel.SelectedLevelOfProtectionIds = qualityLevelViewModel.SelectedLevelOfProtectionIds ?? [];
+            if (qualityLevelViewModel.SelectedLevelOfProtectionIds.Count > 0)
+                summaryViewModel.QualityLevelViewModel.SelectedLevelOfProtections = availableQualityLevels.Where(c => qualityLevelViewModel.SelectedLevelOfProtectionIds.Contains(c.Id)).ToList();
+
+            if (ModelState.IsValid)
+            {
+                HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
+                return RedirectToAction("ServiceSummary", "EditService");
+
+            }
+            else
+            {
+                return View("GPG44", qualityLevelViewModel);
+            }
+        }
+        #endregion
+
+        #region Status of under pinning service - Is in register or not
+        [HttpGet("status-of-underpinning-service")]
+        public IActionResult StatusOfUnderpinningService(bool fromSummaryPage)
+        {
+            ViewBag.fromSummaryPage = fromSummaryPage;            
+            ServiceSummaryViewModel summaryViewModel = GetServiceSummary();            
+            return View(summaryViewModel);
+        }
+
+        [HttpPost("status-of-underpinning-service")]
+        public  IActionResult StatusOfUnderpinningService(ServiceSummaryViewModel serviceSummaryViewModel)
+        {
+            ServiceSummaryViewModel serviceSummary = GetServiceSummary();
+            serviceSummary.FromSummaryPage = serviceSummaryViewModel.FromSummaryPage;           
+            
+
+            if (ModelState["IsUnderpinningServicePublished"].Errors.Count == 0)
+            {
+                serviceSummary.IsUnderpinningServicePublished = serviceSummaryViewModel.IsUnderpinningServicePublished;
+                HttpContext?.Session.Set("ServiceSummary", serviceSummary);
+                return RedirectToAction("SelectUnderpinningService");                
+            }
+            else
+            {
+                return View("StatusOfUnderpinningService", serviceSummaryViewModel);
+            }
+        }
+
+        #endregion
+
+        #region Search for under pinning / published based on status
+        /// <summary>
+        /// Search for services with status published or certificate review 
+        /// passed based on selection in StatusOfUnderpinningService
+        /// </summary>
+        /// <param name="SearchText"></param>
+        /// <param name="SearchAction"></param>
+        /// <returns></returns>
+        [HttpGet("select-underpinning-service")]
+        public async Task<IActionResult> SelectUnderpinningService(string SearchText, string SearchAction)
+        {
+            ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            ViewBag.fromSummaryPage = summaryViewModel.FromSummaryPage;            
+
+            var published = summaryViewModel.IsUnderpinningServicePublished == true;
+
+            var services = new List<ServiceDto>();
+            var manualServices = new List<ServiceDto>();
+            if (SearchAction == "clearSearch")
+            {
+                ModelState.Clear();
+                SearchText = string.Empty;
+            }
+
+            if (SearchText != null)
+            {
+                if (published)
+                {
+                    // Fetch only services of type underpinning and status published
+                    //IsUnderpinningServicePublished // true
+                    //SelectedUnderPinningServiceId // not null
+                    // SelectedManualUnderPinningServiceId //null
+                    services = await editService.GetPublishedUnderpinningServices(SearchText);
+                }
+                else
+                {
+                    //Fetch only manually saved underpinning services with certificate review passed status
+                    // Fetch only services of type underpinning and status published
+                    //IsUnderpinningServicePublished // false
+                    //SelectedUnderPinningServiceId //  null
+                    // SelectedManualUnderPinningServiceId //not null
+                    manualServices = await editService.GetServicesWithManualUnderinningService(SearchText);
+                }
+
+            }
+            else
+            {
+                SearchText = string.Empty;
+
+            }
+            UnderpinningServiceViewModel underpinningServiceViewModel = new()
+            {
+                IsPublished = published,
+                SearchText = SearchText,
+                UnderpinningServices = services,
+                ManualUnderpinningServices = manualServices                
+            };
+            return View(underpinningServiceViewModel);
+        }
+
+        [HttpGet("selected-underpinning-service")]
+
+        public async Task<IActionResult> SelectedUnderpinningService(int serviceId, bool published, bool fromSummaryPage)
+        {
+            //under pinning service or whitelabel service details with manual service details
+            var service = await editService.GetService(serviceId);
+            ViewBag.published = published;
+            ViewBag.fromSummaryPage = fromSummaryPage;           
+            return View(service);
+        }
+
+
+        [HttpGet("confirm-underpinning-service")]
+        public async Task<IActionResult> ConfirmUnderpinningService(int serviceId, bool published, bool fromSummaryPage)
+        {           
+            ViewBag.fromSummaryPage = fromSummaryPage;            
+            var service = await editService.GetService(serviceId);  //under pinning service or whitelabel service details with manual service details
+            ServiceSummaryViewModel serviceSummary;
+            if (published)
+            {
+                serviceSummary = new()
+                {
+                    SelectedUnderPinningServiceId = service.Id,
+                    IsUnderpinningServicePublished = published,
+                    UnderPinningProviderName = service.Provider.RegisteredName,
+                    UnderPinningServiceName = service.ServiceName,
+                    UnderPinningServiceExpiryDate = service.ConformityExpiryDate,
+                    SelectCabViewModel = new SelectCabViewModel { SelectedCabId = service?.CabUser?.CabId, SelectedCabName = service?.CabUser?.Cab?.CabName }
+                  
+
+                };
+
+            }
+            else
+            {
+                serviceSummary = new()
+                {
+                    SelectedManualUnderPinningServiceId = service.ManualUnderPinningService.Id,
+                    IsUnderpinningServicePublished = published,
+                    UnderPinningProviderName = service.ManualUnderPinningService.ProviderName,
+                    UnderPinningServiceName = service.ManualUnderPinningService.ServiceName,
+                    UnderPinningServiceExpiryDate = service.ManualUnderPinningService.CertificateExpiryDate,
+                    SelectCabViewModel = new SelectCabViewModel { SelectedCabId = service?.ManualUnderPinningService?.CabId, SelectedCabName = service?.ManualUnderPinningService?.Cab?.CabName },
+                  
+                };
+
+            }
+
+            return View(serviceSummary);
+        }
+        [HttpPost("confirm-underpinning-service")]
+        public  IActionResult  SaveUnderpinningService(ServiceSummaryViewModel serviceSummaryViewModel)
+        {
+            ServiceSummaryViewModel serviceSummary = GetServiceSummary();        
+            serviceSummaryViewModel.FromSummaryPage = false;
+            serviceSummary.SelectedManualUnderPinningServiceId = serviceSummaryViewModel.SelectedManualUnderPinningServiceId;
+            serviceSummary.SelectedUnderPinningServiceId = serviceSummaryViewModel.SelectedUnderPinningServiceId;
+            serviceSummary.UnderPinningServiceName = serviceSummaryViewModel.UnderPinningServiceName;
+            serviceSummary.UnderPinningProviderName = serviceSummaryViewModel.UnderPinningProviderName;
+            serviceSummary.UnderPinningServiceExpiryDate = serviceSummaryViewModel.UnderPinningServiceExpiryDate;
+            serviceSummary.SelectCabViewModel = new SelectCabViewModel
+            {
+                SelectedCabId = serviceSummaryViewModel?.SelectCabViewModel?.SelectedCabId,
+                SelectedCabName = serviceSummaryViewModel?.SelectCabViewModel?.SelectedCabName
+            };
+            serviceSummary.IsManualServiceLinkedToMultipleServices = true;
+
+            if (ModelState["SelectedUnderPinningServiceId"].Errors.Count == 0 && ModelState["UnderPinningServiceName"].Errors.Count == 0)
+            {
+                HttpContext?.Session.Set("ServiceSummary", serviceSummary);
+                return RedirectToAction("ServiceSummary", "EditService");
+            }
+            else
+            {
+                return View("ConfirmUnderpinningService", serviceSummaryViewModel);
+            }
+        }
+        #endregion
+
+
+        #region GPG45 - Scheme
 
         [HttpGet("scheme/gpg45")]
         public async Task<IActionResult> SchemeGPG45(bool fromSummaryPage, int schemeId)
@@ -97,7 +449,7 @@ namespace DVSAdmin.Controllers
         
         #endregion
 
-        #region GPG44 - input
+        #region GPG44 - input - scheme
 
         [HttpGet("scheme/gpg44-input")]
         public IActionResult SchemeGPG44Input(bool fromSummaryPage, int schemeId)
@@ -170,7 +522,7 @@ namespace DVSAdmin.Controllers
         }
 
         #endregion
-        #region select GPG44
+        #region select GPG44 - Scheme
         [HttpGet("scheme/gpg44")]
         public async Task<IActionResult> SchemeGPG44(bool fromSummaryPage, int schemeId)
         {
@@ -238,12 +590,20 @@ namespace DVSAdmin.Controllers
 
         #region Service Name
         [HttpGet("underpinning-service-name")]
-        public IActionResult UnderPinningServiceName(bool fromSummaryPage)
+        public IActionResult UnderPinningServiceName(bool fromSummaryPage, bool fromUnderPinningServiceSummaryPage, bool manualEntry)
         {
 
-            ViewBag.fromSummaryPage = fromSummaryPage;     
+            ViewBag.fromSummaryPage = fromSummaryPage;
+            ViewBag.fromUnderPinningServiceSummaryPage = fromUnderPinningServiceSummaryPage;
+            ViewBag.manualEntryFirstTimeLoad = manualEntry;
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
-     
+            if (manualEntry)
+            {
+                ViewModelHelper.ClearUnderPinningServiceFieldsBeforeManualEntry(serviceSummaryViewModel);
+                serviceSummaryViewModel.ManualEntryFirstTimeLoad = manualEntry;
+                HttpContext?.Session.Set("ServiceSummary", serviceSummaryViewModel);
+            }
+          
             return View(serviceSummaryViewModel);
         }
 
@@ -256,36 +616,40 @@ namespace DVSAdmin.Controllers
             {
                 serviceSummary.UnderPinningServiceName = serviceSummaryViewModel.UnderPinningServiceName;               
                 HttpContext?.Session.Set("ServiceSummary", serviceSummary);
-                return RedirectToAction("ServiceSummary", "EditService");
+                return  serviceSummaryViewModel.FromUnderPinningServiceSummaryPage ? RedirectToAction("UnderpinningServiceDetailsSummary") 
+                : serviceSummary.ManualEntryFirstTimeLoad ? RedirectToAction("UnderPinningProviderName") 
+                : RedirectToAction("ServiceSummary", "EditService");
             }
             else
             {
-                return View("UnderPinningServiceName", serviceSummaryViewModel);
+              return  View("UnderPinningServiceName", serviceSummaryViewModel);
             }
         }
         #endregion
 
-        #region underpinning provider name
+        #region Underpinning provider name
 
         [HttpGet("underpinning-provider-name")]
-        public IActionResult UnderPinningProviderName(bool fromSummaryPage)
+        public IActionResult UnderPinningProviderName(bool fromSummaryPage, bool fromUnderPinningServiceSummaryPage)
         {
-            ViewBag.fromSummaryPage = fromSummaryPage;              
+            ViewBag.fromSummaryPage = fromSummaryPage;
+            ViewBag.fromUnderPinningServiceSummaryPage = fromUnderPinningServiceSummaryPage;        
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();            
             return View(serviceSummaryViewModel);
         }
 
         [HttpPost("underpinning-provider-name")]
-        public IActionResult SaveUnderPinningProviderName(ServiceSummaryViewModel serviceSummaryViewModel, string action)
+        public IActionResult SaveUnderPinningProviderName(ServiceSummaryViewModel serviceSummaryViewModel)
         {         
             
-            ServiceSummaryViewModel serviceSummary = GetServiceSummary();            
-            
+            ServiceSummaryViewModel serviceSummary = GetServiceSummary();
             if (ModelState["UnderPinningProviderName"].Errors.Count == 0)
             {
                 serviceSummary.UnderPinningProviderName = serviceSummaryViewModel.UnderPinningProviderName;
                 HttpContext?.Session.Set("ServiceSummary", serviceSummary);
-                return RedirectToAction("ServiceSummary", "EditService");
+                return serviceSummaryViewModel.FromUnderPinningServiceSummaryPage ? RedirectToAction("UnderpinningServiceDetailsSummary")
+                : serviceSummary.ManualEntryFirstTimeLoad ? RedirectToAction("SelectCabOfUnderpinningService")
+                : RedirectToAction("ServiceSummary", "EditService");
             }
             else
             {
@@ -300,7 +664,7 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> SelectCabOfUnderpinningService(bool fromSummaryPage, bool fromUnderPinningServiceSummaryPage)
         {
             ViewBag.fromSummaryPage = fromSummaryPage;            
-            ViewBag.fromUnderPinningServiceSummaryPage = fromUnderPinningServiceSummaryPage;
+            ViewBag.fromUnderPinningServiceSummaryPage = fromUnderPinningServiceSummaryPage;            
             var allCabs = await editService.GetAllCabs();
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
             var selectCabViewModel = serviceSummaryViewModel?.SelectCabViewModel ?? new SelectCabViewModel();
@@ -324,7 +688,10 @@ namespace DVSAdmin.Controllers
                     SelectedCabName = cabName
                 };
                 HttpContext?.Session.Set("ServiceSummary", serviceSummary);
-                return RedirectToAction("ServiceSummary", "EditService");
+                return cabsViewModel.FromUnderPinningServiceSummaryPage ? RedirectToAction("UnderpinningServiceDetailsSummary")
+               : serviceSummary.ManualEntryFirstTimeLoad ? 
+                 RedirectToAction("UnderPinningServiceExpiryDate")
+               : RedirectToAction("ServiceSummary", "EditService");
             }
 
             return View("SelectCabOfUnderpinningService", cabsViewModel);
@@ -337,10 +704,10 @@ namespace DVSAdmin.Controllers
         [HttpGet("under-pinning-service-expiry-date")]
         public IActionResult UnderPinningServiceExpiryDate(bool fromSummaryPage,  bool fromUnderPinningServiceSummaryPage)
         {
-            ViewBag.fromSummaryPage = fromSummaryPage;           
-            
+            ViewBag.fromSummaryPage = fromSummaryPage;
+            ViewBag.fromUnderPinningServiceSummaryPage = fromUnderPinningServiceSummaryPage;
+          
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-
             DateViewModel dateViewModel = new()
             {
                 PropertyName = "UnderPinningServiceExpiryDate"
@@ -371,7 +738,8 @@ namespace DVSAdmin.Controllers
             {
                 summaryViewModel.UnderPinningServiceExpiryDate = underPinningServiceExpiryDate;
                 HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
-                return RedirectToAction("ServiceSummary", "EditService");
+                return dateViewModel.FromSummaryPage ? RedirectToAction("ServiceSummary", "EditService")
+               : RedirectToAction("UnderpinningServiceDetailsSummary");
             }
             else
             {
@@ -379,5 +747,18 @@ namespace DVSAdmin.Controllers
             }
         }
         #endregion
+
+
+        [HttpGet("underpinning-service-details-summary")]
+        public IActionResult UnderpinningServiceDetailsSummary()
+        {
+            ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
+            summaryViewModel.ManualEntryFirstTimeLoad = false;
+            HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
+           
+            return View(summaryViewModel);
+        }
+
+        
     }
 }

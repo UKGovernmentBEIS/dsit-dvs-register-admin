@@ -10,6 +10,7 @@
 @using (Html.BeginForm("SaveUnderPinningServiceName", "EditServiceTrustFramework0_4", FormMethod.Post))
 {
     @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })  
+    @Html.HiddenFor(m => m.FromUnderPinningServiceSummaryPage, new { @Value = ViewBag.fromUnderPinningServiceSummaryPage })   
     <div class="govuk-width-container">
         <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-back-link">Back</a>
 
@@ -25,7 +26,7 @@
                             hasError = true;
                             ViewData["Title"] = "Error: " + ViewData["Title"];
                             @await Html.PartialAsync("~/Views/PartialViews/_SpecificErrorsView.cshtml",
-                                     new Tuple<string, IEnumerable<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>>("UnderPinningServiceName", errors))
+                            new Tuple<string, IEnumerable<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>>("UnderPinningServiceName", errors))
                         }
                     }
 
