@@ -94,6 +94,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return await context.ProviderProfile
            .Include(p => p.Services).ThenInclude(s => s.TrustFrameworkVersion)
             .Include(p => p.Services).ThenInclude(s => s.ManualUnderPinningService)
+             .Include(p => p.Services).ThenInclude(s => s.ManualUnderPinningService).ThenInclude(s=>s.Cab)
             .Include(p => p.Services).ThenInclude(s => s.UnderPinningService).ThenInclude(s=>s.Provider)
             .Include(p => p.Services).ThenInclude(s => s.UnderPinningService).ThenInclude(s => s.CabUser).ThenInclude(s=>s.Cab)
            .Include(p => p.Services).ThenInclude(s => s.ServiceRoleMapping).ThenInclude(s => s.Role)
