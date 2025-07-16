@@ -220,10 +220,7 @@ namespace DVSAdmin.Data.Repositories
 
                 if (existingDraft != null)
                 {
-                    UpdateExistingProviderDraft(draft, existingDraft);
-                    await _context.SaveChangesAsync();
-
-                    response.InstanceId = existingDraft.Id;
+                    throw new InvalidOperationException("Service draft already exist for the service");
                 }
                 else
                 {
@@ -355,31 +352,7 @@ namespace DVSAdmin.Data.Repositories
 
             target.ModifiedTime = DateTime.UtcNow;
         }
-        private void UpdateExistingProviderDraft(ProviderProfileDraft source, ProviderProfileDraft target)
-        {
-            target.ModifiedTime = DateTime.UtcNow;
-            target.RegisteredName = source.RegisteredName;
-            target.TradingName = source.TradingName;
-            target.HasRegistrationNumber = source.HasRegistrationNumber;
-            target.CompanyRegistrationNumber = source.CompanyRegistrationNumber;
-            target.DUNSNumber = source.DUNSNumber;
-            target.HasParentCompany = source.HasParentCompany;
-            target.ParentCompanyRegisteredName = source.ParentCompanyRegisteredName;
-            target.ParentCompanyLocation = source.ParentCompanyLocation;
-            target.PrimaryContactFullName = source.PrimaryContactFullName;
-            target.PrimaryContactJobTitle = source.PrimaryContactJobTitle;
-            target.PrimaryContactEmail = source.PrimaryContactEmail;
-            target.PrimaryContactTelephoneNumber = source.PrimaryContactTelephoneNumber;
-            target.SecondaryContactFullName = source.SecondaryContactFullName;
-            target.SecondaryContactJobTitle = source.SecondaryContactJobTitle;
-            target.SecondaryContactEmail = source.SecondaryContactEmail;
-            target.SecondaryContactTelephoneNumber = source.SecondaryContactTelephoneNumber;
-            target.PublicContactEmail = source.PublicContactEmail;
-            target.ProviderTelephoneNumber = source.ProviderTelephoneNumber;
-            target.ProviderWebsiteAddress = source.ProviderWebsiteAddress;
-            target.PreviousProviderStatus = source.PreviousProviderStatus;
-            target.RequestedUserId = source.RequestedUserId;
-        }
+        
         #endregion
     }
 }

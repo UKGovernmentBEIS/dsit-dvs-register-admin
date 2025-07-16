@@ -371,7 +371,15 @@ namespace DVSAdmin.Controllers
             {
                 HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
 
-                return RedirectToMissingMappings(supplementarySchemeViewModel.FromSummaryPage);
+                if(summaryViewModel.TFVersionViewModel?.SelectedTFVersion?.Version == Constants.TFVersion0_4)
+                {
+                    return RedirectToMissingMappings(supplementarySchemeViewModel.FromSummaryPage);
+                }
+                else
+                {
+                    return RedirectToAction("ServiceSummary");
+                }                 
+               
               
             }
             else
