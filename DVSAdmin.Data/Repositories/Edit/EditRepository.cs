@@ -102,8 +102,9 @@ namespace DVSAdmin.Data.Repositories
             return providerProfile;
         }
 
-        public async Task<List<Service>> GetPublishedUnderpinningServices(string searchText)
+        public async Task<List<Service>> GetPublishedUnderpinningServices(string searchText, int? currentSelectedServiceId)
         {
+            int underpinningServiceId = currentSelectedServiceId ?? 0; 
             var baseQuery = _context.Service
                 .Include(s => s.Provider)
                 .Include(s => s.CertificateReview)
@@ -112,7 +113,7 @@ namespace DVSAdmin.Data.Repositories
 
             var filteredQuery = baseQuery
                 .Where(s => s.TrustFrameworkVersion.Version == Constants.TFVersion0_4 && s.ServiceType == ServiceTypeEnum.UnderPinning
-                 && s.ServiceStatus == ServiceStatusEnum.Published);
+                && s.ServiceStatus == ServiceStatusEnum.Published && s.Id != underpinningServiceId);
 
             string trimmedSearchText = searchText.Trim().ToLower();
             filteredQuery = filteredQuery
@@ -123,19 +124,26 @@ namespace DVSAdmin.Data.Repositories
         }
 
 
-        public async Task<List<Service>> GetServicesWithManualUnderinningService(string searchText)
+        public async Task<List<Service>> GetServicesWithManualUnderinningService(string searchText , int? currentSelectedServiceId)
         {
+            int underpinningServiceId = currentSelectedServiceId ?? 0;
             var trimmedSearchText = searchText.Trim().ToLower();
-            //select manually entered under pinning services for a white labelled type
-            var manualUnderPinningServices = await _context.Service.Include(s => s.ManualUnderPinningService)
-            .ThenInclude(s => s.Cab).Include(s => s.CertificateReview)
-            .Where(x => x.ServiceType == ServiceTypeEnum.WhiteLabelled
+            // select manually entered under pinning services for a white labelled type
+            var manualUnderPinningServices = await _context.Service
+                .Include(s => s.ManualUnderPinningService).ThenInclude(s => s.Cab).Include(s => s.CertificateReview)
+                .Where(x => x.ServiceType == ServiceTypeEnum.WhiteLabelled
                             && x.ManualUnderPinningServiceId != null
                             && x.ManualUnderPinningServiceId > 0
                             && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved
+                            && x.ManualUnderPinningServiceId != currentSelectedServiceId
                             && (string.IsNullOrEmpty(trimmedSearchText) ||
                                 x.ManualUnderPinningService.ServiceName.ToLower().Contains(trimmedSearchText) ||
-                                x.Provider.RegisteredName.ToLower().Contains(trimmedSearchText))).AsNoTracking().ToListAsync();
+                                x.Provider.RegisteredName.ToLower().Contains(trimmedSearchText)))
+                .AsNoTracking()
+                .GroupBy(x => x.ManualUnderPinningServiceId)
+                .Select(g => g.FirstOrDefault())
+                .ToListAsync();
+
             return manualUnderPinningServices;
         }
 

@@ -264,20 +264,22 @@ namespace DVSAdmin.Controllers
             {
                 if (published)
                 {
+                    var currentSelectedServiceId = summaryViewModel.SelectedUnderPinningServiceId;
                     // Fetch only services of type underpinning and status published
                     //IsUnderpinningServicePublished // true
                     //SelectedUnderPinningServiceId // not null
                     // SelectedManualUnderPinningServiceId //null
-                    services = await editService.GetPublishedUnderpinningServices(SearchText);
+                    services = await editService.GetPublishedUnderpinningServices(SearchText, currentSelectedServiceId);
                 }
                 else
                 {
+                    var currentSelectedServiceId = summaryViewModel.SelectedManualUnderPinningServiceId;
                     //Fetch only manually saved underpinning services with certificate review passed status
                     // Fetch only services of type underpinning and status published
                     //IsUnderpinningServicePublished // false
                     //SelectedUnderPinningServiceId //  null
                     // SelectedManualUnderPinningServiceId //not null
-                    manualServices = await editService.GetServicesWithManualUnderinningService(SearchText);
+                    manualServices = await editService.GetServicesWithManualUnderinningService(SearchText, currentSelectedServiceId);
                 }
 
             }

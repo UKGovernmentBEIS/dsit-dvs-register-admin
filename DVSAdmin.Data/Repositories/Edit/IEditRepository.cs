@@ -19,8 +19,8 @@ namespace DVSAdmin.Data.Repositories
         public Task<GenericResponse> SaveServiceDraft(ServiceDraft draft, string loggedInUserEmail);
         public Task<GenericResponse> SaveProviderDraftToken(ProviderDraftToken providerDraftToken, string loggedinUserEmail, int providerProfileId);
         public Task<GenericResponse> SaveServiceDraftToken(ServiceDraftToken serviceDraftToken, string loggedinUserEmail, int serviceId);
-        public Task<List<Service>> GetPublishedUnderpinningServices(string searchText);
-        public Task<List<Service>> GetServicesWithManualUnderinningService(string searchText);
+        public Task<List<Service>> GetPublishedUnderpinningServices(string searchText, int? currentSelectedServiceId);
+        public Task<List<Service>> GetServicesWithManualUnderinningService(string searchText, int? currentSelectedServiceId);
         public Task<Service> GetServiceDetails(int serviceId);
         public Task<ManualUnderPinningService> GetManualUnderPinningServiceDetails(int serviceId);
 
