@@ -491,14 +491,14 @@ namespace DVSAdmin.BusinessLogic.Services
                     currentDataDictionary.Add(Constants.CabOfUnderpinningService, [currentServiceDto.CabUser.Cab.CabName]);
                     currentDataDictionary.Add(Constants.UnderpiningExpiryDate, [Helper.GetLocalDateTime(currentServiceDto.ConformityExpiryDate, "dd MMMM yyyy")]);
                 }
-                else if (currentData.IsUnderpinningServicePublished == false && currentData.ManualUnderPinningServiceId != null) // manual selected service
+                else if (currentData.IsUnderpinningServicePublished == false && currentData.ManualUnderPinningServiceId != null ) // manual selected service
                 {
                     await PopulatePreviousManualUnderpinningService(previousDataDictionary, (int)previousData.ManualUnderPinningServiceId);
 
                     ManualUnderPinningService currentSelectedManualService = await _editRepository.GetManualUnderPinningServiceDetails((int)currentData.ManualUnderPinningServiceId);
                     GetKeyValueForSelectedManualUnderpinningService(currentData, currentDataDictionary, currentSelectedManualService);
                 }
-                else if (currentData.IsUnderpinningServicePublished == false && currentData.ManualUnderPinningServiceId == null) // manualluy enetered service
+                else if (currentData.IsUnderpinningServicePublished == false && currentData.ManualUnderPinningServiceId == null && currentData.ManualUnderPinningServiceDraft!=null) // manualluy enetered service
                 {
                     await PopulatePreviousManualUnderpinningService(previousDataDictionary, (int)previousData.ManualUnderPinningServiceId);
                     GetKeyValueForManualUnderpinningDraft(currentData, currentDataDictionary);
