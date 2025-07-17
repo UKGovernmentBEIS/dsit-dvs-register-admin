@@ -392,7 +392,7 @@ namespace DVSAdmin.Models
                             {
                                 var existingIds = existingSchemeQualityLevelMappings[schemeMapping.Key].QualityLevels?.OrderBy(x => x.Id).Select(x => x.Id).ToList();
                                 var updatedIds = updatedList?.QualityLevels?.OrderBy(x => x.Id).Select(x => x.Id).ToList();
-                                if (existingIds != null && updatedIds != null && !existingIds.SequenceEqual(updatedIds))
+                                if ( existingIds ==null ||(   existingIds != null && updatedIds != null && !existingIds.SequenceEqual(updatedIds)))
                                 {
                                     if (updatedList?.QualityLevels != null)
                                     {
