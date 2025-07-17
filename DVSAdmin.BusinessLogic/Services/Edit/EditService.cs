@@ -269,17 +269,17 @@ namespace DVSAdmin.BusinessLogic.Services
             return cabDtos;
         }
 
-        public async Task<List<ServiceDto>> GetPublishedUnderpinningServices(string searchText)
+        public async Task<List<ServiceDto>> GetPublishedUnderpinningServices(string searchText, int? currentSelectedServiceId)
         {
-            var services = await _editRepository.GetPublishedUnderpinningServices(searchText);
+            var services = await _editRepository.GetPublishedUnderpinningServices(searchText, currentSelectedServiceId);
             var serviceDtos = _mapper.Map<List<ServiceDto>>(services);
 
             return serviceDtos;
         }
 
-        public async Task<List<ServiceDto>> GetServicesWithManualUnderinningService(string searchText)
+        public async Task<List<ServiceDto>> GetServicesWithManualUnderinningService(string searchText, int? currentSelectedServiceId)
         {
-            var services = await _editRepository.GetServicesWithManualUnderinningService(searchText);
+            var services = await _editRepository.GetServicesWithManualUnderinningService(searchText, currentSelectedServiceId);
             var serviceDtos = _mapper.Map<List<ServiceDto>>(services);
 
             return serviceDtos;
