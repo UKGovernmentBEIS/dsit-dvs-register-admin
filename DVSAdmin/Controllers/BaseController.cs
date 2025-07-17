@@ -68,6 +68,21 @@ namespace DVSAdmin.Controllers
                 {
                     missingSchemeId = missingSchemeIds[0];
                 }
+
+                //clear removed scheme mappings
+                if (selectedSchemeIds.Count() < existingSchemeIds.Count())
+                {
+
+                    var removedSchemeIds = existingSchemeIds.Except(selectedSchemeIds).ToList();
+                    serviceSummary.SchemeQualityLevelMapping = serviceSummary.SchemeQualityLevelMapping
+                   .Where(mapping => !removedSchemeIds.Contains(mapping.SchemeId))
+                   .OrderBy(x => x.SchemeId).ToList();
+
+                    serviceSummary.SchemeIdentityProfileMapping = serviceSummary.SchemeIdentityProfileMapping
+                   .Where(mapping => !removedSchemeIds.Contains(mapping.SchemeId))
+                   .OrderBy(x => x.SchemeId).ToList();
+                    HttpContext?.Session.Set("ServiceSummary", serviceSummary);
+                }
             }
             return missingSchemeId;
 

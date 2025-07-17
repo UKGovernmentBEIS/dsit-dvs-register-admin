@@ -493,7 +493,7 @@ namespace DVSAdmin.Controllers
 
             ServiceDto previousData = await editService.GetService(summaryViewModel.ServiceId);
             changesViewModel.DSITUserEmails = string.Join(",", userEmails);
-
+            changesViewModel.CurrentService = previousData;
             ServiceDraftDto currentData = ViewModelHelper.MapToDraft(previousData, summaryViewModel);
 
             (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = await editService.GetServiceKeyValue(currentData, previousData);
