@@ -42,8 +42,8 @@ namespace DVSAdmin.Models
         public int CabUserId { get; set; }
         public int CabId { get; set; }
 
-        public int ServiceId { get; set; }
-        public int ServiceKey { get; set; }
+        //public int ServiceId { get; set; }
+        //public int ServiceKey { get; set; }
 
         public TFVersionViewModel? TFVersionViewModel { get; set; }
 

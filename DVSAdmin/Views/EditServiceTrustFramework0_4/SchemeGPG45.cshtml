@@ -11,7 +11,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "GPG45Input", "EditService", new { fromSummaryPage = Model.FromSummaryPage, serviceId = ViewBag.serviceId }, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "GPG45Input", "EditService", new { fromSummaryPage = Model.FromSummaryPage, serviceId = Model.ServiceKey }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -52,14 +52,6 @@
                     int medConfCount = meduimConfidenceList.Count();
                     int highConfCount = highConfidenceList.Count();
                     int verHighConfList = veryHighConfidenceList.Count();
-                    <p class="govuk-body">
-                        You have told us that the service is certified against Right to work.
-                    </p>
-                    <p class="govuk-body">
-                        You should only answer this question in relation to Right to work checks. We
-                        will ask you to provide information about any other supplementary codes
-                        separately.
-                    </p>
                     <p class="govuk-body">
                         To make changes, type the new information and select 'Save'. If there are no changes to make, select 'cancel.'
                     </p>
@@ -111,7 +103,7 @@
                             Save
                         </button>
                         <a href="@((Model.FromSummaryPage) ? Url.Action( "ServiceSummary", "EditService") :
-                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = ViewBag.serviceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
                     </div>
                 }
             </div>
