@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile-sass": "dart-sass ./wwwroot/css/main.scss ./wwwroot/css/main.css"
+    "build": "dart-sass ./wwwroot/css/main.scss ./wwwroot/css/main.css"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dart-sass": "^1.25.0",
-    "govuk-frontend": "^5.7.1",
+    "govuk-frontend": "^5.10.0",
     "sass": "^1.77.3"
   }
 }
