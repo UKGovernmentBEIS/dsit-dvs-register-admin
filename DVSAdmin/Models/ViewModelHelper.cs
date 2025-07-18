@@ -194,7 +194,7 @@ namespace DVSAdmin.Models
             if (updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes != null && updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes.Count > 0)
             {
 
-
+                bool schemeRemoved = updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes.Count < existingService.ServiceSupSchemeMapping.Count;
                 foreach (var schemeMapping in existingService.ServiceSupSchemeMapping)
                 {
                     existingSchemeIdentityProfileMappings.Add(schemeMapping.SupplementarySchemeId, schemeMapping.SchemeGPG45Mapping.Select(m => m.IdentityProfile).ToList());
@@ -236,11 +236,15 @@ namespace DVSAdmin.Models
 
 
                 List<SchemeGPG45MappingDraftDto> gpg45MappingDraft;
-                // New scheme additions
-                foreach (var schemeMapping in updatedSchemeIdentityProfileMappings)
+                List<SchemeGPG44MappingDraftDto> gpg44MappingDraft;
+
+
+                if(schemeRemoved)
                 {
+
                     gpg45MappingDraft = [];
-                    if (!existingSchemeIdentityProfileMappings.ContainsKey(schemeMapping.Key))
+                    gpg44MappingDraft = [];
+                    foreach (var schemeMapping in updatedSchemeIdentityProfileMappings)
                     {
                         if (updatedSchemeIdentityProfileMappings.TryGetValue(schemeMapping.Key, out var updatedList))
                         {
@@ -249,52 +253,30 @@ namespace DVSAdmin.Models
                                 gpg45MappingDraft.Add(new SchemeGPG45MappingDraftDto { IdentityProfileId = item.Id, IdentityProfile = item });
                             }
                         }
-                    }
-                    else
-                    {
-                        // Existing scheme, check for value changes
-                        if (updatedSchemeIdentityProfileMappings.TryGetValue(schemeMapping.Key, out var updatedList))
+
+                        ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
+
+                        // Selected schemes not changed, only mapping changes, so add entry to serviceSupSchemeMappingDraft
+                        if (serviceSupSchemeMappingDraft == null)
                         {
-                            var existingIds = existingSchemeIdentityProfileMappings[schemeMapping.Key].OrderBy(x => x.Id).Select(x => x.Id).ToList();
-                            var updatedIds = updatedList.OrderBy(x => x.Id).Select(x => x.Id).ToList();
-                            if (!existingIds.SequenceEqual(updatedIds))
+                            SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
+                            Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
+                            draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto
                             {
-                                foreach (var item in updatedList)
-                                {
-                                    gpg45MappingDraft.Add(new SchemeGPG45MappingDraftDto { IdentityProfileId = item.Id, IdentityProfile = item });
-                                }
-                            }
+                                SupplementarySchemeId = schemeMapping.Key,
+                                SchemeGPG45MappingDraft = gpg45MappingDraft,
+                                SupplementaryScheme = supplementaryScheme
+                            });
+                        }
+                        else
+                        {
+                            serviceSupSchemeMappingDraft.SchemeGPG45MappingDraft = gpg45MappingDraft;
                         }
                     }
 
-
-                    ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
-
-                    // Selected schemes not changed, only mapping changes, so add entry to serviceSupSchemeMappingDraft
-                    if (serviceSupSchemeMappingDraft == null)
+                    foreach (var schemeMapping in updatedSchemeQualityLevelMappings)
                     {
-                        SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
-                        Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
-                        draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto
-                        {
-                            SupplementarySchemeId = schemeMapping.Key,
-                            SchemeGPG45MappingDraft = gpg45MappingDraft,
-                            SupplementaryScheme = supplementaryScheme
-                        });
-                    }
-                    else
-                    {
-                        serviceSupSchemeMappingDraft.SchemeGPG45MappingDraft = gpg45MappingDraft;
-                    }
 
-                }
-
-                List<SchemeGPG44MappingDraftDto> gpg44MappingDraft;
-                foreach (var schemeMapping in updatedSchemeQualityLevelMappings)
-                {
-                    gpg44MappingDraft = [];
-                    if (!existingSchemeQualityLevelMappings.ContainsKey(schemeMapping.Key)) // new schemes added
-                    {
                         if (updatedSchemeQualityLevelMappings.TryGetValue(schemeMapping.Key, out var updatedList))
                         {
                             if (updatedList.HasGpg44 == true && updatedList.QualityLevels != null)
@@ -306,50 +288,146 @@ namespace DVSAdmin.Models
                             }
 
                         }
+
+                        // Update the ServiceSupSchemeMappingDraftDto if there are changes
+                        ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
+                        if (serviceSupSchemeMappingDraft == null)
+                        {
+                            SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
+                            Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
+                            draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto
+                            {
+                                SupplementarySchemeId = schemeMapping.Key,
+                                HasGpg44Mapping = schemeMapping.Value.HasGpg44,
+                                SchemeGPG44MappingDraft = gpg44MappingDraft,
+                                SupplementaryScheme = supplementaryScheme
+                            });
+                        }
+                        else
+                        {
+                            serviceSupSchemeMappingDraft.HasGpg44Mapping = schemeMapping.Value.HasGpg44;
+                            serviceSupSchemeMappingDraft.SchemeGPG44MappingDraft = gpg44MappingDraft;
+                        }
+                    }
+                }
+                else
+                {
+                    // New scheme additions
+                    foreach (var schemeMapping in updatedSchemeIdentityProfileMappings)
+                    {
+                        gpg45MappingDraft = [];
+                        if (!existingSchemeIdentityProfileMappings.ContainsKey(schemeMapping.Key))
+                        {
+                            if (updatedSchemeIdentityProfileMappings.TryGetValue(schemeMapping.Key, out var updatedList))
+                            {
+                                foreach (var item in updatedList)
+                                {
+                                    gpg45MappingDraft.Add(new SchemeGPG45MappingDraftDto { IdentityProfileId = item.Id, IdentityProfile = item });
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Existing scheme, check for value changes
+                            if (updatedSchemeIdentityProfileMappings.TryGetValue(schemeMapping.Key, out var updatedList))
+                            {
+                                var existingIds = existingSchemeIdentityProfileMappings[schemeMapping.Key].OrderBy(x => x.Id).Select(x => x.Id).ToList();
+                                var updatedIds = updatedList.OrderBy(x => x.Id).Select(x => x.Id).ToList();
+                                if (!existingIds.SequenceEqual(updatedIds))
+                                {
+                                    foreach (var item in updatedList)
+                                    {
+                                        gpg45MappingDraft.Add(new SchemeGPG45MappingDraftDto { IdentityProfileId = item.Id, IdentityProfile = item });
+                                    }
+                                }
+                            }
+                        }
+
+
+                        ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
+
+                        // Selected schemes not changed, only mapping changes, so add entry to serviceSupSchemeMappingDraft
+                        if (serviceSupSchemeMappingDraft == null)
+                        {
+                            SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
+                            Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
+                            draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto
+                            {
+                                SupplementarySchemeId = schemeMapping.Key,
+                                SchemeGPG45MappingDraft = gpg45MappingDraft,
+                                SupplementaryScheme = supplementaryScheme
+                            });
+                        }
+                        else
+                        {
+                            serviceSupSchemeMappingDraft.SchemeGPG45MappingDraft = gpg45MappingDraft;
+                        }
+
                     }
 
 
-                    else
+                    foreach (var schemeMapping in updatedSchemeQualityLevelMappings)
                     {
-                        // Existing key, check for value changes
-                        if (updatedSchemeQualityLevelMappings.TryGetValue(schemeMapping.Key, out var updatedList))
+                        gpg44MappingDraft = [];
+                        if (!existingSchemeQualityLevelMappings.ContainsKey(schemeMapping.Key)) // new schemes added
                         {
-                            var existingIds = existingSchemeQualityLevelMappings[schemeMapping.Key].QualityLevels?.OrderBy(x => x.Id).Select(x => x.Id).ToList();
-                            var updatedIds = updatedList?.QualityLevels?.OrderBy(x => x.Id).Select(x => x.Id).ToList();
-                            if (existingIds != null && updatedIds != null && !existingIds.SequenceEqual(updatedIds))
+                            if (updatedSchemeQualityLevelMappings.TryGetValue(schemeMapping.Key, out var updatedList))
                             {
-                                if (updatedList?.QualityLevels != null)
+                                if (updatedList.HasGpg44 == true && updatedList.QualityLevels != null)
                                 {
                                     foreach (var item in updatedList.QualityLevels)
                                     {
                                         gpg44MappingDraft.Add(new SchemeGPG44MappingDraftDto { QualityLevelId = item.Id, QualityLevel = item });
                                     }
                                 }
+
                             }
                         }
-                    }
 
-                    // Update the ServiceSupSchemeMappingDraftDto if there are changes
-                    ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
-                    if (serviceSupSchemeMappingDraft == null)
-                    {
-                        SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
-                        Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
-                        draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto
+
+                        else
                         {
-                            SupplementarySchemeId = schemeMapping.Key,
-                            HasGpg44Mapping = schemeMapping.Value.HasGpg44,
-                            SchemeGPG44MappingDraft = gpg44MappingDraft,
-                            SupplementaryScheme = supplementaryScheme
-                        });
-                    }
-                    else
-                    {
-                        serviceSupSchemeMappingDraft.HasGpg44Mapping = schemeMapping.Value.HasGpg44;
-                        serviceSupSchemeMappingDraft.SchemeGPG44MappingDraft = gpg44MappingDraft;
-                    }
+                            // Existing key, check for value changes
+                            if (updatedSchemeQualityLevelMappings.TryGetValue(schemeMapping.Key, out var updatedList))
+                            {
+                                var existingIds = existingSchemeQualityLevelMappings[schemeMapping.Key].QualityLevels?.OrderBy(x => x.Id).Select(x => x.Id).ToList();
+                                var updatedIds = updatedList?.QualityLevels?.OrderBy(x => x.Id).Select(x => x.Id).ToList();
+                                if ( existingIds ==null ||(   existingIds != null && updatedIds != null && !existingIds.SequenceEqual(updatedIds)))
+                                {
+                                    if (updatedList?.QualityLevels != null)
+                                    {
+                                        foreach (var item in updatedList.QualityLevels)
+                                        {
+                                            gpg44MappingDraft.Add(new SchemeGPG44MappingDraftDto { QualityLevelId = item.Id, QualityLevel = item });
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
+                        // Update the ServiceSupSchemeMappingDraftDto if there are changes
+                        ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
+                        if (serviceSupSchemeMappingDraft == null)
+                        {
+                            SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
+                            Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
+                            draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto
+                            {
+                                SupplementarySchemeId = schemeMapping.Key,
+                                HasGpg44Mapping = schemeMapping.Value.HasGpg44,
+                                SchemeGPG44MappingDraft = gpg44MappingDraft,
+                                SupplementaryScheme = supplementaryScheme
+                            });
+                        }
+                        else
+                        {
+                            serviceSupSchemeMappingDraft.HasGpg44Mapping = schemeMapping.Value.HasGpg44;
+                            serviceSupSchemeMappingDraft.SchemeGPG44MappingDraft = gpg44MappingDraft;
+                        }
+
+                    }
                 }
+               
 
 
 
@@ -392,8 +470,16 @@ namespace DVSAdmin.Models
                 }
                 else if (existingService.IsUnderPinningServicePublished == false && updatedService.SelectedManualUnderPinningServiceId != null)//  selected service
                 {
-                    draft.UnderPinninngServiceEditType = UnderPinninngServiceEditEnum.ManualToSelectOrChangeManual;
-                    UpdateDraftWithManualUnderPinningServiceChanges(updatedService, draft);
+                   if(updatedService.SelectedManualUnderPinningServiceId!=existingService.ManualUnderPinningServiceId 
+                    || updatedService.UnderPinningServiceName!= existingService.ManualUnderPinningService.ServiceName
+                        || updatedService.UnderPinningProviderName != existingService.ManualUnderPinningService.ProviderName
+                        || updatedService.SelectCabViewModel.SelectedCabId != existingService.ManualUnderPinningService.CabId
+                        || updatedService.UnderPinningServiceExpiryDate != existingService.ManualUnderPinningService.CertificateExpiryDate)
+                    {
+                        draft.UnderPinninngServiceEditType = UnderPinninngServiceEditEnum.ManualToSelectOrChangeManual;
+                        UpdateDraftWithManualUnderPinningServiceChanges(updatedService, draft);
+                    }
+                   
                 }
                 else if (existingService.IsUnderPinningServicePublished == false && updatedService.SelectedManualUnderPinningServiceId == null) // manually entered service
                 {
@@ -410,6 +496,7 @@ namespace DVSAdmin.Models
 
         private static void UpdateDraftWithManualUnderPinningServiceChanges(ServiceSummaryViewModel updatedService, ServiceDraftDto draft)
         {
+          
             draft.ManualUnderPinningService = new();
             draft.ManualUnderPinningServiceId = updatedService.SelectedManualUnderPinningServiceId;
 
