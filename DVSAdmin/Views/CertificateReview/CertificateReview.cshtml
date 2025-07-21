@@ -105,7 +105,7 @@
 
                 </div>
                 <div class="govuk-grid-column-full">
-                    <h3 class="govuk-heading-m">Certification information</h3>             
+                    <h3 class="govuk-heading-l">Certification information</h3>             
 
                     @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
                 </div>
@@ -117,8 +117,7 @@
                     || (@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
                     {
                         <div class="govuk-grid-column-full">
-                            <h3 class="govuk-heading-m">Supplementary codes</h3>
-
+                            <h3 class="govuk-heading-l">Supplementary codes</h3>
                             @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.Service)
                         </div>
                     }
@@ -127,12 +126,10 @@
                 @if(Model.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
                 {
                     <div class="govuk-grid-column-full">
-                    @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.Service)
+                        <h3 class="govuk-heading-l">Underpinning service details</h3>
+                        @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.Service)
                     </div>
-                }
-
-
-                
+                }                
 
                 <div class="govuk-grid-column-two-thirds">
                     <h3 class="govuk-heading-m">Information match</h3>
@@ -159,7 +156,7 @@
                     {
                         <div class="govuk-form-group govuk-form-group--error">
                             <h3 class="govuk-label-wrapper">
-                                <label class="govuk-label govuk-label--s" for="comments">
+                                <label class="govuk-label govuk-label--m" for="comments">
                                     Record the reasons for your decision
                                 </label>
 
