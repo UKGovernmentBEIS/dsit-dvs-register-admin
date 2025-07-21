@@ -109,8 +109,45 @@
                 </dt>
                 <dd class="govuk-summary-list__value">
                     @ViewModelHelper.GetServiceType(Model.ServiceType)
+                </dd>               
+            </div>
+
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    GPG 45 identity profiles
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @if (Model?.ServiceIdentityProfileMapping?.Count > 0)
+                    {
+                        var groupedProfiles = Model.ServiceIdentityProfileMapping
+                        .GroupBy(profile => profile.IdentityProfile.IdentityProfileType)
+                        .ToDictionary(group => group.Key, group => group.ToList())
+                        .OrderBy(g => g.Key);
+
+                        foreach (var group in groupedProfiles)
+                        {
+                            <strong>@group.Key</strong>
+                            <br>
+                            foreach (var item in group.Value.OrderBy(c => c.IdentityProfile.IdentityProfileName))
+                            {
+                                @item.IdentityProfile.IdentityProfileName
+                                <br>
+                            }
+                            <br>
+                        }
+                    }
+                    else
+                    {
+                        <div>@Constants.NullFieldsDisplay</div>
+                    }
                 </dd>
-               
+                @if (isEditable)
+                {
+                    <dd class="govuk-summary-list__actions">
+                        @Html.ActionLink("Change", "ServiceGPG45Input", "EditServiceTrustFramework0_4", new { serviceId = Model.Id },
+                        new { @class = "govuk-link", @aria_label = "Change GPG45 identity profiles" })
+                    </dd>
+                }
             </div>
         }
         <div class="govuk-summary-list__row">
@@ -185,42 +222,34 @@
                
             }
         </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                GPG 45 identity profiles
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @if (Model.ServiceIdentityProfileMapping != null && Model.ServiceIdentityProfileMapping.Any())
-                {
-                    @foreach (var item in Model.ServiceIdentityProfileMapping)
+        @if (!is0_4GammaVersion)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    GPG 45 identity profiles
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @if (Model.ServiceIdentityProfileMapping != null && Model.ServiceIdentityProfileMapping.Any())
                     {
-                        <div>@item.IdentityProfile.IdentityProfileName</div>
+                        @foreach (var item in Model.ServiceIdentityProfileMapping)
+                        {
+                            <div>@item.IdentityProfile.IdentityProfileName</div>
+                        }
                     }
-                }
-                else
-                {
-                    <div>@Constants.NullFieldsDisplay</div>
-                }
-            </dd>
-            @if (isEditable)
-            {
-                @if(is0_4GammaVersion)
-                {
-                    <dd class="govuk-summary-list__actions">
-                        @Html.ActionLink("Change", "ServiceGPG45Input", "EditServiceTrustFramework0_4", new { serviceId = Model.Id },
-                                 new { @class = "govuk-link", @aria_label = "Change GPG45 identity profiles" })
-                    </dd>
-                }
-                else
+                    else
+                    {
+                        <div>@Constants.NullFieldsDisplay</div>
+                    }
+                </dd>
+                @if (isEditable)
                 {
                     <dd class="govuk-summary-list__actions">
                         @Html.ActionLink("Change", "GPG45Input", "EditService", new { serviceId = Model.Id },
-                                 new { @class = "govuk-link", @aria_label = "Change GPG45 identity profiles" })
-                    </dd>
+                        new { @class = "govuk-link", @aria_label = "Change GPG45 identity profiles" })
+                   </dd>
                 }
-              
-            }
-        </div>
+                </div>            
+        }        
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
                 Supplementary codes
@@ -309,11 +338,22 @@
                             </dt>
                             <dd class="govuk-summary-list__value">
 
-                                @if (schemeMapping.SchemeGPG45Mapping != null && schemeMapping.SchemeGPG45Mapping.Count>0)
+                                @if (schemeMapping.SchemeGPG45Mapping != null && schemeMapping.SchemeGPG45Mapping.Count > 0)
                                 {
-                                    @foreach (var item in schemeMapping.SchemeGPG45Mapping)
+                                    var groupedProfiles = schemeMapping.SchemeGPG45Mapping
+                                    .GroupBy(profile => profile.IdentityProfile.IdentityProfileType)
+                                    .ToDictionary(group => group.Key, group => group.ToList())
+                                    .OrderBy(g => g.Key);
+
+                                    foreach (var group in groupedProfiles)
                                     {
-                                        @item.IdentityProfile.IdentityProfileName
+                                        <strong>@group.Key</strong>
+                                        <br>
+                                        foreach (var identity in group.Value.OrderBy(c => c.IdentityProfile.IdentityProfileName))
+                                        {
+                                            @identity.IdentityProfile.IdentityProfileName
+                                            <br>
+                                        }
                                         <br>
                                     }
                                 }
@@ -329,10 +369,8 @@
                                     @Html.ActionLink("Change", "SchemeGPG45", "EditServiceTrustFramework0_4", new { schemeId = schemeMapping.SupplementarySchemeId },
                                              new { @class = "govuk-link", @aria_label = "Change selected GPG45 options for " + schemeMapping.SupplementaryScheme.SchemeName })
                                 </dd>
-                            }
-                            
+                            }                            
                         </div>
-
 
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
