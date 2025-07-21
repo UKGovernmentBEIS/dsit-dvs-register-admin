@@ -193,8 +193,7 @@ namespace DVSAdmin.Models
 
             if (updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes != null && updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes.Count > 0)
             {
-
-                bool schemeRemoved = updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes.Count < existingService.ServiceSupSchemeMapping.Count;
+               
                 foreach (var schemeMapping in existingService.ServiceSupSchemeMapping)
                 {
                     existingSchemeIdentityProfileMappings.Add(schemeMapping.SupplementarySchemeId, schemeMapping.SchemeGPG45Mapping.Select(m => m.IdentityProfile).ToList());
@@ -238,81 +237,7 @@ namespace DVSAdmin.Models
                 List<SchemeGPG45MappingDraftDto> gpg45MappingDraft;
                 List<SchemeGPG44MappingDraftDto> gpg44MappingDraft;
 
-
-                if(schemeRemoved)
-                {
-
-                    gpg45MappingDraft = [];
-                    gpg44MappingDraft = [];
-                    foreach (var schemeMapping in updatedSchemeIdentityProfileMappings)
-                    {
-                        if (updatedSchemeIdentityProfileMappings.TryGetValue(schemeMapping.Key, out var updatedList))
-                        {
-                            foreach (var item in updatedList)
-                            {
-                                gpg45MappingDraft.Add(new SchemeGPG45MappingDraftDto { IdentityProfileId = item.Id, IdentityProfile = item });
-                            }
-                        }
-
-                        ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
-
-                        // Selected schemes not changed, only mapping changes, so add entry to serviceSupSchemeMappingDraft
-                        if (serviceSupSchemeMappingDraft == null)
-                        {
-                            SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
-                            Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
-                            draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto
-                            {
-                                SupplementarySchemeId = schemeMapping.Key,
-                                SchemeGPG45MappingDraft = gpg45MappingDraft,
-                                SupplementaryScheme = supplementaryScheme
-                            });
-                        }
-                        else
-                        {
-                            serviceSupSchemeMappingDraft.SchemeGPG45MappingDraft = gpg45MappingDraft;
-                        }
-                    }
-
-                    foreach (var schemeMapping in updatedSchemeQualityLevelMappings)
-                    {
-
-                        if (updatedSchemeQualityLevelMappings.TryGetValue(schemeMapping.Key, out var updatedList))
-                        {
-                            if (updatedList.HasGpg44 == true && updatedList.QualityLevels != null)
-                            {
-                                foreach (var item in updatedList.QualityLevels)
-                                {
-                                    gpg44MappingDraft.Add(new SchemeGPG44MappingDraftDto { QualityLevelId = item.Id, QualityLevel = item });
-                                }
-                            }
-
-                        }
-
-                        // Update the ServiceSupSchemeMappingDraftDto if there are changes
-                        ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
-                        if (serviceSupSchemeMappingDraft == null)
-                        {
-                            SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
-                            Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
-                            draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto
-                            {
-                                SupplementarySchemeId = schemeMapping.Key,
-                                HasGpg44Mapping = schemeMapping.Value.HasGpg44,
-                                SchemeGPG44MappingDraft = gpg44MappingDraft,
-                                SupplementaryScheme = supplementaryScheme
-                            });
-                        }
-                        else
-                        {
-                            serviceSupSchemeMappingDraft.HasGpg44Mapping = schemeMapping.Value.HasGpg44;
-                            serviceSupSchemeMappingDraft.SchemeGPG44MappingDraft = gpg44MappingDraft;
-                        }
-                    }
-                }
-                else
-                {
-                    // New scheme additions
+                
                     foreach (var schemeMapping in updatedSchemeIdentityProfileMappings)
                     {
                         gpg45MappingDraft = [];
@@ -407,7 +332,7 @@ namespace DVSAdmin.Models
 
                         // Update the ServiceSupSchemeMappingDraftDto if there are changes
                         ServiceSupSchemeMappingDraftDto serviceSupSchemeMappingDraft = draft.ServiceSupSchemeMappingDraft.Where(x => x.SupplementarySchemeId == schemeMapping.Key).FirstOrDefault()!;
-                        if (serviceSupSchemeMappingDraft == null)
+                        if (serviceSupSchemeMappingDraft == null )
                         {
                             SupplementarySchemeDto supplementaryScheme = existingService.ServiceSupSchemeMapping.Where(mapping => mapping.SupplementarySchemeId == schemeMapping.Key).
                             Select(mapping => mapping.SupplementaryScheme).FirstOrDefault()!;
@@ -425,8 +350,7 @@ namespace DVSAdmin.Models
                             serviceSupSchemeMappingDraft.SchemeGPG44MappingDraft = gpg44MappingDraft;
                         }
 
-                    }
-                }
+                    }              
                
 
 
