@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "dart-sass ./wwwroot/css/main.scss ./wwwroot/css/main.css"
+    "build": "sass ./wwwroot/css/main.scss ./wwwroot/css/main.css && sass --style=compressed ./wwwroot/css/main.scss ./wwwroot/css/main.min.css"
   },
   "author": "",
   "license": "ISC",
