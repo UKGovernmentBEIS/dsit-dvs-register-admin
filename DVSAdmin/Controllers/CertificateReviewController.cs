@@ -153,6 +153,7 @@ namespace DVSAdmin.Controllers
             CertificateReviewViewModel certificateReviewViewModel = HttpContext?.Session.Get<CertificateReviewViewModel>("CertificateReviewData") ?? new CertificateReviewViewModel();
             CertificateReviewDto certificateReviewDto = await certificateReviewService.GetCertificateReview(reviewId);
             certificateReviewViewModel.Service = await certificateReviewService.GetServiceDetails(certificateReviewDto.ServiceId);
+            await SetResubmissionFields(certificateReviewViewModel.Service);
             certificateReviewViewModel.CertificateReviewId = reviewId;       
             certificateReviewViewModel.Service.CertificateReview = certificateReviewDto;           
             return View(certificateReviewViewModel);
@@ -164,6 +165,7 @@ namespace DVSAdmin.Controllers
            
             CertificateValidationViewModel certificateValidationViewModel = HttpContext?.Session.Get<CertificateValidationViewModel>("CertificateValidationData")??new CertificateValidationViewModel();                     
             ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateValidationViewModel.ServiceId);
+            await SetResubmissionFields(serviceDto);
             certificateReviewViewModel.Service = serviceDto;
             certificateValidationViewModel.Service = serviceDto;
             ValidateCertificateReviewViewModel(certificateReviewViewModel, certificateValidationViewModel, saveReview);
