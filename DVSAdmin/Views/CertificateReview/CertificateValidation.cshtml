@@ -23,7 +23,7 @@
                 {
                     Title = "Important",
                     NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been provided as part of a reapplication, trust framework uplift or certification transfer from another CAB.",
-                    HtmlContent ="<p class='govuk-body'><a href='#' class='govuk-link' rel='noreferrer noopener' target='_blank'>Access the original submission (opens in new tab)</a></p>"
+                    HtmlContent ="<p class='govuk-body'><a href='/certificate-review/certificate-submission-details?serviceId=" + Model?.Service?.PreviousVersionServiceId + "' class='govuk-link' rel='noreferrer noopener' target='_blank'>Access the original submission (opens in new tab)</a></p>"
             } }
                 };
                 @await Html.PartialAsync("~/Views/PartialViews/_NotificationBanner.cshtml", notificationBanner)
