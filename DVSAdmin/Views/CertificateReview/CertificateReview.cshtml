@@ -105,7 +105,7 @@
 
                 </div>
                 <div class="govuk-grid-column-full">
-                    <h3 class="govuk-heading-l">Certification information</h3>             
+                    <h2 class="govuk-heading-l">Certification information</h2>             
 
                     @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
                 </div>
@@ -126,7 +126,6 @@
                 @if(Model.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
                 {
                     <div class="govuk-grid-column-full">
-                        <h3 class="govuk-heading-l">Underpinning service details</h3>
                         @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.Service)
                     </div>
                 }                

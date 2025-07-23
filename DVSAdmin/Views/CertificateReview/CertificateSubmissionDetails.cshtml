@@ -127,10 +127,7 @@
                         if ((@Model.CertificateValidation.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
                         || (@Model.CertificateValidation.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
                         {
-                         
-                                <h3 class="govuk-heading-m">Supplementary codes</h3>
-                                @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.CertificateValidation.Service)
-                          
+                                @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.CertificateValidation.Service)                          
                         }
                     }
 
