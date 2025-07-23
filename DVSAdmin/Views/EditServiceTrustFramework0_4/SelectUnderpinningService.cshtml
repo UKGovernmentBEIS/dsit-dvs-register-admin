@@ -67,13 +67,10 @@
                                 value="search">
                             Search
                         </button>
-                        @if (published)
-                        {
-                           <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="SearchAction"
+                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="SearchAction"
                                 value="clearSearch">
                             Clear search
-                        </button> 
-                        }
+                        </button>
                     </div>
                     @if (!published)
                     {
@@ -150,7 +147,7 @@
                                                 </td>
                                                 <td class="govuk-table__cell">@item.ManualUnderPinningService.ProviderName</td>
                                                 <td class="govuk-table__cell">@item.ManualUnderPinningService.Cab.CabName</td>
-                                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
+                                                <td class="govuk-table__cell">@HtmlExtensions.GetStyledStatusTag(item.CertificateReview,item.PublicInterestCheck, item.ServiceStatus)</td>
                                             </tr>
                                         }
                                     }
