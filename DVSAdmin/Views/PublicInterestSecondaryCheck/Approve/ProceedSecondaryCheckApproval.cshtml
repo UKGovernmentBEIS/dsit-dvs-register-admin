@@ -239,7 +239,6 @@
                         if ((@Model.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
                             || (@Model.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
                         {
-                            <h2 class="govuk-heading-l">Supplementary codes</h2>
                             @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model)
                         }
                     }
