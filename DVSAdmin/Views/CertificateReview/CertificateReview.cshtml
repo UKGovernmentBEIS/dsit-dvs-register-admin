@@ -117,7 +117,6 @@
                     || (@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
                     {
                         <div class="govuk-grid-column-full">
-                            <h3 class="govuk-heading-l">Supplementary codes</h3>
                             @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.Service)
                         </div>
                     }
