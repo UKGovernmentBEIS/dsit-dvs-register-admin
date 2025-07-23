@@ -29,7 +29,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
 
         public async Task<ProviderProfile> GetProviderAndServices(int providerId)
         {
-            return await context.ProviderProfile.Include(p => p.Services).Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).FirstOrDefaultAsync() ?? new ProviderProfile();
+            return await context.ProviderProfile.Include(p => p.Services).AsNoTracking().Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).AsNoTracking().FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
         public async Task<Service> GetServiceDetails(int serviceId)
