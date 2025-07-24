@@ -152,7 +152,7 @@
         }
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-                GPG 44 quality of authenticator
+                GPG 44 quality of authentication
             </dt>
             <dd class="govuk-summary-list__value">
                 @if (Model.ServiceQualityLevelMapping != null && Model.ServiceQualityLevelMapping.Any(x => x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
@@ -188,7 +188,7 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-                GPG 44 level of protection
+                GPG 44 quality of protection
             </dt>
             <dd class="govuk-summary-list__value">
                 @if (Model.ServiceQualityLevelMapping != null && Model.ServiceQualityLevelMapping.Any(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
@@ -277,7 +277,7 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-                Certificate of conformity
+               Service provider's Certificate of conformity
             </dt>
             <dd class="govuk-summary-list__value">
                 @Model.FileName
