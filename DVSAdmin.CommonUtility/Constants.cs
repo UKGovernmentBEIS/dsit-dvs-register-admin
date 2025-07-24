@@ -47,6 +47,11 @@
         public const string UnderpinningProviderName = "Underpinning service provider registered name";
         public const string CabOfUnderpinningService = "CAB of underpinning service";
         public const string UnderpiningExpiryDate = "Underpinning service certificate expiry date";
+        public const string NotGpg45SubsetError = "The identity profiles you have selected for this service must align to the options you select for any supplementary codes it is also certified against";
+        public const string NotGpg44SubsetError = "The quality of authenticator and quality of protection levels you have selected for this service must align to the options you select for any supplementary codes it is certified against";
+        public const string ServiceGpg44SelectedNo = "The identity profiles you have selected for this service must align to the options you select for any supplementary codes it is also certified against";
+        public const string ConformityMaxExpiryDateErrorTF0_4 = "The certificate of conformity expiry date must not be more than 3 years 60 days after the date of issue";
+
 
 
     }

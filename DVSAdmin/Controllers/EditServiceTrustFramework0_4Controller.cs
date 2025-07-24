@@ -1,6 +1,7 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.BusinessLogic.Services;
+using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Models;
 using DVSAdmin.Models.CabTransfer;
@@ -127,8 +128,6 @@ namespace DVSAdmin.Controllers
             if (ModelState["HasGPG44"].Errors.Count == 0)
             {
                 serviceSummary.HasGPG44 = serviceSummaryViewModel.HasGPG44;
-
-
                 if (Convert.ToBoolean(serviceSummary.HasGPG44))
                 {
                     return RedirectToAction("ServiceGPG44");
@@ -138,6 +137,10 @@ namespace DVSAdmin.Controllers
                     // clear selections if the value is changed from yes to no
                     serviceSummary.QualityLevelViewModel.SelectedQualityofAuthenticators = new List<QualityLevelDto>();
                     serviceSummary.QualityLevelViewModel.SelectedLevelOfProtections = new List<QualityLevelDto>();
+                    serviceSummary.SchemeQualityLevelMapping.ForEach(item => item.HasGPG44 = false);
+                    serviceSummary.SchemeQualityLevelMapping.ForEach(item => item.QualityLevel.SelectedQualityofAuthenticators = []);
+                    serviceSummary.SchemeQualityLevelMapping.ForEach(item => item.QualityLevel.SelectedLevelOfProtections = []);
+
                     HttpContext?.Session.Set("ServiceSummary", serviceSummary);
                     return RedirectToAction("ServiceSummary", "EditService");
 
@@ -425,6 +428,12 @@ namespace DVSAdmin.Controllers
 
             if (identityProfileViewModel.SelectedIdentityProfileIds.Count > 0)
             {
+                var selectedServiceGpg45 = summaryViewModel.IdentityProfileViewModel.SelectedIdentityProfiles.Select(x => x.Id).ToList();
+                if (identityProfileViewModel.SelectedIdentityProfileIds.Except(selectedServiceGpg45).Any())
+                {
+                    ModelState.AddModelError("SelectedIdentityProfileIds", Constants.NotGpg45SubsetError);
+                }
+
                 identityProfileViewModel.SelectedIdentityProfiles = availableIdentityProfiles.Where(c => identityProfileViewModel.SelectedIdentityProfileIds.Contains(c.Id)).ToList();
                 SchemeIdentityProfileMappingViewModel schemeIdentityProfileMappingViewModel = new();
                 schemeIdentityProfileMappingViewModel.SchemeId = identityProfileViewModel.SchemeId;
@@ -446,8 +455,13 @@ namespace DVSAdmin.Controllers
 
             if (ModelState.IsValid)
             {
-                HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
-                return RedirectToMissingMappings(fromSummaryPage);
+                HttpContext?.Session.Set("ServiceSummary", summaryViewModel);             
+                int nextMissingSchemeIdForGpg44 = NextMissingSchemId("GPG44");              
+                 if (nextMissingSchemeIdForGpg44 > 0)
+                    return RedirectToAction("SchemeGPG44Input", "EditServiceTrustFramework0_4", new { fromSummaryPage = fromSummaryPage, schemeId = nextMissingSchemeIdForGpg44 });
+                else
+                    return RedirectToAction("ServiceSummary", "EditService");
+              
             }
             else
             {
@@ -481,7 +495,12 @@ namespace DVSAdmin.Controllers
         public async Task<IActionResult> SaveSchemeGPG44Input(SchemeQualityLevelMappingViewModel viewModel)
         {
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-            bool fromSummaryPage = viewModel.FromSummaryPage; 
+            bool fromSummaryPage = viewModel.FromSummaryPage;
+
+            if (summaryViewModel.HasGPG44 == false && viewModel.HasGPG44 == true)
+            {
+                ModelState.AddModelError("HasGPG44", Constants.ServiceGpg44SelectedNo);
+            }
             if (ModelState["HasGPG44"].Errors.Count == 0)
             {
                 SchemeQualityLevelMappingViewModel schemeQualityLevelMappingViewModel = new();
@@ -576,6 +595,18 @@ namespace DVSAdmin.Controllers
             qualityLevelViewModel.SelectedLevelOfProtectionIds = qualityLevelViewModel.SelectedLevelOfProtectionIds ?? [];
             if (qualityLevelViewModel.SelectedQualityofAuthenticatorIds.Count > 0 && qualityLevelViewModel.SelectedLevelOfProtectionIds.Count > 0)
             {
+                var selectedServiceGpg44Authenticator = summaryViewModel.QualityLevelViewModel.SelectedQualityofAuthenticators.Select(x => x.Id).ToList();
+
+                var selectedServiceGpg44Protection = summaryViewModel.QualityLevelViewModel.SelectedLevelOfProtections.Select(x => x.Id).ToList();
+                if (qualityLevelViewModel.SelectedQualityofAuthenticatorIds.Except(selectedServiceGpg44Authenticator).Any())
+                {
+                    ModelState.AddModelError("SelectedQualityofAuthenticatorIds", Constants.NotGpg44SubsetError);
+                }
+                if (qualityLevelViewModel.SelectedLevelOfProtectionIds.Except(selectedServiceGpg44Protection).Any())
+                {
+                    ModelState.AddModelError("SelectedLevelOfProtectionIds", Constants.NotGpg44SubsetError);
+                }
+
                 qualityLevelViewModel.SelectedQualityofAuthenticators = availableQualityLevels.Where(c => qualityLevelViewModel.SelectedQualityofAuthenticatorIds.Contains(c.Id)).ToList();
                 qualityLevelViewModel.SelectedLevelOfProtections = availableQualityLevels.Where(c => qualityLevelViewModel.SelectedLevelOfProtectionIds.Contains(c.Id)).ToList();
                 var mapping = summaryViewModel.SchemeQualityLevelMapping?.Where(x => x.SchemeId == qualityLevelViewModel.SchemeId).FirstOrDefault() ?? new SchemeQualityLevelMappingViewModel();
@@ -586,7 +617,12 @@ namespace DVSAdmin.Controllers
             if (ModelState.IsValid)
             {
                 HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
-                return RedirectToMissingMappings(fromSummaryPage);
+
+                int nextMissingSchemeIdForGpg45 = NextMissingSchemId("GPG45");              
+                if (nextMissingSchemeIdForGpg45 > 0)
+                    return RedirectToAction("SchemeGPG45", "EditServiceTrustFramework0_4", new { fromSummaryPage = fromSummaryPage, schemeId = nextMissingSchemeIdForGpg45 });               
+                else
+                    return RedirectToAction("ServiceSummary", "EditService");
 
             }
             else
