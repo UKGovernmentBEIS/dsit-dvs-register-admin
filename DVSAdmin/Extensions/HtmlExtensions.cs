@@ -1,4 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models;
+﻿using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using Microsoft.AspNetCore.Html;
 using System.ComponentModel;
@@ -125,6 +126,22 @@ namespace DVSAdmin.Extensions
             DescriptionAttribute attribute = field.GetCustomAttribute<DescriptionAttribute>();
             return attribute == null ? value.ToString() : attribute.Description;
         }
+        public static HtmlString GetStyledStatusTag(CertificateReviewDto certificateReview, PublicInterestCheckDto publicInterestCheck, ServiceStatusEnum serviceStatus)
+        {
+
+            if (certificateReview != null && publicInterestCheck == null && (serviceStatus == ServiceStatusEnum.Submitted || serviceStatus == ServiceStatusEnum.Received || serviceStatus == ServiceStatusEnum.Resubmitted))
+            {
+                return HtmlExtensions.ToStyledStrongTag(certificateReview.CertificateReviewStatus);
+            }
+            else if (publicInterestCheck != null && (serviceStatus == ServiceStatusEnum.Submitted || serviceStatus == ServiceStatusEnum.Received || serviceStatus == ServiceStatusEnum.Resubmitted))
+            {
+                return HtmlExtensions.ToStyledStrongTag(publicInterestCheck.PublicInterestCheckStatus);
+
+            }
+
+            return HtmlExtensions.ToStyledStrongTag(serviceStatus);
+        }
+
 
     }
 }

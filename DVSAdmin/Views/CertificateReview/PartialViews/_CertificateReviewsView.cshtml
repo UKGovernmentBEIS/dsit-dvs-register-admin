@@ -10,8 +10,7 @@
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Service provider</th>
             <th scope="col" class="govuk-table__header">Service name</th>
-            <th scope="col" class="govuk-table__header">Conformity Assessment <br /> Body</th>
-            <th scope="col" class="govuk-table__header">Role type</th>
+            <th scope="col" class="govuk-table__header">New<br />application or reapplication</th>
             <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
             <th scope="col" class="govuk-table__header">Review status</th>
             <th scope="col" class="govuk-table__header">Days left to <br />complete review</th>
@@ -19,12 +18,16 @@
     </thead>
     <tbody class="govuk-table__body">
 
-        @foreach (var item in Model.CertificateReviewList)
+        @if (Model.CertificateReviewList != null || Model?.CertificateReviewList?.Count > 0)
+        {           
+        
+       @foreach (var item in Model.CertificateReviewList)
         {
+
             <tr class="govuk-table__row">
                 @if (item.ServiceStatus == ServiceStatusEnum.AmendmentsRequired)
                 {
-                    <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateSubmissionDetails", "CertificateReview", new { @certificateInfoId = item.Id }, new { @class = "govuk-link" })</td>
+                        <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateSubmissionDetails", "CertificateReview", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>
                 }
                 else
                 {
@@ -33,14 +36,8 @@
                 <td class="govuk-table__cell"> @item.ServiceName</td>
 
 
-                <td class="govuk-table__cell"> @item.CabUser.Cab.CabName</td>
-                <td class="govuk-table__cell">
-                    @foreach (var role in item.ServiceRoleMapping)
-                    {
-                        RoleEnum enumValue = (RoleEnum)role.RoleId;
-                        <div> @Enum.GetName(enumValue) </div>
-                    }
-                </td>
+                <td class="govuk-table__cell">@item.NewOrResubmission </td>
+                
                 <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedTime)</td>
                 @if (@item.CertificateReview == null)
                 {
@@ -63,5 +60,10 @@
                 
             </tr>
         }
+        }
     </tbody>
 </table>
+@if(Model.CertificateReviewList == null || Model.CertificateReviewList.Count==0)
+{
+    @await Html.PartialAsync("~/Views/PartialViews/_NoSearchResultsView.cshtml")
+}

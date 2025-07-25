@@ -64,19 +64,23 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
         public async Task<List<Service>> GetServiceVersionList(int serviceKey)
         {
-            return await context.Service
-            .Include(s => s.ServiceDraft)
+            return await context.Service             
+          
             .Include(s => s.Provider).ThenInclude(p => p.ProviderProfileDraft)
             .Include(s => s.CertificateReview)
-            .Include(s => s.ServiceSupSchemeMapping)
-            .ThenInclude(s => s.SupplementaryScheme)
-            .Include(s => s.ServiceRoleMapping)
-            .ThenInclude(s => s.Role)
-            .Include(s => s.ServiceQualityLevelMapping)
-            .ThenInclude(s => s.QualityLevel)
-            .Include(s => s.ServiceIdentityProfileMapping)
-            .ThenInclude(s => s.IdentityProfile)
-            .Where(s => s.ServiceKey == serviceKey)
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
+            .Include(s => s.ServiceRoleMapping).ThenInclude(s => s.Role)
+            .Include(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel)
+            .Include(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
+            .Include(s => s.TrustFrameworkVersion)
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG44Mapping).ThenInclude(s => s.QualityLevel)
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG45Mapping).ThenInclude(s => s.IdentityProfile)
+            .Include(s => s.UnderPinningService).ThenInclude(s => s.Provider)
+            .Include(s => s.UnderPinningService).ThenInclude(s => s.CabUser).ThenInclude(s=>s.Cab)
+            .Include(s=>s.CabUser).ThenInclude(s=>s.Cab)
+            .Include(s => s.ManualUnderPinningService).ThenInclude(s => s.Cab)
+            .Where(s => s.ServiceKey == serviceKey).AsNoTracking()
             .ToListAsync();
         }
 
@@ -88,10 +92,17 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         public async Task<ProviderProfile> GetProviderWithServiceDetails(int providerId)
         {
             return await context.ProviderProfile
+           .Include(p => p.Services).ThenInclude(s => s.TrustFrameworkVersion)
+            .Include(p => p.Services).ThenInclude(s => s.ManualUnderPinningService)
+             .Include(p => p.Services).ThenInclude(s => s.ManualUnderPinningService).ThenInclude(s=>s.Cab)
+            .Include(p => p.Services).ThenInclude(s => s.UnderPinningService).ThenInclude(s=>s.Provider)
+            .Include(p => p.Services).ThenInclude(s => s.UnderPinningService).ThenInclude(s => s.CabUser).ThenInclude(s=>s.Cab)
            .Include(p => p.Services).ThenInclude(s => s.ServiceRoleMapping).ThenInclude(s => s.Role)
            .Include(p => p.Services).ThenInclude(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel)
            .Include(p => p.Services).ThenInclude(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
            .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
+            .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG44Mapping).ThenInclude(x=>x.QualityLevel)
+            .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG45Mapping).ThenInclude(x => x.IdentityProfile)
            .Where(p => p.Id == providerId && (p.ProviderStatus == ProviderStatusEnum.Published ||
            p.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext || p.ProviderStatus == ProviderStatusEnum.ReadyToPublish)).FirstOrDefaultAsync() ?? new ProviderProfile();
         }

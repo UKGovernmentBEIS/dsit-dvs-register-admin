@@ -1,0 +1,70 @@
+﻿@model DVSAdmin.Models.ServiceSummaryViewModel
+@{
+    ViewData["Title"] = "The digital identity and attribute service provider’s name of service";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+@{
+    bool hasError = false;
+}
+
+@using (Html.BeginForm("SaveUnderPinningServiceName", "EditServiceTrustFramework0_4", FormMethod.Post))
+{
+    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })  
+    @Html.HiddenFor(m => m.FromUnderPinningServiceSummaryPage, new { @Value = ViewBag.fromUnderPinningServiceSummaryPage })   
+    <div class="govuk-width-container">
+        <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-back-link">Back</a>
+
+        <main id="main-content" class="govuk-main-wrapper" role="main">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    @if (Html.ViewData?.ModelState.ContainsKey("UnderPinningServiceName") == true)
+                    {
+                        var errors = Html.ViewData?.ModelState["UnderPinningServiceName"]?.Errors;
+                        if (errors != null && errors.Count > 0)
+                        {
+                            hasError = true;
+                            ViewData["Title"] = "Error: " + ViewData["Title"];
+                            @await Html.PartialAsync("~/Views/PartialViews/_SpecificErrorsView.cshtml",
+                            new Tuple<string, IEnumerable<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>>("UnderPinningServiceName", errors))
+                        }
+                    }
+
+                    <h1 class="govuk-heading-xl form-title">
+                        The digital identity and attribute service provider’s name of service
+                    </h1>
+
+                    <p class="govuk-body">
+                        This must match the service name on the certificate. The information you provide will be publicly displayed on the register of digital identity and attribute services.
+                    </p>
+
+
+                    @{
+                        var serviceNameViewmodel = new TextBoxViewModel
+                        {
+                            PropertyName = "UnderPinningServiceName",
+                            Label = "Name of underpinning service",
+                            Value = Model?.UnderPinningServiceName ?? string.Empty,
+                            Class = "govuk-input",
+                            Hint = "For example, ‘Identity Verification App‘",
+                            HasError = hasError,
+                            ErrorMessage = hasError ? Html.ViewData?.ModelState["UnderPinningServiceName"]?.Errors[0].ErrorMessage ?? string.Empty : string.Empty,
+                        };
+                    }
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_TextBoxView.cshtml", serviceNameViewmodel)
+
+
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button govuk-!-margin-top-6" data-module="govuk-button">
+                            Save
+                        </button>
+                        <a href="@((Model.FromSummaryPage) ? Url.Action( "ServiceSummary", "EditService") :
+                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+}

@@ -3,8 +3,6 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -34,6 +32,8 @@ namespace DVSAdmin.Data.Repositories
         {
             CertificateReview certificateReview = new ();
             certificateReview = await context.CertificateReview.Include(p => p.CertificateReviewRejectionReasonMapping)
+            .Include(s=>s.Service).ThenInclude(s => s.Provider)
+            .Include(s => s.Service).ThenInclude(s => s.CabUser).ThenInclude(s=>s.Cab)
             .Where(p => p.Id == reviewId).FirstOrDefaultAsync()?? new CertificateReview();
             return certificateReview;
         }
@@ -59,18 +59,17 @@ namespace DVSAdmin.Data.Repositories
         }       
 
        
-        public async Task<List<Service>> GetServiceList()
+        public async Task<List<Service>> GetServiceList(string searchText = "")
         {
-            return await context.Service
+            return await context.Service.Where(s => s.ServiceName.ToLower().Contains(searchText) ||
+             s.Provider.RegisteredName.ToLower().Contains(searchText))
             .Include(s => s.Provider)
             .Include(s => s.CertificateReview)
             .Include(s => s.ServiceRoleMapping)
             .Include(s => s.CabUser).ThenInclude(s => s.Cab)
             .OrderByDescending(s => s.CreatedTime)
             .ToListAsync();
-        }
-
-     
+        }     
 
 
 
@@ -81,6 +80,9 @@ namespace DVSAdmin.Data.Repositories
             .Where(p => p.Id == serviceId)
             .Include(p => p.Provider)
             .Include(p => p.CertificateReview)
+            .Include(p => p.TrustFrameworkVersion)
+            .Include(p => p.UnderPinningService)
+            .Include(p => p.ManualUnderPinningService).ThenInclude(x=>x.Cab)
             .Include (p => p.ProceedApplicationConsentToken)
             .Include(p => p.CabUser).ThenInclude(cu => cu.Cab)
             .Include(p => p.ServiceRoleMapping)
@@ -99,6 +101,11 @@ namespace DVSAdmin.Data.Repositories
             {
                 queryWithOptionalIncludes = queryWithOptionalIncludes.Include(p => p.ServiceSupSchemeMapping)
                     .ThenInclude(ssm => ssm.SupplementaryScheme);
+
+                queryWithOptionalIncludes = queryWithOptionalIncludes.Include(p => p.ServiceSupSchemeMapping)
+                 .ThenInclude(ssm => ssm.SchemeGPG44Mapping).ThenInclude(ssm => ssm.QualityLevel);
+                queryWithOptionalIncludes = queryWithOptionalIncludes.Include(p => p.ServiceSupSchemeMapping)
+                    .ThenInclude(ssm => ssm.SchemeGPG45Mapping).ThenInclude(ssm => ssm.IdentityProfile);
             }
             if (await baseQuery.AnyAsync(p => p.ServiceIdentityProfileMapping != null && p.ServiceIdentityProfileMapping.Any()))
             {
@@ -111,14 +118,28 @@ namespace DVSAdmin.Data.Repositories
             return service;
         }
 
+        public async Task<Service> GetPreviousServiceVersion(int currentServiceId)
+        {
+            int previousVersion;
+            Service previousServiceVersion = new();
+            var currentVersionService = await context.Service.FirstOrDefaultAsync(x=>x.Id == currentServiceId);
+            if(currentVersionService!=null && currentVersionService.ServiceVersion>1)
+            {
+                 previousVersion = currentVersionService.ServiceVersion - 1;
+                previousServiceVersion= await context.Service.FirstOrDefaultAsync(x => x.ServiceKey == currentVersionService.ServiceKey && x.ServiceVersion == previousVersion)??new();
+            }
+            return previousServiceVersion;
+
+        }
 
 
-       
 
-        #region Save, update
 
-        //First save -  Part 1 of 2: Certificate Validation Continue and save as draft flow
-        public async Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview, string loggedInUserEmail)
+
+            #region Save, update
+
+            //First save -  Part 1 of 2: Certificate Validation Continue and save as draft flow
+            public async Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();

@@ -2,18 +2,33 @@
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using Newtonsoft.Json
+@using DVSAdmin.Models.UI;
 
 @{
     ViewData["Title"] = "Part 2 of 2: Information match";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
-    ViewData["HidePublishStatus"] = true;// setting variable to hide status field in partial view
+    ViewData["HidePublishStatus"] = true;
 }
 
+
+
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateValidation", "CertificateReview", null, new { @class = "govuk-back-link" })
-    <main id="main-content" class="govuk-main-wrapper" role="main">
+    @Html.ActionLink("Back", "CertificateValidation", "CertificateReview", new { serviceId =Model.Service.Id}, new { @class = "govuk-back-link" })
+    <main id="main-content" class="govuk-main-wrapper" role="main">       
 
         <div class="govuk-grid-row">
+            @if (Model?.Service?.IsResubmission == true)
+            {
+                var notificationBanner = new NotificationBannerViewModel
+                {
+                    Title = "Important",
+                    NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been provided as part of a reapplication, trust framework uplift or certification transfer from another CAB.",
+                    HtmlContent = "<p class='govuk-body'><a href='/certificate-review/certificate-submission-details?serviceId=" + Model?.Service?.PreviousVersionServiceId + "' class='govuk-link' rel='noreferrer noopener' target='_blank'>Access the original submission (opens in new tab)</a></p>"
+                } }
+                };
+                @await Html.PartialAsync("~/Views/PartialViews/_NotificationBanner.cshtml", notificationBanner)
+
+            }
             @using (Html.BeginForm("SaveCertificateReview", "CertificateReview", FormMethod.Post))
             {              
                 @Html.HiddenFor(m => m.CertificateReviewId)
@@ -31,9 +46,11 @@
 
 
                 <div class="govuk-grid-column-two-thirds">
+                 
                     <h2 class="govuk-heading-l">Information match</h2>
                     <p class="govuk-body">
-                        In this section, you will need to review the service provider's certificate submitted by the Conformity Assessment Body (CAB) against the submitted information below to check that the information matches. It is important that all information matches as it will be publicly available.
+                        Review the service provider's certificate submitted by the Conformity Assessment Body (CAB) against the submitted information on this page to check
+                        that it matches. It is important that all information matches as it will be publicly available.
                     </p>
 
 
@@ -48,21 +65,21 @@
 
                             <ol class="govuk-list govuk-list--number">
                                 <li>
-                                    Make sure that you have the service provider’s certificate of conformity open. You can download the file again using the ‘Download certificate of conformity’ button below.
+                                    Make sure that you have the service provider’s certificate of conformity open. You can download the file again using the ‘Download certificate of conformity’ button on this page.
                                 </li>
                                 <li>
-                                    Once you have the certificate open, compare the certification information below.
+                                    Once you have the certificate open, compare the information on it to the information on this page.
                                 </li>
                                 <li>
-                                    After you have verified that all items match, scroll down to the bottom of the page and select 'Yes, it matches the information
-                                    on the certificate' option. If the items do not match select 'No, it does not match'. You must enter comments or notes in the text
-                                    area at the bottom of the page.
+                                    When you have verified that all items match, navigate to 'Information match' and select 'Yes, it matches the information to the certificate'.
+                                    If the items do not match select 'No, it does not much'.
                                 </li>
                                 <li>
-                                    If you wish to submit your review at a later time, you can select the ‘Save as draft’ button located at the bottom of the page. You must have completed all sections before saving.
+                                    If you wish to submit your review at a later time, you can select the ‘Save as draft’ button. You must have completed all sections before saving.
                                 </li>
                                 <li>
-                                    Once you have verified all items, scroll down to the bottom of the page and select ‘Approve submission' or ‘Reject submission’ to proceed with the process. To proceed with approval, the submission must have passed all certificate validation and information match checks.
+                                   To continue with approval, the submission must have passed all certificate validation and information match checks,
+                                   Once you have verified all items, select the 'Approve submission' or 'Reject submission' button to continue.
                                 </li>
                             </ol>
                         </div>
@@ -70,7 +87,7 @@
 
                     <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
                     <p class="govuk-body">
-                        Download the certificate of conformity provided by the CAB to compare against the details submitted by the CAB.
+                        Download the certificate of conformity provided by the CAB to check that the information matches the details provided.
                     </p>
 
                     <span class="govuk-caption-xl">@Model.Service.FileName</span>
@@ -88,11 +105,29 @@
 
                 </div>
                 <div class="govuk-grid-column-full">
-                    <h3 class="govuk-heading-m">Certification information</h3>
-             
+                    <h2 class="govuk-heading-l">Certification information</h2>             
 
                     @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
                 </div>
+
+
+                @if (@Model.Service.ServiceSupSchemeMapping != null && @Model.Service.ServiceSupSchemeMapping.Count > 0)
+                {
+                    if ((@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
+                    || (@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
+                    {
+                        <div class="govuk-grid-column-full">
+                            @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.Service)
+                        </div>
+                    }
+                }
+
+                @if(Model.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
+                {
+                    <div class="govuk-grid-column-full">
+                        @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.Service)
+                    </div>
+                }                
 
                 <div class="govuk-grid-column-two-thirds">
                     <h3 class="govuk-heading-m">Information match</h3>
@@ -119,7 +154,7 @@
                     {
                         <div class="govuk-form-group govuk-form-group--error">
                             <h3 class="govuk-label-wrapper">
-                                <label class="govuk-label govuk-label--s" for="comments">
+                                <label class="govuk-label govuk-label--m" for="comments">
                                     Record the reasons for your decision
                                 </label>
 
@@ -147,8 +182,7 @@
                             </h3>
                             <div id="comments-hint" class="govuk-hint">
                                 This information will only be visible to OfDIA users. If you selected 'No, it does
-                                not match', you should provide further details. If all the information matches the
-                                certificate, please provide a note to confirm this.
+                                not match', you should provide further details.
                             </div>
 
                             @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5",

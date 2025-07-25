@@ -16,12 +16,18 @@ namespace DVSAdmin.BusinessLogic.Models
         public bool IsCurrent { get; set; } = true;
         public string CompanyAddress { get; set; }
         public string WebSiteAddress { get; set; }
+
+        [JsonIgnore]
         public ICollection<ServiceRoleMappingDto> ServiceRoleMapping { get; set; }
-        public bool? HasGPG44 { get; set; }     
+        public bool? HasGPG44 { get; set; }
+        [JsonIgnore]
         public ICollection<ServiceQualityLevelMappingDto>? ServiceQualityLevelMapping { get; set; }
-        public bool? HasGPG45 { get; set; }    
+        public bool? HasGPG45 { get; set; }
+        [JsonIgnore]
         public ICollection<ServiceIdentityProfileMappingDto>? ServiceIdentityProfileMapping { get; set; }
-        public bool? HasSupplementarySchemes { get; set; }   
+        public bool? HasSupplementarySchemes { get; set; }
+
+        [JsonIgnore]
         public ICollection<ServiceSupSchemeMappingDto>? ServiceSupSchemeMapping { get; set; }
 
         public string? FileName { get; set; }
@@ -57,5 +63,23 @@ namespace DVSAdmin.BusinessLogic.Models
         [JsonIgnore]
         public ICollection<CabTransferRequestDto> CabTransferRequest { get; set; }
         public int CabTransferRequestId { get; set; }
+
+        public int TrustFrameworkVersionId { get; set; }
+        [JsonIgnore]
+        public TrustFrameworkVersionDto TrustFrameworkVersion { get; set; }
+        public ServiceTypeEnum? ServiceType { get; set; }
+        public int? UnderPinningServiceId { get; set; }
+        [JsonIgnore]
+        public ServiceDto UnderPinningService { get; set; }
+        public int? ManualUnderPinningServiceId { get; set; }
+        [JsonIgnore]
+        public ManualUnderPinningServiceDto ManualUnderPinningService { get; set; }
+        
+        public bool? IsManualServiceLinkedToMultipleServices { get; set; }
+        public bool? IsUnderPinningServicePublished { get; set; }
+
+        public string NewOrResubmission { get; set; }
+        public bool? IsResubmission { get; set; }
+        public int? PreviousVersionServiceId { get; set; }
     }
 }

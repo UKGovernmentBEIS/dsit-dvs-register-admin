@@ -1,4 +1,5 @@
 using DVSAdmin.CommonUtility.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -40,5 +41,19 @@ namespace DVSAdmin.Data.Entities
         public User User { get; set; } 
         public ServiceStatusEnum PreviousServiceStatus { get; set; }        
         public DateTime ModifiedTime { get; set; }
+
+        public bool? IsUnderpinningServicePublished { get; set; }
+        [ForeignKey("UnderPinningService")]
+        public int? UnderPinningServiceId { get; set; }
+        public Service UnderPinningService { get; set; }
+
+        [ForeignKey("ManualUnderPinningServiceDraft")]
+        public int? ManualUnderPinningServiceDraftId { get; set; }
+        public ManualUnderPinningServiceDraft ManualUnderPinningServiceDraft { get; set; }
+
+        [ForeignKey("ManualUnderPinningService")]
+        public int? ManualUnderPinningServiceId { get; set; }
+        public ManualUnderPinningService ManualUnderPinningService { get; set; }
+        public UnderPinninngServiceEditEnum? UnderPinninngServiceEditType { get; set; }
     }
 }

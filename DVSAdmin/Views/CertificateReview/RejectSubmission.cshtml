@@ -8,7 +8,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new { reviewId  = Model.CertificateReview.CertificateReviewId}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
 
@@ -33,11 +33,10 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header"> Service provider </th>
+                                <th scope="col" class="govuk-table__header">Service provider </th>
                                 <th scope="col" class="govuk-table__header">Service name</th>
-                                <th scope="col" class="govuk-table__header">Conformity Assessment Body </th>
-                                <th scope="col" class="govuk-table__header">Role type</th>
-                                <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
+                                <th scope="col" class="govuk-table__header">New application or reapplication</th>
+                                <th scope="col" class="govuk-table__header">Submission date <br />(GMT)</th>
                                 <th scope="col" class="govuk-table__header">Review status</th>
                                 <th scope="col" class="govuk-table__header">Days left to complete checks</th>
                             </tr>
@@ -47,14 +46,7 @@
 
                                 <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.Provider.RegisteredName</td>
                                 <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.ServiceName</td>
-                                <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.CabUser.Cab.CabName</td>
-                                <td class="govuk-table__cell">
-                                    @foreach (var role in @Model.CertificateValidation.Service.ServiceRoleMapping)
-                                    {
-                                        RoleEnum enumValue = (RoleEnum)role.RoleId;
-                                        <div> @Enum.GetName(enumValue) </div>
-                                    }
-                                </td>
+                                <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.NewOrResubmission</td>                            
                                 <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateValidation.Service.CreatedTime)</td>
                                 @if (@Model.CertificateValidation.Service.CertificateReview == null)
                                 {
@@ -92,30 +84,24 @@
                     <p class="govuk-body">
                         @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateReview?.Comments)
                     </p>
-                    <h2 class="govuk-heading-l">
-                        Rejection information to be sent to the
-                        Conformity Assessment Body
-                    </h2>
+                    <h2 class="govuk-heading-l">Rejection information to be sent to the Conformity Assessment Body</h2>
                     <p class="govuk-body">
-                        You should now give details of the reasons for rejection to be sent by email
-                        to the Conformity Assessment Body (CAB). Please select reasons from the below list which align with the
-                        rejection criteria shown above. You should also provide specific details and
-                        outline any action required in the text box below.
+                        You should now give details of the reasons for rejection to be sent by email to
+                        the Conformity Assessment Body (CAB). Please select reasons from the 
+                        below list which align with the rejection criteria shown above. You should also 
+                        provide specific details and outline any action required in the text box below.
                     </p>
-
-
                 </div>
 
 
                 @if (Html.ViewData.ModelState.ContainsKey("SelectedRejectionReasonIds") && Html.ViewData.ModelState["SelectedRejectionReasonIds"].Errors.Count > 0)
                 {
-
                     <div class="govuk-grid-column-full">
                         <div class="govuk-form-group govuk-form-group--error">
                             <fieldset class="govuk-fieldset">
                                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                                     <h3 class="govuk-fieldset__heading">
-                                        Select reasons for rejection to be sent to the CAB
+                                        Select the reasons
                                     </h3>
                                 </legend>
                                 <p id="selectedrejectionreasonids-error" class="govuk-error-message">
@@ -132,7 +118,6 @@
                                         checkboxid = (reason.Id + 1).ToString();
                                     }
                                 </div>
-
                             </fieldset>
                         </div>
                     </div>
@@ -147,8 +132,6 @@
                                         Select the reasons
                                     </h3>
                                 </legend>
-
-
                                 <div class="govuk-checkboxes" data-module="govuk-checkboxes">
 
                                     @foreach (var reason in Model.RejectionReasons)
@@ -162,7 +145,6 @@
 
                                     }
                                 </div>
-
                             </fieldset>
                         </div>
                     </div>
@@ -171,8 +153,8 @@
                 <div class="govuk-grid-column-two-thirds">
                     <p class="govuk-body">
                         Please use the textbox below to give further details on the reason for
-                        rejection and any required amendments for resubmission. If you have selected
-                        'Other', please specify details below.
+                        rejection and any required amendments for re-submission. If you have 
+                        selected 'Other', please specify details below.
                     </p>
 
                     <h3 class="govuk-heading-s"> Give further details on reasons selected and any required amendments</h3>
@@ -184,7 +166,7 @@
                     @if (Html.ViewData.ModelState.ContainsKey("Comments") && Html.ViewData.ModelState["Comments"].Errors.Count > 0)
                     {
                         <div class="govuk-form-group govuk-form-group--error">
-                            <p class="govuk-body">If you had marked any item as Incorrect , you can use the the textbox below to provide further details.</p>
+                            <p class="govuk-body">If you had marked any item as Incorrect, you can use the textbox below to provide further details.</p>
                             <p id="comments-error" class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comments)
                             </p>
@@ -199,7 +181,6 @@
                         </div>
 
                     }
-
                     <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">
@@ -208,9 +189,7 @@
                             the CAB.
                         </strong>
                     </div>
-
                     <h3 class="govuk-heading-m">Who will receive the decision notification</h3>
-
                     <hr class="govuk-section-break govuk-section-break--visible">
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
@@ -232,12 +211,8 @@
                         </button>
                     </div>
                 </div>
-
-
-
                 @Html.Hidden("RejectionReasons", JsonConvert.SerializeObject(Model.RejectionReasons))
             }
-
             </div>
         </main>
     </div>

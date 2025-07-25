@@ -56,7 +56,7 @@
                         </li>
                     </ul>
                     <div class="govuk-tabs__panel govuk-!-padding-0" id="latest-submission">
-                        @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ServiceDetailsView.cshtml", Model.CurrentServiceVersion)
+                        @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ServiceDetailsView.cshtml", Model.CurrentServiceVersion, new ViewDataDictionary(ViewData) { ["DateFormat"] = "d MMMM yyyy" })
                         <div class="govuk-grid-column-two-thirds govuk-!-margin-top-9 govuk-!-padding-0">
                             <h2 class="govuk-heading-m">Provided certificate of conformity</h2>
                             <p class="govuk-body-l govuk-!-margin-bottom-2">
