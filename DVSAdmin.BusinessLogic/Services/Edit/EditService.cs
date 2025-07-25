@@ -569,7 +569,7 @@ namespace DVSAdmin.BusinessLogic.Services
             // new manually entered service
             currentDataDictionary.Add(Constants.UnderpinningServiceName, [currentData.ManualUnderPinningServiceDraft.ServiceName]);
             currentDataDictionary.Add(Constants.UnderpinningProviderName, [currentData.ManualUnderPinningServiceDraft.ProviderName]);
-            currentDataDictionary.Add(Constants.CabOfUnderpinningService, [currentData.ManualUnderPinningServiceDraft.Cab.CabName]);
+            currentDataDictionary.Add(Constants.CabOfUnderpinningService, [currentData.ManualUnderPinningServiceDraft.SelectedCabName]);
             currentDataDictionary.Add(Constants.UnderpiningExpiryDate, [Helper.GetLocalDateTime(currentData.ManualUnderPinningServiceDraft.CertificateExpiryDate, "dd MMMM yyyy")]);
         }
 
