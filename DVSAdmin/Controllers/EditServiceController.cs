@@ -5,6 +5,7 @@ using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Models;
 using DVSAdmin.Models.Edit;
+using DVSAdmin.Validations;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -370,7 +371,15 @@ namespace DVSAdmin.Controllers
 
                 if(summaryViewModel.TFVersionViewModel?.SelectedTFVersion?.Version == Constants.TFVersion0_4)
                 {
-                    return RedirectToMissingMappings(supplementarySchemeViewModel.FromSummaryPage);
+                    int nextMissingSchemeIdForGpg45 = NextMissingSchemId("GPG45");
+                    int nextMissingSchemeIdForGpg44 = NextMissingSchemId("GPG44");
+                    if (nextMissingSchemeIdForGpg45>0)
+                        return RedirectToAction("SchemeGPG45", "EditServiceTrustFramework0_4", new { fromSummaryPage = supplementarySchemeViewModel.FromSummaryPage, schemeId = nextMissingSchemeIdForGpg45 });
+                    else if(nextMissingSchemeIdForGpg44>0)
+                        return RedirectToAction("SchemeGPG44Input", "EditServiceTrustFramework0_4", new { fromSummaryPage = supplementarySchemeViewModel.FromSummaryPage, schemeId = nextMissingSchemeIdForGpg44 });
+                    else
+                        return RedirectToAction("ServiceSummary", "EditService");
+                    
                 }
                 else
                 {
@@ -414,7 +423,8 @@ namespace DVSAdmin.Controllers
         {
             dateViewModel.PropertyName = "ConformityIssueDate";
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-            DateTime? conformityIssueDate = ValidateIssueDate(dateViewModel, summaryViewModel.ConformityExpiryDate, dateViewModel.FromSummaryPage);
+            DateTime? conformityIssueDate = ValidationHelper.ValidateIssueDate(dateViewModel, summaryViewModel.ConformityExpiryDate, dateViewModel.FromSummaryPage,ModelState,
+            summaryViewModel.TFVersionViewModel.SelectedTFVersion.Version == Constants.TFVersion0_4);
             if (ModelState.IsValid)
             {
                 summaryViewModel.ConformityIssueDate = conformityIssueDate;
@@ -442,6 +452,10 @@ namespace DVSAdmin.Controllers
             {
                 dateViewModel = GetDayMonthYear(summaryViewModel.ConformityExpiryDate);
             }
+            if (summaryViewModel.TFVersionViewModel.SelectedTFVersion.Version == Constants.TFVersion0_4)
+            {
+                dateViewModel.IsTfVersion0_4 = true;
+            }
             dateViewModel.FromSummaryPage = fromSummaryPage;
             ViewBag.serviceKey = summaryViewModel.ServiceKey;
             return View(dateViewModel);
@@ -459,8 +473,17 @@ namespace DVSAdmin.Controllers
             dateViewModel.PropertyName = "ConformityExpiryDate";
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
 
-            DateTime? conformityExpiryDate = ValidateExpiryDate(dateViewModel, Convert.ToDateTime(summaryViewModel.ConformityIssueDate));
+            DateTime? conformityExpiryDate;
 
+            if (dateViewModel.IsTfVersion0_4)
+            {
+                conformityExpiryDate = ValidationHelper.ValidateExpiryDate(dateViewModel, Convert.ToDateTime(summaryViewModel.ConformityIssueDate), ModelState, dateViewModel.IsTfVersion0_4, years: 3, days: 59);
+            }
+
+            else
+            {
+                conformityExpiryDate = ValidationHelper.ValidateExpiryDate(dateViewModel, Convert.ToDateTime(summaryViewModel.ConformityIssueDate), ModelState);
+            }
             if (ModelState.IsValid)
             {
                 summaryViewModel.ConformityExpiryDate = conformityExpiryDate;
@@ -575,109 +598,7 @@ namespace DVSAdmin.Controllers
             return dateViewModel;
         }
 
-        private DateTime? ValidateIssueDate(DateViewModel dateViewModel, DateTime? expiryDate, bool fromSummaryPage)
-        {
-            DateTime? date = null;
-            DateTime minDate = new DateTime(1900, 1, 1);
-            DateTime minIssueDate;
-
-
-            try
-            {
-                if (dateViewModel.Day == null || dateViewModel.Month == null || dateViewModel.Year == null)
-                {
-                    if (dateViewModel.Day == null)
-                    {
-                        ModelState.AddModelError("Day", Constants.ConformityIssueDayError);
-                    }
-                    if (dateViewModel.Month == null)
-                    {
-                        ModelState.AddModelError("Month", Constants.ConformityIssueMonthError);
-                    }
-                    if (dateViewModel.Year == null)
-                    {
-                        ModelState.AddModelError("Year", Constants.ConformityIssueYearError);
-                    }
-                }
-                else
-                {
-                    date = new DateTime(Convert.ToInt32(dateViewModel.Year), Convert.ToInt32(dateViewModel.Month), Convert.ToInt32(dateViewModel.Day));
-                    if (date > DateTime.Today)
-                    {
-                        ModelState.AddModelError("ValidDate", Constants.ConformityIssuePastDateError);
-                    }
-                    if (date < minDate)
-                    {
-                        ModelState.AddModelError("ValidDate", Constants.ConformityIssueDateInvalidError);
-                    }
-
-                    if (expiryDate.HasValue && fromSummaryPage)
-                    {
-                        minIssueDate = expiryDate.Value.AddYears(-2).AddDays(-60);
-                        if (date < minIssueDate)
-                        {
-                            ModelState.AddModelError("ValidDate", Constants.ConformityMaxExpiryDateError);
-                        }
-                    }
-
-                }
-
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError("ValidDate", Constants.ConformityIssueDateInvalidError);
-
-            }
-            return date;
-        }
-
-        private DateTime? ValidateExpiryDate(DateViewModel dateViewModel, DateTime issueDate)
-        {
-            DateTime? date = null;
-
-            try
-            {
-                if (dateViewModel.Day == null || dateViewModel.Month == null || dateViewModel.Year == null)
-                {
-                    if (dateViewModel.Day == null)
-                    {
-                        ModelState.AddModelError("Day", Constants.ConformityExpiryDayError);
-                    }
-                    if (dateViewModel.Month == null)
-                    {
-                        ModelState.AddModelError("Month", Constants.ConformityExpiryMonthError);
-                    }
-                    if (dateViewModel.Year == null)
-                    {
-                        ModelState.AddModelError("Year", Constants.ConformityExpiryYearError);
-                    }
-                }
-                else
-                {
-                    date = new DateTime(Convert.ToInt32(dateViewModel.Year), Convert.ToInt32(dateViewModel.Month), Convert.ToInt32(dateViewModel.Day));
-                    var maxExpiryDate = issueDate.AddYears(2).AddDays(60);
-                    if (date <= DateTime.Today)
-                    {
-                        ModelState.AddModelError("ValidDate", Constants.ConformityExpiryPastDateError);
-                    }
-                    else if (date <= issueDate)
-                    {
-                        ModelState.AddModelError("ValidDate", Constants.ConformityIssueDateExpiryDateError);
-                    }
-                    else if (date > maxExpiryDate)
-                    {
-                        ModelState.AddModelError("ValidDate", Constants.ConformityMaxExpiryDateError);
-                    }
-                }
-
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError("ValidDate", Constants.ConformityExpiryDateInvalidError);
-
-            }
-            return date;
-        }
+      
 
         #endregion
     }

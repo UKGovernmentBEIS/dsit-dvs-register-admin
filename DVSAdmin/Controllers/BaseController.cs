@@ -33,18 +33,8 @@ namespace DVSAdmin.Controllers
             return model;
         }        
 
-        protected IActionResult RedirectToMissingMappings(bool fromSummaryPage)
-        {
-            int nextMissingSchemeIdForGpg45 = NextMissingSchemId("GPG45");
-            int nextMissingSchemeIdForGpg44 = NextMissingSchemId("GPG44");
-            if (nextMissingSchemeIdForGpg45 > 0)
-                return RedirectToAction("SchemeGPG45", "EditServiceTrustFramework0_4", new { fromSummaryPage = fromSummaryPage, schemeId = nextMissingSchemeIdForGpg45 });
-            else if (nextMissingSchemeIdForGpg44 > 0)
-                return RedirectToAction("SchemeGPG44Input", "EditServiceTrustFramework0_4", new { fromSummaryPage = fromSummaryPage, schemeId = nextMissingSchemeIdForGpg44 });
-            else
-                return RedirectToAction("ServiceSummary", "EditService");
-        }
-        private int NextMissingSchemId(string type)
+       
+        protected int NextMissingSchemId(string type)
         {
             int missingSchemeId = 0;
             var serviceSummary = GetServiceSummary();
