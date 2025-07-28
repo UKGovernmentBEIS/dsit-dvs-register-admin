@@ -104,18 +104,18 @@ namespace DVSAdmin.Data.Repositories
         {
             var service = await context.Service
                 .Include(s => s.Provider)
-                .Include(s => s.CabUser)
-                    .ThenInclude(c => c.Cab)
-                .Include(s => s.ServiceQualityLevelMapping)
-                    .ThenInclude(s => s.QualityLevel)
-                .Include(s => s.ServiceIdentityProfileMapping)
-                    .ThenInclude(s => s.IdentityProfile)
-                .Include(s => s.ServiceRoleMapping)
-                    .ThenInclude(s => s.Role)
-                .Include(s => s.ServiceSupSchemeMapping)
-                    .ThenInclude(s => s.SupplementaryScheme)
+                .Include(s => s.TrustFrameworkVersion)
+                .Include(s => s.ManualUnderPinningService).ThenInclude(m => m.Cab)
+                .Include(s => s.UnderPinningService).ThenInclude(m => m.CabUser).ThenInclude(c => c.Cab)
+                .Include(s => s.UnderPinningService).ThenInclude(m => m.Provider)
+                .Include(s => s.CabUser).ThenInclude(c => c.Cab)
+                .Include(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel)
+                .Include(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
+                .Include(s => s.ServiceRoleMapping).ThenInclude(s => s.Role)
+                .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
+                .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG44Mapping).ThenInclude(s => s.QualityLevel)
+                .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG45Mapping).ThenInclude(s => s.IdentityProfile)
                 .FirstOrDefaultAsync(s => s.Id == serviceId);
-
             return service;
         }
 
