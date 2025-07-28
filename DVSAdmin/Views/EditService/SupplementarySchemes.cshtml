@@ -1,6 +1,6 @@
 ﻿@model DVSAdmin.Models.SupplementarySchemeViewModel
 @{
-    ViewData["Title"] = "Select the applicable schemes for this service";
+    ViewData["Title"] = "Select the applicable supplementary codes for this service";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 @{
@@ -14,7 +14,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl">
-                    Select the applicable supplementary schemes for this service
+                    Select the applicable supplementary codes for this service
                 </h1>
 
                 @if (ViewData.ModelState.ErrorCount > 0)
@@ -26,7 +26,7 @@
                 @using (Html.BeginForm("SupplementarySchemes", "EditService", FormMethod.Post))
                 {
                     <p class="govuk-body">
-                        Select all supplementary schemes that the service is certified against on the certificate of conformity.
+                        Select all supplementary codes that the service is certified against on the certificate of conformity.
                     </p>
 
                     <p class="govuk-body">
