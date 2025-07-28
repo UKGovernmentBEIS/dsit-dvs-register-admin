@@ -519,9 +519,9 @@ namespace DVSAdmin.Controllers
             changesViewModel.CurrentService = previousData;
             ServiceDraftDto currentData = ViewModelHelper.MapToDraft(previousData, summaryViewModel);
 
-            (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = await editService.GetServiceKeyValue(currentData, previousData);
+            (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = await editService.GetServiceKeyValue(currentData, previousData);         
 
-            TempData["changedService"] = JsonConvert.SerializeObject(currentData);
+            HttpContext?.Session.Set("changedService", currentData);
 
             return View(changesViewModel);
         }
@@ -530,19 +530,16 @@ namespace DVSAdmin.Controllers
 
         [HttpPost("summary-of-changes")]
         public async Task<IActionResult> SaveServiceDraft(ServiceChangesViewModel serviceChangesViewModel)
-        {
-            var serializedData = TempData["changedService"] as string;
-            
-            if (string.IsNullOrEmpty(serializedData))
-                throw new InvalidOperationException("Service draft data is missing.");
-            
-            ServiceDraftDto? serviceDraft = JsonConvert.DeserializeObject<ServiceDraftDto>(serializedData);
-            
+        {           
+
+            ServiceDraftDto? serviceDraft = HttpContext?.Session.Get<ServiceDraftDto>("changedService");
             if (serviceDraft == null)
-                throw new InvalidOperationException("Unable to deserialize service draft data.");
+                throw new InvalidOperationException("Service draft data is null");
             
             List<string> dsitUserEmails = serviceChangesViewModel.DSITUserEmails.Split(',').ToList();
             GenericResponse genericResponse = await editService.SaveServiceDraft(serviceDraft, UserEmail, dsitUserEmails);
+
+            HttpContext?.Session.Remove("changedService");
 
             if (!genericResponse.Success)
                 throw new InvalidOperationException("Failed to save service draft.");
