@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Views\Cookie\CookiePage.cshtml" />
+    <None Include="Views\EditServiceTrustFramework0_4\PartialViews\_UnderpinningServiceDetails.cshtml" />
+    <None Include="Views\EditServiceTrustFramework0_4\PartialViews\_UnderpinningServiceOnRegister.cshtml" />
     <None Include="Views\PublicInterestSecondaryCheck\Review\SecondaryCheckReview.cshtml" />
   </ItemGroup>
   <ItemGroup>

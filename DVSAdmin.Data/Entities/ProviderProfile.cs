@@ -38,12 +38,10 @@ namespace DVSAdmin.Data.Entities
         public DateTime? ModifiedTime { get; set; }
         public DateTime? PublishedTime { get; set; }
         public DateTime? RemovalRequestTime { get; set; }
-        public PublicInterestCheck PublicInterestCheck { get; set; }
         public DateTime? RemovedTime { get; set; }
         public RemoveProviderToken RemoveProviderToken { get; set; }
         public TokenStatusEnum EditProviderTokenStatus { get; set; }
-        public bool IsInRegister { get; set; }
-      
+        public bool IsInRegister { get; set; }      
         public ProviderProfileDraft ProviderProfileDraft { get; set; }
         public ICollection<ProviderProfileCabMapping> ProviderProfileCabMapping { get; set; }
     }

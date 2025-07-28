@@ -3,6 +3,7 @@ using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Models;
+using DVSAdmin.Models.CabTransfer;
 using DVSAdmin.Models.RegManagement;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -189,6 +190,10 @@ namespace DVSAdmin.Controllers
         #region private methods
         private void SetServiceDataToSession(ServiceDto serviceDto)
         {
+            TFVersionViewModel TFVersionViewModel = new()
+            {
+                SelectedTFVersion = null
+            };
             RoleViewModel roleViewModel = new()
             {
                 SelectedRoles = [],
@@ -208,6 +213,18 @@ namespace DVSAdmin.Controllers
             {
                 SelectedSupplementarySchemes = []
             };
+            SelectCabViewModel selectCabViewModel = new()
+            {
+                SelectedCabId = null,
+                SelectedCabName = null
+            };
+            List<SchemeIdentityProfileMappingViewModel> schemeIdentityProfileMappingViewModelList = [];
+            List<SchemeQualityLevelMappingViewModel> schemeQualityLevelMappingViewModelList = [];
+
+            if (serviceDto.TrustFrameworkVersion != null)
+            {
+                TFVersionViewModel.SelectedTFVersion = serviceDto.TrustFrameworkVersion;
+            }
 
             if (serviceDto.ServiceRoleMapping != null && serviceDto.ServiceRoleMapping.Count > 0)
             {
@@ -242,22 +259,83 @@ namespace DVSAdmin.Controllers
             if (serviceDto.ServiceSupSchemeMapping != null && serviceDto.ServiceSupSchemeMapping.Count > 0)
             {
                 supplementarySchemeViewModel.SelectedSupplementarySchemes = serviceDto.ServiceSupSchemeMapping.Select(mapping => mapping.SupplementaryScheme).ToList();
+                foreach (var item in serviceDto.ServiceSupSchemeMapping)
+                {
+
+                    if (item.SchemeGPG45Mapping != null && item.SchemeGPG45Mapping.Count > 0)
+                    {
+                        SchemeIdentityProfileMappingViewModel schemeIdentityProfileMappingViewModel = new();
+                        schemeIdentityProfileMappingViewModel.SchemeId = item.SupplementarySchemeId;
+                        schemeIdentityProfileMappingViewModel.IdentityProfile = new IdentityProfileViewModel
+                        {
+                            SelectedIdentityProfiles = item.SchemeGPG45Mapping.Select(mapping => mapping.IdentityProfile).ToList()
+                        };
+
+                        schemeIdentityProfileMappingViewModelList.Add(schemeIdentityProfileMappingViewModel);
+                    }
+
+                    if (item.HasGpg44Mapping != null)
+                    {
+                        SchemeQualityLevelMappingViewModel schemeQualityLevelMappingViewModel = new();
+                        schemeQualityLevelMappingViewModel.HasGPG44 = item.HasGpg44Mapping;
+                        schemeQualityLevelMappingViewModel.SchemeId = item.SupplementarySchemeId;
+                        if (item.SchemeGPG44Mapping != null && item.SchemeGPG44Mapping.Count > 0)
+                        {
+
+                            schemeQualityLevelMappingViewModel.QualityLevel = new QualityLevelViewModel
+                            {
+                                SelectedQualityofAuthenticators = item.SchemeGPG44Mapping.Select(mapping => mapping.QualityLevel).Where(x => x.QualityType == QualityTypeEnum.Authentication).ToList(),
+                                SelectedLevelOfProtections = item.SchemeGPG44Mapping.Select(mapping => mapping.QualityLevel).Where(x => x.QualityType == QualityTypeEnum.Protection).ToList(),
+                            };
+                        }
+                        schemeQualityLevelMappingViewModelList.Add(schemeQualityLevelMappingViewModel);
+                    }
+
+                }
             }
+            if (serviceDto?.ManualUnderPinningService?.Cab != null)
+            {
+                selectCabViewModel.SelectedCabId = serviceDto.ManualUnderPinningService.Cab.Id;
+                selectCabViewModel.SelectedCabName = serviceDto.ManualUnderPinningService.Cab.CabName;
+            }
+            else if (serviceDto?.UnderPinningService != null)
+            {
+                selectCabViewModel.SelectedCabId = serviceDto.UnderPinningService.CabUser.Cab.Id;
+                selectCabViewModel.SelectedCabName = serviceDto.UnderPinningService.CabUser.Cab.CabName;
+            }
+
 
 
             ServiceSummaryViewModel serviceSummary = new()
             {
+                TFVersionViewModel = TFVersionViewModel,
                 ServiceName = serviceDto.ServiceName,
                 ServiceURL = serviceDto.WebSiteAddress,
                 CompanyAddress = serviceDto.CompanyAddress,
                 RoleViewModel = roleViewModel,
                 IdentityProfileViewModel = identityProfileViewModel,
-                QualityLevelViewModel = qualityLevelViewModel,
+                QualityLevelViewModel = qualityLevelViewModel,             
                 HasSupplementarySchemes = serviceDto.HasSupplementarySchemes,
+
+                ServiceType = serviceDto?.ServiceType ?? 0,
+                SelectCabViewModel = selectCabViewModel,
+                IsUnderpinningServicePublished = serviceDto?.IsUnderPinningServicePublished,
+               
+                SelectedManualUnderPinningServiceId = serviceDto?.ManualUnderPinningServiceId,//non published manual               
+                SelectedUnderPinningServiceId = serviceDto?.UnderPinningServiceId,// published
+
+                UnderPinningServiceName = serviceDto?.UnderPinningServiceId == null ? serviceDto?.ManualUnderPinningService?.ServiceName : serviceDto?.UnderPinningService?.ServiceName,
+                UnderPinningProviderName = serviceDto?.UnderPinningServiceId == null ? serviceDto?.ManualUnderPinningService?.ProviderName : serviceDto?.UnderPinningService.Provider?.RegisteredName,
+                UnderPinningServiceExpiryDate = serviceDto?.UnderPinningServiceId == null ? serviceDto?.ManualUnderPinningService?.CertificateExpiryDate : serviceDto?.UnderPinningService.ConformityExpiryDate,
+                CabId = serviceDto?.UnderPinningServiceId == null ? serviceDto?.ManualUnderPinningService?.Cab.Id??0 : serviceDto?.UnderPinningService.CabUser.CabId??0,
+
                 HasGPG44 = serviceDto.HasGPG44,
                 HasGPG45 = serviceDto.HasGPG45,
                 FileName = serviceDto.FileName,
                 SupplementarySchemeViewModel = supplementarySchemeViewModel,
+                SchemeIdentityProfileMapping = schemeIdentityProfileMappingViewModelList,
+                SchemeQualityLevelMapping = schemeQualityLevelMappingViewModelList,
+
                 ConformityIssueDate = serviceDto.ConformityIssueDate == DateTime.MinValue ? null : serviceDto.ConformityIssueDate,
                 ConformityExpiryDate = serviceDto.ConformityExpiryDate == DateTime.MinValue ? null : serviceDto.ConformityExpiryDate,
                 ServiceId = serviceDto.Id,

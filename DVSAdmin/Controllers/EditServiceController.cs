@@ -5,6 +5,7 @@ using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Models;
 using DVSAdmin.Models.Edit;
+using DVSAdmin.Validations;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -84,7 +85,7 @@ namespace DVSAdmin.Controllers
             ServiceSummaryViewModel serviceSummaryViewModel = GetServiceSummary();
             RoleViewModel roleViewModel = new RoleViewModel();
             roleViewModel.SelectedRoleIds = serviceSummaryViewModel?.RoleViewModel?.SelectedRoles?.Select(c => c.Id).ToList();
-            roleViewModel.AvailableRoles = await editService.GetRoles();
+            roleViewModel.AvailableRoles = await editService.GetRoles(serviceSummaryViewModel.TFVersionViewModel.SelectedTFVersion.Version);
 
             roleViewModel.FromSummaryPage = fromSummaryPage;
             ViewBag.ServiceKey = serviceSummaryViewModel.ServiceKey;
@@ -94,10 +95,9 @@ namespace DVSAdmin.Controllers
         [HttpPost("provider-roles")]
         public async Task<IActionResult> ProviderRoles(RoleViewModel roleViewModel)
         {
-            bool fromSummaryPage = roleViewModel.FromSummaryPage;
-            bool fromDetailsPage = roleViewModel.FromDetailsPage;
+            bool fromSummaryPage = roleViewModel.FromSummaryPage;          
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-            List<RoleDto> availableRoles = await editService.GetRoles();
+            List<RoleDto> availableRoles = await editService.GetRoles(summaryViewModel.TFVersionViewModel.SelectedTFVersion.Version);
             roleViewModel.AvailableRoles = availableRoles;
             roleViewModel.SelectedRoleIds = roleViewModel.SelectedRoleIds ?? [];
             if (roleViewModel.SelectedRoleIds.Count > 0)
@@ -110,6 +110,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
+                ViewBag.ServiceKey = summaryViewModel.ServiceKey;
                 return View("ProviderRoles", roleViewModel);
             }
         }
@@ -124,7 +125,6 @@ namespace DVSAdmin.Controllers
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
             summaryViewModel.FromSummaryPage = fromSummaryPage;
             HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
-
             return View(summaryViewModel);
         }
 
@@ -135,8 +135,6 @@ namespace DVSAdmin.Controllers
             if (ModelState["HasGPG44"].Errors.Count == 0)
             {
                 serviceSummary.HasGPG44 = serviceSummaryViewModel.HasGPG44;
-
-
                 if (Convert.ToBoolean(serviceSummary.HasGPG44))
                 {
                     return RedirectToAction("GPG44");
@@ -202,12 +200,11 @@ namespace DVSAdmin.Controllers
             if (ModelState.IsValid)
             {
                 HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
-
                 return RedirectToAction("ServiceSummary");
-
             }
             else
             {
+                ViewBag.serviceKey = summaryViewModel.ServiceKey;
                 return View("GPG44", qualityLevelViewModel);
             }
         }
@@ -366,13 +363,30 @@ namespace DVSAdmin.Controllers
             supplementarySchemeViewModel.SelectedSupplementarySchemeIds = supplementarySchemeViewModel.SelectedSupplementarySchemeIds ?? [];
             if (supplementarySchemeViewModel.SelectedSupplementarySchemeIds.Count > 0)
                 summaryViewModel.SupplementarySchemeViewModel.SelectedSupplementarySchemes = availableSupplementarySchemes.Where(c => supplementarySchemeViewModel.SelectedSupplementarySchemeIds.Contains(c.Id)).ToList();
-            summaryViewModel.SupplementarySchemeViewModel.FromSummaryPage = false;
+          
 
             if (ModelState.IsValid)
             {
                 HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
-                return RedirectToAction("ServiceSummary");
 
+                if(summaryViewModel.TFVersionViewModel?.SelectedTFVersion?.Version == Constants.TFVersion0_4)
+                {
+                    int nextMissingSchemeIdForGpg45 = NextMissingSchemId("GPG45");
+                    int nextMissingSchemeIdForGpg44 = NextMissingSchemId("GPG44");
+                    if (nextMissingSchemeIdForGpg45>0)
+                        return RedirectToAction("SchemeGPG45", "EditServiceTrustFramework0_4", new { fromSummaryPage = supplementarySchemeViewModel.FromSummaryPage, schemeId = nextMissingSchemeIdForGpg45 });
+                    else if(nextMissingSchemeIdForGpg44>0)
+                        return RedirectToAction("SchemeGPG44Input", "EditServiceTrustFramework0_4", new { fromSummaryPage = supplementarySchemeViewModel.FromSummaryPage, schemeId = nextMissingSchemeIdForGpg44 });
+                    else
+                        return RedirectToAction("ServiceSummary", "EditService");
+                    
+                }
+                else
+                {
+                    return RedirectToAction("ServiceSummary");
+                }                 
+               
+              
             }
             else
             {
@@ -396,7 +410,6 @@ namespace DVSAdmin.Controllers
             }
             dateViewModel.FromSummaryPage = fromSummaryPage;
             ViewBag.serviceKey = summaryViewModel.ServiceKey;
-
             return View(dateViewModel);
         }
 
@@ -410,7 +423,8 @@ namespace DVSAdmin.Controllers
         {
             dateViewModel.PropertyName = "ConformityIssueDate";
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-            DateTime? conformityIssueDate = ValidateIssueDate(dateViewModel, summaryViewModel.ConformityExpiryDate, dateViewModel.FromSummaryPage);
+            DateTime? conformityIssueDate = ValidationHelper.ValidateIssueDate(dateViewModel, summaryViewModel.ConformityExpiryDate, dateViewModel.FromSummaryPage,ModelState,
+            summaryViewModel.TFVersionViewModel.SelectedTFVersion.Version == Constants.TFVersion0_4);
             if (ModelState.IsValid)
             {
                 summaryViewModel.ConformityIssueDate = conformityIssueDate;
@@ -419,6 +433,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
+                ViewBag.serviceKey = summaryViewModel.ServiceKey;
                 return View("ConformityIssueDate", dateViewModel);
             }
         }
@@ -437,6 +452,10 @@ namespace DVSAdmin.Controllers
             {
                 dateViewModel = GetDayMonthYear(summaryViewModel.ConformityExpiryDate);
             }
+            if (summaryViewModel.TFVersionViewModel.SelectedTFVersion.Version == Constants.TFVersion0_4)
+            {
+                dateViewModel.IsTfVersion0_4 = true;
+            }
             dateViewModel.FromSummaryPage = fromSummaryPage;
             ViewBag.serviceKey = summaryViewModel.ServiceKey;
             return View(dateViewModel);
@@ -454,8 +473,17 @@ namespace DVSAdmin.Controllers
             dateViewModel.PropertyName = "ConformityExpiryDate";
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
 
-            DateTime? conformityExpiryDate = ValidateExpiryDate(dateViewModel, Convert.ToDateTime(summaryViewModel.ConformityIssueDate));
+            DateTime? conformityExpiryDate;
 
+            if (dateViewModel.IsTfVersion0_4)
+            {
+                conformityExpiryDate = ValidationHelper.ValidateExpiryDate(dateViewModel, Convert.ToDateTime(summaryViewModel.ConformityIssueDate), ModelState, dateViewModel.IsTfVersion0_4, years: 3, days: 59);
+            }
+
+            else
+            {
+                conformityExpiryDate = ValidationHelper.ValidateExpiryDate(dateViewModel, Convert.ToDateTime(summaryViewModel.ConformityIssueDate), ModelState);
+            }
             if (ModelState.IsValid)
             {
                 summaryViewModel.ConformityExpiryDate = conformityExpiryDate;
@@ -464,6 +492,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
+                ViewBag.serviceKey = summaryViewModel.ServiceKey;
                 return View("ConformityExpiryDate", dateViewModel);
             }
         }
@@ -487,10 +516,10 @@ namespace DVSAdmin.Controllers
 
             ServiceDto previousData = await editService.GetService(summaryViewModel.ServiceId);
             changesViewModel.DSITUserEmails = string.Join(",", userEmails);
+            changesViewModel.CurrentService = previousData;
+            ServiceDraftDto currentData = ViewModelHelper.MapToDraft(previousData, summaryViewModel);
 
-            ServiceDraftDto currentData = MapToDraft(previousData, summaryViewModel);
-
-            (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = editService.GetServiceKeyValue(currentData, previousData);
+            (changesViewModel.PreviousDataKeyValuePair, changesViewModel.CurrentDataKeyValuePair) = await editService.GetServiceKeyValue(currentData, previousData);
 
             TempData["changedService"] = JsonConvert.SerializeObject(currentData);
 
@@ -558,129 +587,7 @@ namespace DVSAdmin.Controllers
         }
         #endregion
         #region Private Methods
-        private ServiceSummaryViewModel GetServiceSummary()
-        {
-            ServiceSummaryViewModel model = HttpContext?.Session.Get<ServiceSummaryViewModel>("ServiceSummary") ?? new ServiceSummaryViewModel
-            {
-                QualityLevelViewModel = new QualityLevelViewModel { SelectedLevelOfProtections = new List<QualityLevelDto>(), SelectedQualityofAuthenticators = new List<QualityLevelDto>() },
-                RoleViewModel = new RoleViewModel { SelectedRoles = new List<RoleDto>() },
-                IdentityProfileViewModel = new IdentityProfileViewModel { SelectedIdentityProfiles = new List<IdentityProfileDto>() },
-                SupplementarySchemeViewModel = new SupplementarySchemeViewModel { SelectedSupplementarySchemes = new List<SupplementarySchemeDto> { } }
-            };
-            return model;
-        }        
-
-        private ServiceDraftDto MapToDraft(ServiceDto existingService, ServiceSummaryViewModel updatedService)
-        {
-            var existingRoleIds = existingService.ServiceRoleMapping.Select(m => m.RoleId).ToList();
-            var updatedRoleIds = updatedService.RoleViewModel.SelectedRoles.Select(m => m.Id).ToList(); ;
-
-            var existingProtectionIds = existingService.ServiceQualityLevelMapping
-                .Where(item => item.QualityLevel.QualityType == QualityTypeEnum.Protection)
-                .Select(item => item.QualityLevelId);
-            var updatedProtectionIds = updatedService.QualityLevelViewModel.SelectedLevelOfProtections
-                .Select(item => item.Id);
-
-            var existingAuthenticationIds = existingService.ServiceQualityLevelMapping
-                .Where(item => item.QualityLevel.QualityType == QualityTypeEnum.Authentication)
-                .Select(item => item.QualityLevelId);
-            var updatedAuthenticationIds = updatedService.QualityLevelViewModel.SelectedQualityofAuthenticators
-                .Select(item => item.Id);
-
-            var existingIdentityProfileIds = existingService.ServiceIdentityProfileMapping.Select(m => m.IdentityProfileId).ToList();
-            var updatedIdentityProfileIds = updatedService.IdentityProfileViewModel.SelectedIdentityProfiles.Select(m => m.Id).ToList();
-
-            var existingSupSchemeIds = existingService.ServiceSupSchemeMapping.Select(m => m.SupplementarySchemeId).ToList();
-            var updatedSupSchemeIds = updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes.Select(m => m.Id).ToList();
-
-            var draft = new ServiceDraftDto
-            {
-                serviceId = existingService.Id,
-                PreviousServiceStatus = existingService.ServiceStatus,
-                ProviderProfileId = existingService.ProviderProfileId
-            };
-
-
-
-            if (existingService.ServiceName != updatedService.ServiceName)
-            {
-                draft.ServiceName = updatedService.ServiceName;
-            }
-
-            if (existingService.CompanyAddress != updatedService.CompanyAddress)
-            {
-                draft.CompanyAddress = updatedService.CompanyAddress;
-            }
-
-            if (existingService.HasGPG44 != updatedService.HasGPG44)
-            {
-                draft.HasGPG44 = updatedService.HasGPG44;
-            }
-
-            if (existingService.HasGPG45 != updatedService.HasGPG45)
-            {
-                draft.HasGPG45 = updatedService.HasGPG45;
-            }
-
-            if (existingService.HasSupplementarySchemes != updatedService.HasSupplementarySchemes)
-            {
-                draft.HasSupplementarySchemes = updatedService.HasSupplementarySchemes;
-            }
-
-            if (existingService.ConformityIssueDate != updatedService.ConformityIssueDate)
-            {
-                draft.ConformityIssueDate = updatedService.ConformityIssueDate;
-            }
-
-            if (existingService.ConformityExpiryDate != updatedService.ConformityExpiryDate)
-            {
-                draft.ConformityExpiryDate = updatedService.ConformityExpiryDate;
-            }
-
-            if (!existingRoleIds.OrderBy(id => id).SequenceEqual(updatedRoleIds.OrderBy(id => id)))
-            {
-                foreach (var item in updatedService.RoleViewModel.SelectedRoles)
-                {
-                    draft.ServiceRoleMappingDraft.Add(new ServiceRoleMappingDraftDto { RoleId = item.Id, Role = item });
-
-                }
-            }
-            if (!existingProtectionIds.OrderBy(id => id).SequenceEqual(updatedProtectionIds.OrderBy(id => id)))
-            {
-                foreach (var item in updatedService.QualityLevelViewModel.SelectedLevelOfProtections)
-                {
-                    draft.ServiceQualityLevelMappingDraft.Add(new ServiceQualityLevelMappingDraftDto { QualityLevelId = item.Id, QualityLevel = item });
-                }
-            }
-
-            if (!existingAuthenticationIds.OrderBy(id => id).SequenceEqual(updatedAuthenticationIds.OrderBy(id => id)))
-            {
-                foreach (var item in updatedService.QualityLevelViewModel.SelectedQualityofAuthenticators)
-                {
-                    draft.ServiceQualityLevelMappingDraft.Add(new ServiceQualityLevelMappingDraftDto { QualityLevelId = item.Id, QualityLevel = item });
-                }
-            }
-
-            if (!existingIdentityProfileIds.OrderBy(id => id).SequenceEqual(updatedIdentityProfileIds.OrderBy(id => id)))
-            {
-                foreach (var item in updatedService.IdentityProfileViewModel.SelectedIdentityProfiles)
-                {
-                    draft.ServiceIdentityProfileMappingDraft.Add(new ServiceIdentityProfileMappingDraftDto { IdentityProfileId = item.Id, IdentityProfile = item });
-                }
-            }
-
-            if (!existingSupSchemeIds.OrderBy(id => id).SequenceEqual(updatedSupSchemeIds.OrderBy(id => id)))
-            {
-                foreach (var item in updatedService.SupplementarySchemeViewModel.SelectedSupplementarySchemes)
-                {
-                    draft.ServiceSupSchemeMappingDraft.Add(new ServiceSupSchemeMappingDraftDto { SupplementarySchemeId = item.Id, SupplementaryScheme = item });
-                }
-            }
-
-            return (draft);
-        }
-        
-
+          
         private DateViewModel GetDayMonthYear(DateTime? dateTime)
         {
             DateViewModel dateViewModel = new DateViewModel();
@@ -691,109 +598,7 @@ namespace DVSAdmin.Controllers
             return dateViewModel;
         }
 
-        private DateTime? ValidateIssueDate(DateViewModel dateViewModel, DateTime? expiryDate, bool fromSummaryPage)
-        {
-            DateTime? date = null;
-            DateTime minDate = new DateTime(1900, 1, 1);
-            DateTime minIssueDate;
-
-
-            try
-            {
-                if (dateViewModel.Day == null || dateViewModel.Month == null || dateViewModel.Year == null)
-                {
-                    if (dateViewModel.Day == null)
-                    {
-                        ModelState.AddModelError("Day", Constants.ConformityIssueDayError);
-                    }
-                    if (dateViewModel.Month == null)
-                    {
-                        ModelState.AddModelError("Month", Constants.ConformityIssueMonthError);
-                    }
-                    if (dateViewModel.Year == null)
-                    {
-                        ModelState.AddModelError("Year", Constants.ConformityIssueYearError);
-                    }
-                }
-                else
-                {
-                    date = new DateTime(Convert.ToInt32(dateViewModel.Year), Convert.ToInt32(dateViewModel.Month), Convert.ToInt32(dateViewModel.Day));
-                    if (date > DateTime.Today)
-                    {
-                        ModelState.AddModelError("ValidDate", Constants.ConformityIssuePastDateError);
-                    }
-                    if (date < minDate)
-                    {
-                        ModelState.AddModelError("ValidDate", Constants.ConformityIssueDateInvalidError);
-                    }
-
-                    if (expiryDate.HasValue && fromSummaryPage)
-                    {
-                        minIssueDate = expiryDate.Value.AddYears(-2).AddDays(-60);
-                        if (date < minIssueDate)
-                        {
-                            ModelState.AddModelError("ValidDate", Constants.ConformityMaxExpiryDateError);
-                        }
-                    }
-
-                }
-
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError("ValidDate", Constants.ConformityIssueDateInvalidError);
-
-            }
-            return date;
-        }
-
-        private DateTime? ValidateExpiryDate(DateViewModel dateViewModel, DateTime issueDate)
-        {
-            DateTime? date = null;
-
-            try
-            {
-                if (dateViewModel.Day == null || dateViewModel.Month == null || dateViewModel.Year == null)
-                {
-                    if (dateViewModel.Day == null)
-                    {
-                        ModelState.AddModelError("Day", Constants.ConformityExpiryDayError);
-                    }
-                    if (dateViewModel.Month == null)
-                    {
-                        ModelState.AddModelError("Month", Constants.ConformityExpiryMonthError);
-                    }
-                    if (dateViewModel.Year == null)
-                    {
-                        ModelState.AddModelError("Year", Constants.ConformityExpiryYearError);
-                    }
-                }
-                else
-                {
-                    date = new DateTime(Convert.ToInt32(dateViewModel.Year), Convert.ToInt32(dateViewModel.Month), Convert.ToInt32(dateViewModel.Day));
-                    var maxExpiryDate = issueDate.AddYears(2).AddDays(60);
-                    if (date <= DateTime.Today)
-                    {
-                        ModelState.AddModelError("ValidDate", Constants.ConformityExpiryPastDateError);
-                    }
-                    else if (date <= issueDate)
-                    {
-                        ModelState.AddModelError("ValidDate", Constants.ConformityIssueDateExpiryDateError);
-                    }
-                    else if (date > maxExpiryDate)
-                    {
-                        ModelState.AddModelError("ValidDate", Constants.ConformityMaxExpiryDateError);
-                    }
-                }
-
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError("ValidDate", Constants.ConformityExpiryDateInvalidError);
-
-            }
-            return date;
-        }
+      
 
         #endregion
     }

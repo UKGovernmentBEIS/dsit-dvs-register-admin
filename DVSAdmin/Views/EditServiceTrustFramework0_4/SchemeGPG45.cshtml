@@ -1,0 +1,112 @@
+﻿@using DVSAdmin.CommonUtility.Models.Enums;
+@using DVSAdmin.Controllers
+@model DVSAdmin.Models.IdentityProfileViewModel
+@{
+    ViewData["Title"] = "Select GPG 45 identity profiles certified for this service";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+@{
+    bool hasError = false;
+
+}
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "GPG45Input", "EditService", new { fromSummaryPage = Model.FromSummaryPage, serviceId = Model.ServiceKey }, new { @class = "govuk-back-link" })
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">
+                    @Model.SchemeName: GPG 45 identity profiles for the service
+                </h1>
+
+                @using (Html.BeginForm("SaveSchemeGPG45", "EditServiceTrustFramework0_4", FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })
+                    @Html.HiddenFor(m => m.FromDetailsPage, new { @Value = ViewBag.fromDetailsPage })
+
+                    @Html.HiddenFor(m => m.SchemeId)
+                    @Html.HiddenFor(m => m.SchemeName)
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        hasError = true;
+                        ViewData["Title"] = "Error: " + ViewData["Title"];
+                        @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                    }
+                    var lowConfidenceList = Model.AvailableIdentityProfiles
+                    .Where(c => c.IdentityProfileType == IdentityProfileTypeEnum.Low)
+                    .OrderBy(c => c.IdentityProfileName);
+
+                    var meduimConfidenceList = Model.AvailableIdentityProfiles
+                    .Where(c => c.IdentityProfileType == IdentityProfileTypeEnum.Medium)
+                    .OrderBy(c => c.IdentityProfileName);
+
+                    var highConfidenceList = Model.AvailableIdentityProfiles
+                    .Where(c => c.IdentityProfileType == IdentityProfileTypeEnum.High)
+                    .OrderBy(c => c.IdentityProfileName);
+
+                    var veryHighConfidenceList = Model.AvailableIdentityProfiles
+                    .Where(c => c.IdentityProfileType == IdentityProfileTypeEnum.VeryHigh)
+                    .OrderBy(c => c.IdentityProfileName);
+
+                    int lowConfCount = lowConfidenceList.Count();
+                    int medConfCount = meduimConfidenceList.Count();
+                    int highConfCount = highConfidenceList.Count();
+                    int verHighConfList = veryHighConfidenceList.Count();
+                    <p class="govuk-body">
+                        To make changes, type the new information and select 'Save'. If there are no changes to make, select 'cancel.'
+                    </p>
+                    @if (hasError)
+                    {
+                        @await Html.PartialAsync("~/Views/EditService/PartialViews/_IdentityProfilesView.cshtml",
+                                 new Tuple<string, DVSAdmin.Models.IdentityProfileViewModel, IEnumerable<DVSAdmin.BusinessLogic.Models.IdentityProfileDto>, bool, int>("Low confidence", Model, lowConfidenceList, true, 0))
+                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                        @await Html.PartialAsync("~/Views/EditService/PartialViews/_IdentityProfilesView.cshtml",
+                                 new Tuple<string, DVSAdmin.Models.IdentityProfileViewModel, IEnumerable<DVSAdmin.BusinessLogic.Models.IdentityProfileDto>, bool, int>("Medium confidence", Model, meduimConfidenceList, true, lowConfCount))
+                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                        @await Html.PartialAsync("~/Views/EditService/PartialViews/_IdentityProfilesView.cshtml",
+                                 new Tuple<string, DVSAdmin.Models.IdentityProfileViewModel, IEnumerable<DVSAdmin.BusinessLogic.Models.IdentityProfileDto>, bool, int>("High confidence", Model, highConfidenceList, true, lowConfCount + medConfCount))
+                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                        @await Html.PartialAsync("~/Views/EditService/PartialViews/_IdentityProfilesView.cshtml",
+                                 new Tuple<string, DVSAdmin.Models.IdentityProfileViewModel, IEnumerable<DVSAdmin.BusinessLogic.Models.IdentityProfileDto>, bool, int>("Very high confidence", Model, veryHighConfidenceList, true, lowConfCount + medConfCount + highConfCount))
+
+
+                    }
+                    else
+                    {
+                        @await Html.PartialAsync("~/Views/EditService/PartialViews/_IdentityProfilesView.cshtml",
+                                 new Tuple<string, DVSAdmin.Models.IdentityProfileViewModel, IEnumerable<DVSAdmin.BusinessLogic.Models.IdentityProfileDto>, bool, int>("Low confidence", Model, lowConfidenceList, false, 0))
+
+                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+                        @await Html.PartialAsync("~/Views/EditService/PartialViews/_IdentityProfilesView.cshtml",
+                                 new Tuple<string, DVSAdmin.Models.IdentityProfileViewModel, IEnumerable<DVSAdmin.BusinessLogic.Models.IdentityProfileDto>, bool, int>("Medium confidence", Model, meduimConfidenceList, false, lowConfCount))
+                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+                        @await Html.PartialAsync("~/Views/EditService/PartialViews/_IdentityProfilesView.cshtml",
+                                 new Tuple<string, DVSAdmin.Models.IdentityProfileViewModel, IEnumerable<DVSAdmin.BusinessLogic.Models.IdentityProfileDto>, bool, int>("High confidence", Model, highConfidenceList, false, lowConfCount + medConfCount))
+                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+                        @await Html.PartialAsync("~/Views/EditService/PartialViews/_IdentityProfilesView.cshtml",
+                                 new Tuple<string, DVSAdmin.Models.IdentityProfileViewModel, IEnumerable<DVSAdmin.BusinessLogic.Models.IdentityProfileDto>, bool, int>("Very high confidence", Model, veryHighConfidenceList, false, lowConfCount + medConfCount + highConfCount))
+                    }
+
+
+                    <div class="govuk-warning-text govuk-!-margin-top-8">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-visually-hidden">Warning</span>
+                            If you select 'Save' your changes will need to be approved by another OfDIA user. Do not select 'Save' unless you have made changes.
+                        </strong>
+                    </div>
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button govuk-!-margin-top-6" data-module="govuk-button">
+                            Save
+                        </button>
+                        <a href="@((Model.FromSummaryPage) ? Url.Action( "ServiceSummary", "EditService") :
+                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+</div>

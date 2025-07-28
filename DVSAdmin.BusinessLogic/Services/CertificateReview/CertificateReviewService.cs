@@ -61,9 +61,9 @@ namespace DVSAdmin.BusinessLogic.Services
             return automapper.Map<List<CertificateReviewRejectionReasonDto>>(rejectionReasonList);
         }
 
-        public async Task<List<ServiceDto>> GetServiceList()
+        public async Task<List<ServiceDto>> GetServiceList(string searchText = "")
         {
-            var serviceList = await certificateReviewRepository.GetServiceList();
+            var serviceList = await certificateReviewRepository.GetServiceList(searchText);
             return automapper.Map<List<ServiceDto>>(serviceList);
         }
 
@@ -74,9 +74,17 @@ namespace DVSAdmin.BusinessLogic.Services
             var certificateInfo = await certificateReviewRepository.GetServiceDetails(serviceId);
             ServiceDto serviceDto = automapper.Map<ServiceDto>(certificateInfo);
             return serviceDto;
-        }        
+        }
 
-       
+        public async Task<ServiceDto> GetPreviousServiceVersion(int currentServiceId)
+        {
+            var certificateInfo = await certificateReviewRepository.GetPreviousServiceVersion(currentServiceId);
+            ServiceDto serviceDto = automapper.Map<ServiceDto>(certificateInfo);
+            return serviceDto;
+        }
+
+
+
 
 
         public async Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail)

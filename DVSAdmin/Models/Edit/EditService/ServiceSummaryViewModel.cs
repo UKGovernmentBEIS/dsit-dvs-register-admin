@@ -1,11 +1,12 @@
-﻿using DVSAdmin.BusinessLogic.Models.CertificateReview;
-using DVSAdmin.BusinessLogic.Models;
+﻿using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Models.CabTransfer;
 using DVSAdmin.Validations;
 using System.ComponentModel.DataAnnotations;
 
 namespace DVSAdmin.Models
 {
-    public class ServiceSummaryViewModel
+    public class ServiceSummaryViewModel: ServiceSummaryBaseViewModel
     {
         public ProviderProfileDto Provider { get; set; }
 
@@ -40,48 +41,38 @@ namespace DVSAdmin.Models
         public DateTime? ConformityExpiryDate { get; set; }
         public int CabUserId { get; set; }
         public int CabId { get; set; }
-        public bool FromSummaryPage { get; set; }
-        public int ServiceId { get; set; }
-        public int ServiceKey { get; set; }
 
+        //public int ServiceId { get; set; }
+        //public int ServiceKey { get; set; }
 
-        public void ResetInpuData()
-        {
-            ServiceName = null;
-            ServiceURL = null;
-            CompanyAddress = null;
-            ServiceId = 0;
+        public TFVersionViewModel? TFVersionViewModel { get; set; }
 
-            QualityLevelViewModel = new QualityLevelViewModel
-            {
-                SelectedLevelOfProtections = new List<QualityLevelDto>(),
-                SelectedQualityofAuthenticators = new List<QualityLevelDto>()
-            };
+        public int? SelectedUnderPinningServiceId { get; set; }
+        public int? SelectedManualUnderPinningServiceId { get; set; }
+        public bool? IsManualServiceLinkedToMultipleServices { get; set; }
 
-            RoleViewModel = new RoleViewModel
-            {
-                SelectedRoles = new List<RoleDto>()
-            };
+        [RequiredEnumValue(ErrorMessage = "Select the service type")]
+        public ServiceTypeEnum? ServiceType { get; set; }
 
-            IdentityProfileViewModel = new IdentityProfileViewModel
-            {
-                SelectedIdentityProfiles = new List<IdentityProfileDto>()
-            };
+        [Required(ErrorMessage = "Select the registration status")]
+        public bool? IsUnderpinningServicePublished { get; set; }
+        public List<SchemeQualityLevelMappingViewModel>? SchemeQualityLevelMapping { get; set; }
+        public List<SchemeIdentityProfileMappingViewModel>? SchemeIdentityProfileMapping { get; set; }
 
-            SupplementarySchemeViewModel = new SupplementarySchemeViewModel
-            {
-                SelectedSupplementarySchemes = new List<SupplementarySchemeDto>()
-            };
+        [Required(ErrorMessage = "Enter the service name")]
+        [MaximumLength(160, ErrorMessage = "The service name must be less than 161 characters")]
+        [AcceptedCharacters(@"^[A-Za-z0-9 &@#().:_'-]+$", ErrorMessage = "The service name must contain only letters, numbers and accepted characters")]
+        public string? UnderPinningServiceName { get; set; }
 
-            HasSupplementarySchemes = null;
-            HasGPG44 = null;
-            HasGPG45 = null;
+        [Required(ErrorMessage = "Enter the digital identity and attribute provider's registered name")]
+        [MaximumLength(160, ErrorMessage = "The company's registered name must be less than 161 characters")]
+        [AcceptedCharacters(@"^[A-Za-zÀ-ž &@£$€¥(){}\[\]<>!«»“”'‘’?""/*=#%+0-9.,:;\\/-]+$", ErrorMessage = "The company's registered name must contain only letters, numbers and accepted characters")]
+        public string? UnderPinningProviderName { get; set; }
 
-            FileLink = null;
-            FileName = null;
-            FileSizeInKb = null;
-            ConformityIssueDate = null;
-            ConformityExpiryDate = null;
-        }
+        public SelectCabViewModel? SelectCabViewModel { get; set; }
+
+        public DateTime? UnderPinningServiceExpiryDate { get; set; }
+
+       
     }
 }

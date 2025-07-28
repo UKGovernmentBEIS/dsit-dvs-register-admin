@@ -52,7 +52,23 @@
             Dun & Bradstreet or D-U-N-S number
         </dt>
         <dd class="govuk-summary-list__value">
-            @Model.Provider.DUNSNumber
+            @if(!string.IsNullOrEmpty(@Model.Provider.DUNSNumber))
+            {
+                @Model.Provider.DUNSNumber
+            }
+            else
+            {
+                @Constants.NullFieldsDisplay
+            }
+            
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Trust framework version
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.TrustFrameworkVersion.TrustFrameworkName
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -90,6 +106,33 @@
             }
         </dd>
     </div>
+    @if (Model.TrustFrameworkVersion.Version == Constants.TFVersion0_4)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Underpinning or white-labelled service
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @ViewModelHelper.GetServiceType(Model.ServiceType)
+            </dd>
+        </div>
+    }
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">GPG45 identity profiles</dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ServiceIdentityProfileMapping != null && Model.ServiceIdentityProfileMapping.Any())
+            {
+                @foreach (var item in Model.ServiceIdentityProfileMapping)
+                {
+                    <div>@item.IdentityProfile.IdentityProfileName</div>
+                }
+            }
+            else
+            {
+                <div>@Constants.NullFieldsDisplay</div>
+            }
+        </dd>
+    </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">GPG 44 quality of authenticator</dt>
         <dd class="govuk-summary-list__value">
@@ -122,22 +165,7 @@
             }
         </dd>
     </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">GPG45 identity profiles</dt>
-        <dd class="govuk-summary-list__value">
-            @if (Model.ServiceIdentityProfileMapping != null && Model.ServiceIdentityProfileMapping.Any())
-            {
-                @foreach (var item in Model.ServiceIdentityProfileMapping)
-                {
-                    <div>@item.IdentityProfile.IdentityProfileName</div>
-                }
-            }
-            else
-            {
-                <div>@Constants.NullFieldsDisplay</div>
-            }
-        </dd>
-    </div>
+ 
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Supplementary codes</dt>
         <dd class="govuk-summary-list__value">
@@ -156,8 +184,7 @@
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-            Certificate
-            of conformity
+            Service provider's certificate of conformity
         </dt>
         <dd class="govuk-summary-list__value">
             @Model.FileName

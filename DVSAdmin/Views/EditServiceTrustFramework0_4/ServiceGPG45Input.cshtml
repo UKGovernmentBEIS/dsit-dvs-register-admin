@@ -1,0 +1,65 @@
+﻿@model DVSAdmin.Models.ServiceSummaryViewModel
+@using DVSAdmin.Models.UI.Enums
+@{
+    ViewData["Title"] = "Does the service prove or verify someone’s identity (GPG 45)?";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+@{
+    bool hasError = false;    
+}
+
+
+<div class="govuk-width-container">
+    <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-back-link">Back</a>
+    @using (Html.BeginForm("SaveServiceGPG45Input", "EditServiceTrustFramework0_4", FormMethod.Post))
+    {
+        @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })        
+        
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+
+                    @if (Html.ViewData?.ModelState.ContainsKey("HasGPG45") == true)
+                    {
+                        hasError = true;
+                        var errors = Html.ViewData?.ModelState["HasGPG45"]?.Errors;
+                        if (errors != null && errors.Count > 0)
+                        {
+                            hasError = true;
+                            @await Html.PartialAsync("~/Views/PartialViews/_SpecificErrorsView.cshtml",
+                                     new Tuple<string, IEnumerable<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>>("HasGPG45", errors))
+                        }
+                    }
+
+                 
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+                    {
+                        PropertyName = "HasGPG45",
+                        Value = Model.HasGPG45,
+                        FieldSet = "Does the service prove or verify someone’s identity (GPG 45)?",
+                        Hint1 = "Tell us if the service is used to prove or verify someone's identity and is therefore certified against GPG 45.",                    
+                        Hint2 = "This includes verifying an identity in relation to any supplementary codes relevant to this service.",
+                        Heading = HeadingEnum.H1,
+                        LegendStyleClass = "govuk-fieldset__legend--xl",
+                        HasError = hasError,
+                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("HasGPG45") && Html.ViewData.ModelState["HasGPG45"].Errors.Count > 0 ?
+                        Html.ViewData.ModelState["HasGPG45"].Errors[0].ErrorMessage : string.Empty,
+                        Label1 = "Yes",
+                        Label2 = "No"
+                    })
+
+                    <div class="govuk-button-group">
+                        <button type="submit" class="govuk-button govuk-!-margin-top-6" data-module="govuk-button">
+                            Save
+                        </button>
+                        <a href="@((Model.FromSummaryPage) ? Url.Action( "ServiceSummary", "EditService") :
+                        Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey}))" class="govuk-button govuk-button--secondary" role="button">Cancel</a>
+                    </div>
+            </div>
+        </div>
+    </main>
+    }
+</div>
+
+

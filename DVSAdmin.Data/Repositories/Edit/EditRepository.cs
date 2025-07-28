@@ -1,8 +1,10 @@
-﻿using DVSAdmin.CommonUtility.Models;
+﻿using DVSAdmin.CommonUtility;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -20,21 +22,37 @@ namespace DVSAdmin.Data.Repositories
         public async Task<Service> GetService(int serviceId)
         {
             return await _context.Service
-            .Include(s => s.Provider)
-            .Include(s => s.CertificateReview)
-            .Include(s => s.ServiceSupSchemeMapping)
-            .ThenInclude(s => s.SupplementaryScheme)
-            .Include(s => s.ServiceRoleMapping)
-            .ThenInclude(s => s.Role)
-            .Include(s => s.ServiceQualityLevelMapping)
-            .ThenInclude(s => s.QualityLevel)
-            .Include(s => s.ServiceIdentityProfileMapping)
-            .ThenInclude(s => s.IdentityProfile)
+            .Include(s => s.CabUser).ThenInclude(s=>s.Cab).AsNoTracking()
+            .Include(s => s.Provider).AsNoTracking()
+            .Include(s=>s.TrustFrameworkVersion).AsNoTracking()
+            .Include(s=>s.UnderPinningService).ThenInclude(p=>p.Provider).AsNoTracking()
+            .Include(s => s.UnderPinningService).ThenInclude(p => p.CabUser).ThenInclude(c=>c.Cab).AsNoTracking()
+            .Include(s => s.ManualUnderPinningService).ThenInclude(p => p.Cab).AsNoTracking()
+            .Include(s => s.CertificateReview).AsNoTracking()
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme).AsNoTracking()
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG44Mapping).ThenInclude(s=>s.QualityLevel).AsNoTracking()
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG45Mapping).ThenInclude(s => s.IdentityProfile).AsNoTracking()
+            .Include(s => s.ServiceRoleMapping).ThenInclude(s => s.Role).AsNoTracking()
+            .Include(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel).AsNoTracking()
+            .Include(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile).AsNoTracking()
             .FirstOrDefaultAsync(s => s.Id == serviceId);
         }
-        public async Task<List<Role>> GetRoles()
+
+        public async Task<Service> GetServiceDetails(int serviceId)
         {
-            return await _context.Role.OrderBy(c => c.Order).ToListAsync();
+            return await _context.Service
+            .Include(s => s.CabUser).ThenInclude(s => s.Cab).AsNoTracking()
+            .Include(s => s.Provider).AsNoTracking()          
+            .FirstOrDefaultAsync(s => s.Id == serviceId);
+        }
+
+        public async Task<ManualUnderPinningService> GetManualUnderPinningServiceDetails(int serviceId)
+        {
+            return await _context.ManualUnderPinningService.Include(m=>m.Cab).FirstOrDefaultAsync(s => s.Id == serviceId);
+        }
+        public async Task<List<Role>> GetRoles(decimal tfVersion)
+        {           
+            return await _context.Role.Include(x => x.TrustFrameworkVersion).Where(x => x.TrustFrameworkVersion.Version <= tfVersion).OrderBy(c => c.Order).ToListAsync();
         }
         public async Task<List<QualityLevel>> QualityLevels()
         {
@@ -82,6 +100,63 @@ namespace DVSAdmin.Data.Repositories
                .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.ReadyToPublish )
                .OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new ProviderProfile();
             return providerProfile;
+        }
+
+        public async Task<List<Service>> GetPublishedUnderpinningServices(string searchText, int? currentSelectedServiceId)
+        {
+            int underpinningServiceId = currentSelectedServiceId ?? 0; 
+            var baseQuery = _context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.CertificateReview)                 
+                .Include(s => s.TrustFrameworkVersion)
+                .Include(s => s.CabUser).ThenInclude(s => s.Cab);
+
+            var filteredQuery = baseQuery
+                .Where(s => s.TrustFrameworkVersion.Version == Constants.TFVersion0_4 && s.ServiceType == ServiceTypeEnum.UnderPinning
+                && s.ServiceStatus == ServiceStatusEnum.Published && s.Id != underpinningServiceId);
+
+
+            if (searchText == "All")
+            {
+                return await filteredQuery.AsNoTracking().ToListAsync();
+
+            }
+            else
+            {
+                string trimmedSearchText = searchText.Trim().ToLower();
+                filteredQuery = filteredQuery
+                    .Where(s => s.ServiceName.ToLower().Contains(trimmedSearchText) ||
+                                s.Provider.RegisteredName.ToLower().Contains(trimmedSearchText));
+                return await filteredQuery.AsNoTracking().ToListAsync();
+            }
+        }
+
+
+        public async Task<List<Service>> GetServicesWithManualUnderinningService(string searchText , int? currentSelectedServiceId)
+        {
+            int underpinningServiceId = currentSelectedServiceId ?? 0;
+            var trimmedSearchText = searchText.Trim().ToLower();
+            var manualUnderPinningServices = await _context.Service
+            .Include(s => s.ManualUnderPinningService).ThenInclude(s => s.Cab).Include(s => s.CertificateReview).Include(s => s.PublicInterestCheck)
+            .Where(x => x.ServiceType == ServiceTypeEnum.WhiteLabelled
+                        && x.ManualUnderPinningServiceId != null
+                        && x.ManualUnderPinningServiceId > 0
+                        && x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved
+                        && x.ManualUnderPinningServiceId != currentSelectedServiceId)
+            .AsNoTracking()
+            .GroupBy(x => x.ManualUnderPinningServiceId)
+            .Select(g => g.FirstOrDefault())
+            .ToListAsync();
+            if (searchText == "All")
+            {              
+             return manualUnderPinningServices;
+            }
+            else
+            {
+               manualUnderPinningServices = manualUnderPinningServices .Where(x => x.ManualUnderPinningService.ServiceName.ToLower().Contains(trimmedSearchText) ||
+               x.ManualUnderPinningService.ProviderName.ToLower().Contains(trimmedSearchText)).ToList();
+               return manualUnderPinningServices;
+            }
         }
 
 
@@ -165,10 +240,7 @@ namespace DVSAdmin.Data.Repositories
 
                 if (existingDraft != null)
                 {
-                    UpdateExistingProviderDraft(draft, existingDraft);
-                    await _context.SaveChangesAsync();
-
-                    response.InstanceId = existingDraft.Id;
+                    throw new InvalidOperationException("Edit request already exists for the provider");
                 }
                 else
                 {
@@ -229,9 +301,7 @@ namespace DVSAdmin.Data.Repositories
                 var existingService = await _context.Service.Include(p => p.Provider).FirstOrDefaultAsync(x => x.Id == draft.ServiceId);
                 if (existingDraft != null)
                 {
-                    UpdateExistingServiceDraft(draft, existingDraft);
-                    await _context.SaveChangesAsync();
-                    response.InstanceId = existingDraft.Id;
+                    throw new InvalidOperationException("Edit request already exists for the service");
                 }
                 else
                 {
@@ -259,72 +329,6 @@ namespace DVSAdmin.Data.Repositories
         }
 
 
-        #region Private methods
-        private void UpdateExistingServiceDraft(ServiceDraft source, ServiceDraft target)
-        {
-            target.ServiceName = source.ServiceName;
-            target.WebSiteAddress = source.WebSiteAddress;
-            target.CompanyAddress = source.CompanyAddress;
-
-            if (target.ServiceRoleMappingDraft != null && target.ServiceRoleMappingDraft.Count > 0)
-            {
-                _context.ServiceRoleMappingDraft.RemoveRange(target.ServiceRoleMappingDraft);
-            }
-            target.ServiceRoleMappingDraft = source.ServiceRoleMappingDraft;
-
-            if (target.ServiceIdentityProfileMappingDraft != null && target.ServiceIdentityProfileMappingDraft.Count > 0)
-            {
-                _context.ServiceIdentityProfileMappingDraft.RemoveRange(target.ServiceIdentityProfileMappingDraft);
-            }
-            target.ServiceIdentityProfileMappingDraft = source.ServiceIdentityProfileMappingDraft;
-
-            if (target.ServiceQualityLevelMappingDraft != null && target.ServiceQualityLevelMappingDraft.Count > 0)
-            {
-                _context.ServiceQualityLevelMappingDraft.RemoveRange(target.ServiceQualityLevelMappingDraft);
-            }
-            target.ServiceQualityLevelMappingDraft = source.ServiceQualityLevelMappingDraft;
-
-            target.HasSupplementarySchemes = source.HasSupplementarySchemes;
-            target.HasGPG44 = source.HasGPG44;
-            target.HasGPG45 = source.HasGPG45;
-
-            if (target.ServiceSupSchemeMappingDraft != null && target.ServiceSupSchemeMappingDraft.Count > 0)
-            {
-                _context.ServiceSupSchemeMappingDraft.RemoveRange(target.ServiceSupSchemeMappingDraft);
-            }
-            target.ServiceSupSchemeMappingDraft = source.ServiceSupSchemeMappingDraft;
-
-            target.ConformityIssueDate = source.ConformityIssueDate;
-            target.ConformityExpiryDate = source.ConformityExpiryDate;
-            target.PreviousServiceStatus = source.PreviousServiceStatus;
-
-            target.ModifiedTime = DateTime.UtcNow;
-        }
-        private void UpdateExistingProviderDraft(ProviderProfileDraft source, ProviderProfileDraft target)
-        {
-            target.ModifiedTime = DateTime.UtcNow;
-            target.RegisteredName = source.RegisteredName;
-            target.TradingName = source.TradingName;
-            target.HasRegistrationNumber = source.HasRegistrationNumber;
-            target.CompanyRegistrationNumber = source.CompanyRegistrationNumber;
-            target.DUNSNumber = source.DUNSNumber;
-            target.HasParentCompany = source.HasParentCompany;
-            target.ParentCompanyRegisteredName = source.ParentCompanyRegisteredName;
-            target.ParentCompanyLocation = source.ParentCompanyLocation;
-            target.PrimaryContactFullName = source.PrimaryContactFullName;
-            target.PrimaryContactJobTitle = source.PrimaryContactJobTitle;
-            target.PrimaryContactEmail = source.PrimaryContactEmail;
-            target.PrimaryContactTelephoneNumber = source.PrimaryContactTelephoneNumber;
-            target.SecondaryContactFullName = source.SecondaryContactFullName;
-            target.SecondaryContactJobTitle = source.SecondaryContactJobTitle;
-            target.SecondaryContactEmail = source.SecondaryContactEmail;
-            target.SecondaryContactTelephoneNumber = source.SecondaryContactTelephoneNumber;
-            target.PublicContactEmail = source.PublicContactEmail;
-            target.ProviderTelephoneNumber = source.ProviderTelephoneNumber;
-            target.ProviderWebsiteAddress = source.ProviderWebsiteAddress;
-            target.PreviousProviderStatus = source.PreviousProviderStatus;
-            target.RequestedUserId = source.RequestedUserId;
-        }
-        #endregion
+      
     }
 }

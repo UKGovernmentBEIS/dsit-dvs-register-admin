@@ -13,8 +13,9 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<CertificateReviewRejectionReason>> GetRejectionReasons();
         public Task<CertificateReview> GetCertificateReview(int reviewId);
         public Task<CertificateReview> GetCertificateReviewWithRejectionData(int reviewId);
-        public Task<List<Service>> GetServiceList();     
-        public Task<Service> GetServiceDetails(int serviceId);       
+        public Task<List<Service>> GetServiceList(string searchText = "");     
+        public Task<Service> GetServiceDetails(int serviceId);
+        public Task<Service> GetPreviousServiceVersion(int currentServiceId);
 
         #region Save - update 
 
