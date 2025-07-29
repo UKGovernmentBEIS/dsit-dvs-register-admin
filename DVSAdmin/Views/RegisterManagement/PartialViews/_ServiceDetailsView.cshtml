@@ -318,11 +318,10 @@
 @if (is0_4GammaVersion)
 {
     @if (Model?.ServiceSupSchemeMapping != null && Model.ServiceSupSchemeMapping.Count > 0)
-    {
-     
+    {     
         @foreach (var schemeMapping in Model.ServiceSupSchemeMapping)
         {
-            <div class="govuk-summary-card govuk-!-margin-bottom-8">
+            <div class="govuk-summary-card govuk-!-margin-top-8">
                 <div class="govuk-summary-card__title-wrapper">
                     <h2 class="govuk-summary-card__title">
                         Supplementary codes: @schemeMapping.SupplementaryScheme.SchemeName
