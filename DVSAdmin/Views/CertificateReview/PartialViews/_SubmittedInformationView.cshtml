@@ -6,6 +6,7 @@
 
 @{
     bool hidePublishStatus = ViewData["HidePublishStatus"] as bool? ?? false;
+    bool is0_4GammaVersion = Model?.TrustFrameworkVersion.Version == Constants.TFVersion0_4;
 }
 @model ServiceDto
 <dl class="govuk-summary-list govuk-!-margin-bottom-8">
@@ -106,7 +107,7 @@
             }
         </dd>
     </div>
-    @if (Model.TrustFrameworkVersion.Version == Constants.TFVersion0_4)
+    @if (is0_4GammaVersion)
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -116,23 +117,37 @@
                 @ViewModelHelper.GetServiceType(Model.ServiceType)
             </dd>
         </div>
-    }
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">GPG45 identity profiles</dt>
-        <dd class="govuk-summary-list__value">
-            @if (Model.ServiceIdentityProfileMapping != null && Model.ServiceIdentityProfileMapping.Any())
-            {
-                @foreach (var item in Model.ServiceIdentityProfileMapping)
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">GPG45 identity profiles</dt>
+            <dd class="govuk-summary-list__value">
+                @if (Model?.ServiceIdentityProfileMapping?.Count > 0)
                 {
-                    <div>@item.IdentityProfile.IdentityProfileName</div>
+                    var groupedProfiles = Model.ServiceIdentityProfileMapping
+                    .GroupBy(profile => profile.IdentityProfile.IdentityProfileType)
+                    .ToDictionary(group => group.Key, group => group.ToList())
+                    .OrderBy(g => g.Key);
+
+                    foreach (var group in groupedProfiles)
+                    {
+                        <strong>@group.Key</strong>
+                        <br>
+                        foreach (var item in group.Value.OrderBy(c => c.IdentityProfile.IdentityProfileName))
+                        {
+                            @item.IdentityProfile.IdentityProfileName
+                            <br>
+                        }
+                        <br>
+                    }
                 }
-            }
-            else
-            {
-                <div>@Constants.NullFieldsDisplay</div>
-            }
-        </dd>
-    </div>
+                else
+                {
+                    <div>@Constants.NullFieldsDisplay</div>
+                }
+            </dd>
+        </div>
+    }
+    
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">GPG 44 quality of authenticator</dt>
         <dd class="govuk-summary-list__value">
@@ -165,7 +180,27 @@
             }
         </dd>
     </div>
- 
+
+    @if(!is0_4GammaVersion)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">GPG45 identity profiles</dt>
+            <dd class="govuk-summary-list__value">
+                @if (Model.ServiceIdentityProfileMapping != null && Model.ServiceIdentityProfileMapping.Any())
+                {
+                    @foreach (var item in Model.ServiceIdentityProfileMapping)
+                    {
+                        <div>@item.IdentityProfile.IdentityProfileName</div>
+                    }
+                }
+                else
+                {
+                    <div>@Constants.NullFieldsDisplay</div>
+                }
+            </dd>
+        </div>
+    }
+
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Supplementary codes</dt>
         <dd class="govuk-summary-list__value">
