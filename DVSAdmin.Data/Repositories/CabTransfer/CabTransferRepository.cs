@@ -104,18 +104,18 @@ namespace DVSAdmin.Data.Repositories
         {
             var service = await context.Service
                 .Include(s => s.Provider)
-                .Include(s => s.CabUser)
-                    .ThenInclude(c => c.Cab)
-                .Include(s => s.ServiceQualityLevelMapping)
-                    .ThenInclude(s => s.QualityLevel)
-                .Include(s => s.ServiceIdentityProfileMapping)
-                    .ThenInclude(s => s.IdentityProfile)
-                .Include(s => s.ServiceRoleMapping)
-                    .ThenInclude(s => s.Role)
-                .Include(s => s.ServiceSupSchemeMapping)
-                    .ThenInclude(s => s.SupplementaryScheme)
+                .Include(s => s.TrustFrameworkVersion)
+                .Include(s => s.ManualUnderPinningService).ThenInclude(m => m.Cab)
+                .Include(s => s.UnderPinningService).ThenInclude(m => m.CabUser).ThenInclude(c => c.Cab)
+                .Include(s => s.UnderPinningService).ThenInclude(m => m.Provider)
+                .Include(s => s.CabUser).ThenInclude(c => c.Cab)
+                .Include(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel)
+                .Include(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
+                .Include(s => s.ServiceRoleMapping).ThenInclude(s => s.Role)
+                .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
+                .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG44Mapping).ThenInclude(s => s.QualityLevel)
+                .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG45Mapping).ThenInclude(s => s.IdentityProfile)
                 .FirstOrDefaultAsync(s => s.Id == serviceId);
-
             return service;
         }
 
@@ -123,20 +123,17 @@ namespace DVSAdmin.Data.Repositories
         {
             var cabTransferRequest = await context.CabTransferRequest
                 .Include(c => c.Service).ThenInclude(c=>c.Provider)
-                .Include(c => c.Service)
-                    .ThenInclude(s => s.ServiceIdentityProfileMapping)
-                        .ThenInclude(ip => ip.IdentityProfile)
-                .Include(c => c.Service)
-                    .ThenInclude(s => s.ServiceRoleMapping)
-                        .ThenInclude(r => r.Role)
-                .Include(c => c.Service)
-                    .ThenInclude(s => s.ServiceSupSchemeMapping)
-                        .ThenInclude(ss => ss.SupplementaryScheme)
-                .Include(c => c.Service)
-                    .ThenInclude(s => s.ServiceQualityLevelMapping)
-                        .ThenInclude(ql => ql.QualityLevel)
-                .Include(c => c.FromCabUser)
-                    .ThenInclude(c => c.Cab)
+                .Include(c => c.Service).ThenInclude(c => c.TrustFrameworkVersion)
+                .Include(c => c.Service).ThenInclude(c => c.ManualUnderPinningService).ThenInclude(m => m.Cab)
+                .Include(c => c.Service).ThenInclude(c => c.UnderPinningService).ThenInclude(u => u.Provider)
+                .Include(c => c.Service).ThenInclude(c => c.UnderPinningService).ThenInclude(u => u.CabUser).ThenInclude(c => c.Cab)
+                .Include(c => c.Service).ThenInclude(s => s.ServiceIdentityProfileMapping).ThenInclude(ip => ip.IdentityProfile)
+                .Include(c => c.Service).ThenInclude(s => s.ServiceQualityLevelMapping).ThenInclude(ql => ql.QualityLevel)
+                .Include(c => c.Service).ThenInclude(s => s.ServiceRoleMapping).ThenInclude(r => r.Role)
+                .Include(c => c.Service).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(ss => ss.SupplementaryScheme)
+                .Include(c => c.Service).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG44Mapping).ThenInclude(s => s.QualityLevel)
+                .Include(c => c.Service).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG45Mapping).ThenInclude(s => s.IdentityProfile)
+                .Include(c => c.FromCabUser).ThenInclude(c => c.Cab)
                 .Include(c => c.ToCab)
                 .FirstOrDefaultAsync(c => c.ServiceId == serviceId);
 
