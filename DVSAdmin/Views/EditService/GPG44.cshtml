@@ -13,7 +13,8 @@
 
 @using (Html.BeginForm("GPG44", "EditService", FormMethod.Post))
 {
-
+    @Html.HiddenFor(m => m.ServiceKey)
+    @Html.HiddenFor(m => m.FromSummaryPage)
     <div class="govuk-width-container">
         @Html.ActionLink("Back", "GPG44Input", "EditService", new { fromSummaryPage = Model.FromSummaryPage, serviceId = ViewBag.serviceId }, new { @class = "govuk-back-link" })
         <main id="main-content" class="govuk-main-wrapper" role="main">

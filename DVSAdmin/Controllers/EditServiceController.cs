@@ -390,6 +390,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
+                ViewBag.serviceKey = summaryViewModel.ServiceKey;
                 return View("SupplementarySchemes", supplementarySchemeViewModel);
             }
         }

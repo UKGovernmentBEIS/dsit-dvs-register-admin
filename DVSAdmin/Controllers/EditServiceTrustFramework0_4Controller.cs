@@ -76,7 +76,7 @@ namespace DVSAdmin.Controllers
 
             identityProfileViewModel.FromSummaryPage = summaryViewModel.FromSummaryPage;
             ViewBag.serviceId = summaryViewModel.ServiceId;
-            ViewBag.serviceKey = summaryViewModel.ServiceKey;
+            identityProfileViewModel.ServiceKey = summaryViewModel.ServiceKey;
 
             return View(identityProfileViewModel);
         }
@@ -96,7 +96,7 @@ namespace DVSAdmin.Controllers
             identityProfileViewModel.SelectedIdentityProfileIds = identityProfileViewModel.SelectedIdentityProfileIds ?? new List<int>();
             if (identityProfileViewModel.SelectedIdentityProfileIds.Count > 0)
                 summaryViewModel.IdentityProfileViewModel.SelectedIdentityProfiles = availableIdentityProfiles.Where(c => identityProfileViewModel.SelectedIdentityProfileIds.Contains(c.Id)).ToList();
-            summaryViewModel.IdentityProfileViewModel.FromSummaryPage = false;
+            summaryViewModel.IdentityProfileViewModel.FromSummaryPage = false;           
             if (ModelState.IsValid)
             {
                 HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
@@ -104,7 +104,7 @@ namespace DVSAdmin.Controllers
 
             }
             else
-            {
+            {               
                 return View("ServiceGPG45", identityProfileViewModel);
             }
         }
@@ -176,7 +176,7 @@ namespace DVSAdmin.Controllers
 
             qualityLevelViewModel.FromSummaryPage = serviceSummary.FromSummaryPage;
             ViewBag.serviceId = serviceSummary.ServiceId;
-            ViewBag.serviceKey = serviceSummary.ServiceKey;
+            qualityLevelViewModel.ServiceKey = serviceSummary.ServiceKey;
 
             return View(qualityLevelViewModel);
         }
@@ -201,8 +201,7 @@ namespace DVSAdmin.Controllers
             qualityLevelViewModel.AvailableLevelOfProtections = availableQualityLevels.Where(x => x.QualityType == QualityTypeEnum.Protection).ToList();
             qualityLevelViewModel.SelectedLevelOfProtectionIds = qualityLevelViewModel.SelectedLevelOfProtectionIds ?? [];
             if (qualityLevelViewModel.SelectedLevelOfProtectionIds.Count > 0)
-                summaryViewModel.QualityLevelViewModel.SelectedLevelOfProtections = availableQualityLevels.Where(c => qualityLevelViewModel.SelectedLevelOfProtectionIds.Contains(c.Id)).ToList();
-
+                summaryViewModel.QualityLevelViewModel.SelectedLevelOfProtections = availableQualityLevels.Where(c => qualityLevelViewModel.SelectedLevelOfProtectionIds.Contains(c.Id)).ToList();                        
             if (ModelState.IsValid)
             {
                 HttpContext?.Session.Set("ServiceSummary", summaryViewModel);
@@ -211,7 +210,7 @@ namespace DVSAdmin.Controllers
             }
             else
             {
-                return View("GPG44", qualityLevelViewModel);
+                return View("ServiceGPG44", qualityLevelViewModel);
             }
         }
         #endregion
@@ -410,7 +409,8 @@ namespace DVSAdmin.Controllers
                 .Select(scheme => scheme.SchemeName).FirstOrDefault() ?? string.Empty,
                 SelectedIdentityProfileIds = identityProfile?.SelectedIdentityProfiles?.Select(c => c.Id)?.ToList() ?? [],
                 AvailableIdentityProfiles = await editService.GetIdentityProfiles(),
-                ServiceKey = summaryViewModel.ServiceKey
+                ServiceKey = summaryViewModel.ServiceKey,
+                FromSummaryPage = fromSummaryPage
             };
 
             return View(identityProfileViewModel);
@@ -485,11 +485,11 @@ namespace DVSAdmin.Controllers
         [HttpGet("scheme/gpg44-input")]
         public IActionResult SchemeGPG44Input(bool fromSummaryPage, int schemeId)
         {
-            ViewBag.fromSummaryPage = fromSummaryPage;            
+                
             ServiceSummaryViewModel summaryViewModel = GetServiceSummary();
-
             SchemeQualityLevelMappingViewModel schemeQualityLevelMappingViewModel = summaryViewModel?.SchemeQualityLevelMapping?.Where(scheme => scheme.SchemeId == schemeId).
-            FirstOrDefault() ?? new();            
+            FirstOrDefault() ?? new();
+            schemeQualityLevelMappingViewModel.FromSummaryPage = fromSummaryPage;
             schemeQualityLevelMappingViewModel.SchemeId = schemeId;
             schemeQualityLevelMappingViewModel.SchemeName = summaryViewModel?.SupplementarySchemeViewModel?.SelectedSupplementarySchemes?.Where(scheme => scheme.Id == schemeId)
             .Select(scheme => scheme.SchemeName).FirstOrDefault() ?? string.Empty;
@@ -578,7 +578,7 @@ namespace DVSAdmin.Controllers
 
             qualityLevelViewModel.AvailableLevelOfProtections = qualityLevels.Where(x => x.QualityType == QualityTypeEnum.Protection).ToList();
             qualityLevelViewModel.SelectedLevelOfProtectionIds = qualityLevel?.SelectedLevelOfProtections?.Select(c => c.Id)?.ToList() ?? [];
-
+            qualityLevelViewModel.FromSummaryPage = fromSummaryPage;
 
             return View(qualityLevelViewModel);
         }
