@@ -1,4 +1,14 @@
-﻿html {
+﻿.govuk-header__container {
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap
+}
+
+.govuk-header__container > .govuk-service-navigation__wrapper {
+  margin-left: auto;
+}
+
+html {
   font-size: 14px;
 }
 
