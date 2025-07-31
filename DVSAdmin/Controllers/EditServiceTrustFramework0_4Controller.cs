@@ -138,8 +138,15 @@ namespace DVSAdmin.Controllers
                     serviceSummary.QualityLevelViewModel.SelectedQualityofAuthenticators = new List<QualityLevelDto>();
                     serviceSummary.QualityLevelViewModel.SelectedLevelOfProtections = new List<QualityLevelDto>();
                     serviceSummary.SchemeQualityLevelMapping.ForEach(item => item.HasGPG44 = false);
-                    serviceSummary.SchemeQualityLevelMapping.ForEach(item => item.QualityLevel.SelectedQualityofAuthenticators = []);
-                    serviceSummary.SchemeQualityLevelMapping.ForEach(item => item.QualityLevel.SelectedLevelOfProtections = []);
+                    serviceSummary.SchemeQualityLevelMapping.ForEach(item =>
+                    {
+                        if (item.QualityLevel != null)
+                        {
+                            item.QualityLevel.SelectedQualityofAuthenticators = [];
+                            item.QualityLevel.SelectedLevelOfProtections = [];
+                        }
+                    });
+
 
                     HttpContext?.Session.Set("ServiceSummary", serviceSummary);
                     return RedirectToAction("ServiceSummary", "EditService");
