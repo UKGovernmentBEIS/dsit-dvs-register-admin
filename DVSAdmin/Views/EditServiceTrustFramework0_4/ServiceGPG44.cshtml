@@ -14,7 +14,8 @@
 
 @using (Html.BeginForm("SaveServiceGPG44", "EditServiceTrustFramework0_4", FormMethod.Post))
 {
-    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })
+    @Html.HiddenFor(m => m.FromSummaryPage)
+    @Html.HiddenFor(m => m.ServiceKey)
   
     <div class="govuk-width-container">
         @Html.ActionLink("Back", "ServiceGPG44Input", "EditServiceTrustFramework0_4", new { fromSummaryPage = Model.FromSummaryPage, serviceId = Model.ServiceKey }, new { @class = "govuk-back-link" })

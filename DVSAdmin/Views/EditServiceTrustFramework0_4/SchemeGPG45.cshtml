@@ -21,9 +21,7 @@
 
                 @using (Html.BeginForm("SaveSchemeGPG45", "EditServiceTrustFramework0_4", FormMethod.Post))
                 {
-                    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })
-                    @Html.HiddenFor(m => m.FromDetailsPage, new { @Value = ViewBag.fromDetailsPage })
-
+                    @Html.HiddenFor(m => m.FromSummaryPage)
                     @Html.HiddenFor(m => m.SchemeId)
                     @Html.HiddenFor(m => m.SchemeName)
                     @if (ViewData.ModelState.ErrorCount > 0)
