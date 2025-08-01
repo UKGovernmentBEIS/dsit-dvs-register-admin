@@ -15,6 +15,7 @@
 
             @using (Html.BeginForm("SaveRoles", "CabService", FormMethod.Post))
             {
+                @Html.HiddenFor(m => m.FromSummaryPage)
                 <div class="govuk-grid-column-two-thirds">
                     <h1 class="govuk-heading-xl">
                         Select the applicable roles from the UK digital identity and attributes trust framework for this service

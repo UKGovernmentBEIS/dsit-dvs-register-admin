@@ -25,6 +25,7 @@
                 }
                 @using (Html.BeginForm("SupplementarySchemes", "EditService", FormMethod.Post))
                 {
+                    @Html.HiddenFor(m => m.FromSummaryPage)
                     <p class="govuk-body">
                         Select all supplementary codes that the service is certified against on the certificate of conformity.
                     </p>
