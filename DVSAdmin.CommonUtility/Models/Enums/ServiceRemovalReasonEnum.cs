@@ -12,7 +12,9 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("The service provider has requested to remove a service, and there are remaining services published on the register for this provider")]
         ProviderRequestedRemoval = 2,
         [Description("The service provider no longer provides the listed service, and there are remaining services published on the register for this provider")]
-        ProviderNotExists = 3
+        ProviderNotExists = 3,
+        [Description("To help OfDIA maintain accurate record")]
+        RemovedByOfDia = 4
     }
 
     public static class ServiceRemovalReasonEnumExtensions

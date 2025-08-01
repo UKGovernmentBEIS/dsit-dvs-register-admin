@@ -81,5 +81,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public string NewOrResubmission { get; set; }
         public bool? IsResubmission { get; set; }
         public int? PreviousVersionServiceId { get; set; }
+
+        public string? DSITUserEmails { get; set; }
     }
 }
