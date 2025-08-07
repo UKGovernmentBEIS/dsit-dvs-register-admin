@@ -31,6 +31,50 @@ body {
   margin-bottom: 60px;
 }
 
+.sortable-table [aria-sort] {
+    color: #1D70B8;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    padding: 0 10px 0 0;
+    position: relative;
+    text-align: inherit;
+    margin: 0;
+}
+
+    .sortable-table [aria-sort] a {
+        text-decoration: none;
+        color: inherit;
+        display: inline-flex;
+        align-items: center;
+    }
+
+.sortable-table [aria-sort="none"] a::after {
+    content: "▲\A▼";
+    white-space: pre;
+    font-size: 0.5em;
+    margin-left: 0.3em;
+    line-height: 1;
+    display: inline-block;
+}
+
+.sortable-table [aria-sort="ascending"] a::after {
+    content: "▲";
+    font-size: 0.8em;
+    margin-left: 0.3em;
+}
+
+.sortable-table [aria-sort="descending"] a::after {
+    content: "▼";
+    font-size: 0.8em;
+    margin-left: 0.3em;
+}
+
+.sortable-table [aria-sort] a::before {
+    content: none;
+}
+
 :root{
   --brand: #1d70b8;
   --white: #fff;

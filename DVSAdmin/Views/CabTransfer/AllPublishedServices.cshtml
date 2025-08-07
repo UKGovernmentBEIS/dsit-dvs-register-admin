@@ -63,12 +63,12 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <table class="govuk-table govuk-table--small-text-until-tablet moj-sortable-table" data-module="moj-sortable-table">
+                <table class="govuk-table govuk-table--small-text-until-tablet">
                     <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">
                         search results table - column headers with links are sortable
                     </caption>
                     <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
+                        <tr class="govuk-table__row sortable-table">
                             <th scope="col" class="govuk-table__header" aria-sort="@((Model.CurrentSort == "service name") ? Model.CurrentSortAction : "none")" 
                             aria-label="sort by service name">
                                 @Html.ActionLink("Service name", "AllPublishedServices", "CabTransfer", new { CurrentSort = Model.CurrentSort, 
