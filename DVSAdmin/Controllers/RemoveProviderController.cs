@@ -114,6 +114,8 @@ namespace DVSAdmin.Controllers
             {
                 ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceRemovalViewModel.ServiceId);
                 serviceDto.ServiceRemovalReason = serviceRemovalViewModel.ServiceRemovalReason;
+                var userEmails = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);
+                serviceDto.DSITUserEmails = string.Join(",", userEmails);
                 return View("ProceedServiceRemoval", serviceDto);
             }
             else
@@ -127,7 +129,8 @@ namespace DVSAdmin.Controllers
         {
             ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceDetailsViewModel.Id);
             List<int> ServiceIds = [serviceDto.Id];
-            GenericResponse genericResponse = await removeProviderService.RemoveServiceRequest(serviceDetailsViewModel.ProviderProfileId, ServiceIds, UserEmail, serviceRemovalReason);
+            List<string> dsitUserEmails = serviceDetailsViewModel.DSITUserEmails.Split(',').ToList();
+            GenericResponse genericResponse = await removeProviderService.RemoveServiceRequest(serviceDetailsViewModel.ProviderProfileId, ServiceIds, UserEmail, dsitUserEmails, serviceRemovalReason);
 
             if (genericResponse.Success)
             {
@@ -184,9 +187,9 @@ namespace DVSAdmin.Controllers
             GenericResponse genericResponse = new GenericResponse();
 
             ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceId);
-
+            var dsitUserEmail = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);
             List<int> serviceIds = [serviceDto.Id];
-            genericResponse = await removeProviderService.GenerateTokenAndSendServiceRemoval(serviceDto.ProviderProfileId, serviceIds, UserEmail, serviceDto.ServiceRemovalReason, true);
+            genericResponse = await removeProviderService.GenerateTokenAndSendServiceRemoval(serviceDto.ProviderProfileId, serviceIds, UserEmail, dsitUserEmail,TeamEnum.DSIT, serviceDto.ServiceRemovalReason, true);
             ViewBag.providerId = serviceDto.ProviderProfileId;
 
             if (genericResponse.Success)

@@ -52,7 +52,9 @@
 
                 @using (Html.BeginForm("ConformityExpiryDate", "EditService", FormMethod.Post))
                 {
-                    @Html.HiddenFor(m => m.FromSummaryPage, new { @Value = ViewBag.fromSummaryPage })                 
+
+                    @Html.HiddenFor(m => m.ServiceKey)
+                    @Html.HiddenFor(m => m.FromSummaryPage)
                     @Html.HiddenFor(m => m.IsTfVersion0_4)
                     @if (Model.IsTfVersion0_4)
                     {

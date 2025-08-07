@@ -51,6 +51,8 @@
 
                 @using (Html.BeginForm("ConformityIssueDate", "CabService", FormMethod.Post))
                 {
+                    @Html.HiddenFor(m => m.ServiceKey)
+                    @Html.HiddenFor(m => m.FromSummaryPage)
                     <p class="govuk-body">
                         This must match the date on the certificate of conformity. The issue date cannot be greater
                         than today.
