@@ -64,8 +64,8 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
 
         public async Task<List<Service>> GetServiceVersionList(int serviceKey)
         {
-            return await context.Service             
-          
+            return await context.Service
+            .Include(s => s.ServiceDraft)
             .Include(s => s.Provider).ThenInclude(p => p.ProviderProfileDraft)
             .Include(s => s.CertificateReview)
             .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
