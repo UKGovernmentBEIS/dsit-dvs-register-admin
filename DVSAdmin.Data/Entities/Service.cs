@@ -76,5 +76,7 @@ namespace DVSAdmin.Data.Entities
         [ForeignKey("ManualUnderPinningService")]
         public int? ManualUnderPinningServiceId { get; set; }
         public ManualUnderPinningService ManualUnderPinningService { get; set; }
+
+        public ServiceDraft ServiceDraft { get; set; }
     }
 }

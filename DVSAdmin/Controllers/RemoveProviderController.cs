@@ -188,8 +188,9 @@ namespace DVSAdmin.Controllers
 
             ServiceDto serviceDto = await removeProviderService.GetServiceDetails(serviceId);
             var dsitUserEmail = await userService.GetUserEmailsExcludingLoggedIn(UserEmail);
+            TeamEnum requstedBy = serviceDto.ServiceRemovalReason == ServiceRemovalReasonEnum.RemovedByOfDia ? TeamEnum.DSIT : TeamEnum.Provider;
             List<int> serviceIds = [serviceDto.Id];
-            genericResponse = await removeProviderService.GenerateTokenAndSendServiceRemoval(serviceDto.ProviderProfileId, serviceIds, UserEmail, dsitUserEmail,TeamEnum.DSIT, serviceDto.ServiceRemovalReason, true);
+            genericResponse = await removeProviderService.GenerateTokenAndSendServiceRemoval(serviceDto.ProviderProfileId, serviceIds, UserEmail, dsitUserEmail, requstedBy, serviceDto.ServiceRemovalReason, true);
             ViewBag.providerId = serviceDto.ProviderProfileId;
 
             if (genericResponse.Success)
