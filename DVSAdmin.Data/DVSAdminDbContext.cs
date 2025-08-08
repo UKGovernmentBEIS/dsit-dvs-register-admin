@@ -125,6 +125,26 @@ namespace DVSAdmin.Data
             }
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
 
-    }
+            modelBuilder.Entity<ServiceDraft>(b =>
+            {
+                b.HasOne(sd => sd.Service)
+                .WithOne(s => s.ServiceDraft)
+                .HasForeignKey<ServiceDraft>(sd => sd.ServiceId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+                b.HasOne(sd => sd.User)
+                .WithMany()
+                .HasForeignKey(sd => sd.RequestedUserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+                b.Navigation("Service");
+                b.Navigation("User");
+            });
+        }
+     }
 }
