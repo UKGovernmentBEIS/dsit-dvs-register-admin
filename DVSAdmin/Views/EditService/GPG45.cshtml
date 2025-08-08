@@ -19,6 +19,8 @@
 
                 @using (Html.BeginForm("GPG45", "EditService", FormMethod.Post))
                 {
+                    @Html.HiddenFor(m => m.ServiceKey)
+                    @Html.HiddenFor(m => m.FromSummaryPage)
                     @if (ViewData.ModelState.ErrorCount > 0)
                     {
                         hasError = true;

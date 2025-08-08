@@ -20,7 +20,9 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("The Secretary of State is satisfied that the provider is failing to comply with the supplementary code")]
         FailingToComplyWithSupplementaryCode = 7,
         [Description("The Secretary of State considers removal necessary in the interests of national security")]
-        NecessaryForNationalSecurity = 8
+        NecessaryForNationalSecurity = 8,
+        [Description("To help OfDIA maintain accurate record")]
+        RemovedByOfDia = 9
 
     }
     public static class RemovalReasonsEnumExtensions

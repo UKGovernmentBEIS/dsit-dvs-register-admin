@@ -14,6 +14,7 @@
     <a href="@((Model.FromSummaryPage) ? Url.Action("ServiceSummary", "EditService") : Url.Action("ServiceDetails", "RegisterManagement", new { serviceKey = Model.ServiceKey }))" class="govuk-back-link">Back</a>
     @using (Html.BeginForm("GPG45Input", "EditService", FormMethod.Post))
     {
+        @Html.HiddenFor(m => m.FromSummaryPage)
         <main id="main-content" class="govuk-main-wrapper" role="main">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
