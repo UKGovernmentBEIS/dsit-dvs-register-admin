@@ -71,17 +71,6 @@ namespace DVSAdmin.Controllers
 
         }
 
-        [HttpPost("resend-closing-loop-link")]
-        public async Task<ActionResult> ResendClosingLinkEmail(int serviceId)
-        {
-            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
-            GenericResponse genericResponse = await publicInterestCheckService.GenerateTokenAndSendEmail(serviceDto, UserEmail, true);
-
-            if (genericResponse.Success)
-            {
-                return View("ResentConsentToPublishConformation");
-            }
-            return RedirectToAction("PublicInterestCheck", "PublicInterestCheck");
-        }
+      
     }
 }

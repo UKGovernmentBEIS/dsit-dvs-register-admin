@@ -51,16 +51,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
         }
 
 
-        public async Task<ProviderProfile> GetProviderDetailsWithOutReviewDetails(int providerId)
-        {
-            var priorityOrder = Helper.priorityOrderService;
-
-            return await context.ProviderProfile
-                .Include(p => p.Services.OrderBy(s => priorityOrder.IndexOf(s.ServiceStatus)))
-                .Include(p => p.Services).ThenInclude(x => x.CabUser).ThenInclude(x => x.Cab)        
-                .Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished))
-                .FirstOrDefaultAsync() ?? new ProviderProfile();
-        }
+      
 
         public async Task<List<Service>> GetServiceVersionList(int serviceKey)
         {
@@ -114,87 +105,6 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return activeCabUserEmails;
         }
 
-        public async Task<GenericResponse> UpdateServiceStatus(List<int> serviceIds, int providerId, string loggedInUserEmail)
-        {
-            GenericResponse genericResponse = new();
-            using var transaction = context.Database.BeginTransaction();
-            try
-            {
-                foreach (var serviceId in serviceIds)
-                {
-                    var existingService = await context.Service.Include(s => s.Provider).FirstOrDefaultAsync(e => e.Id == serviceId);
-
-                    var previousPublishedServiceVersionList = await context.Service.Where(s => s.ServiceKey == existingService.ServiceKey
-                    && s.ServiceStatus == ServiceStatusEnum.Published && s.IsCurrent == false).ToListAsync();
-
-                    if (existingService != null)
-                    {
-
-                        existingService.ServiceStatus = ServiceStatusEnum.Published;
-                        existingService.IsInRegister = true;
-                        existingService.Provider.IsInRegister = true;
-                        existingService.ModifiedTime = DateTime.UtcNow;
-                        existingService.PublishedTime = DateTime.UtcNow;
-
-
-                        if (previousPublishedServiceVersionList != null && previousPublishedServiceVersionList.Count >0)
-                        {
-                            foreach (var version in previousPublishedServiceVersionList)
-                            {
-                                version.ServiceStatus = ServiceStatusEnum.Removed; // remove old published versions if any
-                                version.RemovedTime = DateTime.UtcNow;
-                                version.IsInRegister = false;
-                            }
-                        }
-
-                    }
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RegisterManagement, loggedInUserEmail);
-                }
-                transaction.Commit();
-                genericResponse.Success = true;
-            }
-            catch (Exception ex)
-            {
-                genericResponse.EmailSent = false;
-                genericResponse.Success = false;
-                transaction.Rollback();
-                logger.LogError(ex.Message);
-            }
-            return genericResponse;
-        }
-
-        public async Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail, List<int> serviceIds)
-        {
-            GenericResponse genericResponse = new();
-            using var transaction = context.Database.BeginTransaction();
-            try
-            {
-
-                var existingProviderEntry = await context.RegisterPublishLog.FirstOrDefaultAsync(e => e.ProviderProfileId == registerPublishLog.ProviderProfileId);
-                if (existingProviderEntry == null) {
-                    registerPublishLog.Description = "First published";
-                }
-                else
-                {          
-                    
-                    registerPublishLog.Description = serviceIds.Count + " new services included";
-                }                
-
-                await context.RegisterPublishLog.AddAsync(registerPublishLog);
-                await context.SaveChangesAsync();
-                transaction.Commit();
-                genericResponse.Success = true;
-            }
-            catch (Exception ex)
-            {
-                genericResponse.Success = false;
-                transaction.Rollback();
-                logger.LogError(ex.Message);
-            }
-            return genericResponse;
-        }
-
-
         public async Task<List<Service>> GetPublishedServices()
         {
            return await context.Service.AsNoTracking()//Read only, so no need for tracking query
@@ -208,7 +118,9 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
                          && ci.ServiceStatus != ServiceStatusEnum.SavedAsDraft
                          && ci.Provider.ProviderStatus !=ProviderStatusEnum.RemovedFromRegister)
             .ToListAsync();
-        }       
+        }
+
+      
 
     }
 }

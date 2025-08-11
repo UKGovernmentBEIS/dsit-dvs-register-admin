@@ -2,12 +2,10 @@
 using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Email;
-using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
-using Microsoft.Extensions.Configuration;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -18,19 +16,19 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly IConsentRepository consentRepository;
         private readonly IMapper automapper;
         private readonly PICheckEmailSender emailSender;
-        private readonly IJwtService jwtService;
-        private readonly IConfiguration configuration;
+        private readonly IRemoveProviderService removeProviderService;       
+
 
 
         public PublicInterestService(IPublicInterestCheckRepository publicInterestCheckRepository, IMapper automapper,
-          PICheckEmailSender emailSender, IConsentRepository consentRepository, IJwtService jwtService, IConfiguration configuration)
+          PICheckEmailSender emailSender, IConsentRepository consentRepository, IRegManagementService regManagementService, IRemoveProviderService removeProviderService)
         {
             this.publicInterestCheckRepository = publicInterestCheckRepository;
             this.automapper = automapper;
             this.emailSender = emailSender;
-            this.consentRepository = consentRepository;
-            this.jwtService = jwtService;
-            this.configuration = configuration;          
+            this.consentRepository = consentRepository;            
+            this.removeProviderService = removeProviderService;
+             
         }
         public async Task<List<ServiceDto>> GetPICheckList()
         {
@@ -41,6 +39,11 @@ namespace DVSAdmin.BusinessLogic.Services
         public async Task<ServiceDto> GetServiceDetails(int serviceId)
         {
             var service = await publicInterestCheckRepository.GetServiceDetails(serviceId);
+            return automapper.Map<ServiceDto>(service);
+        }
+        public async Task<ServiceDto> GetServiceDetailsForPublishing(int serviceId)
+        {
+            var service = await publicInterestCheckRepository.GetServiceDetailsForPublishing(serviceId);
             return automapper.Map<ServiceDto>(service);
         }
 
@@ -107,8 +110,8 @@ namespace DVSAdmin.BusinessLogic.Services
                         await emailSender.SendApplicationRejectedConfirmationToDSIT(service.Provider.RegisteredName, service.ServiceName);
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed)
-                    {
-                        genericResponse = await GenerateTokenAndSendEmail(service, loggedInUserEmail, false);
+                    {                     
+                        
 
                         if (genericResponse.Success)
                         {
@@ -121,31 +124,61 @@ namespace DVSAdmin.BusinessLogic.Services
             return genericResponse;
         }
 
-        public async Task<GenericResponse> GenerateTokenAndSendEmail(ServiceDto service, string loggedInUserEmail, bool isResend)
+        public async Task<GenericResponse> UpdateServiceStatus(int serviceId, string serviceName, int providerProfileId, string loggedInUserEmail, string cabEmail)
         {
-            TokenDetails tokenDetails = jwtService.GenerateToken(string.Empty,service.ProviderProfileId,service.Id.ToString());
-            string consentLink = configuration["DvsRegisterLink"] + "consent/publish-service-give-consent?token=" + tokenDetails.Token;
+            GenericResponse genericResponse = await publicInterestCheckRepository.UpdateServiceStatus(serviceId, loggedInUserEmail);
+            ProviderProfile providerProfile = await publicInterestCheckRepository.GetProviderDetailsWithOutReviewDetails(providerProfileId);
+        
+            // update provider status based on priority
+            genericResponse = await removeProviderService.UpdateProviderStatusByStatusPriority(providerProfileId, loggedInUserEmail, EventTypeEnum.PICheck);
 
-            //Insert token details to db for further reference
-            ProceedPublishConsentToken consentToken = new()
+            if (genericResponse.Success)
             {
-                ServiceId = service.Id,
-                Token = tokenDetails.Token,
-                TokenId = tokenDetails.TokenId
-            };            
-            GenericResponse genericResponse = await consentRepository.SaveConsentToken(consentToken, loggedInUserEmail);
+                //insert provider log
+                RegisterPublishLog registerPublishLog = new();
+                registerPublishLog.ProviderProfileId = providerProfileId;
+                registerPublishLog.CreatedTime = DateTime.UtcNow;
+                registerPublishLog.ProviderName = providerProfile.TradingName;
+                registerPublishLog.Services = serviceName;
 
-            await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
-            service.Provider.PrimaryContactFullName, consentLink, service.Provider.PrimaryContactEmail);
-            await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
-            service.Provider.SecondaryContactFullName, consentLink, service.Provider.SecondaryContactEmail);
+                await publicInterestCheckRepository.SavePublishRegisterLog(registerPublishLog, loggedInUserEmail);
 
-            if (isResend)
-            {
-                await emailSender.ConfirmationConsentResentToDSIT(service.Provider.RegisteredName, service.ServiceName);
+
+                await emailSender.SendServicePublishedToDIP(providerProfile.PrimaryContactFullName, serviceName, providerProfile.RegisteredName, providerProfile.PrimaryContactEmail);
+                await emailSender.SendServicePublishedToDIP(providerProfile.SecondaryContactFullName, serviceName, providerProfile.RegisteredName, providerProfile.SecondaryContactEmail);
+                await emailSender.SendServicePublishedToDSIT(providerProfile.RegisteredName, serviceName);
+                await emailSender.SendServicePublishedToCAB(cabEmail, serviceName, providerProfile.RegisteredName, cabEmail);
+
             }
+
             return genericResponse;
         }
+
+        //public async Task<GenericResponse> GenerateTokenAndSendEmail(ServiceDto service, string loggedInUserEmail, bool isResend)
+        //{
+        //    TokenDetails tokenDetails = jwtService.GenerateToken(string.Empty,service.ProviderProfileId,service.Id.ToString());
+        //    string consentLink = configuration["DvsRegisterLink"] + "consent/publish-service-give-consent?token=" + tokenDetails.Token;
+
+        //    //Insert token details to db for further reference
+        //    ProceedPublishConsentToken consentToken = new()
+        //    {
+        //        ServiceId = service.Id,
+        //        Token = tokenDetails.Token,
+        //        TokenId = tokenDetails.TokenId
+        //    };            
+        //    GenericResponse genericResponse = await consentRepository.SaveConsentToken(consentToken, loggedInUserEmail);
+
+        //    await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
+        //    service.Provider.PrimaryContactFullName, consentLink, service.Provider.PrimaryContactEmail);
+        //    await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
+        //    service.Provider.SecondaryContactFullName, consentLink, service.Provider.SecondaryContactEmail);
+
+        //    if (isResend)
+        //    {
+        //        await emailSender.ConfirmationConsentResentToDSIT(service.Provider.RegisteredName, service.ServiceName);
+        //    }
+        //    return genericResponse;
+        //}
 
         public async Task<ServiceDto> GetProviderAndCertificateDetailsByConsentToken(string token, string tokenId)
         {
