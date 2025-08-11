@@ -79,7 +79,7 @@ namespace DVSAdmin.Controllers
                 return View("Review/SecondaryCheckReview", secondaryCheckViewModelData);
             }
         }
-#endregion
+        #endregion
 
         #region Approve Flow
 
@@ -92,11 +92,25 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpPost("proceed-secondary-check-approve")]
-        public IActionResult ProceedSecondaryCheckApproval(string saveReview)
+        public async Task<IActionResult> ProceedSecondaryCheckApproval(string saveReview)
         {
             if (saveReview == "approve")
             {
-                return RedirectToAction("ConfirmSecondaryCheckApproval", "PublicInterestSecondaryCheck");
+                PublicInterestSecondaryCheckViewModel secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
+                GenericResponse genericResponse;
+
+                if (secondaryCheckViewModel == null || secondaryCheckViewModel.ServiceId <= 0 || secondaryCheckViewModel.ProviderProfileId <= 0)
+                    throw new InvalidOperationException("Secondary check session data is missing or invalid.");
+
+                secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.PublicInterestCheckPassed;
+                PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
+                genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
+                if (genericResponse.Success)
+                    return RedirectToAction("PublishService", "PublicInterestSecondaryCheck");
+                else
+                    throw new InvalidOperationException("Failed to save secondary check approval.");
+
+               
             }
             else if (saveReview == "cancel")
             {
@@ -110,36 +124,65 @@ namespace DVSAdmin.Controllers
 
         }
 
-        [HttpGet("secondary-check-approval")]
-        public IActionResult ConfirmSecondaryCheckApproval()
+
+        [HttpGet("publish-service")]
+        public async Task<IActionResult> PublishService()
         {
-            return View("Approve/ConfirmSecondaryCheckApproval");
+            PublicInterestSecondaryCheckViewModel publicInterestSecondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
+            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetailsForPublishing(publicInterestSecondaryCheckViewModel.ServiceId);
+            return View("Approve/PublishService", serviceDto);
         }
 
-        [HttpPost("secondary-check-approval")]
-        public async Task<IActionResult> SaveSecondaryCheckApproval()
+        [HttpPost("publish-service")]
+        public async Task<IActionResult> SavePublishService()
         {
-            PublicInterestSecondaryCheckViewModel secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
-            GenericResponse genericResponse;
-            
-            if (secondaryCheckViewModel == null || secondaryCheckViewModel.ServiceId <= 0 || secondaryCheckViewModel.ProviderProfileId <= 0)
-                throw new InvalidOperationException("Secondary check session data is missing or invalid.");
-            
-            secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.PublicInterestCheckPassed;
-            PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
-            genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
+            PublicInterestSecondaryCheckViewModel publicInterestSecondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
+            GenericResponse genericResponse = await publicInterestCheckService
+           .UpdateServiceStatus(publicInterestSecondaryCheckViewModel.ServiceId,
+            publicInterestSecondaryCheckViewModel.Service.ServiceName, publicInterestSecondaryCheckViewModel.ProviderProfileId, UserEmail, publicInterestSecondaryCheckViewModel.Service.CabUser.CabEmail);
             if (genericResponse.Success)
-                return RedirectToAction("SecondaryCheckApprovalConfirmation", "PublicInterestSecondaryCheck");
+                return RedirectToAction("ServicePublishedConfirmation");
             else
-                throw new InvalidOperationException("Failed to save secondary check approval.");
+                throw new InvalidOperationException("Failed to publish service");
         }
 
-        [HttpGet("secondary-check-approval-confirmation")]
-        public IActionResult SecondaryCheckApprovalConfirmation()
+
+        //[HttpGet("secondary-check-approval")]
+        //public IActionResult ConfirmSecondaryCheckApproval()
+        //{
+        //    return View("Approve/ConfirmSecondaryCheckApproval");
+        //}
+
+        //[HttpPost("secondary-check-approval")]
+        //public async Task<IActionResult> SaveSecondaryCheckApproval()
+        //{
+        //    PublicInterestSecondaryCheckViewModel secondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
+        //    GenericResponse genericResponse;
+
+        //    if (secondaryCheckViewModel == null || secondaryCheckViewModel.ServiceId <= 0 || secondaryCheckViewModel.ProviderProfileId <= 0)
+        //        throw new InvalidOperationException("Secondary check session data is missing or invalid.");
+
+        //    secondaryCheckViewModel.PublicInterestCheckStatus = PublicInterestCheckEnum.PublicInterestCheckPassed;
+        //    PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(secondaryCheckViewModel);
+        //    genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.SecondaryCheck, UserEmail);
+        //    if (genericResponse.Success)
+        //        return RedirectToAction("SecondaryCheckApprovalConfirmation", "PublicInterestSecondaryCheck");
+        //    else
+        //        throw new InvalidOperationException("Failed to save secondary check approval.");
+        //}
+
+
+
+
+
+
+        [HttpGet("service-published-confirmation")]
+        public async Task<IActionResult> ServicePublishedConfirmation()
         {
-            PublicInterestSecondaryCheckViewModel publicInterestSecondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");         
+            PublicInterestSecondaryCheckViewModel publicInterestSecondaryCheckViewModel = GetSecondaryCheckDataFromSession(HttpContext, "SecondaryCheckData");
+            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetailsWithMappings(publicInterestSecondaryCheckViewModel.ServiceId);
             HttpContext.Session.Remove("SecondaryCheckData");
-            return View("Approve/SecondaryCheckApprovalConfirmation", publicInterestSecondaryCheckViewModel.Service);
+            return View("Approve/ServicePublishedConfirmation", serviceDto);
         }
         #endregion
 

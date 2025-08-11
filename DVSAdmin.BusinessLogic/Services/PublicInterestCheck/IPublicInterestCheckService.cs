@@ -12,7 +12,7 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<ServiceDto> GetServiceDetailsWithMappings(int serviceId);    
         public Task<ServiceDto> GetProviderAndCertificateDetailsByConsentToken(string token, string tokenId);
         public Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheckDto publicInterestCheckDto, ReviewTypeEnum reviewType, string loggedInUserEmail);
-        public Task<GenericResponse> GenerateTokenAndSendEmail(ServiceDto service, string loggedInUserEmail, bool isResend);
-
+        public Task<ServiceDto> GetServiceDetailsForPublishing(int serviceId);
+        public Task<GenericResponse> UpdateServiceStatus(int serviceId, string serviceName, int providerProfileId, string loggedInUserEmail, string cabEmail);
     }
 }

@@ -69,15 +69,7 @@ namespace DVSAdmin.Controllers
             return View(serviceVersions);
         }
 
-        [HttpGet("publish-service")]
-        public async Task<IActionResult> PublishService(int providerId)
-        {           
-            ProviderProfileDto providerDto = await regManagementService.GetProviderWithServiceDetails(providerId);
-            providerDto.Services= providerDto.Services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish).ToList();
-            List<int> ServiceIds = providerDto.Services.Select(item => item.Id).ToList();
-            HttpContext?.Session.Set("ServiceIdsToPublish", ServiceIds);              
-            return View(providerDto);
-        }
+      
 
 
         [HttpGet("proceed-publication")]
@@ -98,36 +90,36 @@ namespace DVSAdmin.Controllers
          return View(providerProfileDto);
         }
 
-        [HttpPost("about-to-publish")]
-        public async Task<IActionResult> Publish(ProviderProfileDto providerDetailsViewModel, string action)
-        {
-            if(action == "publish")
-            {
+        //[HttpPost("about-to-publish")]
+        //public async Task<IActionResult> Publish(ProviderProfileDto providerDetailsViewModel, string action)
+        //{
+        //    if(action == "publish")
+        //    {
               
-                List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
-                if (serviceids == null && !serviceids.Any())
-                    throw new InvalidOperationException("No service IDs found in session to publish.");
-                List<string> activeCabEmails = await regManagementService.GetCabEmailListForServices(serviceids);
-                GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,UserEmail, activeCabEmails);
-                if (genericResponse.Success)
-                {
-                    return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Id });
-                }
-                else
-                {
-                    throw new InvalidOperationException("Failed to update service status during publication.");
-                }
-            }
-            else if(action == "cancel")
-            {
-                return RedirectToAction("ProceedPublication", new { providerId = providerDetailsViewModel.Id });
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid action received during service publication.");
-            }           
+        //        List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
+        //        if (serviceids == null && !serviceids.Any())
+        //            throw new InvalidOperationException("No service IDs found in session to publish.");
+        //        List<string> activeCabEmails = await regManagementService.GetCabEmailListForServices(serviceids);
+        //        GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,UserEmail, activeCabEmails);
+        //        if (genericResponse.Success)
+        //        {
+        //            return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Id });
+        //        }
+        //        else
+        //        {
+        //            throw new InvalidOperationException("Failed to update service status during publication.");
+        //        }
+        //    }
+        //    else if(action == "cancel")
+        //    {
+        //        return RedirectToAction("ProceedPublication", new { providerId = providerDetailsViewModel.Id });
+        //    }
+        //    else
+        //    {
+        //        throw new InvalidOperationException("Invalid action received during service publication.");
+        //    }           
          
-        }
+        //}
 
         [HttpGet("provider-published")]
         public async Task<IActionResult> ProviderPublished(int providerId)
