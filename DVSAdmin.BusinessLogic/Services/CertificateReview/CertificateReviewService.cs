@@ -123,9 +123,8 @@ namespace DVSAdmin.BusinessLogic.Services
             if(genericResponse.Success)  
             {
                 List<string> emailList = [serviceDto.Provider.PrimaryContactEmail, serviceDto.Provider.SecondaryContactEmail];
-                await emailSender.SendProceedApplicationConsentToDIP(serviceDto.Provider.RegisteredName, serviceDto.ServiceName,
-                !string.IsNullOrEmpty(serviceDto.Provider.CompanyRegistrationNumber) ? serviceDto.Provider.CompanyRegistrationNumber : serviceDto.Provider.DUNSNumber ?? string.Empty,
-                serviceDto.CompanyAddress, serviceDto.Provider.PublicContactEmail ?? string.Empty, serviceDto.Provider.ProviderTelephoneNumber ?? string.Empty, consentLink, emailList);
+                await emailSender.SendProceedApplicationConsentToDIP(serviceDto.ServiceName, serviceDto.Provider.PrimaryContactFullName, 
+                    serviceDto.Provider.SecondaryContactFullName, consentLink, emailList);
 
                 if(isResend) 
                 {
