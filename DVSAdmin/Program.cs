@@ -69,6 +69,7 @@ app.UseCookiePolicy();
 app.UseRouting();
 app.UseAuthorization();
 app.UseSession();
+app.UseStatusCodePagesWithReExecute("/page-not-found");
 app.MapControllers();
 
 app.Run();

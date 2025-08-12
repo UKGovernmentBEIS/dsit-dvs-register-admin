@@ -110,13 +110,14 @@ namespace DVSAdmin.BusinessLogic.Services
                         await emailSender.SendApplicationRejectedConfirmationToDSIT(service.Provider.RegisteredName, service.ServiceName);
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed)
-                    {                     
+                    {                   
                         
 
                         if (genericResponse.Success)
                         {
                             await emailSender.SendApplicationApprovedToDSIT(service.Provider.RegisteredName, service.ServiceName);
 
+                            genericResponse = await UpdateServiceStatus(service.Id, service.ServiceName, service.Provider.Id, loggedInUserEmail, service.CabUser.CabEmail);
                         }
                     }
                 }
@@ -124,7 +125,7 @@ namespace DVSAdmin.BusinessLogic.Services
             return genericResponse;
         }
 
-        public async Task<GenericResponse> UpdateServiceStatus(int serviceId, string serviceName, int providerProfileId, string loggedInUserEmail, string cabEmail)
+        private async Task<GenericResponse> UpdateServiceStatus(int serviceId, string serviceName, int providerProfileId, string loggedInUserEmail, string cabEmail)
         {
             GenericResponse genericResponse = await publicInterestCheckRepository.UpdateServiceStatus(serviceId, loggedInUserEmail);
             ProviderProfile providerProfile = await publicInterestCheckRepository.GetProviderDetailsWithOutReviewDetails(providerProfileId);

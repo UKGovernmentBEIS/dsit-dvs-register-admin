@@ -17,6 +17,12 @@ namespace DVSAdmin.Controllers
             return View("ServiceIssue");
         }
 
+        [HttpGet("page-not-found")]
+        public IActionResult PageNotFound()
+        {            
+            return View("PageNotFound");
+        }
+
 
     }
 }
