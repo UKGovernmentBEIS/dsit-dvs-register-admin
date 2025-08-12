@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "You are about to reject this submission";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
@@ -13,9 +12,16 @@
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
                 <p class="govuk-body">
-                    The provider's information will not be published on the register. The Conformity Assessment Body (CAB) and OfDIA
-                    will receive an email with this decision. If the provider still wants to apply to the register, the CAB will need
-                    to create a new submission for approval.
+                    We will not publish the provider's information to the register.
+                </p>
+
+                <p class="govuk-body">
+                    We will email the Conformity Assessment Body (CAB) and other OFDIA users
+                    to inform them of this decision.
+                </p>
+                <p class="govuk-body">
+                    If the provider still wants to apply for this service to appear on the register, the
+                    CAB will need to create a new submission.
                 </p>
 
                 <div class="govuk-warning-text">
@@ -27,14 +33,14 @@
                 </div>
 
                 @using (Html.BeginForm("ProceedConfirmRejection", "CertificateReview", FormMethod.Post))
-                 {
+                {
                     <div class="govuk-button-group">
 
                         <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="proceed">
-                           Reject submission
+                            Reject submission
                         </button>
                         <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
-                            Cancel
+                            Cancel and back
                         </button>
                     </div>
                 }
