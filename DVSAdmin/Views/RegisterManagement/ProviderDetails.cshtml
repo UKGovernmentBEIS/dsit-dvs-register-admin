@@ -98,13 +98,13 @@
                     </div>
                 }
                 <div class="govuk-button-group">
-                    @if (!(Model.ProviderStatus == ProviderStatusEnum.Published)
+                  @*   @if (!(Model.ProviderStatus == ProviderStatusEnum.Published)
                     && (Model.ProviderStatus == ProviderStatusEnum.ReadyToPublish || Model.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext))
                     {
                         <a href="publish-service?providerId=@Model.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
                             Publish
                         </a>
-                    }
+                    } *@
                     @if (isRemovable)
                     {
                         <a href="/remove/provider/reason-for-removal?providerId=@Model.Id" role="button" draggable="false" class="govuk-button govuk-button--warning" data-module="govuk-button">

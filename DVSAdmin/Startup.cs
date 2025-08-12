@@ -138,8 +138,7 @@ namespace DVSAdmin
             services.AddScoped<ICabTransferRepository, CabTransferRepository>();
             services.AddTransient<LoginEmailSender>();
             services.AddTransient<CertificateReviewEmailSender>();
-            services.AddTransient<PICheckEmailSender>();
-            services.AddTransient<RegManagementEmailSender>();
+            services.AddTransient<PICheckEmailSender>();           
             services.AddTransient<RemoveProviderEmailSender>();
             services.AddTransient<EditEmailSender>();
             services.AddTransient<CabTransferEmailSender>();

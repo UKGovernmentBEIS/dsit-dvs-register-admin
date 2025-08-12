@@ -90,34 +90,40 @@ namespace DVSAdmin.CommonUtility.Email
 
         #endregion
 
-        #region Closing the loop
-
-        public async Task<bool> SendConsentToPublishToDIP(string companyName, string serviceName, string recipientName, string consentLink, string emailAddress)
+        public async Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName, string companyName, string emailAddress)
         {
-            var template = govUkNotifyConfig.DIPConsentToPublishTemplate;
-
+            var template = govUkNotifyConfig.ServicePublishedDIPTemplate;
             var personalisation = new Dictionary<string, dynamic>
             {
                 { template.ServiceName,  serviceName},
-                { template.CompanyName,  companyName},
                 { template.RecipientName,  recipientName},
-                { template.ConsentLink,  consentLink}
+                { template.CompanyName,  companyName}
              };
             return await SendNotification(emailAddress, template, personalisation);
         }
 
-        public async Task<bool> ConfirmationConsentResentToDSIT(string companyName, string serviceName)
+        public async Task<bool> SendServicePublishedToCAB(string recipientName, string serviceName, string companyName, string emailAddress)
         {
-            var template = govUkNotifyConfig.ClosingLoopProviderReminderToDSIT;
-
+            var template = govUkNotifyConfig.ServicePublishedCABTemplate;
             var personalisation = new Dictionary<string, dynamic>
             {
                 { template.ServiceName,  serviceName},
-                { template.CompanyName,  companyName},
+                { template.RecipientName,  recipientName},
+                { template.CompanyName,  companyName}
+             };
+            return await SendNotification(emailAddress, template, personalisation);
+        }
+
+        public async Task<bool> SendServicePublishedToDSIT(string companyName, string serviceName)
+        {
+            var template = govUkNotifyConfig.ServicePublishedDSITTemplate;
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { template.ServiceName,  serviceName},
+                { template.CompanyName,  companyName}
+
              };
             return await SendNotificationToOfDiaCommonMailBox(template, personalisation);
         }
-
-        #endregion
     }
 }
