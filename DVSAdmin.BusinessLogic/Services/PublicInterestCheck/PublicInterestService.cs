@@ -6,6 +6,7 @@ using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using DVSAdmin.Data.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -16,19 +17,22 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly IConsentRepository consentRepository;
         private readonly IMapper automapper;
         private readonly PICheckEmailSender emailSender;
-        private readonly IRemoveProviderService removeProviderService;       
+        private readonly IRemoveProviderService removeProviderService;
+        private readonly IConfiguration configuration;
 
 
 
         public PublicInterestService(IPublicInterestCheckRepository publicInterestCheckRepository, IMapper automapper,
-          PICheckEmailSender emailSender, IConsentRepository consentRepository, IRegManagementService regManagementService, IRemoveProviderService removeProviderService)
+          PICheckEmailSender emailSender, IConsentRepository consentRepository, IRegManagementService regManagementService, 
+          IRemoveProviderService removeProviderService, IConfiguration configuration)
         {
             this.publicInterestCheckRepository = publicInterestCheckRepository;
             this.automapper = automapper;
             this.emailSender = emailSender;
             this.consentRepository = consentRepository;            
             this.removeProviderService = removeProviderService;
-             
+            this.configuration = configuration;
+
         }
         public async Task<List<ServiceDto>> GetPICheckList()
         {
@@ -105,8 +109,8 @@ namespace DVSAdmin.BusinessLogic.Services
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckFailed)
                     {
-                        await emailSender.SendApplicationRejectedToDIP(service.Provider.PrimaryContactFullName, service.Provider.PrimaryContactEmail);
-                        await emailSender.SendApplicationRejectedToDIP(service.Provider.SecondaryContactFullName, service.Provider.SecondaryContactEmail);
+                        await emailSender.SendApplicationRejectedToDIP(service.ServiceName, service.Provider.PrimaryContactEmail);
+                        await emailSender.SendApplicationRejectedToDIP(service.ServiceName, service.Provider.SecondaryContactEmail);
                         await emailSender.SendApplicationRejectedConfirmationToDSIT(service.Provider.RegisteredName, service.ServiceName);
                     }
                     else if (publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed)
@@ -115,7 +119,7 @@ namespace DVSAdmin.BusinessLogic.Services
 
                         if (genericResponse.Success)
                         {
-                            await emailSender.SendApplicationApprovedToDSIT(service.Provider.RegisteredName, service.ServiceName);
+                            await emailSender.SendApplicationApprovedToDSIT(service.ServiceName, service.Provider.RegisteredName);
 
                             genericResponse = await UpdateServiceStatus(service.Id, service.ServiceName, service.Provider.Id, loggedInUserEmail, service.CabUser.CabEmail);
                         }
@@ -144,9 +148,10 @@ namespace DVSAdmin.BusinessLogic.Services
 
                 await publicInterestCheckRepository.SavePublishRegisterLog(registerPublishLog, loggedInUserEmail);
 
+                string serviceLink = configuration["DvsRegisterLink"] + "register/provider-details?providerId=" + providerProfileId;
 
-                await emailSender.SendServicePublishedToDIP(providerProfile.PrimaryContactFullName, serviceName, providerProfile.RegisteredName, providerProfile.PrimaryContactEmail);
-                await emailSender.SendServicePublishedToDIP(providerProfile.SecondaryContactFullName, serviceName, providerProfile.RegisteredName, providerProfile.SecondaryContactEmail);
+                await emailSender.SendServicePublishedToDIP(serviceName, serviceLink, providerProfile.PrimaryContactEmail);
+                await emailSender.SendServicePublishedToDIP(serviceName, serviceLink, providerProfile.SecondaryContactEmail);
                 await emailSender.SendServicePublishedToDSIT(providerProfile.RegisteredName, serviceName);
                 await emailSender.SendServicePublishedToCAB(cabEmail, serviceName, providerProfile.RegisteredName, cabEmail);
 
