@@ -53,13 +53,13 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendNotificationToOfDiaCommonMailBox(template, personalisation);
         }
 
-        public async Task<bool> SendApplicationRejectedToDIP(string recipientName, string emailAddress)
+        public async Task<bool> SendApplicationRejectedToDIP(string serviceName, string emailAddress)
         {
             var template = govUkNotifyConfig.PICheckApplicationRejectedDIPTemplate;
 
             var personalisation = new Dictionary<string, dynamic>
             {
-                { template.RecipientName,  recipientName}
+                { template.ServiceName,  serviceName}
             };
             return await SendNotification(emailAddress, template, personalisation);
         }
@@ -76,28 +76,27 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendNotificationToOfDiaCommonMailBox(template, personalisation);
         }
 
-        public async Task<bool> SendApplicationApprovedToDSIT(string companyName, string serviceName)
+        public async Task<bool> SendApplicationApprovedToDSIT(string serviceName, string providerName)
         {
             var template = govUkNotifyConfig.PICheckApplicationApprovedDISTTemplate;
 
             var personalisation = new Dictionary<string, dynamic>
             {
-                { template.CompanyName,  companyName},
-                { template.ServiceName,  serviceName}
+                { template.ServiceName,  serviceName},
+                { template.ProviderName,  providerName},
             };
             return await SendNotificationToOfDiaCommonMailBox(template, personalisation);
         }
 
         #endregion
 
-        public async Task<bool> SendServicePublishedToDIP(string recipientName, string serviceName, string companyName, string emailAddress)
+        public async Task<bool> SendServicePublishedToDIP(string serviceName, string serviceLink, string emailAddress)
         {
             var template = govUkNotifyConfig.ServicePublishedDIPTemplate;
             var personalisation = new Dictionary<string, dynamic>
             {
                 { template.ServiceName,  serviceName},
-                { template.RecipientName,  recipientName},
-                { template.CompanyName,  companyName}
+                { template.ServiceLink,  serviceLink}
              };
             return await SendNotification(emailAddress, template, personalisation);
         }
