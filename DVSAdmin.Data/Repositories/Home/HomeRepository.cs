@@ -4,6 +4,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using static DVSAdmin.Data.Repositories.CabTransferRepository;
 using static QRCoder.PayloadGenerator;
 namespace DVSAdmin.Data.Repositories
@@ -170,6 +171,70 @@ namespace DVSAdmin.Data.Repositories
                 };
             }
         }
+
+        public async Task<Dictionary<string, int>> GetPendingCounts()
+        {
+            var latestServices = await _context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.CertificateReview)
+                .Include(s => s.PublicInterestCheck)
+                .GroupBy(s => s.ServiceKey)
+                .Select(g => g.OrderByDescending(s => s.ServiceVersion).First())
+                .ToListAsync();
+
+            int certificateReviewCount = 0;
+            int primaryCount = 0;
+            int secondaryCount = 0;
+            int updateOrRemovalCount = 0;
+
+            foreach (var s in latestServices)
+            {
+                bool notRemovedOrDraft = s.ServiceStatus != ServiceStatusEnum.Removed &&
+                                         s.ServiceStatus != ServiceStatusEnum.SavedAsDraft;
+
+                if (((s.ServiceStatus == ServiceStatusEnum.Submitted || s.ServiceStatus == ServiceStatusEnum.Resubmitted) &&
+                      notRemovedOrDraft &&
+                      s.Id != s?.CertificateReview?.ServiceId) ||
+                    (s.CertificateReview != null &&
+                     (s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview ||
+                      s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)))
+                {
+                    certificateReviewCount++;
+                }
+
+                if (((s.ServiceStatus == ServiceStatusEnum.Received && notRemovedOrDraft &&
+                      s.Id != s?.PublicInterestCheck?.ServiceId) ||
+                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview ||
+                      s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)))
+                {
+                    primaryCount++;
+                }
+
+                if (notRemovedOrDraft &&
+                    s.PublicInterestCheck != null &&
+                    (s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
+                     s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed))
+                {
+                    secondaryCount++;
+                }
+
+                if (s.ServiceStatus == ServiceStatusEnum.UpdatesRequested ||
+                    s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
+                    s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
+                {
+                    updateOrRemovalCount++;
+                }
+            }
+
+            return new Dictionary<string, int>
+            {
+                ["CertificateReview"] = certificateReviewCount,
+                ["Primary"] = primaryCount,
+                ["Secondary"] = secondaryCount,
+                ["UpdateOrRemoval"] = updateOrRemovalCount
+            };
+        }
+
 
         public async Task<User> GetUserByEmail(string userEmail)
         {

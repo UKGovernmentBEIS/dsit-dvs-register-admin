@@ -1,4 +1,4 @@
-@using DVSAdmin.Models.Shared
+@using DVSAdmin.Models.Home
 @model IEnumerable<DashboardSummaryCardViewModel>
 
 <div class="dashboard-summary" role="listbox" aria-label="Dashboard summary">
@@ -7,11 +7,10 @@
     }
     @foreach (var card in Model)
     {
-        var isSelected = (index == 0) || card.Emphasised; // first one by default
-        <a  class="dashboard-summary__card @(isSelected ? "dashboard-summary__card--emphasised" : "")"
-            href="#"
+        <a  class="dashboard-summary__card @(card.Emphasised ? "dashboard-summary__card--emphasised" : "")"
+            href= "@Url.Action(card.Action)"
             role="option"
-            aria-selected="@(isSelected ? "true" : "false")"
+            aria-selected="@(card.Emphasised ? "true" : "false")"
             data-card>
             <span class="dashboard-summary__count">@card.Count</span>
             <span class="dashboard-summary__label govuk-!-font-weight-bold">@card.Label</span>

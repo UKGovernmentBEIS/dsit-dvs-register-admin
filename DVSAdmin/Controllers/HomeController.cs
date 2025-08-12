@@ -39,10 +39,16 @@ namespace DVSAdmin.Controllers
             }
 
             var results = await homeService.GetServices(pageNumber, CurrentSort, CurrentSortAction, "cert review");
+            var PendingCounts = await homeService.GetPendingCounts();
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
-            OpenTaskCount openTaskCount = new();
-            //Fetch pending count from db                
+            OpenTaskCount openTaskCount = new OpenTaskCount
+            {
+                PendingCertificateReviews = PendingCounts["CertificateReview"],
+                PendingPrimaryChecks = PendingCounts["Primary"],
+                PendingSecondaryChecks = PendingCounts["Secondary"],
+                PendingUpdateAndRemovalRequests = PendingCounts["UpdateOrRemoval"]
+            };               
                     
             PendingListViewModel pendingListViewModel = new PendingListViewModel
             {
@@ -77,10 +83,16 @@ namespace DVSAdmin.Controllers
             }
 
             var results = await homeService.GetServices(pageNumber, CurrentSort, CurrentSortAction, "primary check");
+            var PendingCounts = await homeService.GetPendingCounts();
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
-            OpenTaskCount openTaskCount = new();
-            //Fetch pending count from db                
+            OpenTaskCount openTaskCount = new OpenTaskCount
+            {
+                PendingCertificateReviews = PendingCounts["CertificateReview"],
+                PendingPrimaryChecks = PendingCounts["Primary"],
+                PendingSecondaryChecks = PendingCounts["Secondary"],
+                PendingUpdateAndRemovalRequests = PendingCounts["UpdateOrRemoval"]
+            };
 
             PendingListViewModel pendingListViewModel = new PendingListViewModel
             {
@@ -116,10 +128,16 @@ namespace DVSAdmin.Controllers
 
             var results = await homeService.GetServices(pageNumber, CurrentSort, CurrentSortAction, "secondary check");
             var user = await homeService.GetUserByEmail(UserEmail);
+            var PendingCounts = await homeService.GetPendingCounts();
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
-            OpenTaskCount openTaskCount = new();
-            //Fetch pending count from db                
+            OpenTaskCount openTaskCount = new OpenTaskCount
+            {
+                PendingCertificateReviews = PendingCounts["CertificateReview"],
+                PendingPrimaryChecks = PendingCounts["Primary"],
+                PendingSecondaryChecks = PendingCounts["Secondary"],
+                PendingUpdateAndRemovalRequests = PendingCounts["UpdateOrRemoval"]
+            };
 
             PendingListViewModel pendingListViewModel = new PendingListViewModel
             {
@@ -154,10 +172,16 @@ namespace DVSAdmin.Controllers
             }
 
             var results = await homeService.GetServices(pageNumber, CurrentSort, CurrentSortAction, "update or removal");
+            var PendingCounts = await homeService.GetPendingCounts();
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
-            OpenTaskCount openTaskCount = new();
-            //Fetch pending count from db                
+            OpenTaskCount openTaskCount = new OpenTaskCount
+            {
+                PendingCertificateReviews = PendingCounts["CertificateReview"],
+                PendingPrimaryChecks = PendingCounts["Primary"],
+                PendingSecondaryChecks = PendingCounts["Secondary"],
+                PendingUpdateAndRemovalRequests = PendingCounts["UpdateOrRemoval"]
+            };
 
             PendingListViewModel pendingListViewModel = new PendingListViewModel
             {

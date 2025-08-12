@@ -1,6 +1,8 @@
-﻿@model DVSAdmin.Models.Home.PendingListViewModel
+﻿@using DVSAdmin.Models.Home
+@model DVSAdmin.Models.Home.PendingListViewModel
 @{
     ViewData["Title"] = "PendingSecondaryChecks";
+    ViewData["ActiveNav"] = "OpenTasks";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -13,8 +15,37 @@
                     Conduct a secondary check on the company information of a service providers. This is one of the final checks before publishing the service to the register.
                 </p>
             </div>
-            <div class="govuk-grid-column-full">                
-                @await Html.PartialAsync("~/Views/Home/PartialViews/_PendingCountView.cshtml", Model.OpenTaskCount)
+            <div class="govuk-grid-column-full">      
+                @await Html.PartialAsync(
+                "~/Views/Home/PartialViews/_DashboardSummaryCards.cshtml",
+                                new DashboardSummaryCardViewModel[]
+                                {
+                                new DashboardSummaryCardViewModel
+                                {
+                                Label = "Certification reviews pending",
+                                Count = Model.OpenTaskCount.PendingCertificateReviews,
+                                Action = "PendingCertificateReviews"
+                                },
+                                new DashboardSummaryCardViewModel
+                                {
+                                Label = "Primary checks pending",
+                                Count = Model.OpenTaskCount.PendingPrimaryChecks,
+                                Action = "PendingPrimaryChecks"                                
+                                },
+                                new DashboardSummaryCardViewModel
+                                {
+                                Label = "Secondary checks pending",
+                                Count = Model.OpenTaskCount.PendingSecondaryChecks,
+                                Action = "PendingSecondaryChecks",
+                                Emphasised = true
+                                },
+                                new DashboardSummaryCardViewModel
+                                {
+                                Label = "Update and removal requests pending",
+                                Count = Model.OpenTaskCount.PendingUpdateAndRemovalRequests,
+                                Action = "PendingUpdateOrRemoval"
+                                }
+                                })
                 <div class="govuk-form-group" style="border: 1px solid #b1b4b6; padding: 20px; padding-bottom: 0px; margin-top: 20px;">
                     <table class="govuk-table govuk-table--small-text-until-tablet">
                         <caption class="govuk-table__caption govuk-table__caption--m govuk-!-margin-bottom-5">

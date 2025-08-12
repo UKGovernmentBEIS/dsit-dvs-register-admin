@@ -31,6 +31,11 @@ namespace DVSAdmin.BusinessLogic.Services
                 TotalCount = paginatedServices.TotalCount
             };
         }
+
+        public async Task<Dictionary<string, int>> GetPendingCounts()
+        {
+            return await homeRepository.GetPendingCounts();
+        }
         public Task<UserDto> GetUserByEmail(string userEmail)
         {
             return homeRepository.GetUserByEmail(userEmail)
