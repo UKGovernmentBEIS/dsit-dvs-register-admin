@@ -94,14 +94,18 @@ namespace DVSAdmin.Data.Repositories
             return await context.Service
             .Include(s => s.Provider)
             .Include(s => s.TrustFrameworkVersion)
+            .Include(s => s.UnderPinningService).ThenInclude(s=>s.Provider)
+            .Include(s => s.UnderPinningService).ThenInclude(s => s.CabUser).ThenInclude(s=>s.Cab)
+            .Include(s => s.ManualUnderPinningService)
             .Include(s => s.CabUser).ThenInclude(s => s.Cab)
-            .Include(s => s.PublicInterestCheck)     
+            .Include(s => s.PublicInterestCheck)           
             .Include(s => s.ServiceRoleMapping).ThenInclude(s=>s.Role)
-             .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s=>s.SupplementaryScheme)
+            .Include(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
+            .Include(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel)
+            .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s=>s.SupplementaryScheme)
             .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s=>s.SchemeGPG44Mapping).ThenInclude(s=>s.QualityLevel)
             .Include(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG45Mapping).ThenInclude(s => s.IdentityProfile)
-            .Where(s => s.Id == serviceId && s.ServiceStatus == ServiceStatusEnum.Received)
-            .Include(s => s.CabUser).ThenInclude(s => s.Cab).FirstOrDefaultAsync() ?? new();
+            .Where(s => s.Id == serviceId && s.ServiceStatus == ServiceStatusEnum.Received).FirstOrDefaultAsync();
 
 
         }

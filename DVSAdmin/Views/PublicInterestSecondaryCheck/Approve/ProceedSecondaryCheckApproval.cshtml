@@ -12,8 +12,8 @@
     @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
            
-            <div class="govuk-!-width-two-thirds">
 
                 <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
 
@@ -49,7 +49,7 @@
                 </dl>
 
       
-            </div>
+
 
             <div class="govuk-!-width-two-thirds">
                     <h2 class="govuk-heading-m">What happens next</h2>
@@ -111,22 +111,16 @@
                 </div>
             
             <div class="govuk-!-width-two-thirds">
-                    @using (Html.BeginForm("ProceedSecondaryCheckApproval", "PublicInterestSecondaryCheck", FormMethod.Post))
-                    {
-                        <div class="govuk-button-group">
 
-                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview"
-                                    value="approve">
-                                Proceed with approval
-                            </button>
-                            <button type="submit" class="govuk-button govuk-button--secondary"
-                                    data-module="govuk-button" name="saveReview" value="cancel">
-                                Cancel and back
-                            </button>
-                        </div>
-                    }
-                    </div>                 
-              
+                <a href="@Url.Action("PublishService","PublicInterestSecondaryCheck")" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                    Proceed with approval
+                </a>
+
+                <a href="@Url.Action("SecondaryCheckReview","PublicInterestSecondaryCheck")" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    Cancel and back
+                </a>
+            </div>                 
+            </div>  
             
      </div>
     
