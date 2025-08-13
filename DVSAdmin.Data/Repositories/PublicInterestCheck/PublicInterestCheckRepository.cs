@@ -95,7 +95,7 @@ namespace DVSAdmin.Data.Repositories
             .Include(s => s.TrustFrameworkVersion)
             .Include(s => s.UnderPinningService).ThenInclude(s=>s.Provider)
             .Include(s => s.UnderPinningService).ThenInclude(s => s.CabUser).ThenInclude(s=>s.Cab)
-            .Include(s => s.ManualUnderPinningService)
+            .Include(s => s.ManualUnderPinningService).ThenInclude(s => s.Cab)
             .Include(s => s.CabUser).ThenInclude(s => s.Cab)
             .Include(s => s.PublicInterestCheck)           
             .Include(s => s.ServiceRoleMapping).ThenInclude(s=>s.Role)
