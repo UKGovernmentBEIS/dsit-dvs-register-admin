@@ -403,12 +403,8 @@ namespace DVSAdmin.Controllers
             profileSummaryViewModel.ProviderTelephoneNumber = providerDto.ProviderTelephoneNumber;
             profileSummaryViewModel.ProviderWebsiteAddress = providerDto.ProviderWebsiteAddress;
             profileSummaryViewModel.ProviderProfileId = providerDto.Id;
-            profileSummaryViewModel.IsEditable =
-                (providerDto.ProviderStatus == ProviderStatusEnum.ReadyToPublish ||
-                 providerDto.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext ||
-                (providerDto.ProviderStatus == ProviderStatusEnum.Published &&
-                  !providerDto.Services.Any(s =>
-                      s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign)));
+            profileSummaryViewModel.IsEditable = providerDto.ProviderStatus == ProviderStatusEnum.Published &&
+                  !providerDto.Services.Any(s =>s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign);
 
             return profileSummaryViewModel;
         }

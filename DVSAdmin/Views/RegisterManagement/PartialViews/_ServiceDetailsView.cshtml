@@ -7,8 +7,7 @@
 @model ServiceDto
 
 @{
-    bool isEditable = !Convert.ToBoolean(ViewBag.IsPrevious) && 
-    (Model.ServiceStatus == ServiceStatusEnum.ReadyToPublish || Model.ServiceStatus == ServiceStatusEnum.Published);
+    bool isEditable = !Convert.ToBoolean(ViewBag.IsPrevious) &&  Model.ServiceStatus == ServiceStatusEnum.Published;
     bool is0_4GammaVersion = Model?.TrustFrameworkVersion.Version == Constants.TFVersion0_4;
 }
 

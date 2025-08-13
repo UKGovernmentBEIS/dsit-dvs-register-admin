@@ -156,10 +156,10 @@ namespace DVSAdmin.UnitTests
             service2.CertificateReview = CreateCertificateReview(1, 2, 1, CertificateReviewEnum.Approved, "approved comment", "page 2 comment", "", "");
             serviceDtos.Add(service2);
 
-            var service3 = CreateService(1, "Test service 1", 1, ServiceStatusEnum.ReadyToPublish, true, true, true, 0);
-            service3.Id = 3;
-            service3.CertificateReview = CreateCertificateReview(1, 3, 1, CertificateReviewEnum.Approved, "approved comment", "page 2 comment", "", "");
-            serviceDtos.Add(service3);
+            //var service3 = CreateService(1, "Test service 1", 1, ServiceStatusEnum.ReadyToPublish, true, true, true, 0);
+            //service3.Id = 3;
+            //service3.CertificateReview = CreateCertificateReview(1, 3, 1, CertificateReviewEnum.Approved, "approved comment", "page 2 comment", "", "");
+            //serviceDtos.Add(service3);
 
             var service4 = CreateService(1, "Test service 1", 1, ServiceStatusEnum.Published, true, true, true, 0);
             service4.Id = 4;

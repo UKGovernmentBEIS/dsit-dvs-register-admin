@@ -17,13 +17,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             this.logger = logger;
         }
 
-        public async Task<List<Service>> GetServiceListByProvider(int providerId)
-        {
-            return await context.Service.Where(p => p.ProviderProfileId == providerId &&
-            (p.ServiceStatus == ServiceStatusEnum.ReadyToPublish || p.ServiceStatus == ServiceStatusEnum.Published))
-            .ToListAsync() ?? new List<Service>();
-        }
-
+      
         public async Task<List<ProviderProfile>> GetProviders()
         {
             var priorityOrder = Helper.priorityOrderProvider;
@@ -80,23 +74,7 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             return await context.Service.Where(s => s.Id == serviceId).FirstOrDefaultAsync() ?? new Service(); ;
 
         }
-        public async Task<ProviderProfile> GetProviderWithServiceDetails(int providerId)
-        {
-            return await context.ProviderProfile
-           .Include(p => p.Services).ThenInclude(s => s.TrustFrameworkVersion)
-            .Include(p => p.Services).ThenInclude(s => s.ManualUnderPinningService)
-             .Include(p => p.Services).ThenInclude(s => s.ManualUnderPinningService).ThenInclude(s=>s.Cab)
-            .Include(p => p.Services).ThenInclude(s => s.UnderPinningService).ThenInclude(s=>s.Provider)
-            .Include(p => p.Services).ThenInclude(s => s.UnderPinningService).ThenInclude(s => s.CabUser).ThenInclude(s=>s.Cab)
-           .Include(p => p.Services).ThenInclude(s => s.ServiceRoleMapping).ThenInclude(s => s.Role)
-           .Include(p => p.Services).ThenInclude(s => s.ServiceQualityLevelMapping).ThenInclude(s => s.QualityLevel)
-           .Include(p => p.Services).ThenInclude(s => s.ServiceIdentityProfileMapping).ThenInclude(s => s.IdentityProfile)
-           .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SupplementaryScheme)
-            .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG44Mapping).ThenInclude(x=>x.QualityLevel)
-            .Include(p => p.Services).ThenInclude(s => s.ServiceSupSchemeMapping).ThenInclude(s => s.SchemeGPG45Mapping).ThenInclude(x => x.IdentityProfile)
-           .Where(p => p.Id == providerId && (p.ProviderStatus == ProviderStatusEnum.Published ||
-           p.ProviderStatus == ProviderStatusEnum.ReadyToPublishNext || p.ProviderStatus == ProviderStatusEnum.ReadyToPublish)).FirstOrDefaultAsync() ?? new ProviderProfile();
-        }
+    
 
         public async Task<List<string>> GetCabEmailListForServices(List<int> serviceIds)
         {

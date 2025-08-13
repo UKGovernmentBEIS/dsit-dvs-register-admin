@@ -12,10 +12,6 @@ namespace DVSAdmin.Data.Repositories
         #endregion
 
 
-        #region closing the loop
-        public Task<GenericResponse> SaveConsentToken(ProceedPublishConsentToken consentToken, string loggedInUserEmail);
-        public Task<bool> RemoveConsentToken(string token, string tokenId,string loggedInUserEmail);
-        public Task<ProceedPublishConsentToken> GetConsentToken(string token, string tokenId);
-        #endregion
+      
     }
 }

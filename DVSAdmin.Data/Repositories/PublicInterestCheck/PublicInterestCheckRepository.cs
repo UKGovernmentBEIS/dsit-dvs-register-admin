@@ -29,8 +29,7 @@ namespace DVSAdmin.Data.Repositories
             return await context.Service
             .Include(s => s.Provider)           
             .Include(s => s.CabUser).ThenInclude(s => s.Cab)
-            .Include(s => s.PublicInterestCheck)
-            .Include(s => s.ProceedPublishConsentToken)
+            .Include(s => s.PublicInterestCheck)          
             .Include(s => s.ServiceRoleMapping)
             .Include(s => s.PublicInterestCheck).ThenInclude(p => p.PrimaryCheckUser)
             .Include(s => s.PublicInterestCheck).ThenInclude(p => p.SecondaryCheckUser)

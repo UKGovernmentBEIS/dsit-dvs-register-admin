@@ -160,38 +160,7 @@ namespace DVSAdmin.BusinessLogic.Services
             return genericResponse;
         }
 
-        //public async Task<GenericResponse> GenerateTokenAndSendEmail(ServiceDto service, string loggedInUserEmail, bool isResend)
-        //{
-        //    TokenDetails tokenDetails = jwtService.GenerateToken(string.Empty,service.ProviderProfileId,service.Id.ToString());
-        //    string consentLink = configuration["DvsRegisterLink"] + "consent/publish-service-give-consent?token=" + tokenDetails.Token;
-
-        //    //Insert token details to db for further reference
-        //    ProceedPublishConsentToken consentToken = new()
-        //    {
-        //        ServiceId = service.Id,
-        //        Token = tokenDetails.Token,
-        //        TokenId = tokenDetails.TokenId
-        //    };            
-        //    GenericResponse genericResponse = await consentRepository.SaveConsentToken(consentToken, loggedInUserEmail);
-
-        //    await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
-        //    service.Provider.PrimaryContactFullName, consentLink, service.Provider.PrimaryContactEmail);
-        //    await emailSender.SendConsentToPublishToDIP(service.Provider.RegisteredName, service.ServiceName,
-        //    service.Provider.SecondaryContactFullName, consentLink, service.Provider.SecondaryContactEmail);
-
-        //    if (isResend)
-        //    {
-        //        await emailSender.ConfirmationConsentResentToDSIT(service.Provider.RegisteredName, service.ServiceName);
-        //    }
-        //    return genericResponse;
-        //}
-
-        public async Task<ServiceDto> GetProviderAndCertificateDetailsByConsentToken(string token, string tokenId)
-        {
-            ProceedPublishConsentToken consentToken = await consentRepository.GetConsentToken(token, tokenId);
-            var serviceDto = await GetServiceDetailsWithMappings(consentToken.ServiceId);
-            return serviceDto;
-        }
+   
 
 
      
