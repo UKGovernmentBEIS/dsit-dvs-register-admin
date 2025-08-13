@@ -9,8 +9,8 @@ namespace DVSAdmin.BusinessLogic.Services
       
         public Task<List<ServiceDto>> GetPICheckList();
         public Task<ServiceDto> GetServiceDetails(int serviceId);       
-        public Task<ServiceDto> GetServiceDetailsWithMappings(int serviceId);    
-        public Task<ServiceDto> GetProviderAndCertificateDetailsByConsentToken(string token, string tokenId);
+        public Task<ServiceDto> GetServiceDetailsWithMappings(int serviceId);   
+     
         public Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheckDto publicInterestCheckDto, ReviewTypeEnum reviewType, string loggedInUserEmail);
         public Task<ServiceDto> GetServiceDetailsForPublishing(int serviceId);       
     }

@@ -49,7 +49,7 @@ namespace DVSAdmin.Data.Entities
         public CertificateReview CertificateReview { get; set; }
         public PublicInterestCheck PublicInterestCheck { get; set; }
         public ProceedApplicationConsentToken ProceedApplicationConsentToken { get; set; }
-        public ProceedPublishConsentToken ProceedPublishConsentToken { get;set; }
+      
         public string? RemovalReasonByCab { get; set; }
         public ServiceRemovalReasonEnum? ServiceRemovalReason { get; set; }
         public DateTime? RemovalRequestTime { get; set; }
@@ -58,7 +58,7 @@ namespace DVSAdmin.Data.Entities
         public TokenStatusEnum RemovalTokenStatus { get; set; }
         public TokenStatusEnum EditServiceTokenStatus { get; set; }
         public TokenStatusEnum OpeningLoopTokenStatus { get; set; }
-        public TokenStatusEnum ClosingLoopTokenStatus { get; set; }
+      
         public bool IsInRegister { get; set; }     
         public ICollection<CabTransferRequest>? CabTransferRequest { get; set; }
         [ForeignKey("TrustFrameworkVersion")]

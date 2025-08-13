@@ -17,7 +17,7 @@ namespace DVSAdmin.Models
             {
                 if (!services.All(s => s.ServiceStatus == ServiceStatusEnum.Removed))
                 {
-                    disctinctCabs = services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
+                    disctinctCabs = services.Where(s =>
                   s.ServiceStatus == ServiceStatusEnum.Published ||
                   s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
                   s.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign ||
