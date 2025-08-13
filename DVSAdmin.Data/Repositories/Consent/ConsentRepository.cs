@@ -81,64 +81,6 @@ namespace DVSAdmin.Data.Repositories
         #endregion
 
 
-        #region closing the loop
-
-        public async Task<GenericResponse> SaveConsentToken(ProceedPublishConsentToken consentToken, string loggedinUserEmail)
-        {
-            GenericResponse genericResponse = new GenericResponse();
-            using var transaction = context.Database.BeginTransaction();
-            try
-            {
-                var existingEntity = await context.ProceedPublishConsentToken.FirstOrDefaultAsync(e => e.ServiceId == consentToken.ServiceId);
-                var service = await context.Service.FirstOrDefaultAsync(s => s.Id == consentToken.ServiceId);               
-
-                if (existingEntity == null)
-                {
-                    service.ClosingLoopTokenStatus = TokenStatusEnum.Requested;
-                    consentToken.CreatedTime = DateTime.UtcNow;
-                    await context.ProceedPublishConsentToken.AddAsync(consentToken);                   
-                }
-                else
-                {
-                    service.ClosingLoopTokenStatus = TokenStatusEnum.RequestResent;
-                    existingEntity.Token = consentToken.Token;
-                    existingEntity.TokenId = consentToken.TokenId;
-                    existingEntity.ModifiedTime = DateTime.UtcNow;
-                }
-                await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.AddClosingLoopToken, loggedinUserEmail);
-                transaction.Commit();
-                genericResponse.Success = true;
-            }
-            catch (Exception ex)
-            {
-                genericResponse.EmailSent = false;
-                genericResponse.Success = false;
-                transaction.Rollback();
-                logger.LogError(ex.Message);
-            }
-            return genericResponse;
-        }
-
-        public async Task<ProceedPublishConsentToken> GetConsentToken(string token, string tokenId)
-        {
-            return await context.ProceedPublishConsentToken.FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId)??new ProceedPublishConsentToken();
-        }
-     
-        public async Task<bool> RemoveConsentToken(string token, string tokenId, string loggedInUserEmail)
-        {
-            var consent = await context.ProceedPublishConsentToken.Include(p => p.Service)
-           .FirstOrDefaultAsync(e => e.Token == token && e.TokenId == tokenId);
-            if (consent != null)
-            {
-                context.ProceedPublishConsentToken.Remove(consent);
-                await context.SaveChangesAsync(TeamEnum.Provider, EventTypeEnum.RemoveClosingLoopToken, loggedInUserEmail);
-                logger.LogInformation("Closing Loop : Token Removed for service {0}", consent.Service.ServiceName);
-                return true;                
-            }
-
-            return false;
-        }
-        #endregion
 
     }
 }

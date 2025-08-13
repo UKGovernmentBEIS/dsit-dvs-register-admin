@@ -16,7 +16,7 @@ namespace DVSAdmin.BusinessLogic
                 var priorityOrder = Helper.priorityOrderService;
 
                 ServiceStatusEnum highestPriorityStatus = services
-                   .Where(service => service.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
+                   .Where(service =>
                     service.ServiceStatus == ServiceStatusEnum.Published ||
                     service.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
                     service.ServiceStatus == ServiceStatusEnum.RemovedUnderReassign ||
@@ -31,10 +31,7 @@ namespace DVSAdmin.BusinessLogic
                 switch (highestPriorityStatus)
                 {
                     case ServiceStatusEnum.CabAwaitingRemovalConfirmation:
-                        return ProviderStatusEnum.CabAwaitingRemovalConfirmation;
-                    case ServiceStatusEnum.ReadyToPublish:
-                        bool hasPublishedServices = services.Any(service => service.ServiceStatus == ServiceStatusEnum.Published);
-                        return hasPublishedServices ? ProviderStatusEnum.ReadyToPublishNext : ProviderStatusEnum.ReadyToPublish;
+                        return ProviderStatusEnum.CabAwaitingRemovalConfirmation;                   
                     case ServiceStatusEnum.UpdatesRequested:
                         return ProviderStatusEnum.UpdatesRequested;
                     case ServiceStatusEnum.AwaitingRemovalConfirmation:
@@ -60,7 +57,7 @@ namespace DVSAdmin.BusinessLogic
             List<ServiceDto> filteredServices = [];
             if (services != null && services.Count > 0)
             {
-                filteredServices = services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
+                filteredServices = services.Where(s => 
                                     s.ServiceStatus == ServiceStatusEnum.Published ||
                                     s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
                                     s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
@@ -80,7 +77,7 @@ namespace DVSAdmin.BusinessLogic
             List<ServiceDto> filteredServicesByDate = [];
             if (services != null && services.Count > 0)
             {
-                filteredServices = services.Where(s => s.ServiceStatus == ServiceStatusEnum.ReadyToPublish ||
+                filteredServices = services.Where(s => 
                                     s.ServiceStatus == ServiceStatusEnum.Published ||
                                     s.ServiceStatus == ServiceStatusEnum.PublishedUnderReassign ||
                                     s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||

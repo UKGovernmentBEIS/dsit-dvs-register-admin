@@ -50,9 +50,7 @@ namespace DVSAdmin.BusinessLogic.Models
 
         [JsonIgnore]
         public ProceedApplicationConsentTokenDto ProceedApplicationConsentToken { get; set; }
-
-        [JsonIgnore]
-        public ProceedPublishConsentTokenDto ProceedPublishConsentToken { get; set; }       
+    
         public ServiceRemovalReasonEnum ServiceRemovalReason { get; set; }
         public bool HasPreviousPublishedVersion { get; set; }
         public DateTime? ResubmissionTime { get; set; }

@@ -52,18 +52,7 @@ namespace DVSAdmin.BusinessLogic.Services
             return providerDto;
         }
 
-        public async Task<ProviderProfileDto> GetProviderWithServiceDetails(int providerProfileId)
-        {
-            var provider = await regManagementRepository.GetProviderWithServiceDetails(providerProfileId);
-            ProviderProfileDto providerDto = automapper.Map<ProviderProfileDto>(provider);
-          
-            foreach (var service in providerDto.Services) 
-            {
-               var previousVersionList = providerDto.Services.Where(x => x.ServiceKey == service.ServiceKey && x.IsCurrent == false && x.ServiceStatus == ServiceStatusEnum.Published).ToList();
-               service.HasPreviousPublishedVersion = previousVersionList !=null && previousVersionList.Count > 0;
-            }
-            return providerDto;
-        }
+     
 
         public async Task<List<string>> GetCabEmailListForServices(List<int> serviceIds)
         {

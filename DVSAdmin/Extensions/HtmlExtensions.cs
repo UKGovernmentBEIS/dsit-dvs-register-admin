@@ -57,11 +57,8 @@ namespace DVSAdmin.Extensions
                     return "govuk-tag govuk-tag--grey";
 
 
-                case ApplicationReviewStatusEnum.InPrimaryReview: 
-                case ProviderStatusEnum.ReadyToPublish:
-                case ProviderStatusEnum.ReadyToPublishNext:
-                case ProviderStatusEnum.AwaitingRemovalConfirmation:
-                case ServiceStatusEnum.ReadyToPublish:
+                case ApplicationReviewStatusEnum.InPrimaryReview:                
+                case ProviderStatusEnum.AwaitingRemovalConfirmation:              
                 case ServiceStatusEnum.AwaitingRemovalConfirmation:
                 case CertificateReviewEnum.InReview:
                 case CertificateReviewEnum.AmendmentsRequired:
