@@ -8,35 +8,40 @@
 }
 <div class="govuk-grid-column-full">
     <table class="govuk-table">
-        <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Service provider</th>
-            <th scope="col" class="govuk-table__header">Service name</th>
-            <th scope="col" class="govuk-table__header">New application or reapplication</th>
-            <th scope="col" class="govuk-table__header">Submission date <br/>(GMT)</th>
-            <th scope="col" class="govuk-table__header">Review status</th>
-            <th scope="col" class="govuk-table__header">Time reviewed <br/>(GMT)</th>
-        </tr>
-        </thead>
         <tbody class="govuk-table__body">
-        <tr class="govuk-table__row">
-
-            <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
-            <td class="govuk-table__cell">@Model.ServiceName</td>          
-            <td class="govuk-table__cell">@Model.NewOrResubmission</td>
-            <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CreatedTime)</td>
-            @if (Model.CertificateReview !=null)
-            {
-                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateReview.CertificateReviewStatus)</td>
-                <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.CertificateReview.ModifiedDate, dateFormat)</td>
-            }
-            else
-            {
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Service name</th>
+                <td class="govuk-table__cell">@Model.ServiceName</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Service Provider</th>
+                <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
+                <td class="govuk-table__cell">@Model.NewOrResubmission</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Days left to complete review</th>
+                <td class="govuk-table__cell">@Model.DaysLeftToComplete days</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">New application or reapplication</th>
                 <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.ServiceStatus)</td>
-                <td class="govuk-table__cell"></td>
-            }
-
-        </tr>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Review status</th>
+                <td class="govuk-table__cell">
+                    @if (Model.CertificateReview != null)
+                    {
+                        @HtmlExtensions.ToStyledStrongTag(Model.CertificateReview.CertificateReviewStatus)
+                    }
+                    else
+                    {
+                        <span>No review available</span>
+                    }
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>

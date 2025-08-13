@@ -7,17 +7,17 @@
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
     ViewData["HidePublishStatus"] = true;// setting variable to hide status field in partial view
     var providerEmailsViewModel = new ProviderEmailsViewModel
-            {
-                Heading = "Provider contact information",
-                ProviderContact = Model?.CertificateValidation?.Service?.Provider
-            };
+    {
+        Heading = "Provider contact information",
+        ProviderContact = Model?.CertificateValidation?.Service?.Provider
+    };
 
     string refererUrl = Convert.ToString(ViewBag.RefererUrl);
-    
+
     var notificationBanner = new NotificationBannerViewModel
     {
         Title = "Important",
-                NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been provided as part of a reapplication, trust framework uplift or certification transfer from another CAB.",
+        NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been provided as part of a reapplication, trust framework uplift or certification transfer from another CAB.",
             HtmlContent = "<p class='govuk-body'><a href='/certificate-review/certificate-submission-details?serviceId=" + Model?.CertificateValidation?.Service?.PreviousVersionServiceId + "' class='govuk-link' rel='noreferrer noopener' target='_blank'>Access the original submission (opens in new tab)</a></p>"
      } }
     };
@@ -46,7 +46,7 @@
             <div class="govuk-grid-column-two-thirds">
 
                 <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
-                
+
                 @if (Model?.CertificateValidation?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)
                 {
                     <details class="govuk-details">
@@ -57,8 +57,7 @@
                         </summary>
                         <div class="govuk-details__text">
                             <p class="govuk-body">This submission has been rejected.</p>
-                            <p class="govuk-body">If you want to review other submissions, select the 'Go back to Completed' button.</p>
-                            <p class="govuk-body">If you reject this submission by mistake, select 'Restore this submission' button to move this record to the Certificate Submissions tab.</p>
+                            <p class="govuk-body">If you rejected this submission by mistake, select 'Restore this submission' button to move this record to the Certificate Submissions tab.</p>
                         </div>
                     </details>
                 }
@@ -72,7 +71,8 @@
                             </span>
                         </summary>
                         <div class="govuk-details__text">
-                            <p class="govuk-body">A resubmission request has been sent to the Conformity Assessment Body. The CAB will need to amend and resubmit the submission according to the review feedback from OfDIA. Select 'Go back to certificate review' to review other submissions.</p>
+                            <p class="govuk-body">A resubmission request has been sent to the Conformity Assessment Body (CAB). The CAB will need to amend and resubmit the submission according to the review feedback from OfDIA.</p>
+                            <p class="govuk-body">To review other submissions, select the 'Go back to certificate review' button.</p>
                         </div>
                     </details>
                 }
@@ -112,7 +112,7 @@
                         </span>
                     </p>
                     <a href="/certificate-review/download-certificate?key=@Model.CertificateValidation.Service.FileLink&filename=@Model.CertificateValidation.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
-                        Download certificate of conformity 
+                        Download certificate of conformity
                     </a>
                 </div>
 
@@ -127,13 +127,13 @@
                         if ((@Model.CertificateValidation.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
                         || (@Model.CertificateValidation.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
                         {
-                                @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.CertificateValidation.Service)                          
+                            @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.CertificateValidation.Service)
                         }
                     }
 
                     @if (Model?.CertificateValidation.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
-                    {                       
-                            @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.CertificateValidation.Service)                        
+                    {
+                        @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.CertificateValidation.Service)
                     }
 
 
@@ -184,7 +184,7 @@
                         <p class="govuk-body">
                             @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateReview?.Comments ?? string.Empty)
                         </p>
-                        
+
                         <a href="/certificate-review/certificate-review-list#archive" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
                             Go back to completed
                         </a>
@@ -200,72 +200,72 @@
 
 
                         @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",
-                                 new ReviewFiledsViewModel
-                                {
-                                CertificateValidation = Model.CertficateRejection.CertificateValidation,
-                                InformationMatched = Model.CertificateReview.InformationMatched,
-                                IsRejectFlow = true,
-                                TextForIncorrectField = "Incorrect"
-                                })
+                        new ReviewFiledsViewModel
+                        {
+                            CertificateValidation = Model.CertficateRejection.CertificateValidation,
+                            InformationMatched = Model.CertificateReview.InformationMatched,
+                            IsRejectFlow = true,
+                            TextForIncorrectField = "Incorrect"
+                        })
 
-                        <h3 class="govuk-heading-m">Comments</h3>
-                        <p class="govuk-body">
-                            @HtmlExtensions.ToStringWithLineBreaks(Model.CertificateValidation.CommentsForIncorrect)
-                        </p>
-                        <p class="govuk-body">
-                            @HtmlExtensions.ToStringWithLineBreaks(Model.CertificateReview.Comments)
-                        </p>
-                        <p class="govuk-body">
-                            @HtmlExtensions.ToStringWithLineBreaks(Model.CertficateRejection.Comments)
-                        </p>
+                <h3 class="govuk-heading-m">Comments</h3>
+                <p class="govuk-body">
+                    @HtmlExtensions.ToStringWithLineBreaks(Model.CertificateValidation.CommentsForIncorrect)
+                </p>
+                <p class="govuk-body">
+                    @HtmlExtensions.ToStringWithLineBreaks(Model.CertificateReview.Comments)
+                </p>
+                <p class="govuk-body">
+                    @HtmlExtensions.ToStringWithLineBreaks(Model.CertficateRejection.Comments)
+                </p>
 
-                        <hr class="govuk-section-break govuk-section-break--m">
+                <hr class="govuk-section-break govuk-section-break--m">
 
-                        <div class="govuk-warning-text">
-                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                            <strong class="govuk-warning-text__text">
-                                <span class="govuk-visually-hidden">Warning</span>
-                                If you select 'Restore this submission' the submission will be removed from completed and moved to the certificate submissions tab
-                            </strong>
-                        </div>
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-visually-hidden">Warning</span>
+                        If you select 'Restore this submission' the submission will be removed from completed and moved to the certificate submissions tab
+                    </strong>
+                </div>
 
-                        <div class="govuk-button-group">
-                            <a href="/certificate-review/restore-submission?reviewId=@Model.CertificateValidation.Service.CertificateReview.Id&serviceId=@Model.CertificateValidation.Service.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-                                Restore this submission
-                            </a>
-                            <a href="/certificate-review/certificate-review-list#archive" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
-                                Go back to completed
-                            </a>
-                        </div>
-                    }
+                <div class="govuk-button-group">
+                    <a href="/certificate-review/restore-submission?reviewId=@Model.CertificateValidation.Service.CertificateReview.Id&serviceId=@Model.CertificateValidation.Service.Id" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                        Restore this submission
+                    </a>
+                    <a href="/certificate-review/certificate-review-list#archive" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                        Go back to completed
+                    </a>
+                </div>
+                                }
 
                     else if (Model?.CertificateValidation?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
                     {
                         <h2 class="govuk-heading-l">Information that was sent to the CAB</h2>
 
                         @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",
-                                 new ReviewFiledsViewModel
-                                {
-                                    CertificateValidation = Model.CertficateRejection.CertificateValidation,
-                                    InformationMatched = Model.CertificateReview.InformationMatched,
-                                    IsRejectFlow = false,
-                                    TextForIncorrectField = "Amendments needed",
-                                    ReviewComments = Model.SendBackViewModel.Reason
-                                })
+                        new ReviewFiledsViewModel
+                        {
+                            CertificateValidation = Model.CertficateRejection.CertificateValidation,
+                            InformationMatched = Model.CertificateReview.InformationMatched,
+                            IsRejectFlow = false,
+                            TextForIncorrectField = "Amendments needed",
+                            ReviewComments = Model.SendBackViewModel.Reason
+                        })
 
-                        <div class="govuk-!-padding-top-5 govuk-!-padding-bottom-9">
-                            <h2 class="govuk-heading-l">Decision comments recorded by OfDIA</h2>
-                            <p class="govuk-body">
-                                @HtmlExtensions.ToStringWithLineBreaks(Model.CertificateReview.Comments)
-                            </p>
+                <div class="govuk-!-padding-top-5 govuk-!-padding-bottom-9">
+                    <h2 class="govuk-heading-l">Decision comments recorded by OfDIA</h2>
+                    <p class="govuk-body">
+                        @HtmlExtensions.ToStringWithLineBreaks(Model.CertificateReview.Comments)
+                    </p>
 
-                            <div class="govuk-button-group govuk-!-padding-top-5 govuk-!-padding-bottom-9">
-                                <a href="/certificate-review/certificate-review-list" class="govuk-button" role="button" draggable="false" data-module="govuk-button">
-                                    Go back to certificate review
-                                </a>
-                            </div>
-                        </div>
-                    }
+                    <div class="govuk-button-group govuk-!-padding-top-5 govuk-!-padding-bottom-9">
+                        <a href="/certificate-review/certificate-review-list" class="govuk-button" role="button" draggable="false" data-module="govuk-button">
+                            Go back to certificate review
+                        </a>
+                    </div>
+                </div>
+                                }
                 }
             </div>
         </div>
