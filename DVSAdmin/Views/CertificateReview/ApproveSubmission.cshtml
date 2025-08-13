@@ -10,46 +10,32 @@
     @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new { reviewId = Model.CertificateReview.CertificateReviewId }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-8">
-
-                <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
-
-                <p class="govuk-body">
-                    You are about to confirm that the following submission has passed certificate review and that the
-                    information provided matches the certificate.
-                </p>
-            </div>
+            <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
 
             <div class="govuk-grid-column-full">
-                <table class="govuk-table govuk-grid-column-full">
-                    <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Service provider</th>
-                        <th scope="col" class="govuk-table__header">Service name</th>
-                        <th scope="col" class="govuk-table__header">New application or reapplication</th>
-                        <th scope="col" class="govuk-table__header">Submission date <br/>(GMT)</th>
-                        <th scope="col" class="govuk-table__header">Review status</th>
-                        <th scope="col" class="govuk-table__header">Days left to complete checks</th>
-                    </tr>
-                    </thead>
+                <table class="govuk-table">
                     <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Service name</th>
+                            <td class="govuk-table__cell">Remote Verify</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Service Provider</th>
+                            <td class="govuk-table__cell">Northrow Limited</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
+                            <td class="govuk-table__cell">BSI</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Days left to complete review</th>
+                            <td class="govuk-table__cell">2 days</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">New application or reapplication</th>
+                            <td class="govuk-table__cell">Reapplication<a href="#" class="govuk-link"><br /> Access the previous submission (Opens in new tab)</a></td>
+                        </tr>
 
-                        <td class="govuk-table__cell">@Model.CertificateValidation.Service.Provider.RegisteredName</td>
-                        <td class="govuk-table__cell">@Model.CertificateValidation.Service.ServiceName</td>
-                        <td class="govuk-table__cell">@Model.CertificateValidation.Service.NewOrResubmission</td>
-                        <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateValidation.Service.CreatedTime)</td>
-                        @if (@Model.CertificateValidation.Service.CertificateReview == null)
-                        {
-                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.Service.ServiceStatus)</td>
-                        }
-                        else
-                        {
-                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.Service.CertificateReview.CertificateReviewStatus)</td>
-                        }
-                        <td class="govuk-table__cell">@Model.CertificateValidation.Service.DaysLeftToComplete days</td>
-
-                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -58,10 +44,10 @@
 
                 <h2 class="govuk-heading-l">What will happen once you approve</h2>
                 <p class="govuk-body govuk-!-padding-bottom-4">
-                    The Conformity Assessment Body (CAB) and OfDIA will receive a confirmation of this decision.
+                    We will email the CAB and other OFDIA users to inform them of this decision.
                 </p>
-                
-                
+
+
                 <h3 class="govuk-heading-m">Who will receive the decision notification</h3>
                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                 <dl class="govuk-summary-list">
@@ -76,9 +62,7 @@
                 </dl>
 
                 <p class="govuk-body govuk-!-padding-top-4 govuk-!-padding-bottom-4">
-                    The provider will also receive an email asking for agreement to proceed with their application to
-                    the register of digital identity and attribute services. If the provider agrees to proceed, OfDIA
-                    will receive an email notification. The application will progress to the public interest check.
+                    The application will progress to the public interest check.
                 </p>
 
                 <h3 class="govuk-heading-m govuk-!-padding-top-4">Who will receive the email requesting to proceed with the application</h3>
@@ -121,4 +105,6 @@
     </main>
 
 </div>
+
+
 
