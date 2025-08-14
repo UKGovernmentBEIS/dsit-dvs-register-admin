@@ -182,7 +182,12 @@ await Html.RenderPartialAsync("_CookieBanner");
         </div>
     </footer>
 
-    <script nonce="@Context.GetScriptNonce()"  src="~/js/site.js" asp-append-version="true"></script>
+    <environment include="Development">
+        <script nonce="@Context.GetScriptNonce()" src="~/js/site.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script nonce="@Context.GetScriptNonce()" src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
     <script nonce="@Context.GetScriptNonce()">document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
     <script nonce="@Context.GetScriptNonce()"  type="module" src="/js/govuk.js"></script>
     <script nonce="@Context.GetScriptNonce()"  type="module">
