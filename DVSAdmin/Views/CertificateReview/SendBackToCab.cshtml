@@ -10,12 +10,14 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new {reviewId = Model.CertificateReview.CertificateReviewId}, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new {reviewId = Model.Service.Id}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
 
         <div class="govuk-grid-row">
             @using (Html.BeginForm("ProceedReturn", "CertificateReview", FormMethod.Post))
             {
+                @Html.HiddenFor(m=>m.CertificateValid)
+                @Html.HiddenFor(m => m.InformationMatched)
                 <div class="govuk-grid-column-full govuk-!-padding-bottom-5">
 
                     @if (ViewData.ModelState.ErrorCount > 0)
@@ -26,31 +28,7 @@
                     <h1 class="govuk-heading-xl">Send back to the Conformity Assessment Body for resubmission</h1>
                     
                     <div class="govuk-grid-column-full">
-                        <table class="govuk-table">
-                            <tbody class="govuk-table__body">
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">Service name</th>
-                                    <td class="govuk-table__cell">Remote Verify</td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">Service Provider</th>
-                                    <td class="govuk-table__cell">Northrow Limited</td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
-                                    <td class="govuk-table__cell">BSI</td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">Days left to complete review</th>
-                                    <td class="govuk-table__cell">2 days</td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">New application or reapplication</th>
-                                    <td class="govuk-table__cell">Reapplication<a href="#" class="govuk-link"><br/> Access the previous submission (Opens in new tab)</a></td>
-                                </tr>
-
-                            </tbody>
-                        </table>
+                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithLink.cshtml", Model.Service)
                     </div>
                 </div>
                 <div class="govuk-grid-column-two-thirds">
@@ -60,21 +38,17 @@
                         </h2>
                         <hr class="govuk-section-break govuk-section-break--visible">
                         @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",
-                        new ReviewFiledsViewModel{CertificateValidation = Model.CertificateValidation,
-                        InformationMatched = Model.CertificateReview .InformationMatched,
-                        IsRejectFlow = false,
-                        TextForIncorrectField = "Amendments needed"})
+                        new ReviewViewModel
+                       {
+                        CertificateValid = Model.CertificateValid,
+                        InformationMatched = Model.InformationMatched,
+                        IsSendBack = true
+                        })
                     </div>
-                    <div class="govuk-body govuk-!-padding-bottom-3">
-                        <h2 class="govuk-heading-m">
-                            Comments
-                        </h2>
-                        <p>
-                            @Model.CommentFromReview
-                        </p>
-                    </div>
+                 
                     @if (Html.ViewData.ModelState.ContainsKey("Reason") && Html.ViewData.ModelState["Reason"].Errors.Count > 0)
                     {
+                        
                         <div class="govuk-form-group govuk-form-group--error">
                             <h2 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--l" for="reason">
@@ -145,7 +119,7 @@
                         <button type="submit" class="govuk-button" data-module="govuk-button" name="action" value="return">
                             Return to CAB
                         </button>
-                        <a href="/certificate-review/certificate-review?reviewId=@Model.CertificateReview.CertificateReviewId" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                        <a href="/certificate-review/certificate-review?serviceId=@Model.Service.Id" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
                             Cancel
                         </a>
                     </div>

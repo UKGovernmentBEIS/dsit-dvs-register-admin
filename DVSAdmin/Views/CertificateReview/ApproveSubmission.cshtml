@@ -1,4 +1,4 @@
-﻿@model CertificateApprovalViewModel
+﻿@model DVSAdmin.BusinessLogic.Models.ServiceDto
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @{
@@ -7,37 +7,18 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new { reviewId = Model.CertificateReview.CertificateReviewId }, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new  { serviceId = Model.Id }, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
+
+            <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
 
             <div class="govuk-grid-column-full">
-                <table class="govuk-table">
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">Service name</th>
-                            <td class="govuk-table__cell">Remote Verify</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">Service Provider</th>
-                            <td class="govuk-table__cell">Northrow Limited</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
-                            <td class="govuk-table__cell">BSI</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">Days left to complete review</th>
-                            <td class="govuk-table__cell">2 days</td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">New application or reapplication</th>
-                            <td class="govuk-table__cell">Reapplication<a href="#" class="govuk-link"><br /> Access the previous submission (Opens in new tab)</a></td>
-                        </tr>
 
-                    </tbody>
-                </table>
+                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithLink.cshtml", Model)
+
+                
             </div>
 
             <div class="govuk-grid-column-two-thirds">
@@ -56,7 +37,7 @@
                             Email address of CAB
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.CertificateValidation.Service.CabUser.CabEmail
+                            @Model.CabUser.CabEmail
                         </dd>
                     </div>
                 </dl>
@@ -73,7 +54,7 @@
                             Email address of service provider's primary contact
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.CertificateValidation.Service.Provider.PrimaryContactEmail
+                            @Model.Provider.PrimaryContactEmail
                         </dd>
                     </div>
 
@@ -82,7 +63,7 @@
                             Email address of service provider's secondary contact
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.CertificateValidation.Service.Provider.SecondaryContactEmail
+                            @Model.Provider.SecondaryContactEmail
                         </dd>
                     </div>
                 </dl>
@@ -94,13 +75,14 @@
                        data-module="govuk-button">
                         Proceed with approval
                     </a>
-                    <a href="/certificate-review/certificate-review" class="govuk-button govuk-button--secondary"
+                        <a href="/certificate-review/certificate-review?serviceId=@Model.Id" class="govuk-button govuk-button--secondary"
                        role="button" draggable="false" data-module="govuk-button">
                         Cancel
                     </a>
 
                 </div>
             </div>
+        </div>
         </div>
     </main>
 

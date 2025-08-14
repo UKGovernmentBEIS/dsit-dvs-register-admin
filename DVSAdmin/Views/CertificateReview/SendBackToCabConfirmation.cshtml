@@ -1,4 +1,4 @@
-﻿@model DVSAdmin.Models.CertificateValidationViewModel;
+﻿@model DVSAdmin.BusinessLogic.Models.ServiceDto;
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using DVSAdmin.Models.CertificateReview
@@ -13,7 +13,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full govuk-!-padding-bottom-5">
                 <h1 class="govuk-heading-xl">Resubmission request sent successfully</h1>
-                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithReviewStatus.cshtml", Model)
             </div>
             <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-!-padding-bottom-7">

@@ -1,4 +1,4 @@
-﻿@model CertificateReviewViewModel
+﻿@model DVSAdmin.Models.CertificateReview.ReviewViewModel
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using Newtonsoft.Json
@@ -11,26 +11,14 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateValidation", "CertificateReview", new { serviceId = Model.Service.Id }, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "CertificateReviews", "CertificateReview", null, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
 
         <div class="govuk-grid-row">
-            @if (Model?.Service?.IsResubmission == true)
-            {
-                var notificationBanner = new NotificationBannerViewModel
-                {
-                    Title = "Important",
-                    NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been provided as part of a reapplication, trust framework uplift or certification transfer from another CAB.",
-                        HtmlContent = "<p class='govuk-body'><a href='/certificate-review/certificate-submission-details?serviceId=" + Model?.Service?.PreviousVersionServiceId + "' class='govuk-link' rel='noreferrer noopener' target='_blank'>Access the original submission (opens in new tab)</a></p>"
-                        } }
-                };
-                @await Html.PartialAsync("~/Views/PartialViews/_NotificationBanner.cshtml", notificationBanner)
-
-            }
+            <div class="govuk-grid-column-full">
             @using (Html.BeginForm("SaveCertificateReview", "CertificateReview", FormMethod.Post))
-            {
-                @Html.HiddenFor(m => m.CertificateReviewId)
-
+            {              
+                @Html.HiddenFor(m=>m.ServiceId)
                 <div class="govuk-grid-column-full">
 
                     @if (ViewData.ModelState.ErrorCount > 0)
@@ -38,28 +26,57 @@
                         ViewData["Title"] = "Error: " + ViewData["Title"];
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
-                    <span class="govuk-caption-xl">Certificate validation and information check</span>
-                    <h1 class="govuk-heading-xl">Remote Verify</h1>
+                    <span class="govuk-caption-xl">Certificate validation and information check</span>   
+
+                    <h1 class="govuk-heading-xl">
+
+                        @Model?.Service?.ServiceName
+                        <span class="govuk-caption-l">@Model?.Service?.Provider.RegisteredName</span>
+                     
+                    </h1>
+                    
 
                 </div>
                 <div class="govuk-grid-column-full">
-                    <table class="govuk-table">
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
-                                <td class="govuk-table__cell">BSI</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Days left to complete review</th>
-                                <td class="govuk-table__cell">2 days</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">New application or reapplication</th>
-                                <td class="govuk-table__cell">Reapplication<a href="#" class="govuk-link"><br /> Access the previous submission (Opens in new tab)</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                        <dl class="govuk-summary-list">                            
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Conformity Assessment Body (CAB)
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Service.CabUser.Cab.CabName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Days left to complete review
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Service.DaysLeftToComplete
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    New application or reapplication
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Service.NewOrResubmission
+                                    @if (Model.Service.IsResubmission == true)
+                                    {
+                                        <a href="/certificate-review/certificate-submission-details?serviceId=@Model?.Service.PreviousVersionServiceId" class="govuk-link" target='_blank'>
+                                            <br /> Access the previous submission (Opens in new tab)
+                                        </a>
+                                    }
+                                </dd>
+                            </div>
+                        </dl>
+                    
                 </div>
+
+
+                 <div class="govuk-grid-column-full">
 
                 <h2 class="govuk-heading-l">How to complete the checks</h2>
                 <ol class="govuk-list govuk-list--number">
@@ -90,89 +107,71 @@
                 <a href="/certificate-review/download-certificate?key=@Model.Service.FileLink&filename=@Model.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
                     Download certificate of conformity
                 </a>
-                <div class="govuk-form-group">
-                    <fieldset class="govuk-fieldset">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                            <h1 class="govuk-fieldset__heading">
-                                Does the information provided on the certificate of conformity meet the certification
-                                scheme requirements?
-                            </h1>
-                        </legend>
-                        <div class="govuk-radios" data-module="govuk-radios">
-                            <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="whereDoYouLive" name="whereDoYouLive" type="radio" value="england">
-                                <label class="govuk-label govuk-radios__label" for="whereDoYouLive">
-                                    Yes, the certificate is valid
-                                </label>
-                            </div>
-                            <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="whereDoYouLive-2" name="whereDoYouLive" type="radio" value="scotland">
-                                <label class="govuk-label govuk-radios__label" for="whereDoYouLive-2">
-                                    No, the certificate is not valid
-                                </label>
-                            </div>
-                    </fieldset>
-                </div>
+                   
+                @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+                   {
+                       PropertyName = "CertificateValid",
+                       Value = Model.CertificateValid,
+                       FieldSet = "Does the information provided on the certificate of conformity meet the certification scheme requirements?",
+                       HasError = Html.ViewData.ModelState.ContainsKey("CertificateValid") && Html.ViewData.ModelState["CertificateValid"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("CertificateValid") && Html.ViewData.ModelState["CertificateValid"].Errors.Count > 0 ?
+                       Html.ViewData.ModelState["CertificateValid"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Yes, the certificate is valid",
+                       Label2 = "No, the certificate is not valid"
+                   })
 
                 <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+                </div>
+
                 <div class="govuk-grid-column-full">
                     <h1 class="govuk-heading-xl">Information match</h1>
                     <h2 class="govuk-heading-l">Certification information</h2>
 
                     @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
-                </div>
 
+                     
+                        @if (@Model.Service.ServiceSupSchemeMapping != null && @Model.Service.ServiceSupSchemeMapping.Count > 0)
+                        {
+                            if ((@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
+                            || (@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
+                            {
+                               
+                                    @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.Service)
+                             
+                            }
+                        }
 
-                @if (@Model.Service.ServiceSupSchemeMapping != null && @Model.Service.ServiceSupSchemeMapping.Count > 0)
-                {
-                    if ((@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
-                    || (@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
-                    {
-                        <div class="govuk-grid-column-full">
-                            @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.Service)
+                        @if (Model.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
+                        {
+                           
+                                @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.Service)
+                            
+                        }
                         </div>
-                    }
-                }
-
-                @if (Model.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
-                {
-                    <div class="govuk-grid-column-full">
-                        @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.Service)
-                    </div>
-                }
+                        
+            
+               
 
                 <div class="govuk-grid-column-full">
-                    @Html.ValidationMessageFor(m => m.SubmitValidation, "", new { @class = "govuk-error-message", id = "submit-error" })
 
-
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset">
-                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                                <h1 class="govuk-fieldset__heading">
-                                    Does this information match the certificate of conformity?
-                                </h1>
-                            </legend>
-                            <div class="govuk-radios" data-module="govuk-radios">
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="whereDoYouLive" name="whereDoYouLive" type="radio" value="england">
-                                    <label class="govuk-label govuk-radios__label" for="whereDoYouLive">
-                                        Yes, the information matches
-                                    </label>
-                                </div>
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="whereDoYouLive-2" name="whereDoYouLive" type="radio" value="scotland">
-                                    <label class="govuk-label govuk-radios__label" for="whereDoYouLive-2">
-                                        No, the information does not
-                                    </label>
-                                </div>
-                        </fieldset>
-                    </div>
+                    @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+                   {
+                    PropertyName = "InformationMatched",
+                    Value = Model.InformationMatched,
+                    FieldSet = "Does this information match the certificate of conformity?",
+                    HasError = Html.ViewData.ModelState.ContainsKey("InformationMatched") && Html.ViewData.ModelState["InformationMatched"].Errors.Count > 0,
+                    ErrorMessage = Html.ViewData.ModelState.ContainsKey("InformationMatched") && Html.ViewData.ModelState["InformationMatched"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["InformationMatched"].Errors[0].ErrorMessage : string.Empty,
+                    Label1 = "Yes, the information matches",
+                    Label2 = "No, the information does not"
+                   })
+                  
 
                     @if (Model.Service.CertificateReview == null || (Model.Service.CertificateReview != null &&
                                     Model.Service.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))
                     {
                         <div class="govuk-button-group" id="submitvalidation">
-                            <button type="submit" class="govuk-button" data-module="govuk-button">
+                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="continue">
                                 Continue
                             </button>
                             <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="send-back">
@@ -192,7 +191,7 @@
                 </div>
             }
 
-
+         </div>
         </div>
     </main>
 </div>

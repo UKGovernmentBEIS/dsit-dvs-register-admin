@@ -28,6 +28,7 @@ namespace DVSAdmin.Data.Entities
         public bool? IsTARICApproved { get; set; }
         public bool? IsBannedPoliticalApproved { get; set; }
         public bool? IsProvidersWebpageApproved { get; set; }
+        public bool? PublicInterestChecksMet { get; set; }
         public PublicInterestCheckEnum PublicInterestCheckStatus { get; set; }
         public RejectionReasonEnum? RejectionReason { get; set; }
         public string? RejectionReasons { get; set; }

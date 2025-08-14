@@ -31,11 +31,34 @@ namespace DVSAdmin.BusinessLogic.Services
         }
            
 
-        public async Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto, string loggedInUserEmail)
+        public async Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail,List<CertificateReviewRejectionReasonDto> rejectionReasons = null!)
         {
-            CertificateReview certificateReview = new CertificateReview();
+            CertificateReview certificateReview = new();
             automapper.Map(cetificateReviewDto, certificateReview);
             GenericResponse genericResponse = await certificateReviewRepository.SaveCertificateReview(certificateReview, loggedInUserEmail);
+            if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Approved)
+            {
+
+                genericResponse = await GenerateTokenAndSendEmail(serviceDto, loggedInUserEmail, false);
+                if (genericResponse.Success)
+                {
+                    await emailSender.SendCertificateInfoApprovedToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, serviceDto.CabUser.CabEmail);
+                    await emailSender.SendCertificateInfoApprovedToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName);
+
+                }
+            }
+            else if(genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.Rejected)
+            {
+                string rejectReasons = string.Join("\r", rejectionReasons.Select(m => m.Reason));
+                await emailSender.SendCertificateInfoRejectedToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, rejectReasons, cetificateReviewDto.RejectionComments, serviceDto.CabUser.CabEmail);
+                await emailSender.SendCertificateInfoRejectedToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName, rejectReasons, certificateReview.RejectionComments);
+            }
+            if (genericResponse.Success && cetificateReviewDto.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
+            {
+                await emailSender.SendCertificateBackToCab(serviceDto.CabUser.CabEmail, serviceDto.Provider.RegisteredName, serviceDto.ServiceName, serviceDto.CabUser.CabEmail, certificateReview.Amendments);
+                await emailSender.SendCertificateBackDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName, certificateReview.Amendments);
+
+            }
             return genericResponse;
 
         }    

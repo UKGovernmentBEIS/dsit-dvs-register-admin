@@ -30,6 +30,7 @@ namespace DVSAdmin.BusinessLogic.Models
         public bool? IsAuthenticyVerifiedCorrect { get; set; }
         public string? Comments { get; set; }
         public string? Amendments { get; set; }
+        public bool? CertificateValid { get; set; }
         public bool? InformationMatched { get; set; }
         public string CommentsForIncorrect { get; set; }
         public string? RejectionComments { get; set; }      
