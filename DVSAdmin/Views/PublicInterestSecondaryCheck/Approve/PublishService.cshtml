@@ -1,0 +1,101 @@
+﻿@using DVSAdmin.BusinessLogic.Models;
+@using DVSAdmin.CommonUtility.Models;
+@using DVSAdmin.CommonUtility.Models.Enums;
+@model ServiceDto;
+@{
+    ViewData["Title"] = "You are publishing the following services on the register";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+
+<div class="govuk-width-container">
+    @Html.ActionLink("Back", "ProceedSecondaryCheckApproval", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
+
+    <main id="main-content" class="govuk-main-wrapper" role="main">
+        <div class="govuk-grid-row">
+
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">@ViewData["Title"] </h1>
+                <p class="govuk-body">
+                    Please review the information you are about to publish on the register of trusted digital identity and attribute service
+                    providers.
+                </p>
+
+                <h2 class="govuk-heading-m">Basic information</h2>
+                <dl class="govuk-summary-list govuk-!-margin-bottom-8">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Public contact email
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Provider.PublicContactEmail
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Telephone number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Provider.ProviderTelephoneNumber
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Website address
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Provider.ProviderWebsiteAddress
+                        </dd>
+                    </div>
+                </dl>
+
+
+                <h2 class="govuk-heading-l">Certification information</h2>
+                   @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", @Model)
+                  @if (@Model.ServiceSupSchemeMapping != null && @Model.ServiceSupSchemeMapping.Count > 0)
+                    {
+                    if ((Model.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
+                    || (@Model.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
+                        {
+                        @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", @Model)
+                        }
+                    }
+
+                   @if (@Model.ServiceType == ServiceTypeEnum.WhiteLabelled)
+                    {
+                    @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", @Model)
+                    }
+
+
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-visually-hidden">Warning</span>
+                        Once you publish this service provider s details, this action can't be
+                        undone.
+                    </strong>
+                </div>
+
+
+
+
+                @using (Html.BeginForm("SavePublishService", "PublicInterestSecondaryCheck", FormMethod.Post))
+                {
+                    <div class="govuk-button-group">
+
+                        <button type="submit" class="govuk-button" data-module="govuk-button" name="action" value="proceed">
+                            Proceed with publication
+                        </button>
+                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="action" value="cancel">
+                            Cancel
+                        </button>
+                    </div>
+                }
+
+
+                
+            </div>
+        </div>
+    </main>
+
+</div>

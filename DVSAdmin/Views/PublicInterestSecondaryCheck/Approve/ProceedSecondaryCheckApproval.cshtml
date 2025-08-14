@@ -13,57 +13,59 @@
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
+           
+
                 <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
+
                 <p class="govuk-body govuk-!-padding-bottom-4">
-                    You are about to confirm that the following application has passed all required checks:
+                    You are about to confirm that the following application has passed all required checks.
                 </p>
 
-                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Service name</dt>
+                        <dd class="govuk-summary-list__value">@Model.ServiceName</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Service provider</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.RegisteredName</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Conformity Assessment Body (CAB)</dt>
+                        <dd class="govuk-summary-list__value"> @Model.CabUser.Cab.CabName</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Days left to complete review</dt>
+                        <dd class="govuk-summary-list__value"> @Model.DaysLeftToCompletePICheck days</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">New application or reapplication</dt>
+                        <dd class="govuk-summary-list__value">  @Model.NewOrResubmission</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Review status</dt>
+                        <dd class="govuk-summary-list__value">@HtmlExtensions.ToStyledStrongTag(Model.PublicInterestCheck.PublicInterestCheckStatus)</dd>
+                    </div>                  
+                </dl>
 
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Service provider</th>
-                        <th scope="col" class="govuk-table__header">Service name</th>
-                        <th scope="col" class="govuk-table__header">Conformity <br/>Assessment <br/>Body</th>
-                        <th scope="col" class="govuk-table__header">Time submitted <br/>(GMT)</th>
-                        <th scope="col" class="govuk-table__header">Review status</th>
-                        <th scope="col" class="govuk-table__header">Days left to <br/>complete review</th>
-                    </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
-                        <td class="govuk-table__cell">@Model.ServiceName</td>
-                        <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
-                        <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.ModifiedTime)</td>
-                        <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.PublicInterestCheck.PublicInterestCheckStatus)</td>
-                        <td class="govuk-table__cell">@Model.DaysLeftToCompletePICheck days</td>
-                    </tr>
-                    </tbody>
-                </table>
+      
 
 
-                <div class="govuk-!-width-two-thirds">
-                    <h2 class="govuk-heading-l">What will happen once you approve</h2>
+            <div class="govuk-!-width-two-thirds">
+                    <h2 class="govuk-heading-m">What happens next</h2>
                     <p class="govuk-body">
-                        Once you approve the application, you are confirming that this application<br/>has passed all
-                        required checks. The provider will receive an email asking for<br/>their agreement to publish
-                        the service on the register.
+                        Once you approve this application, you are confirming that it has passed all
+                        the required checks.
                     </p>
-                    <h2 class="govuk-heading-l">Who will receive the application decision notification</h2>
-
+                    <p class="govuk-body">
+                        The service provider s information will be publicly available on the register of
+                        trusted digital identity and attribute service providers.
+                    </p>
+                    <h2 class="govuk-heading-m">Who will receive the confirmation of this decision</h2>
+                    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">
-                                <span class="govuk-visually-hidden">Email address</span>
-                            </th>
-                            <th scope="col" class="govuk-table__header">
-                                <span class="govuk-visually-hidden">Value</span>
-                            </th>
-                        </tr>
+                      
                         </thead>
                         <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
@@ -84,186 +86,43 @@
                         </tr>
                         </tbody>
                     </table>
+            </div>
 
-                    <h2 class="govuk-heading-l">Service information that will be sent to provider to agree upon approval</h2>
-
-                    <span
-                        class="govuk-heading-m govuk-!-margin-bottom-0 govuk-!-padding-bottom-0">Basic information</span>
+            <div class="govuk-!-width-two-thirds">
+                <h2 class="govuk-heading-m">Who will also receive an email notification</h2>
+                <p class="govuk-body">The CAB and OfDIA will also receive an email notification.</p>
+                    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header govuk-!-padding-bottom-0">
-                                <span class="govuk-visually-hidden">Basic information</span>
-                            </th>
-                            <th scope="col" class="govuk-table__header govuk-!-padding-bottom-0">
-                                <span class="govuk-visually-hidden">Value</span>
-                            </th>
-                        </tr>
                         </thead>
                         <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">Public contact email</th>
-                            <td class="govuk-table__cell">
-                                @Html.DisplayFor(model => model.Provider.PublicContactEmail)
-                            </td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">Telephone number</th>
-                            <td class="govuk-table__cell">
-                                @Html.DisplayFor(model => model.Provider.ProviderTelephoneNumber)
-                            </td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">Website address</th>
-                            <td class="govuk-table__cell">
-                                @Model.Provider.ProviderWebsiteAddress
-                            </td>
-                        </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">
+                                    Email address of CAB
+                                </th>
+                                <td class="govuk-table__cell">
+                                    @Model.CabUser.CabEmail
+                                </td>
+                            </tr>
+                           
                         </tbody>
                     </table>
 
-                    <h2 class="govuk-heading-l">Service details: @Model.ServiceName</h2>
-
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Registered name</dt>
-                            <dd class="govuk-summary-list__value">@Model.Provider.RegisteredName</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Trading names</dt>
-                            <dd class="govuk-summary-list__value">@Html.DisplayFor(model => model.Provider.TradingName)</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Company address details</dt>
-                            <dd class="govuk-summary-list__value">@HtmlExtensions.ToStringWithLineBreaks(Model.CompanyAddress)</dd>
-                        </div>
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Trust framework version</dt>
-                            <dd class="govuk-summary-list__value">@Model.TrustFrameworkVersion.TrustFrameworkName</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Name of service</dt>
-                            <dd class="govuk-summary-list__value">@Model.ServiceName</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">URL link to the service</dt>
-                            <dd class="govuk-summary-list__value">@Model.WebSiteAddress</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Roles certified against</dt>
-                            <dd class="govuk-summary-list__value">
-                                @foreach (var item in Model.ServiceRoleMapping)
-                                {
-                                    <div>@item.Role.RoleName</div>
-                                }
-                            </dd>
-                        </div>
-
-                        @if (Model.TrustFrameworkVersion.Version == Constants.TFVersion0_4)
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Underpinning or white-labelled service
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @ViewModelHelper.GetServiceType(Model.ServiceType)
-                                </dd>
-                            </div>
-                        }
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">GPG45 identity profiles</dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (Model.ServiceIdentityProfileMapping != null && Model.ServiceIdentityProfileMapping.Any())
-                                {
-                                    @foreach (var item in Model.ServiceIdentityProfileMapping)
-                                    {
-                                        <div>@item.IdentityProfile.IdentityProfileName</div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div>@Constants.NullFieldsDisplay</div>
-                                }
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                GPG 44 quality of authenticator
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (Model.ServiceQualityLevelMapping.Any(x => x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
-                                {
-                                    @foreach (var item in Model.ServiceQualityLevelMapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Authentication))
-                                    {
-                                        <div>@item.QualityLevel.Level</div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div>@Constants.NullFieldsDisplay</div>
-                                }
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                GPG 44 quality of protection
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (Model.ServiceQualityLevelMapping.Any(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
-                                {
-                                    @foreach (var item in Model.ServiceQualityLevelMapping.Where(x => x.QualityLevel.QualityType == QualityTypeEnum.Protection))
-                                    {
-                                        <div>@item.QualityLevel.Level</div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div>@Constants.NullFieldsDisplay</div>
-                                }
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Date of issue</dt>
-                            <dd class="govuk-summary-list__value"> @DateTimeExtensions.FormatDateTime(@Model.ConformityIssueDate, "dd MMMM yyyy")</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Date of expiry</dt>
-                            <dd class="govuk-summary-list__value"> @DateTimeExtensions.FormatDateTime(@Model.ConformityExpiryDate, "dd MMMM yyyy")</dd>
-                        </div>
-                    </dl>
-
-                    @if (@Model.ServiceSupSchemeMapping != null && @Model.ServiceSupSchemeMapping.Count > 0)
-                    {
-                        if ((@Model.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
-                            || (@Model.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
-                        {
-                            @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model)
-                        }
-                    }
-
-                    @if (Model.ServiceType == ServiceTypeEnum.WhiteLabelled)
-                    {
-                        @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model)
-                    }
-
-                    @using (Html.BeginForm("ProceedSecondaryCheckApproval", "PublicInterestSecondaryCheck", FormMethod.Post))
-                    {
-                        <div class="govuk-button-group">
-
-                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview"
-                                    value="approve">
-                                Proceed with approval
-                            </button>
-                            <button type="submit" class="govuk-button govuk-button--secondary"
-                                    data-module="govuk-button" name="saveReview" value="cancel">
-                                Cancel
-                            </button>
-                        </div>
-                    }
                 </div>
-            </div>
-        </div>
+            
+            <div class="govuk-!-width-two-thirds">
+
+                <a href="@Url.Action("PublishService","PublicInterestSecondaryCheck")" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                    Proceed with approval
+                </a>
+
+                <a href="@Url.Action("SecondaryCheckReview","PublicInterestSecondaryCheck")" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    Cancel and back
+                </a>
+            </div>                 
+            </div>  
+            
+     </div>
+    
     </main>
 </div>

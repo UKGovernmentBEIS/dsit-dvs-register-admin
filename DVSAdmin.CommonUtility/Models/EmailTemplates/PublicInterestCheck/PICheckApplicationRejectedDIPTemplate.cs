@@ -3,6 +3,6 @@
     public class PICheckApplicationRejectedDIPTemplate
     {
         public string Id { get; set; }
-        public string RecipientName { get; set; }       
+        public string ServiceName { get; set; }       
     }
 }

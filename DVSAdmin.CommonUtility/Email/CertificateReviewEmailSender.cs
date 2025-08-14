@@ -117,22 +117,17 @@ namespace DVSAdmin.CommonUtility.Email
 
 
         #region Opening the loop
-        public async Task<bool> SendProceedApplicationConsentToDIP(string companyName, string serviceName, string companyNumber, string companyAddress, string publicContactEmail,
-          string publicPhoneNumber, string consentLink, List<string> emailAddress)
+        public async Task<bool> SendProceedApplicationConsentToDIP(string serviceName, string primaryContact, string secondaryContact,
+            string consentLink, List<string> emailAddress)
         {
             var template = govUkNotifyConfig.ProceedApplicationConsentToDIPTemplate;
 
             var personalisation = new Dictionary<string, dynamic>
                 {
-                { template.ServiceName,  serviceName},
-                { template.CompanyName,  companyName},
-                { template.CompanyNumber,  companyNumber},
-                { template.CompanyAddress,  companyAddress},
-                { template.PublicContactEmail,  publicContactEmail},
-                { template.PublicPhoneNumber ,  publicPhoneNumber},
-                { template.ConsentLink ,  consentLink }
-
-
+                    { template.ServiceName,  serviceName},
+                    { template.PrimaryContact,  primaryContact},
+                    { template.SecondaryContact,  secondaryContact},                
+                    { template.ConsentLink,  consentLink }
                 };
 
             return await SendNotifications(emailAddress, template, personalisation);

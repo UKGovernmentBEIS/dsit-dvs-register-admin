@@ -11,9 +11,7 @@
     {
         Heading = "Provider contact information",
         ProviderContact = Model?.Provider
-    };
-    bool canResend = Model?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed
-    && Model?.ServiceStatus == ServiceStatusEnum.Received;
+    }; 
 }
 
 <div class="govuk-width-container">
@@ -52,18 +50,7 @@
                     </tbody>
                 </table>
 
-                @if (canResend)
-                {
-                    @using (Html.BeginForm("ResendClosingLinkEmail", "PublicInterestCheck", FormMethod.Post))
-                    {
-                        @Html.Hidden("serviceId", Model.Id)
-                        <div class="govuk-button-group govuk-!-margin-top-5 govuk-!-margin-bottom-5">
-                            <button type="submit" class="govuk-button" data-module="govuk-button">
-                                Resend request email
-                            </button>
-                        </div>
-                    }
-                }
+            
 
                 <h2 class="govuk-heading-l">Application details</h2>
                 <h3 class="govuk-heading-m">Provider contact details</h3>
