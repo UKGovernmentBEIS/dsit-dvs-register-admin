@@ -1,5 +1,4 @@
-﻿using Amazon.CognitoIdentityProvider.Model;
-using DVSAdmin.BusinessLogic.Models;
+﻿using DVSAdmin.BusinessLogic.Models;
 using DVSAdmin.BusinessLogic.Models.CertificateReview;
 using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;

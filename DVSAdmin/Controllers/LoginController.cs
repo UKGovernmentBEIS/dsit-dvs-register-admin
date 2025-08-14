@@ -212,7 +212,7 @@ namespace DVSAdmin.Controllers
                 {
                     HttpContext?.Session.Set("IdToken", mfaResponse.IdToken);
                     HttpContext?.Session.Set("AccessToken", mfaResponse.AccessToken);
-                    return RedirectToAction("LandingPage", "DigitalIdentity");
+                    return RedirectToAction("PendingCertificateReviews", "Home");
                 }
                 else
                 {

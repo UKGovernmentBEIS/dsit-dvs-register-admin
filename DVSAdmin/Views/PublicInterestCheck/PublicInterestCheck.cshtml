@@ -2,11 +2,21 @@
 @using DVSAdmin.CommonUtility.Models.Enums;
 @{
     ViewData["Title"] = "Public interest check";
+    ViewData["ActiveNav"] = "ReviewServices";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-back-link" })
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                @Html.ActionLink("Review and manage services", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-breadcrumbs__link" })
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                @Html.ActionLink("Public interest check", "PublicInterestCheck", "PublicInterestCheck", null, new { @class = "govuk-breadcrumbs__link" })
+            </li>
+        </ol>
+    </div>    
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">

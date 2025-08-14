@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile-sass": "dart-sass ./wwwroot/css/main.scss ./wwwroot/css/main.css",
-    "minify:js": "terser wwwroot/js/site.js -c -m -o wwwroot/js/site.min.js --source-map"
+    "compile-sass": "dart-sass ./wwwroot/css/main.scss ./wwwroot/css/main.css"
   },
   "author": "",
   "license": "ISC",
@@ -14,8 +13,5 @@
     "dart-sass": "^1.25.0",
     "govuk-frontend": "^5.7.1",
     "sass": "^1.77.3"
-  },
-  "devDependencies": {
-    "terser": "^5.43.1"
   }
 }
