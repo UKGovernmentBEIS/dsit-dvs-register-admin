@@ -14,36 +14,49 @@
                 <h1 class="govuk-heading-xl">
                     You have rejected this application
                 </h1>
-                <p class="govuk-body">
-                    You have chosen to reject the following application:
-                </p>
-                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
 
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Service provider</th>
-                            <th scope="col" class="govuk-table__header">Service name</th>
-                            <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
-                            <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
-                            <th scope="col" class="govuk-table__header">Review status</th>
-                            <th scope="col" class="govuk-table__header">Days left to complete review</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
-                            <td class="govuk-table__cell">@Model.ServiceName</td>
-                            <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
-                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.ModifiedTime)</td>
-                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(PublicInterestCheckEnum.PublicInterestCheckFailed)</td>
-                            <td class="govuk-table__cell">@Model.DaysLeftToCompletePICheck days</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="govuk-grid-column-full">
+                    <table class="govuk-table">
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Service name</th>
+                                <td class="govuk-table__cell">@Model.ServiceName</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Service Provider</th>
+                                <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
+                                <td class="govuk-table__cell">@Model.NewOrResubmission</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Days left to complete review</th>
+                                <td class="govuk-table__cell">@Model.DaysLeftToComplete days</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">New application or reapplication</th>
+                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.ServiceStatus)</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Review status</th>
+                                <td class="govuk-table__cell">
+                                    @if (Model.CertificateReview != null)
+                                    {
+                                        @HtmlExtensions.ToStyledStrongTag(Model.CertificateReview.CertificateReviewStatus)
+                                    }
+                                    else
+                                    {
+                                        <span>No review available</span>
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <p class="govuk-body">
-                    An email notification of this status update will be sent to the  Digital Identity Register Portal general email inbox within the next 20 minutes.
+                    We will send an email notification to the DI Register Notifications inbox, within the next 20 minutes.
                 </p>
 
                 @using (Html.BeginForm("PublicInterestCheck", "PublicInterestCheck", FormMethod.Get))

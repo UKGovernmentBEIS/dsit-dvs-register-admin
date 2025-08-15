@@ -2,7 +2,7 @@
 @using Newtonsoft.Json
 @using DVSAdmin.Extensions;
 @{
-    ViewData["Title"] = "You are about to confirm this application has failed the primary check";
+    ViewData["Title"] = "You are about to confirm this service has failed the primary public interest check";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -12,16 +12,31 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl">
-                    You are about to confirm that this application has failed the primary check
-                </h1>
+                    You are about to confirm this service has failed the primary public interest check</h1>
+                   
                 <p class="govuk-body">
-                     If you have made a mistake, you can go back to the application review screen to make changes.
+                     If you need to, you can go back to the application review screens to make changes by selecting the
+                     'Cancel and back' button.
                 </p>
 
-                <h2 class="govuk-heading-m">What will happen once you confirm that the application has failed the primary check</h2>
+                    <div class="govuk-form-group">
+                        <h1 class="govuk-label-wrapper">
+                            <label class="govuk-label govuk-label--l" for="more-detail">
+                                Comment (required)
+                            </label>
+                        </h1>
+                        <div id="more-detail-hint" class="govuk-hint">
+                            State the reasons that the primary interest checks have failed. This
+                            information will only be seen by other OFDIA users.
+                        </div>
+                        <textarea class="govuk-textarea" id="more-detail" name="moreDetail" rows="8" aria-describedby="more-detail-hint"></textarea>
+                    </div>
+
+                <h2 class="govuk-heading-m">What happens next</h2>
 
                 <p class="govuk-body">
-                    Once you confirm that the application has failed the primary check, an email notification of your decision will be sent to the Digital Identity Register Portal inbox. Another OfDIA user must then complete the secondary check.
+                    Once you select the 'Fail primary check' button, we will send an email to the DI Register Notifications inbox.
+                    Another OFDIA user must then conduct the secondary public interest check.
                 </p>
                 @using (Html.BeginForm("SavePrimaryCheckFailed", "PublicInterestPrimaryCheck", FormMethod.Post))
                 {
@@ -31,7 +46,7 @@
                             Fail primary check
                         </button>
                         <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
-                            Cancel
+                            Cancel and back 
                         </button>
                     </div>
                 }

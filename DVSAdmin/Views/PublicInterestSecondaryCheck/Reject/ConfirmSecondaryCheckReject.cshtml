@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "You are about to reject an application";
+    ViewData["Title"] = "You are about to reject the publc interest checks";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -10,17 +10,20 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl">
-                    You are about to reject an application
+                    You are about to reject the publc interest checks
                 </h1>
                 <p class="govuk-body">
-                    The provider application will be removed. The applicant and Digital Identity
-                    Register Portal members will recieve an email with this decision.
+                    This is the final stage of the application.
+                </p>
+                <p class="govuk-body">
+                    We will email the DI Register Notifications inbox to notify other OfDIA users of
+                    this decision.
                 </p>
                 <div class="govuk-warning-text">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-visually-hidden">Warning</span>
-                        Once you reject this application, the decision can’t be changed.
+                        Once you reject public interest checks, the action can't be undone.
                     </strong>
                 </div>
                 
@@ -29,7 +32,7 @@
                     <div class="govuk-button-group">
 
                         <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="save">
-                            Reject application
+                            Reject public interest checks
                         </button>
                         
                     </div>

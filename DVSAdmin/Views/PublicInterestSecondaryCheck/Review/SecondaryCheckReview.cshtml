@@ -4,7 +4,7 @@
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using Newtonsoft.Json
 @{
-    ViewData["Title"] = "Application review";
+    ViewData["Title"] = "Secondary review";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -13,7 +13,8 @@
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <h1 class="govuk-heading-xl">Application review</h1>
+                <span class="govuk-caption-xl">Public interest check</span>
+                <h1 class="govuk-heading-xl">Secondary review</h1>
                 @using (Html.BeginForm("SaveSecondaryCheckReview", "PublicInterestSecondaryCheck", FormMethod.Post))
                 {
                     @if (ViewData.ModelState.ErrorCount > 0)
@@ -25,63 +26,52 @@
                     @Html.HiddenFor(m => m.SecondaryCheckUserId)
                     @Html.HiddenFor(m => m.ServiceId)
 
-                    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+                    <p class="govuk-body">You are conducting the secondary review of the public interest check. This enhances security by ensuring that the decision
+                        making process does not depend on a single individual.
+                    </p>
 
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">Service provider</th>
-                                <th scope="col" class="govuk-table__header">Service name</th>
-                                <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
-                                <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
-                                <th scope="col" class="govuk-table__header">Review status</th>
-                                <th scope="col" class="govuk-table__header">Days left to<br />complete review</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@Model.Service.Provider.RegisteredName</td>
-                                <td class="govuk-table__cell">@Model.Service.ServiceName</td>
-                                <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
-                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(@Model.Service.ModifiedTime) </td>
-                                @if (@Model.Service.PublicInterestCheck == null)
-                                {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(@Model.Service.ServiceStatus)</td>
-                                }
-                                else
-                                {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(@Model.Service.PublicInterestCheck.PublicInterestCheckStatus)</td>
-                                }
-                                <td class="govuk-table__cell">@Model.Service.DaysLeftToCompletePICheck days</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                 <table class="govuk-table">
+                            <tbody class="govuk-table__body">
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Service name</th>
+                                    <td class="govuk-table__cell">Remote Verify</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Service Provider</th>
+                                    <td class="govuk-table__cell">Northrow Limited</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
+                                    <td class="govuk-table__cell">BSI</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Days left to complete review</th>
+                                    <td class="govuk-table__cell">2 days</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">New application or reapplication</th>
+                                    <td class="govuk-table__cell">Reaplication</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Review status</th>
+                                    <td class="govuk-table__cell">Primary check failed
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">
-                                Instructions for completing the application review
-                            </span>
-                        </summary>
-                        <ol class="govuk-list govuk-list--number">
-
-                            <li>
-                                This is the secondary check. This is part of the 2i check, which enhances security by ensuring that the decision-making process does not depend on a single individual.
-
-                            </li>
-                            <li>
-                                A first reviewer has already completed the primary check on this application. Review the application thoroughly, paying close attention to the decision on each section and the comments made by the first reviewer.
-
-                            </li>
-                            <li>
-                                If you agree with the first reviewer’s decision, you can proceed by selecting the button that corresponds with the primary check decision.
-
-                            </li>
-                            <li>
-                                If you disagree with the first reviewer’s decision, you may need to request for clarification and send the application back for another review.
-                            </li>
-                        </ol>
-                    </details>
+                    <h2 class="govuk-heading-l">How to complete the checks</h2>
+                    <ol class="govuk-list govuk-list--number">
+						<li>Ensure all the company information on the certificate meets the requirements in the<a href="#" class="govuk-link"> Process for conducting certificate reviews and due diligence checks</a>document.</li>
+                        <li>
+                            If the primary reviewer has passed the information submitted during the
+                            primary check, and you agree with their decision, select the 'Approve application' button.
+                        </li>
+                        <li>
+                           If the primary reviewer has failed the information submitted during the primary check, and you do not agree with
+                           their decision, select the 'Send back to the primary check' button.
+                        </li>
+                    </ol>
 
                     <h2 class="govuk-heading-l">Application details</h2>
                     <h3 class="govuk-heading-m">Provider contact details</h3>
@@ -402,7 +392,7 @@
                                 Reject application
                             </button>
                             <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="sentback">
-                                Send back to primary check for another review
+                                Send back to primary check
                             </button>
                         </div>
 

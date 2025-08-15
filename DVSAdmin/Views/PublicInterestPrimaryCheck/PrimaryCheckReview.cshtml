@@ -4,7 +4,7 @@
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using DVSAdmin.CommonUtility.Models;
 @{
-    ViewData["Title"] = "Application review";
+    ViewData["Title"] = "Primary review";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -20,73 +20,63 @@
                     {
                         ViewData["Title"] = "Error: " + ViewData["Title"];
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+
                     }
-                    <h1 class="govuk-heading-xl">Application review</h1>
+                    <span class="govuk-caption-xl">Public interest check</span>
+                    <h1 class="govuk-heading-xl">Primary review</h1>
+                    <p class="govuk-body">You are conducting the primary review of the public interest check. Once
+                        you have completed the review, this service record will be passed to another OFDIA user for a secondary review.
+                        This enhances security by ensuring that the decision making process does not depend on a single
+                    individual.</p>
 
                     @Html.HiddenFor(m => m.ProviderProfileId)
                     @Html.HiddenFor(m => m.ServiceId)
                     @Html.HiddenFor(m => m.PrimaryCheckUserId)
                     @Html.HiddenFor(m => m.SecondaryCheckUserId)
                     <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header"> Service provider </th>
-                                <th scope="col" class="govuk-table__header"> Service name </th>
-                                <th scope="col" class="govuk-table__header">Conformity Assessment Body</th>
-                                <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
-                                <th scope="col" class="govuk-table__header">Review status</th>
-                                <th scope="col" class="govuk-table__header">Days left to <br />complete</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@Model.Service.Provider.RegisteredName</td>
-                                <td class="govuk-table__cell">@Model.Service.ServiceName</td>
-                                <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
-                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.Service.CreatedTime)</td>
-                                @if (Model.Service.PublicInterestCheck != null)
-                                {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.PublicInterestCheck.PublicInterestCheckStatus)</td>
-                                }
-                                else
-                                {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.ServiceStatus)</td>
-                                }
-                                <td class="govuk-table__cell">@Model.Service.DaysLeftToComplete  days</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                    <div class="govuk-grid-column-full">
+                        <table class="govuk-table">
+                            <tbody class="govuk-table__body">
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Service name</th>
+                                    <td class="govuk-table__cell">Remote Verify</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Service Provider</th>
+                                    <td class="govuk-table__cell">Northrow Limited</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
+                                    <td class="govuk-table__cell">BSI</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Days left to complete review</th>
+                                    <td class="govuk-table__cell">2 days</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">New application or reapplication</th>
+                                    <td class="govuk-table__cell">Reaplication</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Review status</th>
+                                    <td class="govuk-table__cell">Recieved
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">
-                                Instructions for completing the application review
-                            </span>
-                        </summary>
-                        <div class="govuk-details__text">
-
-
-                            <ol class="govuk-list govuk-list--number">
-                                <li>
-                                    This is the primary check. This is part of the 2i check, which enhances security by ensuring that the decision making process does not depend on a single individual.
-                                </li>
-                                <li>
-                                    Using the company information submitted, decide whether to approve or reject each section. Selecting ‘Approve’ means that the checks meet required criteria. ‘Reject’ means you have found evidence that the organisation does not meet the required standard. If the check is not applicable, you should select ‘Approve’.
-                                </li>
-                                <li>
-                                    If you wish to submit your review at a later time, you can select the ‘Save as draft’ button located at the bottom of the page. You can only do so once you have completed all sections.
-                                </li>
-                                <li>
-                                    Once you have completed all sections, decide whether to pass or fail the primary check. ‘Pass primary check’ means that the provider has met all the criteria and been approved for each section. ‘Fail primary check’ means that there is at least one section where the provider has not met the required standard.
-                                </li>
-                                <li>
-                                    Once you have confirmed your decision, this application will be sent to another OfDIA user for a secondary check.
-                                </li>
-                            </ol>
-                        </div>
-                    </details>
-
+                    <h2 class="govuk-heading-l">How to complete the checks</h2>
+                    <ol class="govuk-list govuk-list--number">
+                        <li>Ensure the information on the certificate meets the requirements in the<a href="#" class="govuk-link"> Process for conducting certificate reviews and due diligence checks</a>document.</li>
+                        <li>
+                            If you confirm that the primary interest checks have been met and select the
+                            'Continue' button, the service record will be sent to the secondary OfDIA reviewer.
+                        </li>
+                        <li>If you confirm that the primary interest checks have not been met and
+                            select the 'Continue' button, you will be able to detail the reasons for your decision.</li>
+                    </ol>
                     <h2 class="govuk-heading-l">Application details</h2>
                     <h3 class="govuk-heading-m">Provider contact details</h3>
 
@@ -583,6 +573,31 @@
                         }
 
 
+                    </div>
+
+                    <h1 class="govuk-heading-l">Approval checklist</h1>
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                                <h1 class="govuk-fieldset__heading">
+                                    Have the public interest checks for this service been met?
+                                </h1>
+                            </legend>
+                            <div class="govuk-radios" data-module="govuk-radios">
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="whereDoYouLive" name="whereDoYouLive" type="radio" value="england">
+                                    <label class="govuk-label govuk-radios__label" for="whereDoYouLive">
+                                        Yes, the primary check has passed
+                                    </label>
+                                </div>
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="whereDoYouLive-2" name="whereDoYouLive" type="radio" value="scotland">
+                                    <label class="govuk-label govuk-radios__label" for="whereDoYouLive-2">
+                                        No, the primary check has failed
+                                        </label>
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
 
 

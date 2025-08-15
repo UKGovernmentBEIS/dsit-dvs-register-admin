@@ -15,51 +15,71 @@
                 <h1 class="govuk-heading-xl">
                     Request another primary check
                 </h1>
-                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Service provider</th>
-                            <th scope="col" class="govuk-table__header">Service name</th>
-                            <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
-                            <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
-                            <th scope="col" class="govuk-table__header">Review status</th>
-                            <th scope="col" class="govuk-table__header">Days left to complete review</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@Model?.Service?.Provider.RegisteredName</td>
-                            <td class="govuk-table__cell">@Model?.Service?.ServiceName</td>
-                            <td class="govuk-table__cell">@Model?.Service?.CabUser.Cab.CabName</td>
-                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.Service.ModifiedTime)</td>
-                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.PublicInterestCheck.PublicInterestCheckStatus)</td>
-                            <td class="govuk-table__cell">@Model.Service.DaysLeftToCompletePICheck  days</td>
-                        </tr>
-                    </tbody>
-                </table>              
-               
+                <div class="govuk-grid-column-full">
+                    <table class="govuk-table">
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Service name</th>
+                                <td class="govuk-table__cell">Remote Verify</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Service Provider</th>
+                                <td class="govuk-table__cell">Northrow Limited</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
+                                <td class="govuk-table__cell">BSI</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Days left to complete review</th>
+                                <td class="govuk-table__cell">1 day</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">New application or reapplication</th>
+                                <td class="govuk-table__cell">Reapplication</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Review status</th>
+                                <td class="govuk-table__cell">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="govuk-form-group">
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--m" for="more-detail">
+                        Comment(required)
+                    </label>
+                </h1>
+                <div id="more-detail-hint" class="govuk-hint">
+                    Please add additional details to support your decision. This information will only be visible to OfDIA users.
+                </div>
+                <textarea class="govuk-textarea" id="more-detail" name="moreDetail" rows="5" aria-describedby="more-detail-hint"></textarea>
             </div>
 
             <div class="govuk-grid-column-two-thirds">
                 <h2 class="govuk-heading-m">
-                    What will happen once you send back to primary
-                    check for another review
+                    What will happen next
                 </h2>
                 <p class="govuk-body">
-                    Once you send back to primary check for another review, the responsible
-                    reviewer for the primary check will receive a notification to conduct a check
-                    again. You will receive a notification once the primary check is completed.
+                    Once you request another review, the person who completed the primary
+                    check will recieve a notification to conduct another primary check. You will recieve a
+                    notification once the primary check is completed.
                 </p>
+
+
 
                 @using (Html.BeginForm("SaveSentBackForPrimaryCheck", "PublicInterestSecondaryCheck", FormMethod.Post))
                 {
                     <div class="govuk-button-group">
                         <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="sentback">
-                            Sent back to primary check for another review
+                            Sent back to primary check
                         </button>
                         <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
-                            Cancel
+                            Cancel and back
                         </button>
                     </div>
                 }

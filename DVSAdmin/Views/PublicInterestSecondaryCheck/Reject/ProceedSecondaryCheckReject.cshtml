@@ -3,7 +3,7 @@
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @{
-    ViewData["Title"] = "Rejecting this application";
+    ViewData["Title"] = "Reject public interest check";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -26,40 +26,52 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">
-                    Rejecting this application
+                   Reject public interest check
                 </h1>
                 <p class="govuk-body">
-                    You are about to reject the following application:
+                    You are about to confirm that the following application has failed all required checks.
                 </p>
                
                  @Html.HiddenFor(m=>m.ServiceId)
                  @Html.HiddenFor(m => m.ProviderProfileId)
                  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">Service provider</th>
-                                <th scope="col" class="govuk-table__header">Service name</th>
-                                <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
-                                <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
-                                <th scope="col" class="govuk-table__header">Review status</th>
-                                <th scope="col" class="govuk-table__header">Days left to complete review</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                                
-                                <td class="govuk-table__cell">@Model?.Service?.Provider.RegisteredName</td>
-                                <td class="govuk-table__cell">@Model.Service.ServiceName</td>
-                                <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
-                                <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.Service.ModifiedTime)</td>
-                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.PublicInterestCheck.PublicInterestCheckStatus)</td>
-                                <td class="govuk-table__cell">@Model.Service.DaysLeftToCompletePICheck  days</td>
-                        </tr>
-                    </tbody>
-                </table>              
-                    
-              
+                    <div class="govuk-grid-column-full">
+                        <table class="govuk-table">
+                            <tbody class="govuk-table__body">
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Service name</th>
+                                    <td class="govuk-table__cell">Remote Verify</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Service Provider</th>
+                                    <td class="govuk-table__cell">Northrow Limited</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
+                                    <td class="govuk-table__cell">BSI</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Days left to complete review</th>
+                                    <td class="govuk-table__cell">1 day</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">New application or reapplication</th>
+                                    <td class="govuk-table__cell">Reapplication</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">Review status</th>
+                                    <td class="govuk-table__cell">Primary check failed
+                                     
+                                        {
+                                            <span>No review available</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
             </div>
 
             <div class="govuk-grid-column-two-thirds">
@@ -122,10 +134,6 @@
 
                    
                 <h2 class="govuk-heading-m">Who will receive the application decision notification</h2>
-                <div id="applicationSponsor-hint" class="govuk-hint">
-                    The applicant will receive an email with this decision from the Digital Identity Register
-                    Portal and guidance on next steps.
-                </div>
 
                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                 
@@ -161,7 +169,7 @@
                         Proceed with rejection
                     </button>
                     <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
-                        Cancel
+                        Cancel and back 
                     </button>
                 </div>
             </div>
