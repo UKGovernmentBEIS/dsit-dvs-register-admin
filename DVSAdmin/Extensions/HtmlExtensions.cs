@@ -22,6 +22,7 @@ namespace DVSAdmin.Extensions
             
                 case ServiceStatusEnum.Received:
                 case ServiceStatusEnum.Resubmitted:
+                case CertificateReviewEnum.DeclinedByProvider:
                     return "govuk-tag govuk-tag--blue";
 
                 case ServiceStatusEnum.Published:
