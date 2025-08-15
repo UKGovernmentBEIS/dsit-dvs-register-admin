@@ -194,9 +194,9 @@ namespace DVSAdmin.BusinessLogic.Services
         }
 
 
-        public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail)
+        public async Task<GenericResponse> RestoreRejectedCertificateReview(int serviceId, string loggedInUserEmail)
         {
-            GenericResponse genericResponse = await certificateReviewRepository.RestoreRejectedCertificateReview(reviewId, loggedInUserEmail);
+            GenericResponse genericResponse = await certificateReviewRepository.RestoreRejectedCertificateReview(serviceId, loggedInUserEmail);
             if (genericResponse.Success)
             {
                 await emailSender.SendApplicationRestroredToDSIT();

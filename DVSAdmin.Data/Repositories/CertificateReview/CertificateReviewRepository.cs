@@ -363,18 +363,23 @@ namespace DVSAdmin.Data.Repositories
 
 
         //Restore from archive tab
-        public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail)
+        public async Task<GenericResponse> RestoreRejectedCertificateReview(int serviceId, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.Id == reviewId);
-                if (existingEntity != null)
+                var existingService = await context.Service.Include(x => x.CertificateReview).ThenInclude(x=>x.CertificateReviewRejectionReasonMapping)
+               .Where(x => x.Id == serviceId ).FirstOrDefaultAsync();
+
+
+
+                if (existingService != null)
                 {
-                    existingEntity.CertificateReviewStatus = CertificateReviewEnum.InReview;
-                    existingEntity.ModifiedDate = DateTime.UtcNow;
-                    genericResponse.InstanceId = existingEntity.Id;
+                    existingService.ModifiedTime = DateTime.UtcNow;
+                    existingService.ServiceStatus = ServiceStatusEnum.Resubmitted;
+                    context.CertificateReview.Remove(existingService.CertificateReview);
+                    genericResponse.InstanceId = existingService.Id;
                     await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RestoreCertificateReview, loggedInUserEmail);
                     transaction.Commit();
                     genericResponse.Success = true;

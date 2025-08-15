@@ -19,7 +19,7 @@ namespace DVSAdmin.BusinessLogic.Services
         public Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail);
         public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons, string loggedInUserEmail);
         public Task<GenericResponse> UpdateCertificateSentBack(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail);
-        public Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail);
+        public Task<GenericResponse> RestoreRejectedCertificateReview(int serviceId, string loggedInUserEmail);
         public Task<GenericResponse> GenerateTokenAndSendEmail(ServiceDto serviceDto, string loggedInUserEmail, bool isResend);
         #endregion
     }

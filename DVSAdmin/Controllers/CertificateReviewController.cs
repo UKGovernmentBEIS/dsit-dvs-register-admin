@@ -398,7 +398,7 @@ namespace DVSAdmin.Controllers
             ServiceDto serviceDetails = await certificateReviewService.GetServiceDetails(serviceId);
             if (serviceDetails.CertificateReview.Id ==reviewId && serviceDetails.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)
             {
-                GenericResponse genericResponse = await certificateReviewService.RestoreRejectedCertificateReview(reviewId, UserEmail);
+                GenericResponse genericResponse = await certificateReviewService.RestoreRejectedCertificateReview(serviceId, UserEmail);
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("RestoreSubmissionConfirmation",new { serviceId = serviceId });
