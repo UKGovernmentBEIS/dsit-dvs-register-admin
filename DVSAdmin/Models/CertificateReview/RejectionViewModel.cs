@@ -2,13 +2,10 @@
 using DVSAdmin.Validations;
 using System.ComponentModel.DataAnnotations;
 
-namespace DVSAdmin.Models
+namespace DVSAdmin.Models.CertificateReview
 {
-    public class CertficateRejectionViewModel
-    {     
-        public CertificateValidationViewModel? CertificateValidation { get; set; }
-        public CertificateReviewViewModel? CertificateReview { get; set; }          
-
+    public class RejectionViewModel :ReviewViewModel
+    {
         [Required(ErrorMessage = "Give further details on reasons selected and any required amendments")]
         public string? Comments { get; set; }
 
@@ -17,7 +14,5 @@ namespace DVSAdmin.Models
         [EnsureMinimumCount(ErrorMessage = "Select one or more reasons for rejection")]
         public List<int>? SelectedRejectionReasonIds { get; set; }
         public List<CertificateReviewRejectionReasonDto>? SelectedReasons { get; set; }
-
-      
     }
 }

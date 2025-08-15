@@ -139,176 +139,85 @@ namespace DVSAdmin.Data.Repositories
 
             #region Save, update
 
-            //First save -  Part 1 of 2: Certificate Validation Continue and save as draft flow
+           
             public async Task<GenericResponse> SaveCertificateReview(CertificateReview cetificateReview, string loggedInUserEmail)
-        {
+            {
             GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CertificateReview.Include(p => p.CertificateReviewRejectionReasonMapping).FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId && e.ProviProviderProfileId ==cetificateReview.ProviProviderProfileId);
 
-                if (existingEntity != null)
+
+                var existingEntity = await context.CertificateReview.Include(p => p.CertificateReviewRejectionReasonMapping).FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId && e.ProviProviderProfileId == cetificateReview.ProviProviderProfileId);
+
+                if(existingEntity != null)
                 {
-                    existingEntity.IsCabLogoCorrect = cetificateReview.IsCabLogoCorrect;
-                    existingEntity.IsCabDetailsCorrect  = cetificateReview.IsCabDetailsCorrect;
-                    existingEntity.IsProviderDetailsCorrect = cetificateReview.IsProviderDetailsCorrect;
-                    existingEntity.IsServiceNameCorrect = cetificateReview.IsServiceNameCorrect;
-                    existingEntity.IsRolesCertifiedCorrect = cetificateReview.IsRolesCertifiedCorrect;
-                    existingEntity.IsCertificationScopeCorrect = cetificateReview.IsCertificationScopeCorrect;
-                    existingEntity.IsServiceSummaryCorrect = cetificateReview.IsServiceSummaryCorrect;
-                    existingEntity.IsURLLinkToServiceCorrect = cetificateReview.IsURLLinkToServiceCorrect;
-                    existingEntity.IsGPG44Correct = cetificateReview.IsGPG44Correct;
-                    existingEntity.IsGPG45Correct = cetificateReview.IsGPG45Correct;
-                    existingEntity.IsServiceProvisionCorrect = cetificateReview.IsServiceProvisionCorrect;
-                    existingEntity.IsLocationCorrect = cetificateReview.IsLocationCorrect;
-                    existingEntity.IsDateOfIssueCorrect = cetificateReview.IsDateOfIssueCorrect;
-                    existingEntity.IsDateOfExpiryCorrect = cetificateReview.IsDateOfExpiryCorrect;
-                    existingEntity.IsAuthenticyVerifiedCorrect = cetificateReview.IsAuthenticyVerifiedCorrect;
-                    existingEntity.CommentsForIncorrect = cetificateReview.CommentsForIncorrect;
-                    existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
-                    existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
-                    existingEntity.ModifiedDate = DateTime.UtcNow;
-                    genericResponse.InstanceId = existingEntity.Id;
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
-                }
-
-                else
-                {
-                    cetificateReview.CreatedDate = DateTime.UtcNow;
-                    var entity = await context.CertificateReview.AddAsync(cetificateReview);
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
-                    genericResponse.InstanceId = entity.Entity.Id;
-                }
-                transaction.Commit();
-                genericResponse.Success = true;
-            }
-            catch (Exception ex)
-            {
-                genericResponse.EmailSent = false;
-                genericResponse.Success = false;
-                transaction.Rollback();
-                logger.LogError(ex.Message);
-            }
-            return genericResponse;
-        }
-
-        // Part 2 of 2: Information match  Approve submission and Save as draft flow
-        public async Task<GenericResponse> UpdateCertificateReview(CertificateReview cetificateReview, string loggedInUserEmail)
-        {
-            GenericResponse genericResponse = new();
-            using var transaction = context.Database.BeginTransaction();
-            try
-            {
-                var existingEntity = await context.CertificateReview.Include(p => p.CertificateReviewRejectionReasonMapping).FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId  && e.ProviProviderProfileId ==cetificateReview.ProviProviderProfileId);
-
-                if (existingEntity != null)
-                {
-                    //clear rejection reasons if already exists for approval 
                     if (existingEntity.CertificateReviewRejectionReasonMapping != null && cetificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
                     {
                         context.CertificateReviewRejectionReasonMapping.RemoveRange(existingEntity.CertificateReviewRejectionReasonMapping);
                         existingEntity.RejectionComments = null;
                     }
-
-                    existingEntity.InformationMatched = cetificateReview.InformationMatched;
-                    existingEntity.Comments = cetificateReview.Comments;
-                    existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
-                    existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
-                    existingEntity.ModifiedDate = DateTime.UtcNow;
-                    genericResponse.InstanceId = existingEntity.Id;
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
-                    transaction.Commit();
-                    genericResponse.Success = true;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                genericResponse.EmailSent = false;
-                genericResponse.Success = false;
-                transaction.Rollback();
-                logger.LogError(ex.Message);
-            }
-            return genericResponse;
-        }
-
-        //// Part 2 of 2: Information match  Reject submission flow
-        public async Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReview cetificateReview, string loggedInUserEmail)
-        {
-            GenericResponse genericResponse = new();
-            using var transaction = context.Database.BeginTransaction();
-            try
-            {
-                var existingEntity = await context.CertificateReview.Include(p => p.CertificateReviewRejectionReasonMapping).FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId  && e.ProviProviderProfileId ==cetificateReview.ProviProviderProfileId);
-
-                if (existingEntity != null)
-                {
-                    existingEntity.Comments = cetificateReview.Comments;
-                    existingEntity.InformationMatched = cetificateReview.InformationMatched;
-                    existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
-                    existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
-                    existingEntity.RejectionComments = cetificateReview.RejectionComments;
-
-                    //clear rejection reasons if already exists and update with reasons selected
-                    if (existingEntity.CertificateReviewRejectionReasonMapping != null & existingEntity.CertificateReviewRejectionReasonMapping?.Count >0)
-                        context.CertificateReviewRejectionReasonMapping.RemoveRange(existingEntity.CertificateReviewRejectionReasonMapping);
-
-                    existingEntity.CertificateReviewRejectionReasonMapping = cetificateReview.CertificateReviewRejectionReasonMapping;
-
-                    foreach (var mapping in cetificateReview.CertificateReviewRejectionReasonMapping)
+                    if(cetificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)
                     {
-                        context.Entry(mapping).State = EntityState.Added;
+                        existingEntity.RejectionComments = cetificateReview.RejectionComments;
+
+                        //clear rejection reasons if already exists and update with reasons selected
+                        if (existingEntity.CertificateReviewRejectionReasonMapping != null & existingEntity.CertificateReviewRejectionReasonMapping?.Count > 0)
+                            context.CertificateReviewRejectionReasonMapping.RemoveRange(existingEntity.CertificateReviewRejectionReasonMapping);
+
+                        existingEntity.CertificateReviewRejectionReasonMapping = cetificateReview.CertificateReviewRejectionReasonMapping;
+
+                        foreach (var mapping in cetificateReview.CertificateReviewRejectionReasonMapping)
+                        {
+                            context.Entry(mapping).State = EntityState.Added;
+                        }
                     }
-                    existingEntity.ModifiedDate = DateTime.UtcNow;
-                    genericResponse.InstanceId = existingEntity.Id;
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
-                    transaction.Commit();
-                    genericResponse.Success = true;
-                }
+                    else if (cetificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
+                    {
+                        existingEntity.Amendments = cetificateReview.Amendments;
+                        var existingService = await context.Service
+                      .FirstOrDefaultAsync(e => e.Id == cetificateReview.ServiceId);
 
-            }
-            catch (Exception ex)
-            {
-                genericResponse.EmailSent = false;
-                genericResponse.Success = false;
-                transaction.Rollback();
-                logger.LogError(ex.Message);
-            }
-            return genericResponse;
-        }
+                        if (existingService != null)
+                        {
+                            existingService.ServiceStatus = ServiceStatusEnum.AmendmentsRequired;
+                            existingService.ModifiedTime = DateTime.UtcNow;
+                        }
+                    }
 
-        //// Part 2 of 2: Information match Send back to CAB flow
-        public async Task<GenericResponse> UpdateCertificateSentBack(CertificateReview cetificateReview, string loggedInUserEmail)
-        {
-            GenericResponse genericResponse = new();
-            using var transaction = context.Database.BeginTransaction();
-            try
-            {
-                var existingEntity = await context.CertificateReview
-                    .FirstOrDefaultAsync(e => e.ServiceId == cetificateReview.ServiceId && e.ProviProviderProfileId == cetificateReview.ProviProviderProfileId);
 
-                if (existingEntity != null)
-                {
-                    existingEntity.Comments = cetificateReview.Comments;
-                    existingEntity.InformationMatched = cetificateReview.InformationMatched;
-                    existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
+                    existingEntity.CertificateValid = cetificateReview.CertificateValid;
+                    existingEntity.InformationMatched = cetificateReview.InformationMatched;               
                     existingEntity.VerifiedUser = cetificateReview.VerifiedUser;
-                    existingEntity.Amendments = cetificateReview.Amendments;
+                    existingEntity.CertificateReviewStatus = cetificateReview.CertificateReviewStatus;
                     existingEntity.ModifiedDate = DateTime.UtcNow;
                     genericResponse.InstanceId = existingEntity.Id;
                 }
 
-                var existingService = await context.Service
-                    .FirstOrDefaultAsync(e => e.Id == cetificateReview.ServiceId);
-
-                if (existingService != null)
+                else
                 {
-                    existingService.ServiceStatus = ServiceStatusEnum.AmendmentsRequired;
-                    existingService.ModifiedTime = DateTime.UtcNow;
-                }
+                    cetificateReview.CreatedDate = DateTime.UtcNow;
+                    cetificateReview.ModifiedDate = DateTime.UtcNow;
+                    var entity = await context.CertificateReview.AddAsync(cetificateReview);
+                    genericResponse.InstanceId = entity.Entity.Id;
+                    if (cetificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
+                    {
+                        var existingService = await context.Service
+                       .FirstOrDefaultAsync(e => e.Id == cetificateReview.ServiceId);
 
-                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
+                        if (existingService != null)
+                        {
+                            existingService.ServiceStatus = ServiceStatusEnum.AmendmentsRequired;
+                            existingService.ModifiedTime = DateTime.UtcNow;
+                        }
+                    }
+
+                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
+                   
+                }
+               
+
+             
                 transaction.Commit();
                 genericResponse.Success = true;
             }
@@ -322,20 +231,27 @@ namespace DVSAdmin.Data.Repositories
             return genericResponse;
         }
 
+     
+
 
         //Restore from archive tab
-        public async Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail)
+        public async Task<GenericResponse> RestoreRejectedCertificateReview(int serviceId, string loggedInUserEmail)
         {
             GenericResponse genericResponse = new();
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var existingEntity = await context.CertificateReview.FirstOrDefaultAsync(e => e.Id == reviewId);
-                if (existingEntity != null)
+                var existingService = await context.Service.Include(x => x.CertificateReview).ThenInclude(x=>x.CertificateReviewRejectionReasonMapping)
+               .Where(x => x.Id == serviceId ).FirstOrDefaultAsync();
+
+
+
+                if (existingService != null)
                 {
-                    existingEntity.CertificateReviewStatus = CertificateReviewEnum.InReview;
-                    existingEntity.ModifiedDate = DateTime.UtcNow;
-                    genericResponse.InstanceId = existingEntity.Id;
+                    existingService.ModifiedTime = DateTime.UtcNow;
+                    existingService.ServiceStatus = ServiceStatusEnum.Resubmitted;
+                    context.CertificateReview.Remove(existingService.CertificateReview);
+                    genericResponse.InstanceId = existingService.Id;
                     await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RestoreCertificateReview, loggedInUserEmail);
                     transaction.Commit();
                     genericResponse.Success = true;

@@ -1,4 +1,5 @@
-﻿@model CertficateRejectionViewModel
+﻿
+@model DVSAdmin.Models.CertificateReview.RejectionViewModel
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using Newtonsoft.Json
@@ -8,10 +9,10 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new { reviewId  = Model.CertificateReview.CertificateReviewId}, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new { serviceId = Model.Service.Id}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
-
+            <div class="govuk-grid-column-full">
             <div class="govuk-grid-column-full">
 
                 @if (ViewData.ModelState.ErrorCount > 0)
@@ -23,75 +24,33 @@
 
                 @using (Html.BeginForm("SaveRejectSubmission", "CertificateReview", FormMethod.Post))
                 {
+                  @Html.HiddenFor(m=>m.InformationMatched)
+                  @Html.HiddenFor(m => m.CertificateValid)
                     string checkboxid = string.Empty;                  
 
                 <div class="govuk-grid-column-full">
                     <h1 class="govuk-heading-xl">Reject submission</h1>
-                    <p class="govuk-body">
-                        You are about to reject the following submission:
-                    </p>
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">Service provider </th>
-                                <th scope="col" class="govuk-table__header">Service name</th>
-                                <th scope="col" class="govuk-table__header">New application or reapplication</th>
-                                <th scope="col" class="govuk-table__header">Submission date <br />(GMT)</th>
-                                <th scope="col" class="govuk-table__header">Review status</th>
-                                <th scope="col" class="govuk-table__header">Days left to complete checks</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
 
-                                <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.Provider.RegisteredName</td>
-                                <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.ServiceName</td>
-                                <td class="govuk-table__cell">@Model.CertificateValidation?.Service?.NewOrResubmission</td>                            
-                                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(Model.CertificateValidation.Service.CreatedTime)</td>
-                                @if (@Model.CertificateValidation.Service.CertificateReview == null)
-                                {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.Service.ServiceStatus)</td>
-                                }
-                                else
-                                {
-                                    <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.CertificateValidation.Service.CertificateReview.CertificateReviewStatus)</td>
-                                }
-                                <td class="govuk-table__cell">@Model.CertificateValidation.Service.DaysLeftToComplete  days</td>
-
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="govuk-grid-column-full">
+                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithLink.cshtml", Model.Service)
+                    </div>
 
                     <h2 class="govuk-heading-l">What was rejected</h2>
 
+
+
+
                     <hr class="govuk-section-break govuk-section-break--visible">
 
-                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",
-                     new ReviewFiledsViewModel
-                    {
-                        CertificateValidation = Model.CertificateValidation,
-                        InformationMatched = Model.CertificateReview.InformationMatched,
-                        IsRejectFlow = true,
-                        TextForIncorrectField = "Incorrect"
-                     })
+                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml", Model)
 
                 </div>
-                <div class="govuk-grid-column-two-thirds">
-                    <h3 class="govuk-heading-m">Comments</h3>
-                    <p class="govuk-body">
-                        @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateValidation?.CommentsForIncorrect)
-                    </p>
-                    <p class="govuk-body">
-                        @HtmlExtensions.ToStringWithLineBreaks(Model?.CertificateReview?.Comments)
-                    </p>
-                    <h2 class="govuk-heading-l">Rejection information to be sent to the Conformity Assessment Body</h2>
-                    <p class="govuk-body">
-                        You should now give details of the reasons for rejection to be sent by email to
-                        the Conformity Assessment Body (CAB). Please select reasons from the 
-                        below list which align with the rejection criteria shown above. You should also 
-                        provide specific details and outline any action required in the text box below.
-                    </p>
-                </div>
+              
+                    <h2 class="govuk-heading-l">Rejection information for the CAB</h2>
+                <p class="govuk-body">
+                    Please provide the details of why this submission has been rejected. We will email these to the CAB.
+                </p>
+                
 
 
                 @if (Html.ViewData.ModelState.ContainsKey("SelectedRejectionReasonIds") && Html.ViewData.ModelState["SelectedRejectionReasonIds"].Errors.Count > 0)
@@ -151,16 +110,14 @@
                 }
 
                 <div class="govuk-grid-column-two-thirds">
-                    <p class="govuk-body">
-                        Please use the textbox below to give further details on the reason for
-                        rejection and any required amendments for re-submission. If you have 
-                        selected 'Other', please specify details below.
-                    </p>
+                    
 
-                    <h3 class="govuk-heading-s"> Give further details on reasons selected and any required amendments</h3>
+                    <h3 class="govuk-heading-s">Provide further information (required)</h3>
+                         <div id="comments-hint" class="govuk-hint">
+                        You can also provide further information about the amendments the CAB needs to make before they resubmit the service details.
+                    </div>
                     <div id="comments-hint" class="govuk-hint">
-                        For example: 'UKDIATF logo is missing from the certificate. Please add
-                        UKDIATF logo to the certificate.'
+                        For example: The logo is missing from the certificate
                     </div>
 
                     @if (Html.ViewData.ModelState.ContainsKey("Comments") && Html.ViewData.ModelState["Comments"].Errors.Count > 0)
@@ -198,7 +155,7 @@
                                 CAB
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateValidation.Service.CabUser.CabEmail
+                                @Model.Service.CabUser.CabEmail
                             </dd>
                         </div>
                     </dl>
@@ -214,6 +171,8 @@
                 @Html.Hidden("RejectionReasons", JsonConvert.SerializeObject(Model.RejectionReasons))
             }
             </div>
+            </div>
+
         </main>
     </div>
 
