@@ -41,7 +41,7 @@ namespace DVSAdmin.Data.Repositories
                      s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                      s.Id != s?.CertificateReview?.ServiceId) ||
                     (s.CertificateReview != null &&
-                     (s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview ||
+                     (s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider ||
                       s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)),
                 "primary check" => s =>
                     ((s.ServiceStatus == ServiceStatusEnum.Received &&
