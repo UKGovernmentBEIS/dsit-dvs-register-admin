@@ -16,6 +16,8 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("Expired")]
         Expired = 4,
         [Description("Sent back to CAB")]
-        AmendmentsRequired = 5
+        AmendmentsRequired = 5,
+        [Description("Received")]
+        DeclinedByProvider = 6
     }
 }

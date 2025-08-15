@@ -168,7 +168,7 @@
                   
 
                     @if (Model.Service.CertificateReview == null || (Model.Service.CertificateReview != null &&
-                                    Model.Service.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))
+                                    Model.Service.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider))
                     {
                         <div class="govuk-button-group" id="submitvalidation">
                             <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="continue">

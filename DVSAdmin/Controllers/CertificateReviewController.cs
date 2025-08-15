@@ -52,7 +52,7 @@ namespace DVSAdmin.Controllers
                      x.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                      x.Id != x?.CertificateReview?.ServiceId) ||
                     (x.CertificateReview != null &&
-                    (x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview ||
+                    (x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider ||
                     x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)))
                    .OrderBy(x => x.DaysLeftToComplete).ToList();
 
