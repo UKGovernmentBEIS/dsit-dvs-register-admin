@@ -9,7 +9,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", new {serviceId = Model.Id}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -21,32 +21,7 @@
                     You are about to confirm that the following application has passed all required checks.
                 </p>
 
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Service name</dt>
-                        <dd class="govuk-summary-list__value">@Model.ServiceName</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Service provider</dt>
-                        <dd class="govuk-summary-list__value">@Model.Provider.RegisteredName</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Conformity Assessment Body (CAB)</dt>
-                        <dd class="govuk-summary-list__value"> @Model.CabUser.Cab.CabName</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Days left to complete review</dt>
-                        <dd class="govuk-summary-list__value"> @Model.DaysLeftToCompletePICheck days</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">New application or reapplication</dt>
-                        <dd class="govuk-summary-list__value">  @Model.NewOrResubmission</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Review status</dt>
-                        <dd class="govuk-summary-list__value">@HtmlExtensions.ToStyledStrongTag(Model.PublicInterestCheck.PublicInterestCheckStatus)</dd>
-                    </div>                  
-                </dl>
+                @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/_ServiceDetailsWithReviewStatus.cshtml", Model)
 
       
 
@@ -58,7 +33,7 @@
                         the required checks.
                     </p>
                     <p class="govuk-body">
-                        The service provider s information will be publicly available on the register of
+                        The service provider's information will be publicly available on the register of
                         trusted digital identity and attribute service providers.
                     </p>
                     <h2 class="govuk-heading-m">Who will receive the confirmation of this decision</h2>
@@ -111,12 +86,10 @@
                 </div>
             
             <div class="govuk-!-width-two-thirds">
-
-                <a href="@Url.Action("PublishService","PublicInterestSecondaryCheck")" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                    <a href="@Url.Action("PublishService","PublicInterestSecondaryCheck",new {serviceId = Model.Id})" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
                     Proceed with approval
                 </a>
-
-                <a href="@Url.Action("SecondaryCheckReview","PublicInterestSecondaryCheck")" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                <a href="@Url.Action("SecondaryCheckReview","PublicInterestSecondaryCheck", new {serviceId = Model.Id})" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                     Cancel and back
                 </a>
             </div>                 

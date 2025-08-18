@@ -1,5 +1,6 @@
 ﻿@model DVSAdmin.Models.PublicInterestCheckViewModel;
 @using DVSAdmin.CommonUtility.Models.Enums;
+
 @{
     ViewData["Title"] = "Public interest check";
     ViewData["ActiveNav"] = "ReviewServices";
@@ -22,17 +23,24 @@
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">Public interest check</h1>
 
-                <details class="govuk-details">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            Guidance on this section
-                        </span>
-                    </summary>
-                    <div class="govuk-details__text">
-                        In this section, you can complete primary or secondary public interest checks. This is part of the 2i check, which enhances security by ensuring that the decision-making process does not depend on a single individual. Users acting as first reviewers will be complete the first step of the review, but will be blocked from completing the checks
-                        as a second reviewer.
-                    </div>
-                </details>
+                <p class="govuk-body">
+                    You can complete either the primary or secondary review of a public interest
+                    check. This enhances security by ensuring that the decision-making process
+                    does not depend on a single individual.
+                </p>
+                
+                @using (Html.BeginForm("CertificateReviews", "CertificateReview", FormMethod.Get))
+                {
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_SearchView.cshtml", new DVSAdmin.Models.UI.SearchViewModel
+                    {
+                        Label = "Search for a service provider or service",
+                        SearchTextFieldId = "SearchProviderOrService",
+                        SearchTextFieldName = "search-provider-or-service"
+                        })
+                 }
+                 
 
                 <div class="govuk-tabs" data-module="govuk-tabs">
                     <ul class="govuk-tabs__list">
@@ -51,22 +59,55 @@
                                 Completed
                             </a>
                         </li>
-
                     </ul>
 
                     @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/PublicInterestPrimaryCheckView.cshtml", Model)
-
                     @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/PublicInterestSecondaryCheckView.cshtml", Model)
-
                     @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/ArchiveView.cshtml", Model)
-
-
+                    <nav class="govuk-pagination" aria-label="Pagination">
+                        <div class="govuk-pagination__prev">
+                            <a class="govuk-link govuk-pagination__link" href="#" rel="prev">
+                                <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                                    <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                                </svg>
+                                <span class="govuk-pagination__link-title">
+                                    Previous<span class="govuk-visually-hidden"> page</span>
+                                </span>
+                            </a>
+                        </div>
+                        <ul class="govuk-pagination__list">
+                            <li class="govuk-pagination__item">
+                                <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 1">
+                                    1
+                                </a>
+                            </li>
+                            <li class="govuk-pagination__item govuk-pagination__item--current">
+                                <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 2" aria-current="page">
+                                    2
+                                </a>
+                            </li>
+                            <li class="govuk-pagination__item">
+                                <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 3">
+                                    3
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="govuk-pagination__next">
+                            <a class="govuk-link govuk-pagination__link" href="#" rel="next">
+                                <span class="govuk-pagination__link-title">
+                                    Next<span class="govuk-visually-hidden"> page</span>
+                                </span>
+                                <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                                    <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </nav>
                 </div>
             </div>
         </div>
     </main>
 </div>
-
 
 
 
