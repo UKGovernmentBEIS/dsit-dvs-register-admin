@@ -10,63 +10,26 @@
    
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">
                     You have rejected this application
                 </h1>
 
-                <div class="govuk-grid-column-full">
-                    <table class="govuk-table">
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Service name</th>
-                                <td class="govuk-table__cell">@Model.ServiceName</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Service Provider</th>
-                                <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
-                                <td class="govuk-table__cell">@Model.NewOrResubmission</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Days left to complete review</th>
-                                <td class="govuk-table__cell">@Model.DaysLeftToComplete days</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">New application or reapplication</th>
-                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.ServiceStatus)</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Review status</th>
-                                <td class="govuk-table__cell">
-                                    @if (Model.CertificateReview != null)
-                                    {
-                                        @HtmlExtensions.ToStyledStrongTag(Model.CertificateReview.CertificateReviewStatus)
-                                    }
-                                    else
-                                    {
-                                        <span>No review available</span>
-                                    }
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            
+                    @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/_ServiceDetailsWithReviewStatus.cshtml", Model)
+              
 
                 <p class="govuk-body">
                     We will send an email notification to the DI Register Notifications inbox, within the next 20 minutes.
                 </p>
+                </div>
 
-                @using (Html.BeginForm("PublicInterestCheck", "PublicInterestCheck", FormMethod.Get))
-                {
-                    <button type="submit" class="govuk-button" data-module="govuk-button">
-                        Go back to public interest check
-                    </button>
-                }
+                <a href="@Url.Action("PublicInterestCheck","PublicInterestCheck")" role="button" draggable="false" class="govuk-button"
+                   data-module="govuk-button">
+                    Go back to public interest check
+                </a>
 
-            </div>
+           
         </div>
     </main>
 </div>

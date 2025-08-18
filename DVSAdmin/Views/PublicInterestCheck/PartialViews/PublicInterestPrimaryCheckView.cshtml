@@ -24,8 +24,8 @@
                         @Html.ActionLink(item.Provider.RegisteredName, "PrimaryCheckReview", "PublicInterestPrimaryCheck", new { serviceId = item.Id }, new { @class = "govuk-link" })
                     </td>
                     <td class="govuk-table__cell">@item.ServiceName</td>
-                    <td class="govuk-table__cell">@item.CabUser.Cab.CabName</td>
-                    <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(item.ModifiedTime)</td>
+                    <td class="govuk-table__cell">@item.DaysLeftToCompletePICheck days</td>
+                    <td class="govuk-table__cell">@item.NewOrResubmission</td>
                     <td class="govuk-table__cell">
                         @if (item.PublicInterestCheck == null)
                         {
@@ -36,7 +36,7 @@
                             @HtmlExtensions.ToStyledStrongTag(item.PublicInterestCheck.PublicInterestCheckStatus)
                         }
                     </td>
-                    <td class="govuk-table__cell">@item.DaysLeftToCompletePICheck days</td>
+                
                 </tr>
             }
         </tbody>

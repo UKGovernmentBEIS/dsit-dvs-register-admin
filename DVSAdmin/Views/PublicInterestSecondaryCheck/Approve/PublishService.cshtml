@@ -81,6 +81,7 @@
 
                 @using (Html.BeginForm("SavePublishService", "PublicInterestSecondaryCheck", FormMethod.Post))
                 {
+                    @Html.Hidden("serviceId", Model.Id)
                     <div class="govuk-button-group">
 
                         <button type="submit" class="govuk-button" data-module="govuk-button" name="action" value="proceed">

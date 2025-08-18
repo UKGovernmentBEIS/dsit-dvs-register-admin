@@ -66,24 +66,7 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await publicInterestCheckRepository.SavePublicInterestCheck(publicInterestCheck, reviewType, loggedInUserEmail);
            
             if (genericResponse.Success)
-            {
-                PICheckLogs pICheckLog = new();
-                pICheckLog.PublicInterestCheckId = genericResponse.InstanceId;
-                pICheckLog.LogTime = DateTime.UtcNow;
-                if (reviewType == ReviewTypeEnum.PrimaryCheck)
-                {
-                    pICheckLog.ReviewType = ReviewTypeEnum.PrimaryCheck;
-                    pICheckLog.Comment = publicInterestCheckDto.PrimaryCheckComment;
-                    pICheckLog.UserId = publicInterestCheckDto.PrimaryCheckUserId;
-                }
-                else
-                {
-                    pICheckLog.ReviewType = ReviewTypeEnum.SecondaryCheck;
-                    pICheckLog.Comment = publicInterestCheckDto.SecondaryCheckComment;
-                    pICheckLog.UserId = Convert.ToInt32(publicInterestCheckDto.SecondaryCheckUserId);
-                }
-
-                await publicInterestCheckRepository.SavePICheckLog(pICheckLog, loggedInUserEmail);
+            {                
 
 
                 DateTime expirationdate = Convert.ToDateTime(service.ModifiedTime).AddDays(Constants.DaysLeftToCompletePICheck);

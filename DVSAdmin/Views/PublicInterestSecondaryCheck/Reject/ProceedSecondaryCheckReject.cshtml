@@ -13,15 +13,17 @@
 }
 
 <div class="govuk-width-container">
-
     @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         @using (Html.BeginForm("ProceedSecondaryCheckReject", "PublicInterestSecondaryCheck", FormMethod.Post))
         {
-            @if (ViewData.ModelState.ErrorCount >0)
+            @Html.HiddenFor(m=>Model.ServiceId)
+            @Html.HiddenFor(m => Model.ProviderProfileId)
+            @if (Html.ViewData?.ModelState.ContainsKey("SelectedReasonIds") == true && Html.ViewData.ModelState["SelectedReasonIds"].Errors.Count > 0)
             {
                 ViewData["Title"] = "Error: " + ViewData["Title"];
-                @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                @await Html.PartialAsync("~/Views/PartialViews/_SpecificErrorsView.cshtml",
+                         new Tuple<string, IEnumerable<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>>("SelectedReasonIds", Html.ViewData.ModelState["SelectedReasonIds"]?.Errors))
             }
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -36,42 +38,8 @@
                  @Html.HiddenFor(m => m.ProviderProfileId)
                  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                     <div class="govuk-grid-column-full">
-                        <table class="govuk-table">
-                            <tbody class="govuk-table__body">
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">Service name</th>
-                                    <td class="govuk-table__cell">Remote Verify</td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">Service Provider</th>
-                                    <td class="govuk-table__cell">Northrow Limited</td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
-                                    <td class="govuk-table__cell">BSI</td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">Days left to complete review</th>
-                                    <td class="govuk-table__cell">1 day</td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">New application or reapplication</th>
-                                    <td class="govuk-table__cell">Reapplication</td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th scope="row" class="govuk-table__header">Review status</th>
-                                    <td class="govuk-table__cell">Primary check failed
-                                     
-                                        {
-                                            <span>No review available</span>
-                                        }
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/_ServiceDetailsWithReviewStatus.cshtml", Model.Service)
                     </div>
-
-
             </div>
 
             <div class="govuk-grid-column-two-thirds">
@@ -168,9 +136,9 @@
                     <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
                         Proceed with rejection
                     </button>
-                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
-                        Cancel and back 
-                    </button>
+                        <a href="@Url.Action("SecondaryCheckReview","PublicInterestSecondaryCheck", new {serviceId = Model.ServiceId})" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                            Cancel and back
+                        </a>
                 </div>
             </div>
         </div>

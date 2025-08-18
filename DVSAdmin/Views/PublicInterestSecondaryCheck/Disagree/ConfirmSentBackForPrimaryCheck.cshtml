@@ -5,62 +5,72 @@
 @{
     ViewData["Title"] = "Request another primary check";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+    bool isValid = true;
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", new {serviceId = Model.ServiceId}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
+
+                @if (Html.ViewData?.ModelState.ContainsKey("SecondaryCheckComment") == true && Html.ViewData.ModelState["SecondaryCheckComment"].Errors.Count > 0)
+                {
+                    isValid = false;
+                    ViewData["Title"] = "Error: " + ViewData["Title"];
+                    @await Html.PartialAsync("~/Views/PartialViews/_SpecificErrorsView.cshtml",
+                             new Tuple<string, IEnumerable<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>>("SecondaryCheckComment", Html.ViewData.ModelState["SecondaryCheckComment"]?.Errors))
+                }
                 <h1 class="govuk-heading-xl">
                     Request another primary check
                 </h1>
                 <div class="govuk-grid-column-full">
-                    <table class="govuk-table">
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Service name</th>
-                                <td class="govuk-table__cell">Remote Verify</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Service Provider</th>
-                                <td class="govuk-table__cell">Northrow Limited</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Conformity Assessment Body (CAB)</th>
-                                <td class="govuk-table__cell">BSI</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Days left to complete review</th>
-                                <td class="govuk-table__cell">1 day</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">New application or reapplication</th>
-                                <td class="govuk-table__cell">Reapplication</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Review status</th>
-                                <td class="govuk-table__cell">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/_ServiceDetailsWithReviewStatus.cshtml", Model.Service)
                 </div>
-            </div>
+           @using (Html.BeginForm("SaveSentBackForPrimaryCheck", "PublicInterestSecondaryCheck", FormMethod.Post))
+           {
+                @Html.HiddenFor(m => Model.ServiceId)
+                @Html.HiddenFor(m => Model.ProviderProfileId)
+           <div class="govuk-grid-column-two-thirds">
 
-            <div class="govuk-form-group">
-                <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--m" for="more-detail">
-                        Comment(required)
-                    </label>
-                </h1>
-                <div id="more-detail-hint" class="govuk-hint">
-                    Please add additional details to support your decision. This information will only be visible to OfDIA users.
+           @if (!isValid)
+           {
+                <div class="govuk-form-group govuk-form-group--error">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" for="secondarycheckcomment">
+                            Comment (required)
+                        </label>
+                    </h3>
+
+                    <div id="secondarycheckcomment-hint" class="govuk-hint">
+                        Please add additional details to support your decision. This information will only be visible to OfDIA users.
+                    </div>
+
+                    <p id="secondarycheckcomment-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.SecondaryCheckComment)
+                    </p>
+                    @Html.TextAreaFor(model => model.SecondaryCheckComment, new { @class = "govuk-textarea govuk-textarea--error", @id = "secondarycheckcomment", @name = "secondarycheckcomment-name", @rows = "5", @aria_describedby = "secondarycheckcomment-hint secondarycheckcomment-error" })
                 </div>
-                <textarea class="govuk-textarea" id="more-detail" name="moreDetail" rows="5" aria-describedby="more-detail-hint"></textarea>
-            </div>
 
-            <div class="govuk-grid-column-two-thirds">
+            }
+            else
+            {
+                <div class="govuk-form-group">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" for="secondarycheckcomment">
+                            Comment required
+                        </label>
+                    </h3>
+
+                    <div id="secondarycheckcomment-hint" class="govuk-hint">
+                        If you have marked any item as Reject, you should provide further details. If all
+                        sections are marked Approve, please provide a note to confirm below
+                    </div>
+
+                    @Html.TextAreaFor(model => model.SecondaryCheckComment, new { @class = "govuk-textarea", @id = "secondarycheckcomment", @name = "secondarycheckcomment-name", @rows = "5", @aria_describedby = "secondarycheckcomment-hint" })
+                </div>
+
+            }        
                 <h2 class="govuk-heading-m">
                     What will happen next
                 </h2>
@@ -68,24 +78,19 @@
                     Once you request another review, the person who completed the primary
                     check will recieve a notification to conduct another primary check. You will recieve a
                     notification once the primary check is completed.
-                </p>
-
-
-
-                @using (Html.BeginForm("SaveSentBackForPrimaryCheck", "PublicInterestSecondaryCheck", FormMethod.Post))
-                {
+                </p>               
+                   
                     <div class="govuk-button-group">
-                        <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="sentback">
-                            Sent back to primary check
-                        </button>
-                        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
+                    <button type="submit" class="govuk-button" data-module="govuk-button" >
+                        Sent back to primary check
+                    </button>
+                        <a href="@Url.Action("SecondaryCheckReview","PublicInterestSecondaryCheck", new {serviceId = Model.ServiceId})" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                             Cancel and back
-                        </button>
+                        </a>
                     </div>
-                }
-
-            </div>
-        </div>
+                 </div>
+           }
+     </div>
     </main>
 </div>
 

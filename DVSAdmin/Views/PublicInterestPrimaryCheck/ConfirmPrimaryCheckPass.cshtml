@@ -1,5 +1,4 @@
-﻿@model DVSAdmin.Models.PublicInterestCheckViewModel;
-@using Newtonsoft.Json
+﻿@using Newtonsoft.Json
 @{
     ViewData["Title"] = "You are about to confirm this service has passed the primary public interest check";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -7,7 +6,7 @@
 
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "PrimaryCheckReview", "PublicInterestPrimaryCheck", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "PrimaryCheckReview", "PublicInterestPrimaryCheck", new{serviceId = Convert.ToInt32(ViewBag.serviceId)}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
