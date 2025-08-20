@@ -52,8 +52,7 @@ namespace DVSAdmin.Controllers
             publicInterestPrimaryCheckViewModel = MapDtoToViewModel(serviceDto);
             publicInterestPrimaryCheckViewModel.ServiceId = serviceDto.Id;
             publicInterestPrimaryCheckViewModel.ProviderProfileId = serviceDto.Provider.Id;
-            publicInterestPrimaryCheckViewModel.PrimaryCheckUserId = userDto?.Id;
-            publicInterestPrimaryCheckViewModel.SecondaryCheckUserId = serviceDto.PublicInterestCheck.SecondaryCheckUserId;
+            publicInterestPrimaryCheckViewModel.PrimaryCheckUserId = userDto?.Id;           
             return View(publicInterestPrimaryCheckViewModel);
         }
 
@@ -75,7 +74,7 @@ namespace DVSAdmin.Controllers
             AddModelErrorForInvalidActions(publicInterestPrimaryCheckViewModel);
             if(ModelState["PublicInterestChecksMet"]?.Errors.Count == 0)
             {
-                publicInterestPrimaryCheckViewModel.PrimaryCheckComment = serviceDto.PublicInterestCheck.PrimaryCheckComment;
+                publicInterestPrimaryCheckViewModel.PrimaryCheckComment = serviceDto?.PublicInterestCheck?.PrimaryCheckComment;
                 HttpContext?.Session.Set("PrimaryCheckData", publicInterestPrimaryCheckViewModel);
                 if (publicInterestPrimaryCheckViewModel.PublicInterestChecksMet == true)
                 {                   
@@ -257,6 +256,7 @@ namespace DVSAdmin.Controllers
             { 
                 publicInterestPrimaryCheckViewModel.PublicInterestChecksMet= serviceDto.PublicInterestCheck.PublicInterestChecksMet;                
                 publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus = serviceDto.PublicInterestCheck.PublicInterestCheckStatus;
+                publicInterestPrimaryCheckViewModel.SecondaryCheckUserId = serviceDto.PublicInterestCheck.SecondaryCheckUserId;
             }
             return publicInterestPrimaryCheckViewModel;
         }

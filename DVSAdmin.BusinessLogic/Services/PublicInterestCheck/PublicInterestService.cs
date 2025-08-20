@@ -66,8 +66,34 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await publicInterestCheckRepository.SavePublicInterestCheck(publicInterestCheck, reviewType, loggedInUserEmail);
            
             if (genericResponse.Success)
-            {                
+            {
 
+                bool isPrimaryFailed = reviewType == ReviewTypeEnum.PrimaryCheck &&  publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed;
+                bool isSecondarySentBack = reviewType == ReviewTypeEnum.SecondaryCheck && publicInterestCheckDto.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer;
+
+                if (isPrimaryFailed || isSecondarySentBack)
+                {
+                    var pICheckLog = new PICheckLogs
+                    {
+                        PublicInterestCheckId = genericResponse.InstanceId,
+                        LogTime = DateTime.UtcNow,
+                        ReviewType = reviewType
+                    };
+
+                    if (isPrimaryFailed)
+                    {
+                        pICheckLog.Comment = publicInterestCheckDto.PrimaryCheckComment;
+                        pICheckLog.UserId = publicInterestCheckDto.PrimaryCheckUserId;
+                    }
+                    else 
+                    {
+                        pICheckLog.Comment = publicInterestCheckDto.SecondaryCheckComment;
+                        pICheckLog.UserId = Convert.ToInt32(publicInterestCheckDto.SecondaryCheckUserId);
+                    }
+
+                    await publicInterestCheckRepository.SavePICheckLog(pICheckLog, loggedInUserEmail);
+
+                }
 
                 DateTime expirationdate = Convert.ToDateTime(service.ModifiedTime).AddDays(Constants.DaysLeftToCompletePICheck);
                 string expirationDate = Helper.GetLocalDateTime(expirationdate, "d MMM yyyy h:mm tt");
@@ -102,9 +128,10 @@ namespace DVSAdmin.BusinessLogic.Services
 
                         if (genericResponse.Success)
                         {
-                            await emailSender.SendApplicationApprovedToDSIT(service.ServiceName, service.Provider.RegisteredName);
 
+                            await emailSender.SendApplicationApprovedToDSIT(service.ServiceName, service.Provider.RegisteredName);
                             genericResponse = await UpdateServiceStatus(service.Id, service.ServiceName, service.Provider.Id, loggedInUserEmail, service.CabUser.CabEmail);
+                           
                         }
                     }
                 }

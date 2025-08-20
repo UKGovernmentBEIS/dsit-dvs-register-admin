@@ -38,7 +38,7 @@
                     @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/_ServiceDetailsWithReviewStatus.cshtml", Model.Service)
 
 
-                    @if (Model.Service.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)
+                    @if (Model.Service.PublicInterestCheck!=null && Model.Service.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)
                     {
                         <h3 class="govuk-heading-m">Secondary check reviewer comments</h3>
                         <p class="govuk-body govuk-summary-list__key">@Model.Service.PublicInterestCheck.SecondaryCheckUser.UserName</p>
@@ -184,8 +184,7 @@
                        Label2 = "No, the primary check has failed"
                    })
 
-                    @if ((Model.PublicInterestCheck != null && Model.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview ||
-                    Model.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer) || Model.Service.ServiceStatus == ServiceStatusEnum.Received)
+                    @if ((Model.PublicInterestCheck != null && Model.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer) || Model.Service.ServiceStatus == ServiceStatusEnum.Received)
 
                     {
                         <div id="submitvalidation" class="govuk-button-group">

@@ -48,8 +48,7 @@ namespace DVSAdmin.Data.Repositories
                       s.ServiceStatus != ServiceStatusEnum.Removed &&
                       s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                       s.Id != s?.PublicInterestCheck?.ServiceId) ||
-                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview ||
-                      s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)),
+                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)),
                 "secondary check" => s =>
                     (s.ServiceStatus != ServiceStatusEnum.Removed &&
                      s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
@@ -202,10 +201,9 @@ namespace DVSAdmin.Data.Repositories
                     certificateReviewCount++;
                 }
 
-                if (((s.ServiceStatus == ServiceStatusEnum.Received && notRemovedOrDraft &&
+                if ((s.ServiceStatus == ServiceStatusEnum.Received && notRemovedOrDraft &&
                       s.Id != s?.PublicInterestCheck?.ServiceId) ||
-                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview ||
-                      s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)))
+                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer))
                 {
                     primaryCount++;
                 }

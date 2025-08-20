@@ -16,7 +16,8 @@ namespace DVSAdmin.Data.Repositories
 
         #region Save update methods
         public Task<GenericResponse> SavePublicInterestCheck(PublicInterestCheck publicInterestCheck, ReviewTypeEnum reviewType, string loggedInUserEmail);      
-        public Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail);      
+        public Task<GenericResponse> SavePublishRegisterLog(RegisterPublishLog registerPublishLog, string loggedInUserEmail);
+        public Task<GenericResponse> SavePICheckLog(PICheckLogs pICheck, string loggedInUserEmail);
 
         #endregion
     }
