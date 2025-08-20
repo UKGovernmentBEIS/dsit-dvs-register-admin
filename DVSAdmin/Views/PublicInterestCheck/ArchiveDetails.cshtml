@@ -25,46 +25,78 @@
                            
                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
 
-                @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/_ServiceDetailsWithReviewStatus.cshtml", Model)
+                @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/_ServiceDetailsWithTimeReviewed.cshtml", Model)
 
-            
-
-                <h2 class="govuk-heading-l">Application details</h2>
-                <h3 class="govuk-heading-m">Provider contact details</h3>
-
+                <h2 class="govuk-heading-l">Review summary</h2>
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Full name of primary contact</dt>
-                        <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactFullName</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Job title of primary contact</dt>
-                        <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactJobTitle</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Email address of primary contact</dt>
-                        <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactEmail</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Telephone number of primary contact</dt>
-                        <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactTelephoneNumber</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Full name of secondary contact</dt>
-                        <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactFullName</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Job title of secondary contact</dt>
-                        <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactJobTitle</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Email address of secondary contact</dt>
-                        <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactEmail</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Telephone number of secondary contact</dt>
-                        <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactTelephoneNumber</dd>
-                    </div>
+
+                    @if (Model.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PublicInterestCheckPassed)
+                    {
+                      <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Primary check
+                        </dt>
+                            <dd class="govuk-summary-list__value">
+                                <strong class="govuk-tag govuk-tag--green">
+                                    Primary check passed
+                                </strong>
+                            </dd>
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Secondary check
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <strong class="govuk-tag govuk-tag--green">
+                                    Secondary check passed
+                                </strong>
+                            </dd>
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Primary check
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <strong class="govuk-tag govuk-tag--red">
+                                    Primary check failed
+                                </strong>
+                            </dd>
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Secondary check
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <strong class="govuk-tag govuk-tag--red">
+                                    Secondary check failed
+                                </strong>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Reason for rejection
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+
+                                @foreach (var reason in @Model?.PublicInterestCheck?.RejectionReasons?.Split('~'))
+                                {                                   
+                                      <strong class="govuk-tag govuk-tag--red govuk-!-margin-top-2">
+                                        @reason
+                                    </strong>
+                                    <br/>                                   
+                                }
+                               
+                               
+                            </dd>
+                        </div>
+                    }
+                   
                 </dl>
 
                 <h3 class="govuk-heading-m">Company overview</h3>
@@ -108,26 +140,60 @@
                         </div>
 
                     }
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Public contact email</dt>
-                        <dd class="govuk-summary-list__value">@Html.DisplayFor(model => model.Provider.PublicContactEmail)</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Public telephone number</dt>
-                        <dd class="govuk-summary-list__value">@Html.DisplayFor(model => model.Provider.ProviderTelephoneNumber)</dd>
-                    </div>
+               
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Website address</dt>
                         <dd class="govuk-summary-list__value">@Model.Provider.ProviderWebsiteAddress</dd>
                     </div>
                 </dl>
 
-                @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)     
+            
 
-              
+                <h3 class="govuk-heading-m">Primary contact details</h3>
 
-             
-         
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Full name</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactFullName</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Job title</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactJobTitle</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Email address</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactEmail</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Telephone number</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.PrimaryContactTelephoneNumber</dd>
+                    </div>
+
+                    </dl>
+                <h3 class="govuk-heading-m">Secondary contact details</h3>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Full name</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactFullName</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Job title</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactJobTitle</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Email address</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactEmail</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Telephone number</dt>
+                        <dd class="govuk-summary-list__value">@Model.Provider.SecondaryContactTelephoneNumber</dd>
+                    </div>
+                </dl>
+
+
+                <a href="/public-interest-check/public-interest-check-list#archive" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                    Go back to completed
+                </a>
             </div>
         </div>
     </main>

@@ -137,6 +137,8 @@ namespace DVSAdmin.Data.Repositories
                         existingEntity.PublicInterestCheckStatus = publicInterestCheck.PublicInterestCheckStatus;
                         existingEntity.PrimaryCheckUserId = publicInterestCheck.PrimaryCheckUserId;
                         existingEntity.PrimaryCheckTime = DateTime.UtcNow;
+                        if (publicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
+                            existingEntity.PrimaryCheckComment = publicInterestCheck.PrimaryCheckComment;
                     }
                     else
                     {
@@ -206,6 +208,7 @@ namespace DVSAdmin.Data.Repositories
                     existingService.Provider.IsInRegister = true;
                     existingService.ModifiedTime = DateTime.UtcNow;
                     existingService.PublishedTime = DateTime.UtcNow;
+                    existingService.Provider.PublishedTime = DateTime.UtcNow;
 
 
                     if (previousPublishedServiceVersionList != null && previousPublishedServiceVersionList.Count > 0)
@@ -341,5 +344,28 @@ namespace DVSAdmin.Data.Repositories
             return success;
 
         }
+
+        public async Task<GenericResponse> SavePICheckLog(PICheckLogs pICheck, string loggedInUserEmail)
+        {
+            GenericResponse genericResponse = new();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                await context.PICheckLogs.AddAsync(pICheck);
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.PICheck, loggedInUserEmail);
+                transaction.Commit();
+                genericResponse.Success = true;
+            }
+            catch (Exception ex)
+            {
+                genericResponse.EmailSent = false;
+                genericResponse.Success = false;
+                transaction.Rollback();
+                logger.LogError($"Failed to log to PI check logs: {ex}");
+
+            }
+            return genericResponse;
+        }
+
     }
 }

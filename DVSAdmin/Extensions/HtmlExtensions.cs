@@ -62,8 +62,7 @@ namespace DVSAdmin.Extensions
                 case ProviderStatusEnum.AwaitingRemovalConfirmation:              
                 case ServiceStatusEnum.AwaitingRemovalConfirmation:
                 case CertificateReviewEnum.InReview:
-                case CertificateReviewEnum.AmendmentsRequired:
-                case PublicInterestCheckEnum.InPrimaryReview:
+                case CertificateReviewEnum.AmendmentsRequired:               
                 case PublicInterestCheckEnum.PrimaryCheckSkipped:
                 case ProviderStatusEnum.UpdatesRequested:
                 case ServiceStatusEnum.UpdatesRequested:
