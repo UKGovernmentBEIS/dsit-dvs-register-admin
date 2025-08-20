@@ -35,31 +35,36 @@ namespace DVSAdmin.Controllers
       
 
         [HttpGet("certificate-review-list")]
-        public async Task<ActionResult> CertificateReviews(string SearchText = "", string SearchAction = "")
-        {          
-            CertificateReviewListViewModel certificateReviewListViewModel = new ();
-            if (SearchAction == "clearSearch")
+        public async Task<ActionResult> CertificateReviews(string currentSort = "days", string currentSortAction = "ascending", int pageNumber = 1, string newSort = "", string searchText = "")
+        {
+            if (!string.IsNullOrEmpty(newSort))
             {
-                ModelState.Clear();
-                SearchText = string.Empty;
+                if (currentSort.Equals(newSort, StringComparison.OrdinalIgnoreCase))
+                    currentSortAction = currentSortAction == "ascending" ? "descending" : "ascending";
+                else
+                {
+                    currentSort = newSort;
+                    currentSortAction = "ascending";
+                }
+                pageNumber = 1;
             }
-            var serviceList = await certificateReviewService.GetServiceList(SearchText);
 
-            certificateReviewListViewModel.CertificateReviewList = serviceList
-                .Where(x =>
-                    ((x.ServiceStatus == ServiceStatusEnum.Submitted || x.ServiceStatus == ServiceStatusEnum.Resubmitted) &&
-                     x.ServiceStatus != ServiceStatusEnum.Removed &&
-                     x.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
-                     x.Id != x?.CertificateReview?.ServiceId) ||
-                    (x.CertificateReview != null &&
-                    (x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider ||
-                    x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)))
-                   .OrderBy(x => x.DaysLeftToComplete).ToList();
+            var paged = await certificateReviewService.GetCertificateReviews(
+                pageNumber, currentSort, currentSortAction, searchText);
 
-            certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
-            ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) 
-            || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)).OrderByDescending(x => x.CertificateReview.ModifiedDate).ToList();
-            return View(certificateReviewListViewModel);
+            var totalPages = (int)Math.Ceiling(paged.TotalCount / 10d);
+
+            var vm = new CertificateReviewListViewModel
+            {
+                CertificateReviewList = paged.Items,
+                TotalPages = totalPages,
+                CurrentSort = currentSort,
+                CurrentSortAction = currentSortAction
+            };
+
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.SearchText = searchText;
+            return View(vm);
         }
 
         [HttpGet("certificate-submission-details")]
