@@ -1,8 +1,11 @@
-﻿using DVSAdmin.CommonUtility.Models;
+﻿using DVSAdmin.CommonUtility;
+using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static DVSAdmin.Data.Repositories.CabTransferRepository;
+
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -14,7 +17,7 @@ namespace DVSAdmin.Data.Repositories
         public CertificateReviewRepository(DVSAdminDbContext context, ILogger<CertificateReviewRepository> logger)
         {
             this.context = context;
-            this.logger=logger;
+            this.logger = logger;
         }
        
 
@@ -69,7 +72,103 @@ namespace DVSAdmin.Data.Repositories
             .Include(s => s.CabUser).ThenInclude(s => s.Cab)
             .OrderByDescending(s => s.CreatedTime)
             .ToListAsync();
-        }     
+        }
+        
+        public async Task<PaginatedResult<Service>> GetCertificateReviews(int pageNumber, string sort, string sortAction, string searchText)
+        {
+            var baseQuery = context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.CertificateReview);
+
+            var latest = await baseQuery
+                .GroupBy(s => s.ServiceKey)
+                .Select(g => g.OrderByDescending(s => s.ServiceVersion).FirstOrDefault())
+                .ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                var term = searchText.Trim();
+                latest = latest.Where(s =>
+                    (s.ServiceName ?? string.Empty).Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (s.Provider?.RegisteredName ?? string.Empty).Contains(term, StringComparison.OrdinalIgnoreCase)
+                ).ToList();
+            }
+
+            var filtered = latest.Where(s =>
+                (
+                    ((s.ServiceStatus == ServiceStatusEnum.Submitted || s.ServiceStatus == ServiceStatusEnum.Resubmitted) &&
+                     s.ServiceStatus != ServiceStatusEnum.Removed &&
+                     s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
+                     s.Id != s?.CertificateReview?.ServiceId)
+                )
+                ||
+                (
+                    s.CertificateReview != null &&
+                    (s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider ||
+                     s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
+                )
+            ).ToList();
+
+            int deadline = Constants.DaysLeftToCompleteCertificateReview;
+
+            var results = filtered.Select(s =>
+            {
+                var baseDate = s.ModifiedTime ?? s.CreatedTime;
+                var daysLeft = 0;
+                if (baseDate.HasValue)
+                {
+                    var daysPassed = (DateTime.UtcNow.Date - baseDate.Value.Date).Days;
+                    daysLeft = Math.Max(0, deadline - daysPassed);
+                }
+                
+
+                return new
+                {
+                    Service = s,
+                    DaysLeft = daysLeft,
+                    NewOrResubmission = s.ServiceVersion == 1 ? Constants.NewApplication : Constants.ReApplication,
+                    ReviewStatus = s.CertificateReview?.CertificateReviewStatus,
+                    Submitted = s.CreatedTime
+                };
+            }).ToList();
+
+            bool desc = string.Equals(sortAction, "descending", StringComparison.OrdinalIgnoreCase);
+
+            var ordered = sort switch
+            {
+                "provider"      => desc ? results.OrderByDescending(r => r.Service.Provider.RegisteredName ?? string.Empty)
+                                        : results.OrderBy(r => r.Service.Provider.RegisteredName ?? string.Empty),
+
+                "service name"  => desc ? results.OrderByDescending(r => r.Service.ServiceName ?? string.Empty)
+                                        : results.OrderBy(r => r.Service.ServiceName ?? string.Empty),
+
+                "application"   => desc ? results.OrderByDescending(r => r.NewOrResubmission)
+                                        : results.OrderBy(r => r.NewOrResubmission),
+
+                "submitted"     => desc ? results.OrderByDescending(r => r.Submitted)
+                                        : results.OrderBy(r => r.Submitted),
+
+                "status"        => desc ? results.OrderByDescending(r => r.ReviewStatus)
+                                        : results.OrderBy(r => r.ReviewStatus),
+
+                _ /* "days" */  => desc ? results.OrderByDescending(r => r.DaysLeft)
+                                        : results.OrderBy(r => r.DaysLeft),
+            };
+
+            var totalCount = results.Count;
+            
+            var pageItems = ordered
+                .Skip((pageNumber - 1) * 10)
+                .Take(10)
+                .Select(r => r.Service)
+                .ToList();
+
+            return new PaginatedResult<Service>
+            {
+                Items = pageItems,
+                TotalCount = totalCount
+            };
+        }
 
 
 

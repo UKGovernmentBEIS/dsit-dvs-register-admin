@@ -8,7 +8,8 @@ namespace DVSAdmin.BusinessLogic.Services
        
         public  Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons();      
         public Task<CertificateReviewDto> GetCertificateReviewWithRejectionData(int reviewId);
-        public Task<List<ServiceDto>> GetServiceList(string searchText = "");       
+        public Task<List<ServiceDto>> GetServiceList(string searchText = "");
+        public Task<PaginatedResult<ServiceDto>> GetCertificateReviews(int pageNumber, string sort, string sortAction, string searchText = "");
         public Task<ServiceDto> GetServiceDetails(int serviceId);
         public Task<ServiceDto> GetPreviousServiceVersion(int currentServiceId);
 
