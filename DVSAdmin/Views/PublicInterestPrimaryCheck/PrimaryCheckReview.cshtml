@@ -176,7 +176,9 @@
                    {
                        PropertyName = "PublicInterestChecksMet",
                        Value = Model.PublicInterestChecksMet,
-                       Legend = "Have the public interest checks for this service been met?",
+                       Heading = DVSAdmin.Models.UI.Enums.HeadingEnum.H3,
+                       FieldSet = "Have the public interest checks for this service been met?",
+                       LegendStyleClass = "govuk-fieldset__legend--m",
                        HasError = Html.ViewData.ModelState.ContainsKey("PublicInterestChecksMet") && Html.ViewData.ModelState["PublicInterestChecksMet"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("PublicInterestChecksMet") && Html.ViewData.ModelState["PublicInterestChecksMet"].Errors.Count > 0 ?
                        Html.ViewData.ModelState["PublicInterestChecksMet"].Errors[0].ErrorMessage : string.Empty,
