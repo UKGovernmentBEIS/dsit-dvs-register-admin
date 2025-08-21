@@ -116,11 +116,14 @@ namespace DVSAdmin.BusinessLogic.Services
             GenericResponse genericResponse = await consentRepository.SaveProceedApplicationConsentToken(consentToken, loggedInUserEmail);
             if(genericResponse.Success)  
             {
-                List<string> emailList = [serviceDto.Provider.PrimaryContactEmail, serviceDto.Provider.SecondaryContactEmail];
+            
                 await emailSender.SendProceedApplicationConsentToDIP(serviceDto.ServiceName, serviceDto.Provider.PrimaryContactFullName, 
-                    serviceDto.Provider.SecondaryContactFullName, consentLink, emailList);
+                    serviceDto.Provider.SecondaryContactFullName, consentLink, serviceDto.Provider.PrimaryContactEmail);
 
-                if(isResend) 
+                await emailSender.SendProceedApplicationConsentToDIP(serviceDto.ServiceName, serviceDto.Provider.PrimaryContactFullName,
+                   serviceDto.Provider.SecondaryContactFullName, consentLink, serviceDto.Provider.SecondaryContactEmail);
+
+                if (isResend) 
                 {
                     await emailSender.ConfirmationConsentResentToDSIT(serviceDto.Provider.RegisteredName, serviceDto.ServiceName);
                 }
