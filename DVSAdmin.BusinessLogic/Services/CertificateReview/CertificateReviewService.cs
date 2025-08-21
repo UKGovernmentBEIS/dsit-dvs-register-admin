@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Email;
 using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.CommonUtility.Models;
@@ -83,20 +82,6 @@ namespace DVSAdmin.BusinessLogic.Services
         {
             var serviceList = await certificateReviewRepository.GetServiceList(searchText);
             return automapper.Map<List<ServiceDto>>(serviceList);
-        }
-        
-        public async Task<PaginatedResult<ServiceDto>> GetCertificateReviews(
-            int pageNumber,
-            string sort,
-            string sortAction,
-            string searchText = "")
-        {
-            var page = await certificateReviewRepository.GetCertificateReviews(
-                pageNumber, sort, sortAction, searchText);
-            
-            var dtos = automapper.Map<List<ServiceDto>>(page.Items);
-            
-            return new PaginatedResult<ServiceDto> { Items = dtos, TotalCount = page.TotalCount };
         }
 
       
