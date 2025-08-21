@@ -112,7 +112,9 @@
                    {
                        PropertyName = "CertificateValid",
                        Value = Model.CertificateValid,
+                       Heading = DVSAdmin.Models.UI.Enums.HeadingEnum.H3,
                        FieldSet = "Does the information provided on the certificate of conformity meet the certification scheme requirements?",
+                   LegendStyleClass = "govuk-fieldset__legend--m",
                        HasError = Html.ViewData.ModelState.ContainsKey("CertificateValid") && Html.ViewData.ModelState["CertificateValid"].Errors.Count > 0,
                        ErrorMessage = Html.ViewData.ModelState.ContainsKey("CertificateValid") && Html.ViewData.ModelState["CertificateValid"].Errors.Count > 0 ?
                        Html.ViewData.ModelState["CertificateValid"].Errors[0].ErrorMessage : string.Empty,
@@ -158,7 +160,9 @@
                    {
                     PropertyName = "InformationMatched",
                     Value = Model.InformationMatched,
+                    Heading = DVSAdmin.Models.UI.Enums.HeadingEnum.H3,
                     FieldSet = "Does this information match the certificate of conformity?",
+                    LegendStyleClass = "govuk-fieldset__legend--m",
                     HasError = Html.ViewData.ModelState.ContainsKey("InformationMatched") && Html.ViewData.ModelState["InformationMatched"].Errors.Count > 0,
                     ErrorMessage = Html.ViewData.ModelState.ContainsKey("InformationMatched") && Html.ViewData.ModelState["InformationMatched"].Errors.Count > 0 ?
                     Html.ViewData.ModelState["InformationMatched"].Errors[0].ErrorMessage : string.Empty,
