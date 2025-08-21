@@ -40,32 +40,14 @@
 
                 @if (Model?.CertificateReview?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)
                 {
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">
-                                This submission has been rejected.
-                            </span>
-                        </summary>
-                        <div class="govuk-details__text">
-                            <p class="govuk-body">This submission has been rejected.</p>
-                            <p class="govuk-body">If you rejected this submission by mistake, select 'Restore this submission' button to move this record to the Certificate Submissions tab.</p>
-                        </div>
-                    </details>
+                    
                 }
 
                 @if (Model?.CertificateReview?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
                 {
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">
-                                This submission has been sent back to the Conformity Assessment Body
-                            </span>
-                        </summary>
-                        <div class="govuk-details__text">
-                            <p class="govuk-body">A resubmission request has been sent to the Conformity Assessment Body (CAB). The CAB will need to amend and resubmit the submission according to the review feedback from OfDIA.</p>
-                            <p class="govuk-body">To review other submissions, select the 'Go back to certificate review' button.</p>
-                        </div>
-                    </details>
+                    <p class="govuk-body">A resubmission request has been sent to the Conformity Assessment Body (CAB). The CAB will need to amend and resubmit the submission according to the review feedback from OfDIA.</p>
+                    <p class="govuk-body">To review other submissions, select the 'Go back to certificate review' button.</p>
+
                 }
             </div>
 
@@ -75,7 +57,19 @@
             </div>
 
 
-            <div class="govuk-grid-column-full">
+            @if (Model?.CertificateReview?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)
+            {
+                <h2 class="govuk-heading-l">Information that was sent to the CAB</h2>
+
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",
+                new DVSAdmin.Models.CertificateReview.ReviewViewModel
+                {
+                    CertificateValid = Model.CertificateReview.CertificateValid,
+                    InformationMatched = Model.CertificateReview.InformationMatched,
+                    IsSendBack = true,
+                    ReviewComments = Model.SendBackViewModel.Reason
+                })
+                        }
                
 
                 @if (Model.CanResendOpeningLoopRequest)
@@ -94,7 +88,38 @@
                     }
                 }
 
-                <h2 class="govuk-heading-l">Review summary</h2>
+
+                @if (Model?.CertificateReview?.Service?.CertificateReview != null)
+                {
+                    if (Model?.CertificateReview?.Service?.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved)
+                    {
+                        <h2 class="govuk-heading-l">Review summary</h2>
+
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Certificate validation
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--green">
+                                        Approved
+                                    </strong>
+                                </dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Information match
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <strong class="govuk-tag govuk-tag--green">
+                                        Yes, it matches the information on the certificate
+                                    </strong>
+                                </dd>
+                            </div>
+                        </dl>
+                    }
+                }
 
                 <div class="govuk-!-padding-bottom-6">
                     <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
@@ -117,19 +142,7 @@
                 </div>
 
                 <div class="govuk-!-padding-bottom-6">
-                    <h2 class="govuk-heading-l">Submitted information</h2>
-                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_SubmittedInformationView.cshtml", Model?.CertificateReview?.Service)
 
-
-
-                    @if (@Model?.CertificateReview?.Service.ServiceSupSchemeMapping != null && @Model?.CertificateReview?.Service.ServiceSupSchemeMapping.Count > 0)
-                    {
-                        if ((@Model.CertificateReview.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
-                        || (@Model.CertificateReview.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
-                        {
-                            @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.CertificateReview.Service)
-                        }
-                    }
 
                     @if (Model?.CertificateReview.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
                     {
@@ -242,9 +255,9 @@
                         </a>
                     </div>
                 </div>
-                                }
+                   }
                 }
-            </div>
+            </>
         </div>
     </main>
 
