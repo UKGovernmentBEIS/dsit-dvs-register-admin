@@ -32,49 +32,47 @@ body {
 }
 
 .sortable-table [aria-sort] {
-    color: #1d70b8;
+    color: #1D70B8;
     cursor: pointer;
-    font: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
     padding: 0 10px 0 0;
     position: relative;
     text-align: inherit;
     margin: 0;
 }
 
-.sortable-table [aria-sort] a,
-.sortable-table [aria-sort] button {
-    display: inline-flex;
-    align-items: center;
-    color: inherit;
-    text-decoration: none;
-}
+    .sortable-table [aria-sort] a {
+        text-decoration: none;
+        color: inherit;
+        display: inline-flex;
+        align-items: center;
+    }
 
-/* Glyphs */
-.sortable-table [aria-sort="none"] a::after,
-.sortable-table [aria-sort="none"] button::after {
+.sortable-table [aria-sort="none"] a::after {
     content: "▲\A▼";
     white-space: pre;
-    font-size: .5em;
-    margin-left: .3em;
+    font-size: 0.5em;
+    margin-left: 0.3em;
     line-height: 1;
     display: inline-block;
 }
-.sortable-table [aria-sort="ascending"] a::after,
-.sortable-table [aria-sort="ascending"] button::after { content: "▲"; font-size: .8em; margin-left: .3em; }
-.sortable-table [aria-sort="descending"] a::after,
-.sortable-table [aria-sort="descending"] button::after { content: "▼"; font-size: .8em; margin-left: .3em; }
 
-.sortable-table [aria-sort] a::before,
-.sortable-table [aria-sort] button::before { content: none; }
+.sortable-table [aria-sort="ascending"] a::after {
+    content: "▲";
+    font-size: 0.8em;
+    margin-left: 0.3em;
+}
 
-.sortable-table [aria-sort] a:focus,
-.sortable-table [aria-sort] a:focus-visible,
-.sortable-table [aria-sort] button:focus,
-.sortable-table [aria-sort] button:focus-visible {
-    outline: 3px solid #fd0;
-    outline-offset: 0;
-    box-shadow: 0 -2px #0b0c0c, 0 4px #fd0;
-    text-decoration: none;
+.sortable-table [aria-sort="descending"] a::after {
+    content: "▼";
+    font-size: 0.8em;
+    margin-left: 0.3em;
+}
+
+.sortable-table [aria-sort] a::before {
+    content: none;
 }
 
 :root{

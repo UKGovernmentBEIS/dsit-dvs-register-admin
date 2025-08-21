@@ -1,6 +1,5 @@
 ﻿using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
-using static DVSAdmin.Data.Repositories.CabTransferRepository;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -14,8 +13,7 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<CertificateReviewRejectionReason>> GetRejectionReasons();
         public Task<CertificateReview> GetCertificateReview(int reviewId);
         public Task<CertificateReview> GetCertificateReviewWithRejectionData(int reviewId);
-        public Task<List<Service>> GetServiceList(string searchText = "");
-        public Task<PaginatedResult<Service>> GetCertificateReviews(int pageNumber, string sort, string sortAction, string searchText);
+        public Task<List<Service>> GetServiceList(string searchText = "");     
         public Task<Service> GetServiceDetails(int serviceId);
         public Task<Service> GetPreviousServiceVersion(int currentServiceId);
 

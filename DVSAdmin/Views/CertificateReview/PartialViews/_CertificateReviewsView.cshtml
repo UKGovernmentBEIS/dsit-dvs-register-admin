@@ -5,78 +5,41 @@
 @model DVSAdmin.Models.CertificateReviewListViewModel;
 
 <h2 class="govuk-heading-l">Certificate submissions</h2>
-
-<table class="govuk-table govuk-table--small-text-until-tablet">
+<table class="govuk-table">
     <thead class="govuk-table__head">
-    <tr class="govuk-table__row sortable-table">
-        <th scope="col" class="govuk-table__header"
-            aria-sort="@((Model.CurrentSort == "provider") ? Model.CurrentSortAction : "none")"
-            aria-label="sort by provider">
-            <a href="@Url.Action("CertificateReviews", new { CurrentSort = Model.CurrentSort, CurrentSortAction = Model.CurrentSortAction, NewSort = "provider", SearchText = ViewBag.SearchText })">
-                <b>Service provider</b>
-            </a>
-        </th>
-        <th scope="col" class="govuk-table__header"
-            aria-sort="@((Model.CurrentSort == "service name") ? Model.CurrentSortAction : "none")"
-            aria-label="sort by service name">
-            <a href="@Url.Action("CertificateReviews", new { CurrentSort = Model.CurrentSort, CurrentSortAction = Model.CurrentSortAction, NewSort = "service name", SearchText = ViewBag.SearchText })">
-                <b>Service name</b>
-            </a>
-        </th>
-        <th scope="col" class="govuk-table__header"
-            aria-sort="@((Model.CurrentSort == "application") ? Model.CurrentSortAction : "none")"
-            aria-label="sort by application type">
-            <a href="@Url.Action("CertificateReviews", new { CurrentSort = Model.CurrentSort, CurrentSortAction = Model.CurrentSortAction, NewSort = "application", SearchText = ViewBag.SearchText })">
-                <b>New application<br/>or reapplication</b>
-            </a>
-        </th>
-        <th scope="col" class="govuk-table__header"
-            aria-sort="@((Model.CurrentSort == "submitted") ? Model.CurrentSortAction : "none")"
-            aria-label="sort by time submitted">
-            <a href="@Url.Action("CertificateReviews", new { CurrentSort = Model.CurrentSort, CurrentSortAction = Model.CurrentSortAction, NewSort = "submitted", SearchText = ViewBag.SearchText })">
-                <b>Time submitted (GMT)</b>
-            </a>
-        </th>
-        <th scope="col" class="govuk-table__header"
-            aria-sort="@((Model.CurrentSort == "status") ? Model.CurrentSortAction : "none")"
-            aria-label="sort by review status">
-            <a href="@Url.Action("CertificateReviews", new { CurrentSort = Model.CurrentSort, CurrentSortAction = Model.CurrentSortAction, NewSort = "status", SearchText = ViewBag.SearchText })">
-                <b>Review status</b>
-            </a>
-        </th>
-        <th scope="col" class="govuk-table__header"
-            aria-sort="@((Model.CurrentSort == "days") ? Model.CurrentSortAction : "none")"
-            aria-label="sort by days left">
-            <a href="@Url.Action("CertificateReviews", new { CurrentSort = Model.CurrentSort, CurrentSortAction = Model.CurrentSortAction, NewSort = "days", SearchText = ViewBag.SearchText })">
-                <b>Days left to<br/>complete review</b>
-            </a>
-        </th>
-    </tr>
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Service provider</th>
+            <th scope="col" class="govuk-table__header">Service name</th>
+            <th scope="col" class="govuk-table__header">New<br />application or reapplication</th>
+            <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
+            <th scope="col" class="govuk-table__header">Review status</th>
+            <th scope="col" class="govuk-table__header">Days left to <br />complete review</th>
+        </tr>
     </thead>
-
-
     <tbody class="govuk-table__body">
-    @if (Model?.CertificateReviewList != null && Model.CertificateReviewList.Count > 0)
-    {
-        foreach (var item in Model.CertificateReviewList)
+
+        @if (Model.CertificateReviewList != null || Model?.CertificateReviewList?.Count > 0)
+        {           
+        
+       @foreach (var item in Model.CertificateReviewList)
         {
+
             <tr class="govuk-table__row">
                 @if (item.ServiceStatus == ServiceStatusEnum.AmendmentsRequired)
                 {
-                    <td class="govuk-table__cell">
-                        @Html.ActionLink(item.Provider.RegisteredName, "CertificateSubmissionDetails", "CertificateReview",
-                            new { serviceId = item.Id }, new { @class = "govuk-link" })
-                    </td>
+                        <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateSubmissionDetails", "CertificateReview", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>
                 }
                 else
                 {
                         <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateReview", "CertificateReview", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>
                 }
-                <td class="govuk-table__cell">@item.ServiceName</td>
-                <td class="govuk-table__cell">@item.NewOrResubmission</td>
-                <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(item.CreatedTime)</td>
+                <td class="govuk-table__cell"> @item.ServiceName</td>
 
-                @if (item.CertificateReview == null)
+
+                <td class="govuk-table__cell">@item.NewOrResubmission </td>
+                
+                <td class="govuk-table__cell"> @DateTimeExtensions.FormatDateTime(item.CreatedTime)</td>
+                @if (@item.CertificateReview == null)
                 {
                     <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
                 }
@@ -93,35 +56,14 @@
                 {
                     <td class="govuk-table__cell">@item.DaysLeftToComplete days</td>
                 }
+
+                
             </tr>
         }
-    }
-    else
-    {
-        <tr class="govuk-table__row">
-            <td class="govuk-table__cell" colspan="6">
-                <p class="govuk-body"><b>Showing 0 results</b></p>
-            </td>
-        </tr>
-    }
+        }
     </tbody>
 </table>
-
-@if (Model?.TotalPages > 1)
-{
-    var pagination = new PaginationViewModel
-    {
-        Action = "CertificateReviews",
-        CurrentPage = ViewBag.CurrentPage,
-        TotalPages = Model.TotalPages,
-        Sort = Model.CurrentSort,
-        SortAction = Model.CurrentSortAction
-    };
-    @await Html.PartialAsync("~/Views/PartialViews/_PaginationView.cshtml", pagination)
-}
-
-
-@if(Model.CertificateReviewList == null || Model.CertificateReviewList.Count == 0)
+@if(Model.CertificateReviewList == null || Model.CertificateReviewList.Count==0)
 {
     @await Html.PartialAsync("~/Views/PartialViews/_NoSearchResultsView.cshtml")
 }
