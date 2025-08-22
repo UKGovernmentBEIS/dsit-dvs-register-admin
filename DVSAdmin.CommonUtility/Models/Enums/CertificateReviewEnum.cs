@@ -7,8 +7,7 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         //Donot change order of the enum as the ids are used to save in database
         //New entries should be added at the last
       
-        [Description("In review")]
-        InReview = 1,
+      
         [Description("Approved")]
         Approved = 2,
         [Description("Rejected")]
@@ -16,6 +15,8 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         [Description("Expired")]
         Expired = 4,
         [Description("Sent back to CAB")]
-        AmendmentsRequired = 5
+        AmendmentsRequired = 5,
+        [Description("Received")]
+        DeclinedByProvider = 6
     }
 }

@@ -72,64 +72,6 @@ namespace DVSAdmin.Controllers
       
 
 
-        //[HttpGet("proceed-publication")]
-        //public async Task<IActionResult> ProceedPublication(int providerId)
-        //{
-        //    //To make sure only the service ids reviewed in previous screen is fetched
-        //    List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
-        //    ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
-        //    providerProfileDto.Services =  providerProfileDto.Services.Where(item => serviceids.Contains(item.Id)).ToList();
-        //    providerProfileDto.ActiveCabEmails = await regManagementService.GetCabEmailListForServices(serviceids);
-        //    return View(providerProfileDto);
-        //}
-
-        //[HttpGet("about-to-publish")]
-        //public ActionResult AboutToPublish(int providerId)
-        //{
-        // ProviderProfileDto providerProfileDto = new ProviderProfileDto { Id = providerId }; 
-        // return View(providerProfileDto);
-        //}
-
-        //[HttpPost("about-to-publish")]
-        //public async Task<IActionResult> Publish(ProviderProfileDto providerDetailsViewModel, string action)
-        //{
-        //    if(action == "publish")
-        //    {
-              
-        //        List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
-        //        if (serviceids == null && !serviceids.Any())
-        //            throw new InvalidOperationException("No service IDs found in session to publish.");
-        //        List<string> activeCabEmails = await regManagementService.GetCabEmailListForServices(serviceids);
-        //        GenericResponse genericResponse = await regManagementService.UpdateServiceStatus(serviceids, providerDetailsViewModel.Id,UserEmail, activeCabEmails);
-        //        if (genericResponse.Success)
-        //        {
-        //            return RedirectToAction("ProviderPublished", new { providerId  = providerDetailsViewModel.Id });
-        //        }
-        //        else
-        //        {
-        //            throw new InvalidOperationException("Failed to update service status during publication.");
-        //        }
-        //    }
-        //    else if(action == "cancel")
-        //    {
-        //        return RedirectToAction("ProceedPublication", new { providerId = providerDetailsViewModel.Id });
-        //    }
-        //    else
-        //    {
-        //        throw new InvalidOperationException("Invalid action received during service publication.");
-        //    }           
-         
-        //}
-
-        //[HttpGet("provider-published")]
-        //public async Task<IActionResult> ProviderPublished(int providerId)
-        //{
-        //    ProviderProfileDto providerProfileDto = await regManagementService.GetProviderDetails(providerId);
-        //    List<int> serviceids = HttpContext?.Session.Get<List<int>>("ServiceIdsToPublish") ?? new List<int>();
-        //    providerProfileDto.Services = providerProfileDto.Services.Where(x => serviceids.Contains(x.Id)).ToList();
-        //    HttpContext.Session.Remove("ServiceIdsToPublish");
-        //    return View(providerProfileDto);
-        //}
 
         /// <summary>
         /// Download from s3

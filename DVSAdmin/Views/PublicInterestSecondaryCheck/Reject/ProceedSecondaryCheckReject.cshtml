@@ -3,7 +3,7 @@
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @{
-    ViewData["Title"] = "Rejecting this application";
+    ViewData["Title"] = "Reject public interest check";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -13,53 +13,33 @@
 }
 
 <div class="govuk-width-container">
-
     @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         @using (Html.BeginForm("ProceedSecondaryCheckReject", "PublicInterestSecondaryCheck", FormMethod.Post))
         {
-            @if (ViewData.ModelState.ErrorCount >0)
+            @Html.HiddenFor(m=>Model.ServiceId)
+            @Html.HiddenFor(m => Model.ProviderProfileId)
+            @if (Html.ViewData?.ModelState.ContainsKey("SelectedReasonIds") == true && Html.ViewData.ModelState["SelectedReasonIds"].Errors.Count > 0)
             {
                 ViewData["Title"] = "Error: " + ViewData["Title"];
-                @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
+                @await Html.PartialAsync("~/Views/PartialViews/_SpecificErrorsView.cshtml",
+                         new Tuple<string, IEnumerable<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>>("SelectedReasonIds", Html.ViewData.ModelState["SelectedReasonIds"]?.Errors))
             }
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">
-                    Rejecting this application
+                   Reject public interest check
                 </h1>
                 <p class="govuk-body">
-                    You are about to reject the following application:
+                    You are about to confirm that the following application has failed all required checks.
                 </p>
                
                  @Html.HiddenFor(m=>m.ServiceId)
                  @Html.HiddenFor(m => m.ProviderProfileId)
                  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">Service provider</th>
-                                <th scope="col" class="govuk-table__header">Service name</th>
-                                <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
-                                <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
-                                <th scope="col" class="govuk-table__header">Review status</th>
-                                <th scope="col" class="govuk-table__header">Days left to complete review</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                                
-                                <td class="govuk-table__cell">@Model?.Service?.Provider.RegisteredName</td>
-                                <td class="govuk-table__cell">@Model.Service.ServiceName</td>
-                                <td class="govuk-table__cell">@Model.Service.CabUser.Cab.CabName</td>
-                                <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.Service.ModifiedTime)</td>
-                                <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(Model.Service.PublicInterestCheck.PublicInterestCheckStatus)</td>
-                                <td class="govuk-table__cell">@Model.Service.DaysLeftToCompletePICheck  days</td>
-                        </tr>
-                    </tbody>
-                </table>              
-                    
-              
+                    <div class="govuk-grid-column-full">
+                        @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/_ServiceDetailsWithReviewStatus.cshtml", Model.Service)
+                    </div>
             </div>
 
             <div class="govuk-grid-column-two-thirds">
@@ -122,10 +102,6 @@
 
                    
                 <h2 class="govuk-heading-m">Who will receive the application decision notification</h2>
-                <div id="applicationSponsor-hint" class="govuk-hint">
-                    The applicant will receive an email with this decision from the Digital Identity Register
-                    Portal and guidance on next steps.
-                </div>
 
                 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
                 
@@ -160,9 +136,9 @@
                     <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
                         Proceed with rejection
                     </button>
-                    <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="cancel">
-                        Cancel
-                    </button>
+                        <a href="@Url.Action("SecondaryCheckReview","PublicInterestSecondaryCheck", new {serviceId = Model.ServiceId})" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                            Cancel and back
+                        </a>
                 </div>
             </div>
         </div>

@@ -1,0 +1,66 @@
+﻿@using DVSAdmin.Extensions
+@model DVSAdmin.BusinessLogic.Models.ServiceDto
+
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Service name
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.ServiceName
+        </dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Service Provider
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.Provider.RegisteredName
+        </dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Conformity Assessment Body (CAB)
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.CabUser.Cab.CabName
+        </dd>
+    </div>
+
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Time reviewed
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @DateTimeExtensions.FormatDateTime(Model.PublicInterestCheck.SecondaryCheckTime, "d MMM yyyy, hh:mm tt")
+        </dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            New application or reapplication
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.NewOrResubmission
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Review status
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.PublicInterestCheck != null)
+            {
+                @HtmlExtensions.ToStyledStrongTag(Model.PublicInterestCheck.PublicInterestCheckStatus)
+            }
+            else
+            {
+                @HtmlExtensions.ToStyledStrongTag(Model.ServiceStatus)
+            }
+
+        </dd>
+    </div>
+</dl>

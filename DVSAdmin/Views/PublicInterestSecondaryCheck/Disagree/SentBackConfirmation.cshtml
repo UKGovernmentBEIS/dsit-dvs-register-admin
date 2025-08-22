@@ -2,7 +2,7 @@
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @{
-    ViewData["Title"] = "Primary check request successful";
+    ViewData["Title"] = "You have requested another primary check for this application";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -12,46 +12,23 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">
-                    Primary check request successful
+                    You have requested another primary check for this application
                 </h1>
-                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Service provider</th>
-                            <th scope="col" class="govuk-table__header">Service name</th>
-                            <th scope="col" class="govuk-table__header">Conformity <br />Assessment <br />Body</th>
-                            <th scope="col" class="govuk-table__header">Time submitted (GMT)</th>
-                            <th scope="col" class="govuk-table__header">Review status</th>
-                            <th scope="col" class="govuk-table__header">Days left to complete review</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@Model.Provider.RegisteredName</td>
-                            <td class="govuk-table__cell">@Model.ServiceName</td>
-                            <td class="govuk-table__cell">@Model.CabUser.Cab.CabName</td>
-                            <td class="govuk-table__cell">@DateTimeExtensions.FormatDateTime(Model.ModifiedTime)</td>
-                            <td class="govuk-table__cell">@HtmlExtensions.ToStyledStrongTag(PublicInterestCheckEnum.SentBackBySecondReviewer)</td>
-                            <td class="govuk-table__cell">@Model.DaysLeftToCompletePICheck days</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="govuk-grid-column-full">
+                    @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/_ServiceDetailsWithReviewStatus.cshtml", Model)
+                </div>
 
 
                 <div class="govuk-grid-column-two-thirds">
                    
                     <div id="applicationSponsor-hint" class="govuk-hint">
-                        The Digital Identity Register Portal user will receive an email notification of the
-                        application status change within 20 minutes.
+                     We will send an email notification to the primary reviewer, within 20 minutes, asking them to redo the primary check.
                     </div>
 
-                    @using (Html.BeginForm("PublicInterestCheck", "PublicInterestCheck", FormMethod.Get))
-                    {
-                        <button type="submit" class="govuk-button" data-module="govuk-button">
-                            Go back to public interest check
-                        </button>
-                    }
+                    <a href="@Url.Action("PublicInterestCheck","PublicInterestCheck")" role="button" draggable="false" class="govuk-button"
+                       data-module="govuk-button">
+                        Go back to public interest check
+                    </a>
                 </div>
 
             </div>

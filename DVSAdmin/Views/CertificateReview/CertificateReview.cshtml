@@ -1,38 +1,24 @@
-﻿@model CertificateReviewViewModel
+﻿@model DVSAdmin.Models.CertificateReview.ReviewViewModel
 @using DVSAdmin.Extensions;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @using Newtonsoft.Json
 @using DVSAdmin.Models.UI;
 
 @{
-    ViewData["Title"] = "Part 2 of 2: Information match";
+    ViewData["Title"] = "Remote Verify";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
     ViewData["HidePublishStatus"] = true;
 }
 
-
-
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateValidation", "CertificateReview", new { serviceId =Model.Service.Id}, new { @class = "govuk-back-link" })
-    <main id="main-content" class="govuk-main-wrapper" role="main">       
+    @Html.ActionLink("Back", "CertificateReviews", "CertificateReview", null, new { @class = "govuk-back-link" })
+    <main id="main-content" class="govuk-main-wrapper" role="main">
 
         <div class="govuk-grid-row">
-            @if (Model?.Service?.IsResubmission == true)
-            {
-                var notificationBanner = new NotificationBannerViewModel
-                {
-                    Title = "Important",
-                    NotificationContent = new List<NotificationContent> { new() { Heading = "This information has been provided as part of a reapplication, trust framework uplift or certification transfer from another CAB.",
-                    HtmlContent = "<p class='govuk-body'><a href='/certificate-review/certificate-submission-details?serviceId=" + Model?.Service?.PreviousVersionServiceId + "' class='govuk-link' rel='noreferrer noopener' target='_blank'>Access the original submission (opens in new tab)</a></p>"
-                } }
-                };
-                @await Html.PartialAsync("~/Views/PartialViews/_NotificationBanner.cshtml", notificationBanner)
-
-            }
+            <div class="govuk-grid-column-full">
             @using (Html.BeginForm("SaveCertificateReview", "CertificateReview", FormMethod.Post))
             {              
-                @Html.HiddenFor(m => m.CertificateReviewId)
-
+                @Html.HiddenFor(m=>m.ServiceId)
                 <div class="govuk-grid-column-full">
 
                     @if (ViewData.ModelState.ErrorCount > 0)
@@ -40,195 +26,176 @@
                         ViewData["Title"] = "Error: " + ViewData["Title"];
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
-                    <h1 class="govuk-heading-xl">Part 2 of 2: Information match </h1>
-                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithDaysLeftView.cshtml", Model.Service)
-                </div>
+                    <span class="govuk-caption-xl">Certificate validation and information check</span>   
 
+                    <h1 class="govuk-heading-xl">
 
-                <div class="govuk-grid-column-two-thirds">
-                 
-                    <h2 class="govuk-heading-l">Information match</h2>
-                    <p class="govuk-body">
-                        Review the service provider's certificate submitted by the Conformity Assessment Body (CAB) against the submitted information on this page to check
-                        that it matches. It is important that all information matches as it will be publicly available.
-                    </p>
-
-
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">
-                                Instructions for completing the information match
-                            </span>
-                        </summary>
-                        <div class="govuk-details__text">
-
-
-                            <ol class="govuk-list govuk-list--number">
-                                <li>
-                                    Make sure that you have the service provider’s certificate of conformity open. You can download the file again using the ‘Download certificate of conformity’ button on this page.
-                                </li>
-                                <li>
-                                    Once you have the certificate open, compare the information on it to the information on this page.
-                                </li>
-                                <li>
-                                    When you have verified that all items match, navigate to 'Information match' and select 'Yes, it matches the information to the certificate'.
-                                    If the items do not match select 'No, it does not much'.
-                                </li>
-                                <li>
-                                    If you wish to submit your review at a later time, you can select the ‘Save as draft’ button. You must have completed all sections before saving.
-                                </li>
-                                <li>
-                                   To continue with approval, the submission must have passed all certificate validation and information match checks,
-                                   Once you have verified all items, select the 'Approve submission' or 'Reject submission' button to continue.
-                                </li>
-                            </ol>
-                        </div>
-                    </details>
-
-                    <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
-                    <p class="govuk-body">
-                        Download the certificate of conformity provided by the CAB to check that the information matches the details provided.
-                    </p>
-
-                    <span class="govuk-caption-xl">@Model.Service.FileName</span>
-
-                    <div id="download-certificate-hint" class="govuk-hint">
-                        PDF, @Model.Service.FileSizeInKb KB, 1 page
-                        This file may not be suitable for users of assistive technology.
-                    </div>
-
-                    <a href="/certificate-review/download-certificate?key=@Model.Service.FileLink&filename=@Model.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
-                        Download certificate of conformity 
-                    </a>
-
-                    <hr class="govuk-section-break govuk-section-break--m">
+                        @Model?.Service?.ServiceName
+                        <span class="govuk-caption-l">@Model?.Service?.Provider.RegisteredName</span>
+                     
+                    </h1>
+                    
 
                 </div>
                 <div class="govuk-grid-column-full">
-                    <h2 class="govuk-heading-l">Certification information</h2>             
 
-                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
+                        <dl class="govuk-summary-list">                            
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Conformity Assessment Body (CAB)
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Service.CabUser.Cab.CabName
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Days left to complete review
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Service.DaysLeftToComplete
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    New application or reapplication
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Service.NewOrResubmission
+                                    @if (Model.Service.IsResubmission == true)
+                                    {
+                                        <a href="/certificate-review/certificate-submission-details?serviceId=@Model?.Service.PreviousVersionServiceId" class="govuk-link" target='_blank'>
+                                            <br /> Access the previous submission (Opens in new tab)
+                                        </a>
+                                    }
+                                </dd>
+                            </div>
+                        </dl>
+                    
                 </div>
 
 
-                @if (@Model.Service.ServiceSupSchemeMapping != null && @Model.Service.ServiceSupSchemeMapping.Count > 0)
-                {
-                    if ((@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
-                    || (@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
-                    {
-                        <div class="govuk-grid-column-full">
-                            @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.Service)
+                 <div class="govuk-grid-column-full">
+
+                <h2 class="govuk-heading-l">How to complete the checks</h2>
+                <ol class="govuk-list govuk-list--number">
+                    <li>Select the 'Download certificate of conformity' button.</li>
+                    <li>Ensure the information on the certificate meets the requirements in Process for conducting certificate reviews and due diligence checks.</li>
+                    <li>
+                        Ensure all information matches the details printed on the certificate. These will appear on the public register, if the
+                        provider makes an application to publish the service details.
+                    </li>
+                    <li>To proceed with the next step, select the 'Continue' button.</li>
+                    <li>
+                        If the certificate is not valid, or the information submitted does not match that on the certificate, you can request amends
+                        by selecting the 'Return to CAB' button.
+                    </li>
+                </ol>
+
+                <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+                <h1 class="govuk-heading-xl">Certificate validity</h1>
+                <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
+
+                <span class="govuk-caption-xl">@Model.Service.FileName</span>
+
+                <div id="download-certificate-hint" class="govuk-hint">
+                    PDF, @Model.Service.FileSizeInKb KB, 1 page <br />
+                    This file may not be suitable for users of assistive technology.
+                </div>
+                <a href="/certificate-review/download-certificate?key=@Model.Service.FileLink&filename=@Model.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
+                    Download certificate of conformity
+                </a>
+                   
+                @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
+                   {
+                       PropertyName = "CertificateValid",
+                       Value = Model.CertificateValid,
+                       Heading = DVSAdmin.Models.UI.Enums.HeadingEnum.H3,
+                       FieldSet = "Does the information provided on the certificate of conformity meet the certification scheme requirements?",
+                   LegendStyleClass = "govuk-fieldset__legend--m",
+                       HasError = Html.ViewData.ModelState.ContainsKey("CertificateValid") && Html.ViewData.ModelState["CertificateValid"].Errors.Count > 0,
+                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("CertificateValid") && Html.ViewData.ModelState["CertificateValid"].Errors.Count > 0 ?
+                       Html.ViewData.ModelState["CertificateValid"].Errors[0].ErrorMessage : string.Empty,
+                       Label1 = "Yes, the certificate is valid",
+                       Label2 = "No, the certificate is not valid"
+                   })
+
+                <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+                </div>
+
+                <div class="govuk-grid-column-full">
+                    <h1 class="govuk-heading-xl">Information match</h1>
+                    <h2 class="govuk-heading-l">Certification information</h2>
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
+
+                     
+                        @if (@Model.Service.ServiceSupSchemeMapping != null && @Model.Service.ServiceSupSchemeMapping.Count > 0)
+                        {
+                            if ((@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
+                            || (@Model.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
+                            {
+                               
+                                    @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.Service)
+                             
+                            }
+                        }
+
+                        @if (Model.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
+                        {
+                           
+                                @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.Service)
+                            
+                        }
                         </div>
-                    }
-                }
+                        
+            
+               
 
-                @if(Model.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
-                {
-                    <div class="govuk-grid-column-full">
-                        @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.Service)
-                    </div>
-                }                
-
-                <div class="govuk-grid-column-two-thirds">
-                    <h3 class="govuk-heading-m">Information match</h3>
-
-                    <p class="govuk-body">
-                        The information above matches the service provider's certificate of conformity.
-                    </p>
-
+                <div class="govuk-grid-column-full">
 
                     @await Html.PartialAsync("~/Views/PartialViews/_TwoRadioButtonGroupView.cshtml", new TwoRadioButtonGroupViewModel
                    {
-                       PropertyName = "InformationMatched",
-                       Value = Model.InformationMatched,
-                       HasError = Html.ViewData.ModelState.ContainsKey("InformationMatched") && Html.ViewData.ModelState["InformationMatched"].Errors.Count > 0,
-                       ErrorMessage = Html.ViewData.ModelState.ContainsKey("InformationMatched") && Html.ViewData.ModelState["InformationMatched"].Errors.Count > 0 ?
-                       Html.ViewData.ModelState["InformationMatched"].Errors[0].ErrorMessage : string.Empty,
-                       Label1 = "Yes, it matches the information on the certificate",
-                       Label2 = "No, it does not match"
+                    PropertyName = "InformationMatched",
+                    Value = Model.InformationMatched,
+                    Heading = DVSAdmin.Models.UI.Enums.HeadingEnum.H3,
+                    FieldSet = "Does this information match the certificate of conformity?",
+                    LegendStyleClass = "govuk-fieldset__legend--m",
+                    HasError = Html.ViewData.ModelState.ContainsKey("InformationMatched") && Html.ViewData.ModelState["InformationMatched"].Errors.Count > 0,
+                    ErrorMessage = Html.ViewData.ModelState.ContainsKey("InformationMatched") && Html.ViewData.ModelState["InformationMatched"].Errors.Count > 0 ?
+                    Html.ViewData.ModelState["InformationMatched"].Errors[0].ErrorMessage : string.Empty,
+                    Label1 = "Yes, the information matches",
+                    Label2 = "No, the information does not"
                    })
-
-
-
-                    @if (Html.ViewData.ModelState.ContainsKey("Comments") && Html.ViewData.ModelState["Comments"].Errors.Count > 0)
-                    {
-                        <div class="govuk-form-group govuk-form-group--error">
-                            <h3 class="govuk-label-wrapper">
-                                <label class="govuk-label govuk-label--m" for="comments">
-                                    Record the reasons for your decision
-                                </label>
-
-                            </h3>
-                            <div id="comments-hint" class="govuk-hint">
-                                This information will only be visible to OfDIA users. If you selected 'No, it does
-                                not match', you should provide further details. If all the information matches the
-                                certificate, please provide a note to confirm this.
-                            </div>
-                            <p class="govuk-body"></p>
-                            <p id="comments-error" class="govuk-error-message">
-                                <span class="govuk-visually-hidden">Error:</span>  @Html.ValidationMessageFor(m => m.Comments)
-                            </p>
-                            @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea govuk-textarea--error", @id = "comments", @name = "comment", @rows = "5", aria_describedby = "comments-hint comments-error" })
-                        </div>
-
-                    }
-                    else
-                    {
-                        <div class="govuk-form-group">
-                            <h3 class="govuk-label-wrapper">
-                                <label class="govuk-label govuk-label--s" for="comments">
-                                    Record the reasons for your decision 
-                                </label>
-                            </h3>
-                            <div id="comments-hint" class="govuk-hint">
-                                This information will only be visible to OfDIA users. If you selected 'No, it does
-                                not match', you should provide further details.
-                            </div>
-
-                            @Html.TextAreaFor(model => model.Comments, new { @class = "govuk-textarea", @id = "comments", @name = "comment", @rows = "5",
-                           aria_describedby = "comments-hint" })
-                        </div>
-
-                    }
-                </div>
-
-                <div class="govuk-grid-column-full">
-                    @Html.ValidationMessageFor(m => m.SubmitValidation, "", new { @class = "govuk-error-message", id = "submit-error" })
-
-
+                  
 
                     @if (Model.Service.CertificateReview == null || (Model.Service.CertificateReview != null &&
-                 Model.Service.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview))
+                                    Model.Service.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider))
                     {
                         <div class="govuk-button-group" id="submitvalidation">
-                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="approve">
-                                Approve submission
-                            </button>
-                            <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" name="saveReview" value="reject">
-                                Reject submission
+                            <button type="submit" class="govuk-button" data-module="govuk-button" name="saveReview" value="continue">
+                                Continue
                             </button>
                             <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="send-back">
                                 Return to CAB
                             </button>
-                            <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="saveReview" value="draft">
-                                Save as draft
-                            </button>
                         </div>
 
                     }
-
 
                     <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">
                             <span class="govuk-visually-hidden">Warning</span>
-                            To proceed with approval, this submission must have passed all certificate validation and information match checks.
+                            To continue to the next step, you must have answered all questions.
                         </strong>
                     </div>
                 </div>
             }
 
-
+         </div>
         </div>
     </main>
 </div>

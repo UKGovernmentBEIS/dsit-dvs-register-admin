@@ -3,6 +3,7 @@ using DVSAdmin.BusinessLogic.Services;
 using DVSAdmin.CommonUtility;
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
+using DVSAdmin.Data.Entities;
 using DVSAdmin.Models;
 using DVSRegister.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -33,31 +34,25 @@ namespace DVSAdmin.Controllers
         [HttpGet("application-reivew")]
         public async Task<IActionResult> PrimaryCheckReview(int serviceId)
         {
-            PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckViewModel;
+            PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckViewModel = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
 
-            if (serviceId == 0)
-            {
-                publicInterestPrimaryCheckViewModel = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(UserEmail))
-                    throw new InvalidOperationException("User email is missing.");
-                
-                UserDto userDto = await userService.GetUser(UserEmail);
+            if (string.IsNullOrEmpty(UserEmail))
+                throw new InvalidOperationException("User email is missing.");
 
-                if (userDto.Id<=0)
-                    throw new InvalidOperationException("User is not valid.");
-                
-                ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
-                
-                if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft ) 
-                    throw new InvalidOperationException("Service is not in a valid status for primary check review.");
-                
-                publicInterestPrimaryCheckViewModel = MapDtoToViewModel(serviceDto);
-                publicInterestPrimaryCheckViewModel.PrimaryCheckUserId = userDto.Id;
-            }
-            
+            UserDto userDto = await userService.GetUser(UserEmail);
+
+            if (userDto.Id <= 0)
+                throw new InvalidOperationException("User is not valid.");
+
+            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
+
+            if (serviceDto.ServiceStatus == ServiceStatusEnum.Removed || serviceDto.ServiceStatus == ServiceStatusEnum.SavedAsDraft)
+                throw new InvalidOperationException("Service is not in a valid status for primary check review.");
+
+            publicInterestPrimaryCheckViewModel = MapDtoToViewModel(serviceDto);
+            publicInterestPrimaryCheckViewModel.ServiceId = serviceDto.Id;
+            publicInterestPrimaryCheckViewModel.ProviderProfileId = serviceDto.Provider.Id;
+            publicInterestPrimaryCheckViewModel.PrimaryCheckUserId = userDto?.Id;           
             return View(publicInterestPrimaryCheckViewModel);
         }
 
@@ -71,66 +66,31 @@ namespace DVSAdmin.Controllers
         /// <param name="saveReview"></param>
         /// <returns></returns>
         [HttpPost("save-primary-check-review")]
-        public async Task<IActionResult> SavePrimaryCheckReview(PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckViewModel, string saveReview)
+        public async Task<IActionResult> SavePrimaryCheckReview(PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckViewModel)
         {
             ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(publicInterestPrimaryCheckViewModel.ServiceId);
             publicInterestPrimaryCheckViewModel.Service = serviceDto;
-            PublicInterestCheckEnum reviewStatus = GetApplicationStatus(publicInterestPrimaryCheckViewModel, saveReview);
-            // To handle back ward navigation between screens and cancel
-            HttpContext?.Session.Set("PrimaryCheckData", publicInterestPrimaryCheckViewModel);
-            AddModelErrorForInvalidActions(publicInterestPrimaryCheckViewModel, saveReview);
-            
-            publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus = reviewStatus;
-            PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckViewModel);
-            if (reviewStatus == PublicInterestCheckEnum.InPrimaryReview)
+          
+            AddModelErrorForInvalidActions(publicInterestPrimaryCheckViewModel);
+            if(ModelState["PublicInterestChecksMet"]?.Errors.Count == 0)
             {
-                if (ModelState["SubmitValidation"]?.Errors == null)
-                {
-                    GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
-                    if (genericResponse.Success)
-                    {
-                        return RedirectToAction("PrimaryCheckReview", new { serviceId = publicInterestPrimaryCheckViewModel.Service.Id });
-                    }
-                    else
-                    { 
-                        throw new InvalidOperationException("Failed to save primary check review in draft state.");
-                    }
+                publicInterestPrimaryCheckViewModel.PrimaryCheckComment = serviceDto?.PublicInterestCheck?.PrimaryCheckComment;
+                HttpContext?.Session.Set("PrimaryCheckData", publicInterestPrimaryCheckViewModel);
+                if (publicInterestPrimaryCheckViewModel.PublicInterestChecksMet == true)
+                {                   
+                    return RedirectToAction("ConfirmPrimaryCheckPass");
                 }
-                else
-                {
-                    HttpContext?.Session.Remove("PrimaryCheckData");
-                    return View("PrimaryCheckReview", publicInterestPrimaryCheckViewModel);
-                }
-                  
-            } 
-            else if (reviewStatus == PublicInterestCheckEnum.PrimaryCheckPassed)
-            {
-                if (ModelState.IsValid)
-                {
-                    return RedirectToAction("ConfirmPrimaryCheckPass", "PublicInterestPrimaryCheck");
-                }
-                else
-                {
-                    HttpContext?.Session.Remove("PrimaryCheckData");
-                    return View("PrimaryCheckReview", publicInterestPrimaryCheckViewModel);
-                }
-            }
-            else if (reviewStatus == PublicInterestCheckEnum.PrimaryCheckFailed)
-            {
-                if (ModelState.IsValid)
-                {
-                    return RedirectToAction("ConfirmPrimaryCheckFail", "PublicInterestPrimaryCheck");
-                }
-                else
-                {
-                    HttpContext?.Session.Remove("PrimaryCheckData");
-                    return View("PrimaryCheckReview", publicInterestPrimaryCheckViewModel);
+                else  
+                {                   
+                    return RedirectToAction("ConfirmPrimaryCheckFail");
                 }
             }
             else
             {
-                throw new InvalidOperationException("Unexpected review status.");
+                return View("PrimaryCheckReview", publicInterestPrimaryCheckViewModel);
             }
+
+           
 
         }
 
@@ -144,7 +104,8 @@ namespace DVSAdmin.Controllers
         [HttpGet("primary-check-approval")]
         public IActionResult ConfirmPrimaryCheckPass()
         {
-            return View();
+            PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckView = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");           
+            return View(publicInterestPrimaryCheckView);
         }
 
         /// <summary>
@@ -153,24 +114,24 @@ namespace DVSAdmin.Controllers
         /// <param name="saveReview"></param>
         /// <returns></returns>
         [HttpPost("save-primary-check-passed")]
-        public async Task<IActionResult> SavePrimaryCheckPassed(string saveReview)
+        public async Task<IActionResult> SavePrimaryCheckPassed( string saveReview)
         {
 
             PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckView = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
-            
+            ViewBag.serviceId = publicInterestPrimaryCheckView.ServiceId;
             if (publicInterestPrimaryCheckView == null)
                 throw new InvalidOperationException("Primary check session data is missing.");
 
             if (saveReview == "save")
             {
+                publicInterestPrimaryCheckView.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckPassed;
                 if (publicInterestPrimaryCheckView.ServiceId <= 0)
                 {
                     HttpContext.Session.Remove("PrimaryCheckData");
                     throw new InvalidOperationException("Invalid service ID in primary check view.");
                 }
-                
-                PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
-                publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckPassed;
+                publicInterestPrimaryCheckView.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckPassed;           
+                PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);              
                 GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
                 
                 if (genericResponse.Success)
@@ -185,7 +146,7 @@ namespace DVSAdmin.Controllers
             }
             else if (saveReview == "cancel") // on cancel click go back to previous page with curent data
             {
-                return RedirectToAction("PrimaryCheckReview", "PublicInterestPrimaryCheck");
+                return RedirectToAction("PrimaryCheckReview", "PublicInterestPrimaryCheck", new { serviceId  = publicInterestPrimaryCheckView.ServiceId });
             }
             else
             {
@@ -196,11 +157,12 @@ namespace DVSAdmin.Controllers
 
 
         [HttpGet("primary-check-approval-confirmation")]
-        public IActionResult PrimaryCheckPassedConfirmation()
+        public async  Task<IActionResult> PrimaryCheckPassedConfirmation()
         {
             PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckView = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
+            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(publicInterestPrimaryCheckView.ServiceId);
             HttpContext.Session.Remove("PrimaryCheckData");
-            return View(publicInterestPrimaryCheckView.Service);
+            return View(serviceDto);
         }
         #endregion
 
@@ -214,7 +176,8 @@ namespace DVSAdmin.Controllers
         [HttpGet("confirm-primary-check-fail")]
         public IActionResult ConfirmPrimaryCheckFail()
         {
-            return View();
+            PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckView = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
+            return View(publicInterestPrimaryCheckView);
         }
 
 
@@ -226,22 +189,23 @@ namespace DVSAdmin.Controllers
         /// <param name="saveReview"></param>
         /// <returns></returns>
         [HttpPost("save-primary-check-failed")]
-        public async Task<IActionResult> SavePrimaryCheckFailed(string saveReview)
+        public async Task<IActionResult> SavePrimaryCheckFailed(PublicInterestPrimaryCheckViewModel viewModel)
         {
             //Get data in previous page stored in session , ans save to database
             PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckView = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
-            if (saveReview == "save")
+            if (ModelState["PrimaryCheckComment"]?.Errors.Count == 0)
             {
+
                 if (publicInterestPrimaryCheckView == null || publicInterestPrimaryCheckView.ServiceId <= 0)
                 {
                     HttpContext.Session.Remove("PrimaryCheckData");
                     throw new InvalidOperationException("Primary check session data is missing or contains an invalid service ID.");
                 }
-                
+                publicInterestPrimaryCheckView.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckFailed;
+                publicInterestPrimaryCheckView.PrimaryCheckComment = viewModel.PrimaryCheckComment;
                 PublicInterestCheckDto publicInterestCheckDto = MapViewModelToDto(publicInterestPrimaryCheckView);
-                publicInterestCheckDto.PublicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckFailed;
                 GenericResponse genericResponse = await publicInterestCheckService.SavePublicInterestCheck(publicInterestCheckDto, ReviewTypeEnum.PrimaryCheck, UserEmail);
-                
+
                 if (genericResponse.Success)
                 {
                     return RedirectToAction("PrimaryCheckFailedConfirmation", "PublicInterestPrimaryCheck");
@@ -252,25 +216,21 @@ namespace DVSAdmin.Controllers
                     throw new InvalidOperationException("Failed to save primary check as failed.");
                 }
             }
-            else if (saveReview == "cancel")
-            {
-                return RedirectToAction("PrimaryCheckReview", "PublicInterestPrimaryCheck");
-            }
             else
             {
-                HttpContext.Session.Remove("PrimaryCheckData");
-                throw new InvalidOperationException("Invalid review action for primary check rejection.");
-            }          
+                return View("ConfirmPrimaryCheckFail", viewModel);
+            }
 
         }
 
 
         [HttpGet("primary-check-rejection-confirmation")]
-        public IActionResult PrimaryCheckFailedConfirmation()
+        public async Task<IActionResult> PrimaryCheckFailedConfirmation()
         {
             PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckView = GetPrimaryCheckDataFromSession(HttpContext, "PrimaryCheckData");
+            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(publicInterestPrimaryCheckView.ServiceId);
             HttpContext.Session.Remove("PrimaryCheckData");
-            return View(publicInterestPrimaryCheckView.Service);
+            return View(serviceDto);
           
         }
 
@@ -293,19 +253,10 @@ namespace DVSAdmin.Controllers
                 ProviderProfileId = serviceDto.Provider.Id,
              };
             if (serviceDto.PublicInterestCheck!= null)
-            {                
-                publicInterestPrimaryCheckViewModel.IsCompanyHouseNumberApproved= serviceDto.PublicInterestCheck.IsCompanyHouseNumberApproved;
-                publicInterestPrimaryCheckViewModel.IsDirectorshipsApproved = serviceDto.PublicInterestCheck.IsDirectorshipsApproved;
-                publicInterestPrimaryCheckViewModel.IsDirectorshipsAndRelationApproved= serviceDto.PublicInterestCheck.IsDirectorshipsAndRelationApproved;
-                publicInterestPrimaryCheckViewModel.IsTradingAddressApproved= serviceDto.PublicInterestCheck.IsTradingAddressApproved;
-                publicInterestPrimaryCheckViewModel.IsSanctionListApproved= serviceDto.PublicInterestCheck.IsSanctionListApproved;
-                publicInterestPrimaryCheckViewModel.IsUNFCApproved= serviceDto.PublicInterestCheck.IsUNFCApproved;
-                publicInterestPrimaryCheckViewModel.IsECCheckApproved= serviceDto.PublicInterestCheck.IsECCheckApproved;
-                publicInterestPrimaryCheckViewModel.IsTARICApproved= serviceDto.PublicInterestCheck.IsTARICApproved;
-                publicInterestPrimaryCheckViewModel.IsBannedPoliticalApproved= serviceDto.PublicInterestCheck.IsBannedPoliticalApproved;
-                publicInterestPrimaryCheckViewModel.IsProvidersWebpageApproved= serviceDto.PublicInterestCheck.IsProvidersWebpageApproved;
-                publicInterestPrimaryCheckViewModel.PrimaryCheckComment = serviceDto.PublicInterestCheck.PrimaryCheckComment;
+            { 
+                publicInterestPrimaryCheckViewModel.PublicInterestChecksMet= serviceDto.PublicInterestCheck.PublicInterestChecksMet;                
                 publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus = serviceDto.PublicInterestCheck.PublicInterestCheckStatus;
+                publicInterestPrimaryCheckViewModel.SecondaryCheckUserId = serviceDto.PublicInterestCheck.SecondaryCheckUserId;
             }
             return publicInterestPrimaryCheckViewModel;
         }
@@ -315,19 +266,12 @@ namespace DVSAdmin.Controllers
             PublicInterestCheckDto publicInterestCheckDto = new()
             {
                 ServiceId =publicInterestPrimaryCheckViewModel.ServiceId,
-                ProviderProfileId = publicInterestPrimaryCheckViewModel.ProviderProfileId,
-                IsCompanyHouseNumberApproved= publicInterestPrimaryCheckViewModel?.IsCompanyHouseNumberApproved,
-                IsDirectorshipsApproved = publicInterestPrimaryCheckViewModel?.IsDirectorshipsApproved,
-                IsDirectorshipsAndRelationApproved= publicInterestPrimaryCheckViewModel?.IsDirectorshipsAndRelationApproved,
-                IsTradingAddressApproved= publicInterestPrimaryCheckViewModel?.IsTradingAddressApproved,
-                IsSanctionListApproved= publicInterestPrimaryCheckViewModel?.IsSanctionListApproved,
-                IsUNFCApproved= publicInterestPrimaryCheckViewModel?.IsUNFCApproved,
-                IsECCheckApproved= publicInterestPrimaryCheckViewModel?.IsECCheckApproved,
-                IsTARICApproved= publicInterestPrimaryCheckViewModel?.IsTARICApproved,
-                IsBannedPoliticalApproved= publicInterestPrimaryCheckViewModel?.IsBannedPoliticalApproved,
-                IsProvidersWebpageApproved= publicInterestPrimaryCheckViewModel?.IsProvidersWebpageApproved,
-                PrimaryCheckComment = publicInterestPrimaryCheckViewModel?.PrimaryCheckComment,
-                PublicInterestCheckStatus = publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus,
+                ProviderProfileId = publicInterestPrimaryCheckViewModel.ProviderProfileId,               
+                PublicInterestChecksMet= publicInterestPrimaryCheckViewModel.PublicInterestChecksMet,      
+                PublicInterestCheckStatus = publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus,               
+                PrimaryCheckComment = publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed?
+                publicInterestPrimaryCheckViewModel.PrimaryCheckComment:null,              
+                
                 PrimaryCheckUserId = Convert.ToInt32(publicInterestPrimaryCheckViewModel.PrimaryCheckUserId)
             };
 
@@ -335,21 +279,9 @@ namespace DVSAdmin.Controllers
             return publicInterestCheckDto;
         }
 
-        private static PublicInterestCheckEnum GetApplicationStatus(PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckViewModel, string saveReview)
-        {
-            PublicInterestCheckEnum publicInterestCheckStatus = publicInterestPrimaryCheckViewModel.PublicInterestCheckStatus;//Default value
+   
 
-            if (saveReview == "approve")
-                publicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckPassed;
-            else if (saveReview == "reject")
-                publicInterestCheckStatus = PublicInterestCheckEnum.PrimaryCheckFailed;
-            else if (saveReview == "draft")
-                publicInterestCheckStatus = PublicInterestCheckEnum.InPrimaryReview;
-            return publicInterestCheckStatus;
-
-        }
-
-        private void AddModelErrorForInvalidActions(PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckViewModel, string reviewAction)
+        private void AddModelErrorForInvalidActions(PublicInterestPrimaryCheckViewModel publicInterestPrimaryCheckViewModel)
         {          
 
             if (publicInterestPrimaryCheckViewModel.PrimaryCheckUserId == publicInterestPrimaryCheckViewModel.SecondaryCheckUserId)
@@ -357,89 +289,7 @@ namespace DVSAdmin.Controllers
                 ModelState.AddModelError("SubmitValidation", "Primary and secondary check user should be different");
             }
           
-            else
-            {
-
-                var errorMessages = new Dictionary<string, string>
-                {
-                    {"IsCompanyHouseNumberApproved", "Companies House or charity information or D U-N-S number"},
-                    {"IsDirectorshipsApproved", "Directorships"},
-                    {"IsDirectorshipsAndRelationApproved", "Directors and relationships"},
-                    {"IsTradingAddressApproved", "Trading as address checks"},
-                    {"IsSanctionListApproved", "Sanctions list checks"},
-                    {"IsUNFCApproved", "UNFC check"},
-                    {"IsECCheckApproved", "EC check"},
-                    {"IsTARICApproved", "TARIC check"},
-                    {"IsBannedPoliticalApproved", "Banned political affiliations"},
-                    {"IsProvidersWebpageApproved", "Service provider's website"}
-                };
-
-
-                if (publicInterestPrimaryCheckViewModel.IsCompanyHouseNumberApproved !=null && publicInterestPrimaryCheckViewModel.IsDirectorshipsApproved!=null
-                    && publicInterestPrimaryCheckViewModel.IsDirectorshipsAndRelationApproved!=null && publicInterestPrimaryCheckViewModel.IsTradingAddressApproved!=null
-                    && publicInterestPrimaryCheckViewModel.IsSanctionListApproved!=null && publicInterestPrimaryCheckViewModel.IsUNFCApproved!= null
-                    && publicInterestPrimaryCheckViewModel.IsECCheckApproved!=null && publicInterestPrimaryCheckViewModel.IsTARICApproved!=null
-                    && publicInterestPrimaryCheckViewModel.IsBannedPoliticalApproved != null && publicInterestPrimaryCheckViewModel.IsProvidersWebpageApproved != null)
-                {
-
-                   bool isCompanyHouseNumberApproved = Convert.ToBoolean(publicInterestPrimaryCheckViewModel.IsCompanyHouseNumberApproved);
-                   bool isDirectorshipsApproved =  Convert.ToBoolean(publicInterestPrimaryCheckViewModel.IsDirectorshipsApproved);
-                   bool isDirectorshipsAndRelationApproved = Convert.ToBoolean(publicInterestPrimaryCheckViewModel.IsDirectorshipsAndRelationApproved);
-                   bool isTradingAddressApproved = Convert.ToBoolean(publicInterestPrimaryCheckViewModel.IsTradingAddressApproved);
-                   bool isSanctionListApproved = Convert.ToBoolean(publicInterestPrimaryCheckViewModel.IsSanctionListApproved);
-                   bool isUNFCApproved = Convert.ToBoolean(publicInterestPrimaryCheckViewModel.IsUNFCApproved);
-                   bool isECCheckApproved = Convert.ToBoolean(publicInterestPrimaryCheckViewModel.IsECCheckApproved);
-                   bool isTARICApproved = Convert.ToBoolean(publicInterestPrimaryCheckViewModel.IsTARICApproved);
-                   bool isBannedPoliticalApproved = Convert.ToBoolean(publicInterestPrimaryCheckViewModel.IsBannedPoliticalApproved);
-                   bool isProvidersWebpageApproved = Convert.ToBoolean(publicInterestPrimaryCheckViewModel.IsProvidersWebpageApproved);
-
-
-
-                    if (isCompanyHouseNumberApproved && isDirectorshipsApproved &&  isDirectorshipsAndRelationApproved &&   isTradingAddressApproved &&
-                        isSanctionListApproved && isUNFCApproved &&   isECCheckApproved && isTARICApproved && isBannedPoliticalApproved && isProvidersWebpageApproved
-                        && !string.IsNullOrEmpty(publicInterestPrimaryCheckViewModel.PrimaryCheckComment)  && reviewAction == "reject")
-                    {                                              
-
-                        // Iterate over the dictionary and add model errors for all fields as all approve is selected
-                        foreach (var errorMessage in errorMessages)
-                        {
-                            ModelState.AddModelError(errorMessage.Key, string.Format(Constants.PrimaryCheckApproveErrorMessage, errorMessage.Value));
-                        }
-
-                    }
-
-                    else if(!string.IsNullOrEmpty(publicInterestPrimaryCheckViewModel.PrimaryCheckComment) && reviewAction == "approve")
-                    {
-
-                        var approvalFlags = new List<(bool IsApproved, string ErrorKey)>
-                        {
-                            (isCompanyHouseNumberApproved, "IsCompanyHouseNumberApproved"),
-                            (isDirectorshipsApproved, "IsDirectorshipsApproved"),
-                            (isDirectorshipsAndRelationApproved, "IsDirectorshipsAndRelationApproved"),
-                            (isTradingAddressApproved, "IsTradingAddressApproved"),
-                            (isSanctionListApproved, "IsSanctionListApproved"),
-                            (isUNFCApproved, "IsUNFCApproved"),
-                            (isECCheckApproved, "IsECCheckApproved"),
-                            (isTARICApproved, "IsTARICApproved"),
-                            (isBannedPoliticalApproved, "IsBannedPoliticalApproved"),
-                            (isProvidersWebpageApproved, "IsProvidersWebpageApproved")
-                        };
-
-
-                        foreach (var flag in approvalFlags)
-                        {
-                            if (!flag.IsApproved)
-                            {
-                                string errorMessage = errorMessages[flag.ErrorKey];
-                                ModelState.AddModelError(flag.ErrorKey, string.Format(Constants.PrimaryCheckRejectErrorMessage, errorMessage));
-                            }
-                        }                    
-
-                    }
-
-                   
-                }
-            }
+           
         }
        
         #endregion

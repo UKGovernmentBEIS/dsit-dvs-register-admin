@@ -1,28 +1,46 @@
 ﻿@model DVSAdmin.Models.PublicInterestCheckViewModel;
 @using DVSAdmin.CommonUtility.Models.Enums;
+
 @{
     ViewData["Title"] = "Public interest check";
+    ViewData["ActiveNav"] = "ReviewServices";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-back-link" })
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                @Html.ActionLink("Review and manage services", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-breadcrumbs__link" })
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                @Html.ActionLink("Public interest check", "PublicInterestCheck", "PublicInterestCheck", null, new { @class = "govuk-breadcrumbs__link" })
+            </li>
+        </ol>
+    </div>    
     <main id="main-content" class="govuk-main-wrapper" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">Public interest check</h1>
 
-                <details class="govuk-details">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            Guidance on this section
-                        </span>
-                    </summary>
-                    <div class="govuk-details__text">
-                        In this section, you can complete primary or secondary public interest checks. This is part of the 2i check, which enhances security by ensuring that the decision-making process does not depend on a single individual. Users acting as first reviewers will be complete the first step of the review, but will be blocked from completing the checks
-                        as a second reviewer.
-                    </div>
-                </details>
+                <p class="govuk-body">
+                    You can complete either the primary or secondary review of a public interest
+                    check. This enhances security by ensuring that the decision-making process
+                    does not depend on a single individual.
+                </p>
+                
+                @using (Html.BeginForm("CertificateReviews", "CertificateReview", FormMethod.Get))
+                {
+
+
+                    @await Html.PartialAsync("~/Views/PartialViews/_SearchView.cshtml", new DVSAdmin.Models.UI.SearchViewModel
+                    {
+                        Label = "Search for a service provider or service",
+                        SearchTextFieldId = "SearchProviderOrService",
+                        SearchTextFieldName = "search-provider-or-service"
+                        })
+                 }
+                 
 
                 <div class="govuk-tabs" data-module="govuk-tabs">
                     <ul class="govuk-tabs__list">
@@ -41,22 +59,17 @@
                                 Completed
                             </a>
                         </li>
-
                     </ul>
 
                     @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/PublicInterestPrimaryCheckView.cshtml", Model)
-
                     @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/PublicInterestSecondaryCheckView.cshtml", Model)
-
                     @await Html.PartialAsync("~/Views/PublicInterestCheck/PartialViews/ArchiveView.cshtml", Model)
-
-
+              
                 </div>
             </div>
         </div>
     </main>
 </div>
-
 
 
 

@@ -14,9 +14,8 @@
                     @ViewData["Title"]
                 </h1>
                 <p class="govuk-body">
-                    You have successfully published the following service provider:
+                    You have successfully published the following service:
                 </p>
-                <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
 
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
@@ -29,7 +28,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Time and date of publication (GMT)</dt>
-                        <dd class="govuk-summary-list__value"> @Model.PublishedTime</dd>
+                        <dd class="govuk-summary-list__value">@DateTimeExtensions.FormatDateTime(Model.PublishedTime, "d MMM yyyy, hh:mm tt")</dd>
                     </div>              
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">New application or reapplication</dt>

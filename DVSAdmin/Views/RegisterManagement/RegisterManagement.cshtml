@@ -4,6 +4,7 @@
 @using DVSAdmin.Extensions
 @{
     ViewData["Title"] = "Register Management";
+    ViewData["ActiveNav"] = "ReviewServices";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
@@ -11,7 +12,7 @@
     <div class="govuk-breadcrumbs">
         <ol class="govuk-breadcrumbs__list">
             <li class="govuk-breadcrumbs__list-item">
-                @Html.ActionLink("Home", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-breadcrumbs__link" })
+                @Html.ActionLink("Review and manage services", "LandingPage", "DigitalIdentity", null, new { @class = "govuk-breadcrumbs__link" })
             </li>
             <li class="govuk-breadcrumbs__list-item">
                 @Html.ActionLink("Register management", "RegisterManagement", "RegisterManagement", null, new { @class = "govuk-breadcrumbs__link" })
