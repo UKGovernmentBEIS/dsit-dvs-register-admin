@@ -20,9 +20,9 @@ namespace DVSAdmin.BusinessLogic.Services
         //get certificate reviews list
         //get primary checks list
 
-        public async Task<PaginatedResult<ServiceDto>> GetServices(int pageNumber, string sort, string sortAction, string openTask)
+        public async Task<PaginatedResult<ServiceDto>> GetServices(string loggedInUserEmail, int pageNumber, string sort, string sortAction, string openTask)
         {
-            var paginatedServices = await homeRepository.GetServices(pageNumber, sort, sortAction, openTask);
+            var paginatedServices = await homeRepository.GetServices(loggedInUserEmail, pageNumber, sort, sortAction, openTask);
             var serviceDtos = automapper.Map<List<ServiceDto>>(paginatedServices.Items);
 
             return new PaginatedResult<ServiceDto>
@@ -32,9 +32,9 @@ namespace DVSAdmin.BusinessLogic.Services
             };
         }
 
-        public async Task<Dictionary<string, int>> GetPendingCounts()
+        public async Task<Dictionary<string, int>> GetPendingCounts(string loggedInUserEmail)
         {
-            return await homeRepository.GetPendingCounts();
+            return await homeRepository.GetPendingCounts(loggedInUserEmail);
         }
         public Task<UserDto> GetUserByEmail(string userEmail)
         {

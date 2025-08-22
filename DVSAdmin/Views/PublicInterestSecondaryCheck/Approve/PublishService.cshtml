@@ -1,5 +1,6 @@
 ﻿@using DVSAdmin.BusinessLogic.Models;
 @using DVSAdmin.CommonUtility.Models;
+@using DVSAdmin.CommonUtility;
 @using DVSAdmin.CommonUtility.Models.Enums;
 @model ServiceDto;
 @{
@@ -28,7 +29,8 @@
                             Public contact email
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Provider.PublicContactEmail
+                            @Html.DisplayFor(model => model.Provider.PublicContactEmail)
+
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -36,7 +38,8 @@
                             Telephone number
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Provider.ProviderTelephoneNumber
+                            @Html.DisplayFor(model => model.Provider.ProviderTelephoneNumber)
+                       
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -44,7 +47,8 @@
                             Website address
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Provider.ProviderWebsiteAddress
+                            @Html.DisplayFor(model => model.Provider.ProviderWebsiteAddress)
+                     
                         </dd>
                     </div>
                 </dl>

@@ -38,8 +38,8 @@ namespace DVSAdmin.Controllers
                 pageNumber = 1;
             }
 
-            var results = await homeService.GetServices(pageNumber, CurrentSort, CurrentSortAction, "cert review");
-            var PendingCounts = await homeService.GetPendingCounts();
+            var results = await homeService.GetServices(UserEmail, pageNumber, CurrentSort, CurrentSortAction, "cert review");
+            var PendingCounts = await homeService.GetPendingCounts(UserEmail);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
             OpenTaskCount openTaskCount = new OpenTaskCount
@@ -82,8 +82,8 @@ namespace DVSAdmin.Controllers
                 pageNumber = 1;
             }
 
-            var results = await homeService.GetServices(pageNumber, CurrentSort, CurrentSortAction, "primary check");
-            var PendingCounts = await homeService.GetPendingCounts();
+            var results = await homeService.GetServices(UserEmail, pageNumber, CurrentSort, CurrentSortAction, "primary check");
+            var PendingCounts = await homeService.GetPendingCounts(UserEmail);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
             OpenTaskCount openTaskCount = new OpenTaskCount
@@ -126,9 +126,9 @@ namespace DVSAdmin.Controllers
                 pageNumber = 1;
             }
 
-            var results = await homeService.GetServices(pageNumber, CurrentSort, CurrentSortAction, "secondary check");
+            var results = await homeService.GetServices(UserEmail, pageNumber, CurrentSort, CurrentSortAction, "secondary check");
             var user = await homeService.GetUserByEmail(UserEmail);
-            var PendingCounts = await homeService.GetPendingCounts();
+            var PendingCounts = await homeService.GetPendingCounts(UserEmail);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
             OpenTaskCount openTaskCount = new OpenTaskCount
@@ -171,8 +171,8 @@ namespace DVSAdmin.Controllers
                 pageNumber = 1;
             }
 
-            var results = await homeService.GetServices(pageNumber, CurrentSort, CurrentSortAction, "update or removal");
-            var PendingCounts = await homeService.GetPendingCounts();
+            var results = await homeService.GetServices(UserEmail, pageNumber, CurrentSort, CurrentSortAction, "update or removal");
+            var PendingCounts = await homeService.GetPendingCounts(UserEmail);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
             OpenTaskCount openTaskCount = new OpenTaskCount
