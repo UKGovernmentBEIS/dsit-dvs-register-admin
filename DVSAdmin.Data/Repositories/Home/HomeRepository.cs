@@ -4,9 +4,7 @@ using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 using static DVSAdmin.Data.Repositories.CabTransferRepository;
-using static QRCoder.PayloadGenerator;
 namespace DVSAdmin.Data.Repositories
 {
     public class HomeRepository : IHomeRepository
@@ -41,8 +39,7 @@ namespace DVSAdmin.Data.Repositories
                      s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                      s.Id != s?.CertificateReview?.ServiceId) ||
                     (s.CertificateReview != null &&
-                     (s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider ||
-                      s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)),
+                     (s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider )),
                 "primary check" => s =>
                     ((s.ServiceStatus == ServiceStatusEnum.Received &&
                       s.ServiceStatus != ServiceStatusEnum.Removed &&

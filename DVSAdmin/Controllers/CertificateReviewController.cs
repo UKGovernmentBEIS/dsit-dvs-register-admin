@@ -48,17 +48,15 @@ namespace DVSAdmin.Controllers
             certificateReviewListViewModel.CertificateReviewList = serviceList
                 .Where(x =>
                     ((x.ServiceStatus == ServiceStatusEnum.Submitted || x.ServiceStatus == ServiceStatusEnum.Resubmitted) &&
-                     x.ServiceStatus != ServiceStatusEnum.Removed &&
-                     x.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
+                     x.ServiceStatus != ServiceStatusEnum.Removed &&  x.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                      x.Id != x?.CertificateReview?.ServiceId) ||
-                    (x.CertificateReview != null &&
-                    (x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider ||
-                    x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)))
+                    (x.CertificateReview != null &&  (x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider )))
                    .OrderBy(x => x.DaysLeftToComplete).ToList();
 
             certificateReviewListViewModel.ArchiveList = serviceList.Where(x=>x.CertificateReview !=null && 
             ((x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Approved) 
-            || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected)).OrderByDescending(x => x.CertificateReview.ModifiedDate).ToList();
+            || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.Rejected
+            || x.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)).OrderByDescending(x => x.CertificateReview.ModifiedDate).ToList();
             return View(certificateReviewListViewModel);
         }
 
