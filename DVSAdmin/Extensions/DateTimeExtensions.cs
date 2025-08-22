@@ -19,7 +19,7 @@ namespace DVSAdmin.Extensions
             };
 
             string date = localTime.ToString("d MMM yyyy");
-            return new HtmlString($"{date}; {time}");
+            return new HtmlString($"{date}, {time}");
         }
 
         public static HtmlString FormatDateTime(DateTime? dateTime, string format)
