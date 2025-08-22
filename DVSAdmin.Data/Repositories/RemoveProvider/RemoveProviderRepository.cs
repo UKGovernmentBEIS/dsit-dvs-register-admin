@@ -29,7 +29,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
 
         public async Task<ProviderProfile> GetProviderAndServices(int providerId)
         {
-            return await context.ProviderProfile.Include(p => p.Services).AsNoTracking().Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).AsNoTracking().FirstOrDefaultAsync() ?? new ProviderProfile();
+            return await context.ProviderProfile.Include(p => p.Services).AsNoTracking().Where(p => p.Id == providerId).AsNoTracking().FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
         public async Task<Service> GetServiceDetails(int serviceId)
@@ -44,7 +44,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             try
             {
                 var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(p => p.Id == providerProfileId);
-                if (existingProvider != null)
+                if (existingProvider != null && providerStatus >0)
                 {
                     existingProvider.ModifiedTime = DateTime.UtcNow;
                     existingProvider.ProviderStatus = providerStatus;
@@ -70,10 +70,13 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                         }
                       
                     }
+
+                    await context.SaveChangesAsync(team, eventType, loggedInUserEmail);
+                    await transaction.CommitAsync();
+                    genericResponse.Success = true;
                 }
-                await context.SaveChangesAsync(team, eventType, loggedInUserEmail);
-                await transaction.CommitAsync();
-                genericResponse.Success = true;
+               
+             
             }
             catch (Exception ex)
             {
