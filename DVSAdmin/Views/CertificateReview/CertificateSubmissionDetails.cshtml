@@ -11,10 +11,7 @@
         Heading = "Provider contact information",
         ProviderContact = Model?.CertificateReview?.Service?.Provider
     };
-
     string refererUrl = Convert.ToString(ViewBag.RefererUrl);
-
-   
 }
 
 <div class="govuk-width-container">
@@ -31,8 +28,6 @@
         </ol>
     </div>
     <main id="main-content" class="govuk-main-wrapper" role="main">
-
-      
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
@@ -53,8 +48,7 @@
                 }
 
             </div>
-
-
+            
             <div class="govuk-grid-column-full">
                 @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithLink.cshtml", Model.CertificateReview.Service)
             </div>
@@ -76,7 +70,7 @@
                                 application for it to appear on the register.
                             </p>
                             <p class="govuk-body">
-                                Select the Resend email request button to send another email with an
+                                Select the 'Resend request email' button to send another email with an
                                 updated link that the provider can use to start the application process.
                             </p>
                             <button type="submit" class="govuk-button" data-module="govuk-button">
@@ -130,58 +124,46 @@
 
             </div>
 
-           
-
             <div class="govuk-grid-column-full">
                 <div class="govuk-!-padding-bottom-6">
                     <h2 class="govuk-heading-l">Provided certificate of conformity</h2>
-                    <p class="govuk-body-l">
-                        @Model?.CertificateReview?.Service?.FileName
-                    </p>
-                     <div class="govuk-hint">
-                            PDF, @Model?.CertificateReview?.Service?.FileSizeInKb KB, 1 page
-                        </div>
+                    <p class="govuk-body-l">@Model?.CertificateReview?.Service?.FileName</p>
                     <div class="govuk-hint">
-                            This file may not be suitable for users of assistive technology.
-                        </div>
+                        PDF, @Model?.CertificateReview?.Service?.FileSizeInKb KB, 1 page
+                    </div>
+                    <div class="govuk-hint">
+                        This file may not be suitable for users of assistive technology.
+                    </div>
                     <a href="/certificate-review/download-certificate?key=@Model.CertificateReview.Service.FileLink&filename=@Model.CertificateReview.Service.FileName" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button" target="_blank">
                         Download certificate of conformity
                     </a>
                 </div>
-                </div>
-
-            <div class="govuk-grid-column-full">
-            <h2 class="govuk-heading-l">Submitted information</h2>
-
-            @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ContactView.cshtml", Model?.CertificateReview?.Service)
-            @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
             </div>
 
             <div class="govuk-grid-column-full">
-            <h3 class="govuk-heading-m">Service details</h3>
-            @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.CertificateReview?.Service)
+                <h2 class="govuk-heading-l">Submitted information</h2>
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ContactView.cshtml", Model?.CertificateReview?.Service)
+                @await Html.PartialAsync("~/Views/PartialViews/_ProviderEmailsView.cshtml", providerEmailsViewModel)
+            </div>
+
+            <div class="govuk-grid-column-full">
+                <h3 class="govuk-heading-m">Service details</h3>
+                @await Html.PartialAsync("~/Views/PartialViews/_ServiceDetailsView.cshtml", Model.CertificateReview?.Service)
             </div>
             <div class="govuk-grid-column-full">
-
                 @if (@Model.CertificateReview.Service.ServiceSupSchemeMapping != null && @Model.CertificateReview.Service.ServiceSupSchemeMapping.Count > 0)
                 {
                     if ((@Model.CertificateReview.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG44Mapping != null && mapping.SchemeGPG44Mapping.Count > 0))
                     || (@Model.CertificateReview.Service.ServiceSupSchemeMapping.Any(mapping => mapping.SchemeGPG45Mapping != null && mapping.SchemeGPG45Mapping.Count > 0)))
                     {
-
                         @await Html.PartialAsync("~/Views/PartialViews/_SchemeMappingView.cshtml", Model.CertificateReview.Service)
-
                     }
                 }
-
-                    @if (Model?.CertificateReview.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
-                    {
-                        @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.CertificateReview.Service)
-                    }
-
-                   
-                </div>
-
+                @if (Model?.CertificateReview.Service.ServiceType == ServiceTypeEnum.WhiteLabelled)
+                {
+                    @await Html.PartialAsync("~/Views/PartialViews/_UnderpinningServiceDetailsView.cshtml", Model.CertificateReview.Service)
+                }
+            </div>
 
             <div class="govuk-grid-column-full">
                 @if (Model?.CertificateReview?.Service?.CertificateReview != null)
@@ -204,13 +186,9 @@
                             </a>
                         </div>
                     }
-
-                   
                 }
-                </div>
-            </>
+            </div>
         </div>
     </main>
-
 </div>
 
