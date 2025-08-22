@@ -95,6 +95,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
+                User loggedInUser = await context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
                 foreach (var item in serviceIds)
                 {
                     var service = await context.Service.Where(s => s.Id == item && s.ProviderProfileId == providerProfileId).FirstOrDefaultAsync();
@@ -103,6 +104,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                     service.RemovalRequestTime = DateTime.UtcNow;
                     service.ServiceRemovalReason = serviceRemovalReason;
                     service.RemovalTokenStatus = TokenStatusEnum.Requested;
+                    service.RemovalRequestedUser = loggedInUser?.Id;
                 }
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
                 await transaction.CommitAsync();
@@ -126,6 +128,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             try
             {
                 var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(p => p.Id == providerProfileId);
+                User loggedInUser = await context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
                 if (existingProvider != null)
                 {
                     existingProvider.RemovalReason = reason;
@@ -141,6 +144,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                         existingService.ModifiedTime = DateTime.UtcNow;
                         existingService.RemovalRequestTime = DateTime.UtcNow;
                         existingService.RemovalTokenStatus = TokenStatusEnum.Requested;
+                        existingService.RemovalRequestedUser = loggedInUser?.Id;
                     }
                 }
 

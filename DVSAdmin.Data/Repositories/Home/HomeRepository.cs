@@ -17,18 +17,16 @@ namespace DVSAdmin.Data.Repositories
             _logger = logger;
         }
 
-        public async Task<PaginatedResult<Service>> GetServices(int pageNumber, string sort, string sortAction, string openTask)
+        public async Task<PaginatedResult<Service>> GetServices(string loggedInUserEmail, int pageNumber, string sort, string sortAction, string openTask)
         {
             var baseQuery = _context.Service
                 .Include(s => s.Provider)
+                 .Include(s => s.ServiceDraft)
                 .Include(s => s.CertificateReview)
                 .Include(s => s.PublicInterestCheck);
 
-            var groupedQuery = await baseQuery
-                .GroupBy(s => s.ServiceKey)
-                .Select(g => g.OrderByDescending(s => s.ServiceVersion).FirstOrDefault())
-                .ToListAsync();
 
+            User loggedInUser = await _context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
             var isTaskWithDeadline = openTask is "cert review" or "primary check" or "secondary check";                        
 
             Func<Service, bool> taskFilter = openTask switch
@@ -45,19 +43,21 @@ namespace DVSAdmin.Data.Repositories
                       s.ServiceStatus != ServiceStatusEnum.Removed &&
                       s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                       s.Id != s?.PublicInterestCheck?.ServiceId) ||
-                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)),
+                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer
+                     && s.PublicInterestCheck.SecondaryCheckUserId != loggedInUser?.Id)),
                 "secondary check" => s =>
                     (s.ServiceStatus != ServiceStatusEnum.Removed &&
                      s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
                      s.PublicInterestCheck != null &&
                      (s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
-                      s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed)),
-                _ => s => s.ServiceStatus == ServiceStatusEnum.UpdatesRequested
-                         || s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation
+                      s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed) && s.PublicInterestCheck.PrimaryCheckUserId != loggedInUser?.Id),
+                _ => s => (s.ServiceStatus == ServiceStatusEnum.UpdatesRequested && s?.ServiceDraft?.RequestedUserId != loggedInUser?.Id)
+                         || ( s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser?.Id && s.ServiceRemovalReason != ServiceRemovalReasonEnum.ProviderRequestedRemoval)
+                         || (s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser?.Id && s.ServiceRemovalReason == null && s.Provider.RemovalReason != RemovalReasonsEnum.ProviderRequestedRemoval)
                          || s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation
             };
 
-            var filtered = groupedQuery.Where(taskFilter).ToList();
+            var filtered = baseQuery.Where(taskFilter).ToList();
 
             if (isTaskWithDeadline)
             {
@@ -168,14 +168,14 @@ namespace DVSAdmin.Data.Repositories
             }
         }
 
-        public async Task<Dictionary<string, int>> GetPendingCounts()
+        public async Task<Dictionary<string, int>> GetPendingCounts(string loggedInUserEmail)
         {
+            User loggedInUser = await _context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
             var latestServices = await _context.Service
                 .Include(s => s.Provider)
+                .Include(s => s.ServiceDraft)
                 .Include(s => s.CertificateReview)
-                .Include(s => s.PublicInterestCheck)
-                .GroupBy(s => s.ServiceKey)
-                .Select(g => g.OrderByDescending(s => s.ServiceVersion).First())
+                .Include(s => s.PublicInterestCheck)               
                 .ToListAsync();
 
             int certificateReviewCount = 0;
@@ -199,7 +199,8 @@ namespace DVSAdmin.Data.Repositories
 
                 if ((s.ServiceStatus == ServiceStatusEnum.Received && notRemovedOrDraft &&
                       s.Id != s?.PublicInterestCheck?.ServiceId) ||
-                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer))
+                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer 
+                     && s.PublicInterestCheck.SecondaryCheckUserId != loggedInUser?.Id))
                 {
                     primaryCount++;
                 }
@@ -207,13 +208,14 @@ namespace DVSAdmin.Data.Repositories
                 if (notRemovedOrDraft &&
                     s.PublicInterestCheck != null &&
                     (s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
-                     s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed))
+                     s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed) && s.PublicInterestCheck.PrimaryCheckUserId != loggedInUser?.Id)
                 {
                     secondaryCount++;
                 }
 
-                if (s.ServiceStatus == ServiceStatusEnum.UpdatesRequested ||
-                    s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation ||
+                if ( (s.ServiceStatus == ServiceStatusEnum.UpdatesRequested && s?.ServiceDraft?.RequestedUserId != loggedInUser?.Id) ||
+                    (s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser?.Id && s.ServiceRemovalReason!= ServiceRemovalReasonEnum.ProviderRequestedRemoval)||
+                     (s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser?.Id && s.ServiceRemovalReason == null  && s.Provider.RemovalReason != RemovalReasonsEnum.ProviderRequestedRemoval) ||
                     s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
                 {
                     updateOrRemovalCount++;
