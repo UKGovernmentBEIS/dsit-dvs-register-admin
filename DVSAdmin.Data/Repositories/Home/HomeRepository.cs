@@ -195,8 +195,7 @@ namespace DVSAdmin.Data.Repositories
                       notRemovedOrDraft &&
                       s.Id != s?.CertificateReview?.ServiceId) ||
                     (s.CertificateReview != null &&
-                     (s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.InReview ||
-                      s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)))
+                     ( s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.AmendmentsRequired)))
                 {
                     certificateReviewCount++;
                 }

@@ -118,7 +118,7 @@ namespace DVSAdmin.CommonUtility.Email
 
         #region Opening the loop
         public async Task<bool> SendProceedApplicationConsentToDIP(string serviceName, string primaryContact, string secondaryContact,
-            string consentLink, List<string> emailAddress)
+            string consentLink, string emailAddress)
         {
             var template = govUkNotifyConfig.ProceedApplicationConsentToDIPTemplate;
 
@@ -130,7 +130,7 @@ namespace DVSAdmin.CommonUtility.Email
                     { template.ConsentLink,  consentLink }
                 };
 
-            return await SendNotifications(emailAddress, template, personalisation);
+            return await SendNotification(emailAddress, template, personalisation);
 
         }
 

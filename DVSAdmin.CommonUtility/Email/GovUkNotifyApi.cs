@@ -31,16 +31,7 @@ namespace DVSAdmin.CommonUtility.Email
             return await SendEmail(emailModel);
         }
 
-        public async Task<bool> CreateModelAndSendMultipleEmails(List<string> emailAddress, dynamic template, Dictionary<string, object> personalisation)
-        {
-            var emailModel = new GovUkNotifyEmailModel
-            {
-                EmailList = emailAddress,
-                TemplateId = template.Id,
-                Personalisation = personalisation
-            };
-            return await SendEmail(emailModel);
-        }
+      
 
 
         private async Task<bool> SendEmail(GovUkNotifyEmailModel emailModel)
