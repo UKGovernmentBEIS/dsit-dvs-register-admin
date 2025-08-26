@@ -78,5 +78,7 @@ namespace DVSAdmin.Data.Entities
         public ManualUnderPinningService ManualUnderPinningService { get; set; }
 
         public ServiceDraft ServiceDraft { get; set; }
+        [ForeignKey("User")]
+        public int? RemovalRequestedUser { get; set; }
     }
 }
