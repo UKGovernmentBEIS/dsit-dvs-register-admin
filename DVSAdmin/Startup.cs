@@ -136,10 +136,11 @@ namespace DVSAdmin
             services.AddScoped<IEditRepository, EditRepository>();
             services.AddScoped<ICabTransferService, CabTransferService>();
             services.AddScoped<ICabTransferRepository, CabTransferRepository>();
+            services.AddScoped<IHomeRepository, HomeRepository>();
+            services.AddScoped<IHomeService, HomeService>();
             services.AddTransient<LoginEmailSender>();
             services.AddTransient<CertificateReviewEmailSender>();
-            services.AddTransient<PICheckEmailSender>();
-            services.AddTransient<RegManagementEmailSender>();
+            services.AddTransient<PICheckEmailSender>();           
             services.AddTransient<RemoveProviderEmailSender>();
             services.AddTransient<EditEmailSender>();
             services.AddTransient<CabTransferEmailSender>();

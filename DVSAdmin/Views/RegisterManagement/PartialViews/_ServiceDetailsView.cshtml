@@ -7,13 +7,12 @@
 @model ServiceDto
 
 @{
-    bool isEditable = !Convert.ToBoolean(ViewBag.IsPrevious) && 
-    (Model.ServiceStatus == ServiceStatusEnum.ReadyToPublish || Model.ServiceStatus == ServiceStatusEnum.Published);
+    bool isEditable = !Convert.ToBoolean(ViewBag.IsPrevious) &&  Model.ServiceStatus == ServiceStatusEnum.Published;
     bool is0_4GammaVersion = Model?.TrustFrameworkVersion.Version == Constants.TFVersion0_4;
 }
 
 <div class="govuk-summary-card__title-wrapper">
-    <p class="govuk-summary-card__title">
+    <p class="govuk-summary-card__title">Submission date (GMT):
         @DateTimeExtensions.FormatDateTime(@Model.ModifiedTime)
     </p>
 </div>

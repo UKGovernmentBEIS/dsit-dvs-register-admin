@@ -1,4 +1,5 @@
-﻿@model CertificateValidationViewModel
+﻿@using DVSAdmin.Extensions
+@model DVSAdmin.BusinessLogic.Models.ServiceDto
 @{
     ViewData["Title"] = "You have approved this submission";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
@@ -6,34 +7,24 @@
 
 <div class="govuk-width-container">
     <main id="main-content" class="govuk-main-wrapper" role="main">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-
+        <div class="govuk-grid-row">         
+            <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
-
                 <p class="govuk-body">
                     You have successfully approved the submission.
                 </p>
-            </div>
-
-
-
-            @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsView.cshtml", Model.Service)
-
-
-
-            <div class="govuk-grid-column-two-thirds">
+                @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithReviewStatus.cshtml", Model)
                 <p class="govuk-body">
-                    The Conformity Assessment Body and OfDIA will receive an email notification of the submission decision within 20 minutes.
+                    We will email the CAB and OfDIA with this decision within 20 minutes.
                 </p>
-                <a href="/certificate-review/certificate-review-list" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                <a href="@Url.Action("CertificateReviews","CertificateReview")" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
                     Go back to certificate review
-                </a>             
-               
+                </a>          
             </div>
         </div>
     </main>
-
 </div>
+
+
 
 

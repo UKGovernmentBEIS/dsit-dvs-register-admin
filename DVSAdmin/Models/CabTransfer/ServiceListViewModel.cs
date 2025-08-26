@@ -1,14 +1,11 @@
 ﻿using DVSAdmin.BusinessLogic.Models;
+using DVSAdmin.Models.UI;
 
 namespace DVSAdmin.Models.CabTransfer
 {
-    public class ServiceListViewModel
+    public class ServiceListViewModel : PaginationParameters
     {
         public List<ServiceDto>? Services { get; set; }
         public string? SearchText { get; set; }
-        public int TotalPages { get; set; }
-        public int PageNumber { get; set; }
-        public string CurrentSort { get; set; }
-        public string CurrentSortAction { get; set; }
     }
 }

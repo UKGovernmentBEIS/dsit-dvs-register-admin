@@ -6,8 +6,7 @@ namespace DVSAdmin.BusinessLogic.Services
     public interface ICertificateReviewService
     {
        
-        public  Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons();
-        public  Task<CertificateReviewDto> GetCertificateReview(int reviewId);
+        public  Task<List<CertificateReviewRejectionReasonDto>> GetRejectionReasons();      
         public Task<CertificateReviewDto> GetCertificateReviewWithRejectionData(int reviewId);
         public Task<List<ServiceDto>> GetServiceList(string searchText = "");       
         public Task<ServiceDto> GetServiceDetails(int serviceId);
@@ -15,11 +14,8 @@ namespace DVSAdmin.BusinessLogic.Services
 
 
         #region save update methods
-        public Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto, string loggedInUserEmail);
-        public Task<GenericResponse> UpdateCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail);
-        public Task<GenericResponse> UpdateCertificateReviewRejection(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, List<CertificateReviewRejectionReasonDto> rejectionReasons, string loggedInUserEmail);
-        public Task<GenericResponse> UpdateCertificateSentBack(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail);
-        public Task<GenericResponse> RestoreRejectedCertificateReview(int reviewId, string loggedInUserEmail);
+        public Task<GenericResponse> SaveCertificateReview(CertificateReviewDto cetificateReviewDto, ServiceDto serviceDto, string loggedInUserEmail, List<CertificateReviewRejectionReasonDto> rejectionReasons = null!);
+           public Task<GenericResponse> RestoreRejectedCertificateReview(int serviceId, string loggedInUserEmail);
         public Task<GenericResponse> GenerateTokenAndSendEmail(ServiceDto serviceDto, string loggedInUserEmail, bool isResend);
         #endregion
     }

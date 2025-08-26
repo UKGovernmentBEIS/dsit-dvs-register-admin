@@ -31,7 +31,7 @@
                 }
                 else
                 {
-                    <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateValidation", "CertificateReview", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>
+                        <td class="govuk-table__cell"> @Html.ActionLink(item.Provider.RegisteredName, "CertificateReview", "CertificateReview", new { @serviceId = item.Id }, new { @class = "govuk-link" })</td>
                 }
                 <td class="govuk-table__cell"> @item.ServiceName</td>
 

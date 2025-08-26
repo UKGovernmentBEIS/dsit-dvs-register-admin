@@ -97,7 +97,7 @@ namespace DVSAdmin.Data.Repositories
             ProviderProfile providerProfile = new();
             providerProfile = await _context.ProviderProfile      
                .Include(p => p.Services)
-               .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.ReadyToPublish )
+               .Where(p => p.Id == providerId && p.ProviderStatus >= ProviderStatusEnum.Published )
                .OrderBy(c => c.ModifiedTime).FirstOrDefaultAsync() ?? new ProviderProfile();
             return providerProfile;
         }
@@ -246,7 +246,7 @@ namespace DVSAdmin.Data.Repositories
                 {
                     draft.ModifiedTime = DateTime.UtcNow;
                     await _context.ProviderProfileDraft.AddAsync(draft);
-                    var servicesList = provider?.Services?.Where(x => x.ServiceStatus == ServiceStatusEnum.Published || x.ServiceStatus == ServiceStatusEnum.ReadyToPublish);
+                    var servicesList = provider?.Services?.Where(x => x.ServiceStatus == ServiceStatusEnum.Published );
 
                     provider.ProviderStatus = ProviderStatusEnum.UpdatesRequested;
                     provider.ModifiedTime = DateTime.UtcNow;

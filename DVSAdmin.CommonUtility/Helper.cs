@@ -53,9 +53,7 @@ namespace DVSAdmin.CommonUtility
 
         public static List<ProviderStatusEnum> priorityOrderProvider = new List<ProviderStatusEnum>
         {
-            ProviderStatusEnum.CabAwaitingRemovalConfirmation,
-            ProviderStatusEnum.ReadyToPublishNext,
-            ProviderStatusEnum.ReadyToPublish,
+            ProviderStatusEnum.CabAwaitingRemovalConfirmation,           
             ProviderStatusEnum.UpdatesRequested,
             ProviderStatusEnum.AwaitingRemovalConfirmation,
             ProviderStatusEnum.PublishedUnderReassign,
@@ -66,8 +64,7 @@ namespace DVSAdmin.CommonUtility
 
         public static List<ServiceStatusEnum> priorityOrderService = new List<ServiceStatusEnum>
             {
-                ServiceStatusEnum.CabAwaitingRemovalConfirmation,
-                ServiceStatusEnum.ReadyToPublish,
+                ServiceStatusEnum.CabAwaitingRemovalConfirmation,              
                 ServiceStatusEnum.UpdatesRequested,
                 ServiceStatusEnum.Received,
                 ServiceStatusEnum.AwaitingRemovalConfirmation,

@@ -36,6 +36,7 @@ namespace DVSAdmin.Data.Entities
         public bool? IsAuthenticyVerifiedCorrect { get; set; }
         public string? Comments { get; set; }
         public bool? InformationMatched { get; set; }
+        public bool? CertificateValid { get; set; }
         public string? CommentsForIncorrect { get; set; }
         public string? RejectionComments { get; set; }
         public string? Amendments { get; set; }

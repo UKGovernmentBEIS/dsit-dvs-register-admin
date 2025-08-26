@@ -40,8 +40,7 @@ namespace DVSAdmin.Controllers
             Where(x => (x.ServiceStatus == ServiceStatusEnum.Received && x.ServiceStatus != ServiceStatusEnum.Removed 
             && x.ServiceStatus!=ServiceStatusEnum.SavedAsDraft  &&
             x.Id != x?.PublicInterestCheck?.ServiceId ) ||
-            (x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.InPrimaryReview               
-            || x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)
+            ( x?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer)
              && x.PublicInterestCheck.SecondaryCheckUserId != userDto.Id).OrderBy(x => x.DaysLeftToCompletePICheck).ToList();
 
             publicInterestCheckViewModel.SecondaryChecksList = publicinterestchecks
@@ -71,17 +70,6 @@ namespace DVSAdmin.Controllers
 
         }
 
-        [HttpPost("resend-closing-loop-link")]
-        public async Task<ActionResult> ResendClosingLinkEmail(int serviceId)
-        {
-            ServiceDto serviceDto = await publicInterestCheckService.GetServiceDetails(serviceId);
-            GenericResponse genericResponse = await publicInterestCheckService.GenerateTokenAndSendEmail(serviceDto, UserEmail, true);
-
-            if (genericResponse.Success)
-            {
-                return View("ResentConsentToPublishConformation");
-            }
-            return RedirectToAction("PublicInterestCheck", "PublicInterestCheck");
-        }
+      
     }
 }

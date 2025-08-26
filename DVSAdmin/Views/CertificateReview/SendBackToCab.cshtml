@@ -10,12 +10,14 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new {reviewId = Model.CertificateReview.CertificateReviewId}, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "CertificateReview", "CertificateReview", new {reviewId = Model.Service.Id}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
 
         <div class="govuk-grid-row">
             @using (Html.BeginForm("ProceedReturn", "CertificateReview", FormMethod.Post))
             {
+                @Html.HiddenFor(m=>m.CertificateValid)
+                @Html.HiddenFor(m => m.InformationMatched)
                 <div class="govuk-grid-column-full govuk-!-padding-bottom-5">
 
                     @if (ViewData.ModelState.ErrorCount > 0)
@@ -24,7 +26,10 @@
                         @await Html.PartialAsync("~/Views/PartialViews/_ErrorSummaryView.cshtml", Model)
                     }
                     <h1 class="govuk-heading-xl">Send back to the Conformity Assessment Body for resubmission</h1>
-                    @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithDaysLeftView.cshtml", Model.CertificateReview.Service)
+                    
+                    <div class="govuk-grid-column-full">
+                        @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_ServiceDetailsWithLink.cshtml", Model.Service)
+                    </div>
                 </div>
                 <div class="govuk-grid-column-two-thirds">
                     <div class="govuk-body">
@@ -33,29 +38,25 @@
                         </h2>
                         <hr class="govuk-section-break govuk-section-break--visible">
                         @await Html.PartialAsync("~/Views/CertificateReview/PartialViews/_CertificateValidationFieldsView.cshtml",
-                        new ReviewFiledsViewModel{CertificateValidation = Model.CertificateValidation,
-                        InformationMatched = Model.CertificateReview .InformationMatched,
-                        IsRejectFlow = false,
-                        TextForIncorrectField = "Amendments needed"})
+                        new ReviewViewModel
+                       {
+                        CertificateValid = Model.CertificateValid,
+                        InformationMatched = Model.InformationMatched,
+                        IsSendBack = true
+                        })
                     </div>
-                    <div class="govuk-body govuk-!-padding-bottom-3">
-                        <h2 class="govuk-heading-m">
-                            Comments
-                        </h2>
-                        <p>
-                            @Model.CommentFromReview
-                        </p>
-                    </div>
+                 
                     @if (Html.ViewData.ModelState.ContainsKey("Reason") && Html.ViewData.ModelState["Reason"].Errors.Count > 0)
                     {
+                        
                         <div class="govuk-form-group govuk-form-group--error">
                             <h2 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--l" for="reason">
-                                    Tell the CAB what amendments they need to make
+                                    Tell the CAB what amendments they need to make(required)
                                 </label>
                             </h2>
                             <div id="reason-hint" class="govuk-hint">
-                                The details below will be sent to the Conformity Assessment Body as guidance on what they should amend before resubmission.
+                                The details below will be sent to the CAB as guidance on what they should amend before resubmission.
                             </div>
                             <p class="govuk-body"></p>
                             <p id="reason-error" class="govuk-error-message">
@@ -76,7 +77,7 @@
                         <div class="govuk-form-group">
                             <h2 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--l" for="reason">
-                                    Tell the CAB what amendments they need to make
+                                    Tell the CAB what amendments they need to make (required)
                                 </label>
                             </h2>
                             <div id="reason-hint" class="govuk-hint">
@@ -118,7 +119,7 @@
                         <button type="submit" class="govuk-button" data-module="govuk-button" name="action" value="return">
                             Return to CAB
                         </button>
-                        <a href="/certificate-review/certificate-review?reviewId=@Model.CertificateReview.CertificateReviewId" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
+                        <a href="/certificate-review/certificate-review?serviceId=@Model.Service.Id" class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button">
                             Cancel
                         </a>
                     </div>

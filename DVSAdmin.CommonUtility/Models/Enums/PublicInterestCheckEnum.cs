@@ -8,8 +8,7 @@ namespace DVSAdmin.CommonUtility.Models.Enums
         //New entries should be added at the last    
         //Donot change order of the enum as the ids are used to save in database
         //New entries should be added at the last    
-        [Description("In review")]
-        InPrimaryReview = 1,
+
         [Description("Primary check failed")]
         PrimaryCheckFailed = 2,
         [Description("Primary check passed")]

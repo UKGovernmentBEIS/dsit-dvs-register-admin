@@ -29,7 +29,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
 
         public async Task<ProviderProfile> GetProviderAndServices(int providerId)
         {
-            return await context.ProviderProfile.Include(p => p.Services).AsNoTracking().Where(p => p.Id == providerId && (p.ProviderStatus > ProviderStatusEnum.Unpublished)).AsNoTracking().FirstOrDefaultAsync() ?? new ProviderProfile();
+            return await context.ProviderProfile.Include(p => p.Services).AsNoTracking().Where(p => p.Id == providerId).AsNoTracking().FirstOrDefaultAsync() ?? new ProviderProfile();
         }
 
         public async Task<Service> GetServiceDetails(int serviceId)
@@ -44,7 +44,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             try
             {
                 var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(p => p.Id == providerProfileId);
-                if (existingProvider != null)
+                if (existingProvider != null && providerStatus >0)
                 {
                     existingProvider.ModifiedTime = DateTime.UtcNow;
                     existingProvider.ProviderStatus = providerStatus;
@@ -70,10 +70,13 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                         }
                       
                     }
+
+                    await context.SaveChangesAsync(team, eventType, loggedInUserEmail);
+                    await transaction.CommitAsync();
+                    genericResponse.Success = true;
                 }
-                await context.SaveChangesAsync(team, eventType, loggedInUserEmail);
-                await transaction.CommitAsync();
-                genericResponse.Success = true;
+               
+             
             }
             catch (Exception ex)
             {
@@ -92,6 +95,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
+                User loggedInUser = await context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
                 foreach (var item in serviceIds)
                 {
                     var service = await context.Service.Where(s => s.Id == item && s.ProviderProfileId == providerProfileId).FirstOrDefaultAsync();
@@ -100,6 +104,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                     service.RemovalRequestTime = DateTime.UtcNow;
                     service.ServiceRemovalReason = serviceRemovalReason;
                     service.RemovalTokenStatus = TokenStatusEnum.Requested;
+                    service.RemovalRequestedUser = loggedInUser?.Id;
                 }
                 await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.RemoveService, loggedInUserEmail);
                 await transaction.CommitAsync();
@@ -123,6 +128,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
             try
             {
                 var existingProvider = await context.ProviderProfile.FirstOrDefaultAsync(p => p.Id == providerProfileId);
+                User loggedInUser = await context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
                 if (existingProvider != null)
                 {
                     existingProvider.RemovalReason = reason;
@@ -138,6 +144,7 @@ namespace DVSAdmin.Data.Repositories.RemoveProvider
                         existingService.ModifiedTime = DateTime.UtcNow;
                         existingService.RemovalRequestTime = DateTime.UtcNow;
                         existingService.RemovalTokenStatus = TokenStatusEnum.Requested;
+                        existingService.RemovalRequestedUser = loggedInUser?.Id;
                     }
                 }
 

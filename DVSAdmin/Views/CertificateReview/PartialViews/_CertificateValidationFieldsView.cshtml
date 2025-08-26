@@ -1,230 +1,85 @@
 ﻿@using DVSAdmin.Extensions
-@model ReviewFiledsViewModel
+@model DVSAdmin.Models.CertificateReview.ReviewViewModel
 
 <dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Cerificate validation
+        </dt>
+        <dd class="govuk-summary-list__value">
 
+            @if (Model.CertificateValid == true)
+            {
+                <strong class="govuk-tag govuk-tag--green">
+                    Yes, the certificate is valid
+                </strong>
 
+            }
+            else
+            {
+                @if (Model.IsSendBack == true)
+                {
+                    <strong class="govuk-tag govuk-tag--red">
+                        Amendments needed                      
+                    </strong>
+                }
+                else
+                {
+                    <strong class="govuk-tag govuk-tag--red">                     
 
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsCabLogoCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Logos and certificate number
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsCabDetailsCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Conformity Assessment Body details
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsProviderDetailsCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Service provider details
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsServiceNameCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Name of service
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsRolesCertifiedCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Roles certified against
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsCertificationScopeCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Scope of certification
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsServiceSummaryCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Summary of service
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsURLLinkToServiceCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                URL link to service
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsGPG45Correct))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                GPG 45 identity profiles
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsGPG44Correct))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                GPG44 quality assessment
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsServiceProvisionCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Methods of service provision
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsLocationCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Geographical location
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsDateOfIssueCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Date of issue
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsDateOfExpiryCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Date of expiry
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
-    @if (!Convert.ToBoolean(Model.CertificateValidation.IsAuthenticyVerifiedCorrect))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Authenticity verification
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
+                        No, the certificate is not valid
+                    </strong>
+                }
+              
+            }
 
-    @if (!Convert.ToBoolean(Model.InformationMatched))
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Information match
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <strong class="govuk-tag govuk-tag--red">
-                    @Model.TextForIncorrectField
-                </strong>
-            </dd>
-        </div>
-    }
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Information match
+        </dt>
+        <dd class="govuk-summary-list__value">
 
-    @if (!String.IsNullOrEmpty(Model.ReviewComments))
+            @if (Model.InformationMatched == true)
+            {
+                <strong class="govuk-tag govuk-tag--green">
+                    Yes, it matches the information on the certificate
+                </strong>
+            }
+            else
+            {
+                @if(Model.IsSendBack == true)
+                {
+                    <strong class="govuk-tag govuk-tag--red">
+                        Amendments needed 
+                    </strong>
+                }
+                else
+                {
+                    <strong class="govuk-tag govuk-tag--red">
+                        No, the information does not match
+                    </strong>
+                }
+               
+            }
+
+        </dd>
+    </div>
+
+    @if(!string.IsNullOrEmpty(Model.ReviewComments))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
                 Review comments
             </dt>
             <dd class="govuk-summary-list__value">
-                @HtmlExtensions.ToStringWithLineBreaks(Model.ReviewComments)
+
+              @Model.ReviewComments
+
             </dd>
         </div>
     }
 
+    
 </dl>

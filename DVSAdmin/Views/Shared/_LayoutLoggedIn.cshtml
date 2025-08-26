@@ -114,6 +114,34 @@
             </nav>
         </div>
     </header>
+    @if (!String.IsNullOrEmpty(ViewData["ActiveNav"]?.ToString()))
+    {
+        <div class="govuk-service-navigation"
+             data-module="govuk-service-navigation">
+            <div class="govuk-width-container">
+                <div class="govuk-service-navigation__container">
+                    <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
+                        <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle" aria-controls="navigation" hidden>
+                            Menu
+                        </button>
+                        <ul class="govuk-service-navigation__list" id="navigation">
+                            <li class="govuk-service-navigation__item @(ViewData["ActiveNav"]?.ToString() == "OpenTasks" ? "govuk-service-navigation__item--active" : "")">
+                                <a class="govuk-service-navigation__link" href="/open-tasks/pending-certificate-reviews" aria-current="@(ViewData["ActiveNav"]?.ToString() == "OpenTasks" ? "true" : "false")">
+                                    Open tasks
+                                </a>
+                            </li>
+                            <li class="govuk-service-navigation__item @(ViewData["ActiveNav"]?.ToString() == "ReviewServices" ? "govuk-service-navigation__item--active" : "")">
+                                <a class="govuk-service-navigation__link" href="/home" aria-current="@(ViewData["ActiveNav"]?.ToString() == "ReviewServices" ? "true" : "false")">
+                                    Review and manage services
+                                </a>
+                            </li>
+                        </ul>
+
+                    </nav>
+                </div>
+            </div>
+        </div>
+    }
     <div class="govuk-width-container">
         <div class="govuk-phase-banner">
             <p class="govuk-phase-banner__content">
@@ -193,7 +221,6 @@
         </div>
     </footer>
 
-    <script nonce="@Context.GetScriptNonce()" src="~/js/site.js" asp-append-version="true"></script>
     <script type="module" nonce="@Context.GetScriptNonce()">
         import { initAll as govukInit } from '/lib/govuk-frontend/govuk-frontend-5.10.0.min.js';
         import { SortableTable } from '/lib/moj-frontend/moj-frontend-5.1.5.min.js';

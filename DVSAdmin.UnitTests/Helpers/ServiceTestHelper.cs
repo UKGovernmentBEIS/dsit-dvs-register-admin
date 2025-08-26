@@ -16,24 +16,9 @@ namespace DVSAdmin.UnitTests
 
                 ServiceId = serviceId,
                 ProviProviderProfileId = providerId,
-                IsCabLogoCorrect = isPass,
-                IsCabDetailsCorrect = isPass,
-                IsProviderDetailsCorrect = isPass,
-                IsServiceNameCorrect = isPass,
-                IsRolesCertifiedCorrect = isPass,
-                IsCertificationScopeCorrect = isPass,
-                IsServiceSummaryCorrect = isPass,
-                IsURLLinkToServiceCorrect = isPass,
-                IsGPG44Correct = isPass,
-                IsGPG45Correct = isPass,
-                IsServiceProvisionCorrect = isPass,
-                IsLocationCorrect = isPass,
-                IsDateOfIssueCorrect = isPass,
-                IsDateOfExpiryCorrect = isPass,
-                IsAuthenticyVerifiedCorrect = isPass,
-                Comments = comments,
+              
                 InformationMatched = isPass,
-                CommentsForIncorrect = commentsForIncorrect,
+              
                 RejectionComments = rejectionComments,
                 Amendments = amendments,
                 VerifiedUser = verifiedUser,
@@ -106,12 +91,7 @@ namespace DVSAdmin.UnitTests
 
             var service1 = CreateService(1, "Test service 1", 1, ServiceStatusEnum.Submitted, true, true, true, 0);
             service1.Id = 1;
-            serviceDtos.Add(service1);
-
-            var service2 = CreateService(1, "Test service 2", 1, ServiceStatusEnum.Submitted, true, true, true, 0);
-            service2.Id = 2;
-            service2.CertificateReview = CreateCertificateReview(1, 2, 1, CertificateReviewEnum.InReview, "approved comment", "page 2 comment", "", "");           
-            serviceDtos.Add(service2);
+            serviceDtos.Add(service1);     
 
             var service3 = CreateService(1, "Test service 3", 1, ServiceStatusEnum.Submitted, true, true, true, 0);
             service3.Id = 3;
@@ -156,10 +136,10 @@ namespace DVSAdmin.UnitTests
             service2.CertificateReview = CreateCertificateReview(1, 2, 1, CertificateReviewEnum.Approved, "approved comment", "page 2 comment", "", "");
             serviceDtos.Add(service2);
 
-            var service3 = CreateService(1, "Test service 1", 1, ServiceStatusEnum.ReadyToPublish, true, true, true, 0);
-            service3.Id = 3;
-            service3.CertificateReview = CreateCertificateReview(1, 3, 1, CertificateReviewEnum.Approved, "approved comment", "page 2 comment", "", "");
-            serviceDtos.Add(service3);
+            //var service3 = CreateService(1, "Test service 1", 1, ServiceStatusEnum.ReadyToPublish, true, true, true, 0);
+            //service3.Id = 3;
+            //service3.CertificateReview = CreateCertificateReview(1, 3, 1, CertificateReviewEnum.Approved, "approved comment", "page 2 comment", "", "");
+            //serviceDtos.Add(service3);
 
             var service4 = CreateService(1, "Test service 1", 1, ServiceStatusEnum.Published, true, true, true, 0);
             service4.Id = 4;
@@ -199,10 +179,7 @@ namespace DVSAdmin.UnitTests
             service11.Id = 11;
             serviceDtos.Add(service11);
 
-            var service12 = CreateService(1, "Test service 1", 1, ServiceStatusEnum.Submitted, true, true, true, 0);
-            service12.Id = 12;
-            service12.CertificateReview = CreateCertificateReview(1, 12, 1, CertificateReviewEnum.InReview, "approved comment", "page 2 comment", "", "");
-            serviceDtos.Add(service12);
+          
 
             var service13= CreateService(1, "Test service 1", 1, ServiceStatusEnum.Submitted, true, true, true, 0);
             service13.Id = 13;

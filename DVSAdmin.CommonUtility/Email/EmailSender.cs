@@ -19,9 +19,6 @@ namespace DVSAdmin.CommonUtility.Email
             return await govUkNotifyApi.CreateModelAndSend(emailAddress, template, personalisation);
         }
 
-        protected async Task<bool> SendNotifications<TTemplate>(List<string> emailAddress, TTemplate template, Dictionary<string, dynamic> personalisation)
-        {
-            return await govUkNotifyApi.CreateModelAndSendMultipleEmails(emailAddress, template, personalisation);
-        }
+      
     }
 }
