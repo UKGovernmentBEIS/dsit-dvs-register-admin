@@ -1,9 +1,9 @@
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
+using DVSAdmin.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 
 namespace DVSAdmin.Data.Repositories
 {
@@ -18,11 +18,7 @@ namespace DVSAdmin.Data.Repositories
             this.logger = logger;
         }
 
-        public class PaginatedResult<T>
-        {
-            public List<T> Items { get; set; }
-            public int TotalCount { get; set; }
-        }
+      
 
         public async Task<List<CabUser>> GetActiveCabUsers(int cabId)
         {

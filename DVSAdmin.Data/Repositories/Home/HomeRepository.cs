@@ -1,10 +1,9 @@
-﻿using DVSAdmin.CommonUtility;
-using DVSAdmin.CommonUtility.Models;
+﻿using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
+using DVSAdmin.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using static DVSAdmin.Data.Repositories.CabTransferRepository;
 namespace DVSAdmin.Data.Repositories
 {
     public class HomeRepository : IHomeRepository
@@ -17,210 +16,151 @@ namespace DVSAdmin.Data.Repositories
             _logger = logger;
         }
 
-        public async Task<PaginatedResult<Service>> GetServices(string loggedInUserEmail, int pageNumber, string sort, string sortAction, string openTask)
+
+        public async Task<PaginatedResult<Service>> GetPendingCertificateReviews(int pageNumber, string sort, string sortAction)
         {
-            var baseQuery = _context.Service
+            try
+            {
+                var baseQuery = _context.Service
                 .Include(s => s.Provider)
-                 .Include(s => s.ServiceDraft)
                 .Include(s => s.CertificateReview)
-                .Include(s => s.PublicInterestCheck);
+                .Where(s => ((s.ServiceStatus == ServiceStatusEnum.Submitted || s.ServiceStatus == ServiceStatusEnum.Resubmitted) &&
+                s.ServiceStatus != ServiceStatusEnum.Removed &&
+                s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
+                s.Id != s.CertificateReview.ServiceId) ||
+                (s.CertificateReview != null &&
+                (s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider)));
 
-
-            User loggedInUser = await _context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
-            var isTaskWithDeadline = openTask is "cert review" or "primary check" or "secondary check";                        
-
-            Func<Service, bool> taskFilter = openTask switch
-            {
-                "cert review" => s =>
-                    ((s.ServiceStatus == ServiceStatusEnum.Submitted || s.ServiceStatus == ServiceStatusEnum.Resubmitted) &&
-                     s.ServiceStatus != ServiceStatusEnum.Removed &&
-                     s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
-                     s.Id != s?.CertificateReview?.ServiceId) ||
-                    (s.CertificateReview != null &&
-                     (s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider )),
-                "primary check" => s =>
-                    ((s.ServiceStatus == ServiceStatusEnum.Received &&
-                      s.ServiceStatus != ServiceStatusEnum.Removed &&
-                      s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
-                      s.Id != s?.PublicInterestCheck?.ServiceId) ||
-                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer
-                     && s.PublicInterestCheck.SecondaryCheckUserId != loggedInUser?.Id)),
-                "secondary check" => s =>
-                    (s.ServiceStatus != ServiceStatusEnum.Removed &&
-                     s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
-                     s.PublicInterestCheck != null &&
-                     (s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
-                      s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed) && s.PublicInterestCheck.PrimaryCheckUserId != loggedInUser?.Id),
-                _ => s => (s.ServiceStatus == ServiceStatusEnum.UpdatesRequested && s?.ServiceDraft?.RequestedUserId != loggedInUser?.Id)
-                         || ( s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser?.Id && s.ServiceRemovalReason != ServiceRemovalReasonEnum.ProviderRequestedRemoval)
-                         || (s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser?.Id && s.ServiceRemovalReason == null && s.Provider.RemovalReason != RemovalReasonsEnum.ProviderRequestedRemoval)
-                         || s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation
-            };
-
-            var filtered = baseQuery.Where(taskFilter).ToList();
-
-            if (isTaskWithDeadline)
-            {
-                int deadline = openTask switch
-                {
-                    "cert review" => Constants.DaysLeftToCompleteCertificateReview,
-                    _ => Constants.DaysLeftToCompletePICheck
-                };
-
-                var results = filtered.Select(s =>
-                {
-                    var baseDate = s.ModifiedTime ?? s.CreatedTime;
-                    int daysLeft = 0;
-
-                    if (baseDate.HasValue)
-                    {
-                        var daysPassed = (DateTime.UtcNow.Date - baseDate.Value.Date).Days;
-                        daysLeft = Math.Max(0, deadline - daysPassed);
-                    }
-
-                    string appType = s.ServiceVersion == 1 ? Constants.NewApplication : Constants.ReApplication;
-
-                    return new
-                    {
-                        Service = s,
-                        DaysLeft = daysLeft,
-                        NewOrResubmission = appType
-                    };
-                }).ToList();
-
-                var sortedResults = sort switch
-                {
-                    "service name" => sortAction == "descending"
-                        ? results.OrderByDescending(r => r.Service.ServiceName)
-                        : results.OrderBy(r => r.Service.ServiceName),
-
-                    "provider" => sortAction == "descending"
-                        ? results.OrderByDescending(r => r.Service.Provider.RegisteredName)
-                        : results.OrderBy(r => r.Service.Provider.RegisteredName),
-
-                    "days" => sortAction == "descending"
-                        ? results.OrderByDescending(r => r.DaysLeft)
-                        : results.OrderBy(r => r.DaysLeft),
-
-                    "application" => sortAction == "descending"
-                        ? results.OrderByDescending(r => r.NewOrResubmission)
-                        : results.OrderBy(r => r.NewOrResubmission)
-                };
-
-                var paged = sortedResults
-                    .Skip((pageNumber - 1) * 10)
-                    .Take(10)
-                    .Select(r => r.Service)
-                    .ToList();
-
-                return new PaginatedResult<Service>
-                {
-                    Items = paged,
-                    TotalCount = results.Count
-                };
+                return await SortAndPaginate(pageNumber, sort, sortAction, baseQuery);
             }
-            else
+            catch (Exception ex)
             {
-                var results = filtered.Select(s => new
-                {
-                    Service = s,
-                    Status = s.ServiceStatus,
-                    NewOrResubmission = s.ServiceVersion == 1 ? Constants.NewApplication : Constants.ReApplication
-                }).ToList();
-
-                var priorityOrder = new List<ServiceStatusEnum>
-                {
-                    ServiceStatusEnum.CabAwaitingRemovalConfirmation,
-                    ServiceStatusEnum.AwaitingRemovalConfirmation,
-                    ServiceStatusEnum.UpdatesRequested
-                };
-
-                var sortedResults = sort switch
-                {
-                    "service name" => sortAction == "descending"
-                        ? results.OrderByDescending(r => r.Service.ServiceName)
-                        : results.OrderBy(r => r.Service.ServiceName),
-
-                    "provider" => sortAction == "descending"
-                        ? results.OrderByDescending(r => r.Service.Provider.RegisteredName)
-                        : results.OrderBy(r => r.Service.Provider.RegisteredName),
-
-                    "status" => sortAction == "descending"
-                        ? results.OrderByDescending(r => priorityOrder.IndexOf(r.Status)) 
-                        : results.OrderBy(r => priorityOrder.IndexOf(r.Status)),
-
-                    "application" => sortAction == "descending"
-                        ? results.OrderByDescending(r => r.NewOrResubmission)
-                        : results.OrderBy(r => r.NewOrResubmission)
-                };
-
-                var paged = sortedResults
-                    .Skip((pageNumber - 1) * 10)
-                    .Take(10)
-                    .Select(r => r.Service)
-                    .ToList();
-
-                return new PaginatedResult<Service>
-                {
-                    Items = paged,
-                    TotalCount = results.Count
-                };
+                _logger.LogError(ex.Message);
+                return null;
+               
             }
+        
         }
+
+      
+
+        public async Task<PaginatedResult<Service>> GetPendingPrimaryChecks(string loggedInUserEmail,int pageNumber, string sort, string sortAction)
+        {
+            try
+            {
+                User loggedInUser = await _context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
+                var baseQuery = _context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.PublicInterestCheck)
+                .Where(s => (s.ServiceStatus == ServiceStatusEnum.Received &&
+                s.ServiceStatus != ServiceStatusEnum.Removed &&
+                s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
+                s.Id != s.PublicInterestCheck.ServiceId) ||
+                (s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer
+                && s.PublicInterestCheck.SecondaryCheckUserId != loggedInUser.Id));
+                return await SortAndPaginate(pageNumber, sort, sortAction, baseQuery);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+
+            }
+
+        }
+
+        public async Task<PaginatedResult<Service>> GetPendingSecondaryChecks(string loggedInUserEmail, int pageNumber, string sort, string sortAction)
+        {
+            try
+            {
+                User loggedInUser = await _context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
+                var baseQuery = _context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.PublicInterestCheck)
+                .Where(s => (s.ServiceStatus != ServiceStatusEnum.Removed &&
+                s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
+                s.PublicInterestCheck != null &&
+                (s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
+                s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed) && s.PublicInterestCheck.PrimaryCheckUserId != loggedInUser.Id));
+
+
+                return await SortAndPaginate(pageNumber, sort, sortAction, baseQuery);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+
+            }
+
+        }
+        public async Task<PaginatedResult<Service>> GetPendingRequests(string loggedInUserEmail, int pageNumber, string sort, string sortAction)
+        {
+            try
+            {
+                User loggedInUser = await _context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
+                var baseQuery = _context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.ServiceDraft)
+                .Where(s => (s.ServiceStatus == ServiceStatusEnum.UpdatesRequested && s.ServiceDraft.RequestedUserId != loggedInUser.Id)
+                         || (s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser.Id && s.ServiceRemovalReason != ServiceRemovalReasonEnum.ProviderRequestedRemoval)
+                         || (s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser.Id && s.ServiceRemovalReason == null && s.Provider.RemovalReason != RemovalReasonsEnum.ProviderRequestedRemoval)
+                         || s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation);
+
+
+                return await SortAndPaginate(pageNumber, sort, sortAction, baseQuery);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+
+            }
+
+        }
+
+
 
         public async Task<Dictionary<string, int>> GetPendingCounts(string loggedInUserEmail)
         {
-            User loggedInUser = await _context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();
-            var latestServices = await _context.Service
+            User loggedInUser = await _context.User.Where(x => x.Email == loggedInUserEmail).FirstOrDefaultAsync();          
+
+            int certificateReviewCount = _context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.CertificateReview)
+                .Where(s => ((s.ServiceStatus == ServiceStatusEnum.Submitted || s.ServiceStatus == ServiceStatusEnum.Resubmitted) &&
+                s.ServiceStatus != ServiceStatusEnum.Removed &&
+                s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
+                s.Id != s.CertificateReview.ServiceId) ||
+                (s.CertificateReview != null &&
+                (s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider))).Count();
+                
+            int primaryCount = _context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.PublicInterestCheck)
+                .Where(s => (s.ServiceStatus == ServiceStatusEnum.Received &&
+                s.ServiceStatus != ServiceStatusEnum.Removed &&
+                s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
+                s.Id != s.PublicInterestCheck.ServiceId) ||
+                (s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer
+                && s.PublicInterestCheck.SecondaryCheckUserId != loggedInUser.Id)).Count();
+
+            int secondaryCount = _context.Service
+                .Include(s => s.Provider)
+                .Include(s => s.PublicInterestCheck)
+                .Where(s => (s.ServiceStatus != ServiceStatusEnum.Removed &&
+                s.ServiceStatus != ServiceStatusEnum.SavedAsDraft &&
+                s.PublicInterestCheck != null &&
+                (s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
+                s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed) && s.PublicInterestCheck.PrimaryCheckUserId != loggedInUser.Id)).Count(); ;
+            int updateOrRemovalCount = _context.Service
                 .Include(s => s.Provider)
                 .Include(s => s.ServiceDraft)
-                .Include(s => s.CertificateReview)
-                .Include(s => s.PublicInterestCheck)               
-                .ToListAsync();
-
-            int certificateReviewCount = 0;
-            int primaryCount = 0;
-            int secondaryCount = 0;
-            int updateOrRemovalCount = 0;
-
-            foreach (var s in latestServices)
-            {
-                bool notRemovedOrDraft = s.ServiceStatus != ServiceStatusEnum.Removed &&
-                                         s.ServiceStatus != ServiceStatusEnum.SavedAsDraft;
-
-                if (((s.ServiceStatus == ServiceStatusEnum.Submitted || s.ServiceStatus == ServiceStatusEnum.Resubmitted) &&
-                      notRemovedOrDraft &&
-                      s.Id != s?.CertificateReview?.ServiceId) ||
-                    (s.CertificateReview != null &&
-                     ( s.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider)))
-                {
-                    certificateReviewCount++;
-                }
-
-                if ((s.ServiceStatus == ServiceStatusEnum.Received && notRemovedOrDraft &&
-                      s.Id != s?.PublicInterestCheck?.ServiceId) ||
-                     (s?.PublicInterestCheck?.PublicInterestCheckStatus == PublicInterestCheckEnum.SentBackBySecondReviewer 
-                     && s.PublicInterestCheck.SecondaryCheckUserId != loggedInUser?.Id))
-                {
-                    primaryCount++;
-                }
-
-                if (notRemovedOrDraft &&
-                    s.PublicInterestCheck != null &&
-                    (s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckPassed ||
-                     s.PublicInterestCheck.PublicInterestCheckStatus == PublicInterestCheckEnum.PrimaryCheckFailed) && s.PublicInterestCheck.PrimaryCheckUserId != loggedInUser?.Id)
-                {
-                    secondaryCount++;
-                }
-
-                if ( (s.ServiceStatus == ServiceStatusEnum.UpdatesRequested && s?.ServiceDraft?.RequestedUserId != loggedInUser?.Id) ||
-                    (s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser?.Id && s.ServiceRemovalReason!= ServiceRemovalReasonEnum.ProviderRequestedRemoval)||
-                     (s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser?.Id && s.ServiceRemovalReason == null  && s.Provider.RemovalReason != RemovalReasonsEnum.ProviderRequestedRemoval) ||
-                    s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation)
-                {
-                    updateOrRemovalCount++;
-                }
-            }
+                .Where(s => (s.ServiceStatus == ServiceStatusEnum.UpdatesRequested && s.ServiceDraft.RequestedUserId != loggedInUser.Id)
+                         || (s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser.Id && s.ServiceRemovalReason != ServiceRemovalReasonEnum.ProviderRequestedRemoval)
+                         || (s.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && s.RemovalRequestedUser != loggedInUser.Id && s.ServiceRemovalReason == null && s.Provider.RemovalReason != RemovalReasonsEnum.ProviderRequestedRemoval)
+                         || s.ServiceStatus == ServiceStatusEnum.CabAwaitingRemovalConfirmation).Count();
+           
 
             return new Dictionary<string, int>
             {
@@ -236,5 +176,48 @@ namespace DVSAdmin.Data.Repositories
         {
             return await _context.User.FirstOrDefaultAsync<User>(e => e.Email == userEmail);
         }
+
+        #region Private methods
+        private static async Task<PaginatedResult<Service>> SortAndPaginate(int pageNumber, string sort, string sortAction, IQueryable<Service> baseQuery)
+        {
+            var sortedResults = sort switch
+            {
+                "service name" => sortAction == "descending"
+                    ? baseQuery.OrderByDescending(r => r.ServiceName)
+                    : baseQuery.OrderBy(r => r.ServiceName),
+
+                "provider" => sortAction == "descending"
+                    ? baseQuery.OrderByDescending(r => r.Provider.RegisteredName)
+                    : baseQuery.OrderBy(r => r.Provider.RegisteredName),
+
+                "days" => sortAction == "descending"
+                ? baseQuery.OrderByDescending(r => (r.ModifiedTime ?? r.CreatedTime))
+                : baseQuery.OrderBy(r => (r.ModifiedTime ?? r.CreatedTime)),
+
+
+                "application" => sortAction == "descending"
+                    ? baseQuery.OrderByDescending(r => r.ServiceVersion)
+                    : baseQuery.OrderBy(r => r.ServiceVersion),
+                "status" => sortAction == "descending"
+                   ? baseQuery.OrderByDescending(r => r.ServiceStatus)
+                   : baseQuery.OrderBy(r => r.ServiceStatus),
+                _ => sortAction == "descending"
+                    ? baseQuery.OrderByDescending(r => r.ModifiedTime)
+                    : baseQuery.OrderBy(r => r.ModifiedTime),
+            };
+
+
+            var paged = sortedResults
+               .Skip((pageNumber - 1) * 10)
+               .Take(10)
+               .ToListAsync();
+
+            return new PaginatedResult<Service>
+            {
+                Items = await paged,
+                TotalCount = sortedResults.ToList().Count
+            };
+        }
+        #endregion
     }
 }

@@ -1,6 +1,6 @@
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Entities;
-using static DVSAdmin.Data.Repositories.CabTransferRepository;
+using DVSAdmin.Data.Models;
 
 namespace DVSAdmin.Data.Repositories
 {
