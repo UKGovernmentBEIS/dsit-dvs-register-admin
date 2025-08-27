@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.CommonUtility.JWT;
 using DVSAdmin.Data.Repositories;
-using Microsoft.Extensions.Configuration;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -11,7 +9,7 @@ namespace DVSAdmin.BusinessLogic.Services
         private readonly IHomeRepository homeRepository;
         private readonly IMapper automapper;
 
-        public HomeService(IHomeRepository homeRepository, IUserService userService, IMapper automapper, IJwtService jwtService, IConfiguration configuration)
+        public HomeService(IHomeRepository homeRepository, IMapper automapper)
         {
             this.homeRepository = homeRepository;
             this.automapper = automapper;
@@ -20,9 +18,9 @@ namespace DVSAdmin.BusinessLogic.Services
         //get certificate reviews list
         //get primary checks list
 
-        public async Task<PaginatedResult<ServiceDto>> GetServices(string loggedInUserEmail, int pageNumber, string sort, string sortAction, string openTask)
+        public async Task<PaginatedResult<ServiceDto>> GetPendingCertificateReviews( int pageNumber, string sort, string sortAction)
         {
-            var paginatedServices = await homeRepository.GetServices(loggedInUserEmail, pageNumber, sort, sortAction, openTask);
+            var paginatedServices = await homeRepository.GetPendingCertificateReviews(pageNumber, sort, sortAction);
             var serviceDtos = automapper.Map<List<ServiceDto>>(paginatedServices.Items);
 
             return new PaginatedResult<ServiceDto>
@@ -31,6 +29,40 @@ namespace DVSAdmin.BusinessLogic.Services
                 TotalCount = paginatedServices.TotalCount
             };
         }
+
+        public async Task<PaginatedResult<ServiceDto>> GetPendingPrimaryChecks(string loggedInUserEmail, int pageNumber, string sort, string sortAction)
+        {
+            var paginatedServices = await homeRepository.GetPendingPrimaryChecks(loggedInUserEmail,pageNumber, sort, sortAction);
+            var serviceDtos = automapper.Map<List<ServiceDto>>(paginatedServices.Items);
+
+            return new PaginatedResult<ServiceDto>
+            {
+                Items = serviceDtos,
+                TotalCount = paginatedServices.TotalCount
+            };
+        }
+        public async Task<PaginatedResult<ServiceDto>> GetPendingSecondaryChecks(string loggedInUserEmail, int pageNumber, string sort, string sortAction)
+        {
+            var paginatedServices = await homeRepository.GetPendingSecondaryChecks(loggedInUserEmail, pageNumber, sort, sortAction);
+            var serviceDtos = automapper.Map<List<ServiceDto>>(paginatedServices.Items);
+
+            return new PaginatedResult<ServiceDto>
+            {
+                Items = serviceDtos,
+                TotalCount = paginatedServices.TotalCount
+            };
+        }
+        public async Task<PaginatedResult<ServiceDto>> GetPendingRequests(string loggedInUserEmail, int pageNumber, string sort, string sortAction)
+        {
+            var paginatedServices = await homeRepository.GetPendingRequests(loggedInUserEmail, pageNumber, sort, sortAction);
+            var serviceDtos = automapper.Map<List<ServiceDto>>(paginatedServices.Items);
+
+            return new PaginatedResult<ServiceDto>
+            {
+                Items = serviceDtos,
+                TotalCount = paginatedServices.TotalCount
+            };
+        }       
 
         public async Task<Dictionary<string, int>> GetPendingCounts(string loggedInUserEmail)
         {

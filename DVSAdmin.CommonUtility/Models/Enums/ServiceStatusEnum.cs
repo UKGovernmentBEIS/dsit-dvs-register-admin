@@ -8,7 +8,7 @@ namespace DVSAdmin.CommonUtility.Models
     {
         //Donot change order of the enum as the ids are used to save in database
         //New entries should be added at the last
-        [Description("Submitted")]
+        [Description("Received")]
         Submitted = 1,
         [Description("Received")] // Status when provider consents to proceed application, opening loop
         Received = 2,

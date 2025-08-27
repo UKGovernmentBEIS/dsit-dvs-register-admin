@@ -2,57 +2,83 @@
 @model DVSAdmin.Models.CertificateReview.ReviewViewModel
 
 <dl class="govuk-summary-list">
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            Cerificate validation
-        </dt>
-        <dd class="govuk-summary-list__value">
 
-            @if (Model.CertificateValid == true)
-            {
-                <strong class="govuk-tag govuk-tag--green">
-                    Yes, the certificate is valid
-                </strong>
 
-            }
-            else
-            {
-                @if (Model.IsSendBack == true)
-                {
+    @if (Model.IsSendBack == true)
+    {
+        @if (Model.CertificateValid == false)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Cerificate validation
+                </dt>
+
+                <dd class="govuk-summary-list__value">
                     <strong class="govuk-tag govuk-tag--red">
-                        Amendments needed                      
+                        Amendments needed
+                    </strong>
+                </dd>
+            </div>
+        }
+
+    }
+    else
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Cerificate validation
+            </dt>
+
+            <dd class="govuk-summary-list__value">
+                @if (Model.CertificateValid == true)
+                {
+                    <strong class="govuk-tag govuk-tag--green">
+                        Yes, the certificate is valid
                     </strong>
                 }
                 else
                 {
-                    <strong class="govuk-tag govuk-tag--red">                     
-
+                    <strong class="govuk-tag govuk-tag--red">
                         No, the certificate is not valid
                     </strong>
                 }
               
-            }
+            </dd>
+        </div>
+    }
 
-        </dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            Information match
-        </dt>
-        <dd class="govuk-summary-list__value">
 
-            @if (Model.InformationMatched == true)
-            {
-                <strong class="govuk-tag govuk-tag--green">
-                    Yes, it matches the information on the certificate
-                </strong>
-            }
-            else
-            {
-                @if(Model.IsSendBack == true)
-                {
+
+    @if (Model.IsSendBack == true)
+    {
+        @if (Model.InformationMatched == false)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Cerificate validation
+                </dt>
+
+                <dd class="govuk-summary-list__value">
                     <strong class="govuk-tag govuk-tag--red">
-                        Amendments needed 
+                        Amendments needed
+                    </strong>
+                </dd>
+            </div>
+        }
+
+    }
+    else
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Information match
+            </dt>
+            <dd class="govuk-summary-list__value">
+
+                @if (Model.InformationMatched == true)
+                {
+                    <strong class="govuk-tag govuk-tag--green">
+                        Yes, it matches the information on the certificate
                     </strong>
                 }
                 else
@@ -60,14 +86,17 @@
                     <strong class="govuk-tag govuk-tag--red">
                         No, the information does not match
                     </strong>
+
                 }
-               
-            }
 
-        </dd>
-    </div>
+            </dd>
+        </div>
+    }
 
-    @if(!string.IsNullOrEmpty(Model.ReviewComments))
+   
+   
+
+    @if (!string.IsNullOrEmpty(Model.ReviewComments))
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -75,11 +104,11 @@
             </dt>
             <dd class="govuk-summary-list__value">
 
-              @Model.ReviewComments
+                @Model.ReviewComments
 
             </dd>
         </div>
     }
 
-    
+
 </dl>
