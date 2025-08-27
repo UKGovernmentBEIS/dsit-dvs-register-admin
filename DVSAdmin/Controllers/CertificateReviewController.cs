@@ -131,25 +131,29 @@ namespace DVSAdmin.Controllers
             ServiceDto serviceDto = await certificateReviewService.GetServiceDetails(certificateReviewViewModel.ServiceId);
             await SetResubmissionFields(serviceDto);
             certificateReviewViewModel.Service = serviceDto;
-          
-             
+            bool passed = certificateReviewViewModel.InformationMatched == true && certificateReviewViewModel.CertificateValid == true;  
+            if(passed && saveReview == "send-back")
+            {
+                ModelState.AddModelError("SubmitValidation", "You can only return this submission back to CAB if at least one check is not valid");
+            }
+
             if (ModelState.IsValid)
             {
                 HttpContext?.Session.Set("ReviewViewModel", certificateReviewViewModel);
             
                 if (saveReview == "continue")
                 {
-                    if (certificateReviewViewModel.InformationMatched == true && certificateReviewViewModel.CertificateValid == true)
+                    if (passed)
                     {
                         return RedirectToAction("ApproveSubmission");
                     }
                     else
-                    {
+                    {                        
                         return RedirectToAction("RejectSubmission");
                     }
                 }
                 else if( saveReview == "send-back")
-                {
+                {   
                     return RedirectToAction("SendBackToCab");
                 }
                 else

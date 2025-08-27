@@ -13,7 +13,7 @@
 }
 
 <div class="govuk-width-container">
-    @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", null, new { @class = "govuk-back-link" })
+    @Html.ActionLink("Back", "SecondaryCheckReview", "PublicInterestSecondaryCheck", new { serviceId  = Model.ServiceId}, new { @class = "govuk-back-link" })
     <main id="main-content" class="govuk-main-wrapper" role="main">
         @using (Html.BeginForm("ProceedSecondaryCheckReject", "PublicInterestSecondaryCheck", FormMethod.Post))
         {
