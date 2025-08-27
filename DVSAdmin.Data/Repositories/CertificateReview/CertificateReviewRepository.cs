@@ -210,14 +210,12 @@ namespace DVSAdmin.Data.Repositories
                             existingService.ServiceStatus = ServiceStatusEnum.AmendmentsRequired;
                             existingService.ModifiedTime = DateTime.UtcNow;
                         }
-                    }
-
-                    await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
+                    }                  
                    
                 }
-               
+                await context.SaveChangesAsync(TeamEnum.DSIT, EventTypeEnum.CertificateReview, loggedInUserEmail);
 
-             
+
                 transaction.Commit();
                 genericResponse.Success = true;
             }
