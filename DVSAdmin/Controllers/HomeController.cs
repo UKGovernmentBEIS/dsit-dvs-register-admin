@@ -38,7 +38,7 @@ namespace DVSAdmin.Controllers
                 pageNumber = 1;
             }
 
-            var results = await homeService.GetServices(UserEmail, pageNumber, CurrentSort, CurrentSortAction, "cert review");
+            var results = await homeService.GetPendingCertificateReviews( pageNumber, CurrentSort, CurrentSortAction);
             var PendingCounts = await homeService.GetPendingCounts(UserEmail);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
@@ -82,7 +82,7 @@ namespace DVSAdmin.Controllers
                 pageNumber = 1;
             }
 
-            var results = await homeService.GetServices(UserEmail, pageNumber, CurrentSort, CurrentSortAction, "primary check");
+            var results = await homeService.GetPendingPrimaryChecks(UserEmail, pageNumber, CurrentSort, CurrentSortAction);
             var PendingCounts = await homeService.GetPendingCounts(UserEmail);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 
@@ -126,7 +126,7 @@ namespace DVSAdmin.Controllers
                 pageNumber = 1;
             }
 
-            var results = await homeService.GetServices(UserEmail, pageNumber, CurrentSort, CurrentSortAction, "secondary check");
+            var results = await homeService.GetPendingSecondaryChecks(UserEmail, pageNumber, CurrentSort, CurrentSortAction);
             var user = await homeService.GetUserByEmail(UserEmail);
             var PendingCounts = await homeService.GetPendingCounts(UserEmail);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
@@ -171,7 +171,7 @@ namespace DVSAdmin.Controllers
                 pageNumber = 1;
             }
 
-            var results = await homeService.GetServices(UserEmail, pageNumber, CurrentSort, CurrentSortAction, "update or removal");
+            var results = await homeService.GetPendingRequests(UserEmail, pageNumber, CurrentSort, CurrentSortAction);
             var PendingCounts = await homeService.GetPendingCounts(UserEmail);
             var totalPages = (int)Math.Ceiling((double)results.TotalCount / 10);
 

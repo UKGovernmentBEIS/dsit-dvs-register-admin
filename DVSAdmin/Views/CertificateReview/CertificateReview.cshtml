@@ -8,6 +8,7 @@
     ViewData["Title"] = "Remote Verify";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
     ViewData["HidePublishStatus"] = true;
+    string inValidSendBackClickMessage = Html.ViewData?.ModelState["SubmitValidation"]?.Errors[0].ErrorMessage ?? string.Empty;
 }
 
 <div class="govuk-width-container">
@@ -169,8 +170,15 @@
                     Label1 = "Yes, the information matches",
                     Label2 = "No, the information does not match"
                    })
-                  
 
+
+                        @if (!string.IsNullOrEmpty(inValidSendBackClickMessage))
+                        {
+                            <p id="submitvalidation-error" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span> @inValidSendBackClickMessage
+                            </p>
+                        }
+                       
                     @if (Model.Service.CertificateReview == null || (Model.Service.CertificateReview != null &&
                                     Model.Service.CertificateReview.CertificateReviewStatus == CertificateReviewEnum.DeclinedByProvider))
                     {
