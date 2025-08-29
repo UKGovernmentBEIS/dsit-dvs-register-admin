@@ -53,11 +53,12 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpGet("service-details")]
-        public async Task<IActionResult> ServiceDetails(int serviceKey,int pageNumber =1,  string currentSort = "status", string currentSortAction = "ascending")
+        public async Task<IActionResult> ServiceDetails(int serviceKey,int pageNumber =1,  string CurrentSort = "status", string CurrentSortAction = "ascending", string NewSort = "")
         {
-            ViewBag.CurrentSort = currentSort;
-            ViewBag.CurrentSortAction = currentSortAction;
+            ViewBag.CurrentSort = CurrentSort;
+            ViewBag.CurrentSortAction = CurrentSortAction;
             ViewBag.CurrentPage = pageNumber;
+            ViewBag.NewSort = NewSort;
             ServiceVersionViewModel serviceVersions = new();
             var serviceList = await regManagementService.GetServiceVersionList(serviceKey);
             ServiceDto currentServiceVersion = serviceList.OrderByDescending(x => x.ModifiedTime).FirstOrDefault() ?? new ServiceDto(); //Latest submission has latest date          

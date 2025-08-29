@@ -12,9 +12,7 @@ else
     
 
     <table class="govuk-table govuk-table--small-text-until-tablet">
-        <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">
-            search results table - column headers with links are sortable
-        </caption>
+        <caption class="govuk-table__caption govuk-table__caption--m">Review history</caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row sortable-table">
                 <th scope="col" class="govuk-table__header" aria-sort="@((Model.CurrentSort == "service name") ? Model.CurrentSortAction : "none")"
@@ -25,7 +23,7 @@ else
                         CurrentSort = Model.CurrentSort,
                         CurrentSortAction = Model.CurrentSortAction,
                         NewSort = "service name"
-                    })#history">Service name</a>
+                    })#service-history">Service name</a>
 
                 </th>
                
@@ -37,7 +35,7 @@ else
                         CurrentSort = Model.CurrentSort,
                         CurrentSortAction = Model.CurrentSortAction,
                         NewSort = "status"
-                    })#history">Status</a>
+                    })#service-history">Status</a>
                    
                 </th>
             </tr>
@@ -76,9 +74,10 @@ else
                         TotalPages = Model.TotalPages,
                         Sort = Model.CurrentSort,
                         SortAction = Model.CurrentSortAction,
-                        TabName = "#history"
+                        TabName = "#service-history"
                     };
      
         @await Html.PartialAsync("~/Views/PartialViews/_PaginationView.cshtml", paginationViewModel, ViewData);
     }
 }
+
