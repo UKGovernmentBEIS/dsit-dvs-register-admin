@@ -2,6 +2,7 @@
 using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.CommonUtility.Models.Enums;
 using DVSAdmin.Data.Entities;
+using DVSAdmin.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 namespace DVSAdmin.Data.Repositories.RegisterManagement
@@ -98,7 +99,57 @@ namespace DVSAdmin.Data.Repositories.RegisterManagement
             .ToListAsync();
         }
 
-      
+        public async Task<PaginatedResult<Service>> GetServiceHistory(int pageNumber, string sort, string sortAction)
+        {
+            var baseQuery = context.Service
+                .Include(s => s.Provider)                        
+                .Where(s => s.ServiceStatus >ServiceStatusEnum.Submitted);         
+
+            return await SortAndPaginate(pageNumber, sort, sortAction, baseQuery);
+        }
+
+        private static async Task<PaginatedResult<Service>> SortAndPaginate(int pageNumber, string sort, string sortAction, IQueryable<Service> baseQuery)
+        {
+            var sortedResults = sort switch
+            {
+                "service name" => sortAction == "descending"
+                    ? baseQuery.OrderByDescending(r => r.ServiceName)
+                    : baseQuery.OrderBy(r => r.ServiceName),
+
+                "provider" => sortAction == "descending"
+                    ? baseQuery.OrderByDescending(r => r.Provider.RegisteredName)
+                    : baseQuery.OrderBy(r => r.Provider.RegisteredName),
+
+                "days" => sortAction == "descending"
+                ? baseQuery.OrderByDescending(r => (r.ModifiedTime ?? r.CreatedTime))
+                : baseQuery.OrderBy(r => (r.ModifiedTime ?? r.CreatedTime)),
+
+
+                "application" => sortAction == "descending"
+                    ? baseQuery.OrderByDescending(r => r.ServiceVersion)
+                    : baseQuery.OrderBy(r => r.ServiceVersion),
+                "status" => sortAction == "descending"
+                   ? baseQuery.OrderByDescending(r => r.ServiceStatus)
+                   : baseQuery.OrderBy(r => r.ServiceStatus),
+                _ => sortAction == "descending"
+                    ? baseQuery.OrderByDescending(r => r.ModifiedTime)
+                    : baseQuery.OrderBy(r => r.ModifiedTime),
+            };
+
+
+            var paged = sortedResults
+               .Skip((pageNumber - 1) * 10)
+               .Take(10)
+               .ToListAsync();
+
+            return new PaginatedResult<Service>
+            {
+                Items = await paged,
+                TotalCount = sortedResults.ToList().Count
+            };
+        }
+
+
 
     }
 }

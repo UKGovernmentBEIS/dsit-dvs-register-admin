@@ -53,8 +53,11 @@ namespace DVSAdmin.Controllers
         }
 
         [HttpGet("service-details")]
-        public async Task<IActionResult> ServiceDetails(int serviceKey)
+        public async Task<IActionResult> ServiceDetails(int serviceKey,int pageNumber =1,  string currentSort = "status", string currentSortAction = "ascending")
         {
+            ViewBag.CurrentSort = currentSort;
+            ViewBag.CurrentSortAction = currentSortAction;
+            ViewBag.CurrentPage = pageNumber;
             ServiceVersionViewModel serviceVersions = new();
             var serviceList = await regManagementService.GetServiceVersionList(serviceKey);
             ServiceDto currentServiceVersion = serviceList.OrderByDescending(x => x.ModifiedTime).FirstOrDefault() ?? new ServiceDto(); //Latest submission has latest date          
@@ -65,7 +68,7 @@ namespace DVSAdmin.Controllers
             serviceVersions.CanResendRemovalRequest = currentServiceVersion.ServiceStatus == ServiceStatusEnum.AwaitingRemovalConfirmation && currentServiceVersion.ServiceRemovalReason != 0;
             serviceVersions.CanResendUpdateRequest = currentServiceVersion.ServiceStatus == ServiceStatusEnum.UpdatesRequested && currentServiceVersion.ServiceDraft != null
             && currentServiceVersion.Provider.ProviderProfileDraft == null;
-
+            
             return View(serviceVersions);
         }
 

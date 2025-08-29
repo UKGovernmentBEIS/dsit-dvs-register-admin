@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.CommonUtility.Models;
 using DVSAdmin.Data.Repositories;
 
 namespace DVSAdmin.BusinessLogic.Services
@@ -67,7 +66,21 @@ namespace DVSAdmin.BusinessLogic.Services
             List<ServiceDto> services =  automapper.Map<List<ServiceDto>>(serviceList);
             return ServiceHelper.FilterByServiceStatus(services);
 
-        }    
+        }
+        public async Task<PaginatedResult<ServiceDto>>  GetServiceHistory(int pageNumber, string sort, string sortAction)
+        {
+            var paginatedServices = await regManagementRepository.GetServiceHistory(pageNumber,sort,sortAction);
+            var serviceDtos = automapper.Map<List<ServiceDto>>(paginatedServices.Items);
+
+            return new PaginatedResult<ServiceDto>
+            {
+                Items = serviceDtos,
+                TotalCount = paginatedServices.TotalCount
+            };
+
+        }
+
+        
 
 
     }

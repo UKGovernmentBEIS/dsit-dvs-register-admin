@@ -1,12 +1,34 @@
 ﻿@model DVSAdmin.Models.PaginationViewModel
 
+@{
+
+    int serviceKey = Convert.ToInt32(ViewData["ServiceKey"]);
+    string tabAnchor = !string.IsNullOrEmpty(Model.TabName) ? $"{Model.TabName}" : "";
+    var routeValues = new Dictionary<string, object>
+    {      
+        {"pageNumber" ,0},
+        { "CurrentSort", Model.Sort },
+        { "CurrentSortAction", Model.SortAction }
+    };
+
+    if (serviceKey != 0)
+    {
+        routeValues.Add("serviceKey", serviceKey);
+    }
+
+   
+}
+
+
 
 <nav class="govuk-pagination" aria-label="Pagination">
     <div class="govuk-pagination__prev">
         @if (Model.CurrentPage>1)
         {
-            <a class="govuk-link govuk-pagination__link" href="@Url.Action(Model.Action, new { pageNumber = Model.CurrentPage - 1, CurrentSort = Model.Sort,
-            CurrentSortAction = Model.SortAction })" rel="prev">
+            routeValues["pageNumber"] = Model.CurrentPage - 1;
+            string url = Url.Action(Model.Action, routeValues) + tabAnchor;
+
+            <a class="govuk-link govuk-pagination__link" href="@url" rel="prev">
                 <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
                     <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
                 </svg>
@@ -60,9 +82,12 @@
         }
         else
         {
+                routeValues["pageNumber"] = pageNum;
+                string url = Url.Action(Model.Action, routeValues) + tabAnchor;
+
             <li class="govuk-pagination__item @(pageNum == current ? "govuk-pagination__item--current" : "")">
                 <a class="govuk-link govuk-pagination__link" 
-                   href="@Url.Action(Model.Action, new { pageNumber = pageNum, CurrentSort = Model.Sort, CurrentSortAction = Model.SortAction })" 
+                   href="@url" 
                    aria-label="Page @pageNum">@pageNum</a>
             </li>
         }
@@ -71,8 +96,11 @@
     <div class="govuk-pagination__next">
         @if (Model.CurrentPage < Model.TotalPages)
         {
-            <a class="govuk-link govuk-pagination__link" href="@Url.Action(Model.Action, new { pageNumber = Model.CurrentPage + 1, CurrentSort = Model.Sort, 
-                                    CurrentSortAction = Model.SortAction })" rel="next">
+            routeValues["pageNumber"] = Model.CurrentPage + 1;
+            string url = Url.Action(Model.Action, routeValues) + tabAnchor;
+
+
+            <a class="govuk-link govuk-pagination__link" href="@url" rel="next">
                 <span class="govuk-pagination__link-title">
                     Next<span class="govuk-visually-hidden"> page</span>
                 </span>

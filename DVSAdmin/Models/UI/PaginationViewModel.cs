@@ -8,5 +8,7 @@
         public string SortAction { get; set; }
         public string Action { get; set; }
         public string Controller { get; set; }
+        public string TabName { get; set; }
+        //public int ServiceKey { get; set; } 
     }
 }

@@ -1,6 +1,5 @@
 ﻿
 using DVSAdmin.BusinessLogic.Models;
-using DVSAdmin.CommonUtility.Models;
 
 namespace DVSAdmin.BusinessLogic.Services
 {
@@ -12,6 +11,7 @@ namespace DVSAdmin.BusinessLogic.Services
        
         public Task<List<ServiceDto>> GetServiceVersionList(int serviceKey);
         public Task<List<string>> GetCabEmailListForServices(List<int> serviceIds);
+        public Task<PaginatedResult<ServiceDto>> GetServiceHistory(int pageNumber, string sort, string sortAction);
 
 
     }

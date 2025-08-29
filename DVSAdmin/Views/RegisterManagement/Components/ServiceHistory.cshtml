@@ -1,0 +1,84 @@
+﻿@using DVSAdmin.CommonUtility.Models;
+@using DVSAdmin.Extensions;
+@model DVSAdmin.Models.RegManagement.ServiceHistoryViewModel
+
+
+@if (Model.Services == null || !Model.Services.Any())
+{
+    <p class="govuk-body govuk-!-padding-7">No completed services found.</p>
+}
+else
+{
+    
+
+    <table class="govuk-table govuk-table--small-text-until-tablet">
+        <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">
+            search results table - column headers with links are sortable
+        </caption>
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row sortable-table">
+                <th scope="col" class="govuk-table__header" aria-sort="@((Model.CurrentSort == "service name") ? Model.CurrentSortAction : "none")"
+                    aria-label="sort by service name">
+
+                    <a href="@Url.Action("ServiceDetails", "RegisterManagement", new {
+                        serviceKey = Model.ServiceKey,
+                        CurrentSort = Model.CurrentSort,
+                        CurrentSortAction = Model.CurrentSortAction,
+                        NewSort = "service name"
+                    })#history">Service name</a>
+
+                </th>
+               
+                <th scope="col" class="govuk-table__header" aria-sort="@((Model.CurrentSort == "status") ? Model.CurrentSortAction : "none")"
+                    aria-label="sort by service status">
+
+                    <a href="@Url.Action("ServiceDetails", "RegisterManagement", new {
+                        serviceKey = Model.ServiceKey,
+                        CurrentSort = Model.CurrentSort,
+                        CurrentSortAction = Model.CurrentSortAction,
+                        NewSort = "status"
+                    })#history">Status</a>
+                   
+                </th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            @if (Model?.Services != null && Model.Services.Count > 0)
+            {
+                @foreach (var item in Model.Services)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                            @item.ServiceName
+                        </td>
+                    
+                        <td class="govuk-table__cell"> @HtmlExtensions.ToStyledStrongTag(item.ServiceStatus)</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" colspan="4">
+                        <p class="govuk-body"><b>Your search did not match any services.</b></p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    if (Model.TotalPages > 1)
+    {
+        var paginationViewModel = new PaginationViewModel
+                    {
+                        Action = "ServiceDetails",
+                        CurrentPage =  ViewBag.CurrentPage,
+                        TotalPages = Model.TotalPages,
+                        Sort = Model.CurrentSort,
+                        SortAction = Model.CurrentSortAction,
+                        TabName = "#history"
+                    };
+     
+        @await Html.PartialAsync("~/Views/PartialViews/_PaginationView.cshtml", paginationViewModel, ViewData);
+    }
+}

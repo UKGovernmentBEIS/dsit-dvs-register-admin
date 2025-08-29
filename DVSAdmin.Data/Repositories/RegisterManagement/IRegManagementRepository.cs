@@ -1,5 +1,5 @@
-﻿using DVSAdmin.CommonUtility.Models;
-using DVSAdmin.Data.Entities;
+﻿using DVSAdmin.Data.Entities;
+using DVSAdmin.Data.Models;
 
 
 namespace DVSAdmin.Data.Repositories
@@ -12,6 +12,7 @@ namespace DVSAdmin.Data.Repositories
         public Task<List<Service>> GetPublishedServices();
         public Task<List<Service>> GetServiceVersionList(int serviceKey);       
         public Task<List<string>> GetCabEmailListForServices(List<int> serviceIds);
+        public Task<PaginatedResult<Service>> GetServiceHistory(int pageNumber, string sort, string sortAction);
 
 
     }

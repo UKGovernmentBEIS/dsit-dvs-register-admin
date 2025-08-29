@@ -1,5 +1,6 @@
 ﻿@using DVSAdmin.BusinessLogic.Models;
 @using DVSAdmin.CommonUtility.Models
+@using DVSAdmin.Components;
 @model DVSAdmin.Models.RegManagement.ServiceVersionViewModel
 @{
     ViewData["Title"] = "Service details";
@@ -54,6 +55,11 @@
                                 Previously submitted
                             </a>
                         </li>
+                        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                            <a class="govuk-tabs__tab" href="#history">
+                           Completed
+                            </a>
+                        </li>
                     </ul>
                     <div class="govuk-tabs__panel govuk-!-padding-0" id="latest-submission">
                         @await Html.PartialAsync("~/Views/RegisterManagement/PartialViews/_ServiceDetailsView.cshtml", Model.CurrentServiceVersion, new ViewDataDictionary(ViewData) { ["DateFormat"] = "d MMMM yyyy" })
@@ -93,6 +99,20 @@
                             }
                         }
                     </div>
+
+
+                    <div class="govuk-tabs__panel govuk-tabs__panel--hidden govuk-!-padding-0" id="history">
+
+                        @await Component.InvokeAsync("ServiceHistory", new
+                            {
+                                serviceKey = Model.CurrentServiceVersion.ServiceKey,
+                                pageNumber = ViewBag.CurrentPage ?? 1,
+                                CurrentSort = ViewBag.CurrentSort,
+                                CurrentSortAction = ViewBag.CurrentSortAction
+                            })
+
+                    </div>
+
                 </div>
             </div>
         </div>
